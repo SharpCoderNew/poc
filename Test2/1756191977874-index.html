@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NovaDesign - Modern UI, Delightful Interactions</title>
+  <meta name="description" content="A minimal, accessible, responsive single-page site showcasing a modern brand with smooth motion, strong UX, and a reusable design system." />
+  <style>
+    /* Design Tokens */
+    :root{
+      --brand: #7b5cff;
+      --brand-2: #22d3ee;
+      --bg: #0b1020;
+      --surface: #141a32;
+      --card: #1e234a;
+      --text: #e9ecf8;
+      --muted: #a8b3d6;
+      --radius: 14px;
+      --shadow: 0 8px 20px rgba(0,0,0,.25);
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 32px;
+      --gap: 20px;
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;
+      --break-sm: 600px;
+      --break-md: 900px;
+      --break-lg: 1200px;
+    }
+
+    /* Global styles */
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background: radial-gradient( circle at 20% -10%, rgba(123,92,255,.15), transparent 40% ),
+                  radial-gradient( circle at 100% 0%, rgba(34,211,238,.15), transparent 40% ),
+                  linear-gradient(#0b1020, #0b1020);
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+
+    /* Layout helpers */
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(6px);
+      background: rgba(11,16,32,.92);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .site-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+
+    .brand {
+      display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text);
+    }
+
+    .brand svg { width: 28px; height: 28px; }
+
+    nav ul {
+      list-style: none; margin: 0; padding: 0; display: flex; gap: 6px;
+    }
+
+    nav a {
+      color: #dbe3ff; text-decoration: none; padding: 10px 12px; border-radius: 8px;
+      transition: background .3s ease, color .3s ease;
+    }
+    nav a:hover, nav a[aria-current="true"] {
+      background: rgba(123,92,255,.25);
+      color: #fff;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 72px 0 48px;
+    }
+    .hero-content {
+      display: grid; gap: 28px;
+      grid-template-columns: 1fr;
+      align-items: center;
+    }
+    .hero h1 {
+      font-size: 2.4rem; line-height: 1.15; margin: 0;
+      letter-spacing: .2px;
+    }
+    .hero p { color: var(--muted); font-size: 1.05rem; max-width: 58ch; }
+
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 12px 18px; border-radius: 10px; text-decoration: none;
+      border: 0; cursor: pointer;
+      font-weight: 600;
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: white; box-shadow: 0 6px 18px rgba(123,92,255,.5);
+    }
+    .btn.secondary {
+      background: rgba(255,255,255,.08); color: #eaf0ff;
+      border: 1px solid rgba(255,255,255,.15);
+    }
+
+    /* Sections */
+    section { padding: 60px 0; }
+    h2.section-title {
+      font-size: 1.9rem; margin: 0 0 8px; letter-spacing: .2px;
+    }
+    .section-sub { color: var(--muted); margin-bottom: 20px; }
+
+    /* Cards grid */
+    .grid { display: grid; gap: var(--gap); }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      min-height: 120px;
+      display: flex; flex-direction: column; gap: 12px;
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    .card.in-view { transform: translateY(0); opacity: 1; transition: all 600ms ease; }
+    .icon {
+      width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 8px; background: rgba(123,92,255,.15);
+      color: #d5d6ff;
+    }
+
+    .portfolio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (min-width: 720px) {
+      .hero-content { grid-template-columns: 1.1fr .9fr; align-items: center; }
+      .portfolio-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .portfolio-item {
+      aspect-ratio: 1 / 0.75;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #11162b;
+      border: 1px solid rgba(255,255,255,.08);
+      display: block;
+    }
+
+    /* Image placeholders (inline SVGs) */
+    .portfolio-item svg { width: 100%; height: 100%; display: block; }
+
+    /* Form */
+    form .field { display: flex; flex-direction: column; gap: 6px; }
+    input, textarea {
+      padding: 12px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.05); color: #fff;
+    }
+    input:focus, textarea:focus { outline: 2px solid #93c5fd; outline-offset: 2px; }
+    .form-row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 720px) {
+      .form-row.two { grid-template-columns: 1fr 1fr; }
+    }
+
+    .alert { margin-top: 10px; color: #a8ffd9; }
+
+    footer { padding: 24px 0; color: var(--muted); text-align: center; }
+
+    /* Scroll reveal (animations) */
+    .reveal { opacity: 0; transform: translateY(16px); transition: all 600ms ease; }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+    /* Top progress bar (optional) */
+    #progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--brand), var(--brand-2)); width: 0%; z-index: 9999; }
+
+    /* Reduced motion preference handling */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { transition: none; opacity: 1; transform: none; }
+      .card { transform: none; opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress" aria-hidden="true"></div>
+
+  <header>
+    <div class="container site-nav" role="navigation" aria-label="Main">
+      <a href="#home" class="brand" aria-label="NovaDesign Home">
+        <!-- Inline brand SVG logo -->
+        <svg viewBox="0 0 48 48" role="img" aria-label="Brand Logo">
+          <defs>
+            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+              <stop stop-color="#7b5cff"/>
+              <stop offset="1" stop-color="#22d3ee"/>
+            </linearGradient>
+          </defs>
+          <rect x="6" y="6" width="36" height="36" rx="8" fill="url(#g)"/>
+          <path d="M14 34 L34 14" stroke="white" stroke-width="4" stroke-linecap="round"/>
+          <path d="M34 34 L14 14" stroke="white" stroke-width="4" stroke-linecap="round" opacity=".9"/>
+        </svg>
+        <span style="font-weight:700; letter-spacing:.4px;">NovaDesign</span>
+      </a>
+
+      <nav aria-label="Site">
+        <ul>
+          <li><a href="#home" data-nav="home" aria-current="true">Home</a></li>
+          <li><a href="#about" data-nav="about">About</a></li>
+          <li><a href="#services" data-nav="services">Services</a></li>
+          <li><a href="#portfolio" data-nav="portfolio">Work</a></li>
+          <li><a href="#contact" data-nav="contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero / Intro -->
+  <section id="home" class="hero container" aria-label="Intro">
+    <div class="hero-content">
+      <div class="text reveal">
+        <span style="display:inline-flex; align-items:center; gap:8px; color:var(--muted); font-weight:600; letter-spacing:.4px;">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--brand); display:inline-block;"></span>
+          Modern UI, measurable impact
+        </span>
+        <h1 style="margin-top:10px; font-size: clamp(2rem, 4vw + 1rem, 3.5rem);">
+          Design systems that feel fast, accessible, and delightful
+        </h1>
+        <p>We craft responsive brands and interfaces with clean UI, purposeful motion, and performance in mind. A reusable design system helps you scale with confidence.</p>
+        <div class="cta-row" aria-label="Primary actions">
+          <a class="btn primary" href="#contact" role="button">Get a Demo</a>
+          <a class="btn secondary" href="#portfolio" role="button">See Our Work</a>
+        </div>
+      </div>
+
+      <div class="reveal" aria-label="Decorative art" style="min-height:240px; display:flex; align-items:center; justify-content:center;">
+        <!-- Simple decorative SVG card -->
+        <svg viewBox="0 0 420 260" width="100%" height="260" role="img" aria-label="Brand hero illustration">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
+              <stop stop-color="#7b5cff" offset="0"/>
+              <stop stop-color="#22d3ee" offset="1"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="420" height="260" fill="#11162b"/>
+          <circle cx="110" cy="120" r="60" fill="url(#grad)" opacity=".9"/>
+          <circle cx="260" cy="80" r="40" fill="url(#grad)" opacity=".75"/>
+          <rect x="170" y="140" width="180" height="60" rx="12" fill="rgba(255,255,255,.08)"/>
+          <text x="210" y="184" fill="#eaf0ff" font-family="monospace" font-size="14" text-anchor="middle">Motion, speed, accessibility</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" aria-label="About NovaDesign" class="container reveal">
+    <h2 class="section-title">Brand-forward, performance-first</h2>
+    <p class="section-sub">We help teams ship fast with a cohesive design system, solid accessibility, and data-backed UX decisions.</p>
+
+    <div class="grid" style="grid-template-columns: 1fr; gap:20px;">
+      <div class="card reveal in-view" tabindex="0" aria-label="Fast iteration">
+        <span class="icon" aria-hidden="true">⚡</span>
+        <strong>Fast iteration</strong>
+        <p style="margin:0; color:var(--muted);">Token-driven UI, modular components, and accessible defaults to speed up delivery.</p>
+      </div>
+      <div class="card reveal in-view" tabindex="0" aria-label="Accessible by default">
+        <span class="icon" aria-hidden="true">♿</span>
+        <strong>Accessible by default</strong>
+        <p style="margin:0; color:var(--muted);">WCAG-aware components with keyboard navigation and color contrast baked in.</p>
+      </div>
+      <div class="card reveal in-view" tabindex="0" aria-label="Performance-aware">
+        <span class="icon" aria-hidden="true">🚀</span>
+        <strong>Performance-focused</strong>
+        <p style="margin:0; color:var(--muted);">Optimized, lean interactions that respect motion preferences and budgets.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services" aria-label="Services" class="container reveal">
+    <h2 class="section-title">What we offer</h2>
+    <p class="section-sub">Design system creation, UI/UX design, and frontend implementation to ship cohesive experiences.</p>
+
+    <div class="grid" style="grid-template-columns: 1fr; gap: 18px;">
+      <article class="card reveal in-view" tabindex="0" aria-label="Design system">
+        <div style="display:flex; gap:12px; align-items: center;">
+          <span class="icon" aria-hidden="true">🧩</span>
+          <strong>Design Systems</strong>
+        </div>
+        <p style="margin:0; color:var(--muted);">Token-driven components, accessible patterns, and scalable typography all in one package.</p>
+      </article>
+
+      <article class="card reveal in-view" tabindex="0" aria-label="UI/UX design">
+        <div style="display:flex; gap:12px; align-items: center;">
+          <span class="icon" aria-hidden="true">🎨</span>
+          <strong>UI/UX Design</strong>
+        </div>
+        <p style="margin:0; color:var(--muted);">User research-informed layouts, motion design, and delightful micro-interactions.</p>
+      </article>
+
+      <article class="card reveal in-view" tabindex="0" aria-label="Frontend development">
+        <div style="display:flex; gap:12px; align-items: center;">
+          <span class="icon" aria-hidden="true">💻</span>
+          <strong>Frontend Implementation</strong>
+        </div>
+        <p style="margin:0; color:var(--muted);">Lightweight, accessible HTML/CSS/JS with performance budgets in mind.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Portfolio -->
+  <section id="portfolio" aria-label="Portfolio" class="container reveal">
+    <h2 class="section-title">Selected Work</h2>
+    <p class="section-sub">A sample of projects illustrating clean UI, fast performance, and accessible interactions.</p>
+
+    <div class="grid portfolio-grid" aria-label="Portfolio grid">
+      <!-- Item 1 -->
+      <a class="portfolio-item reveal in-view" href="#" aria-label="Project Alpha">
+        <svg viewBox="0 0 600 420" role="img" aria-label="Project Alpha placeholder">
+          <defs><linearGradient id="a" x1="0" x2="1" y1="0" y2="1">
+            <stop stop-color="#7b5cff"/><stop offset="1" stop-color="#22d3ee"/>
+          </linearGradient></defs>
+          <rect width="600" height="420" fill="#11162b"/>
+          <circle cx="120" cy="180" r="70" fill="url(#a)" opacity=".9"/>
+          <rect x="260" y="120" width="240" height="120" rx="14" fill="rgba(255,255,255,.08)"/>
+          <text x="300" y="320" fill="#eaf0ff" font-family="sans-serif" font-size="28" text-anchor="middle">Project Alpha</text>
+        </svg>
+      </a>
+      <!-- Item 2 -->
+      <a class="portfolio-item reveal in-view" href="#" aria-label="Project Beta">
+        <svg viewBox="0 0 600 420" role="img" aria-label="Project Beta placeholder">
+          <defs><linearGradient id="b" x1="0" x2="1" y1="0" y2="1">
+            <stop stop-color="#22d3ee"/><stop offset="1" stop-color="#7b5cff"/>
+          </linearGradient></defs>
+          <rect width="600" height="420" fill="#11162b"/>
+          <rect x="60" y="60" width="480" height="300" rx="18" fill="url(#b)" opacity=".9"/>
+          <text x="300" y="320" fill="#eaf0ff" font-family="sans-serif" font-size="28" text-anchor="middle">Project Beta</text>
+        </svg>
+      </a>
+      <!-- Item 3 -->
+      <a class="portfolio-item reveal in-view" href="#" aria-label="Project Gamma">
+        <svg viewBox="0 0 600 420" role="img" aria-label="Project Gamma
