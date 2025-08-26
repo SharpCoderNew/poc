@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Polished personal portfolio for a Front-End Developer: bio, projects, resume, and contact." />
+  <title>Alex Doe — Front-End Developer</title>
+  <!-- Simple, readable fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --surface: #ffffff;
+      --card: #ffffff;
+      --fg: #0b1020;
+      --muted: #5b6470;
+      --primary: #4f46e5;
+      --secondary: #0ea5e9;
+      --ring: 0 0 0 3px rgba(79,70,229,0.25);
+      --shadow: 0 6px 18px rgba(0,0,0,.08);
+      --radius: 14px;
+    }
+    /* Dark mode overrides */
+    body.dark {
+      --bg: #0b1020;
+      --surface: #0e1320;
+      --card: #141a2a;
+      --fg: #e8ecf5;
+      --muted: #a6b0c8;
+      --primary: #8b9aff;
+      --secondary: #22d3ee;
+      --shadow: 0 6px 18px rgba(0,0,0,.5);
+    }
+
+    /* Global */
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.5;
+    }
+
+    /* Layout */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: color-m-mix(in oklab, var(--surface) 85%, white);
+      border-bottom: 1px solid rgba(0,0,0,.04);
+      backdrop-filter: saturate(1.2) blur(6px);
+    }
+    .nav {
+      max-width: 1120px; margin: 0 auto; padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit;
+    }
+    .brand-logo {
+      width: 38px; height: 38px; border-radius: 9px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; font-weight: 700;
+    }
+    nav ul { list-style: none; padding: 0; margin: 0; display: flex; gap: 14px; align-items: center; }
+    nav a { color: var(--fg); text-decoration: none; padding: 8px 12px; border-radius: 999px; }
+    nav a:hover, nav a:focus { background: rgba(0,0,0,.05); outline: none; }
+    .cta-btn {
+      padding: 9px 14px; border-radius: 999px; border: 1px solid rgba(0,0,0,.08);
+      background: var(--surface); color: var(--fg); text-decoration: none;
+    }
+    .theme-toggle { background: none; border: 1px solid rgba(0,0,0,.08); border-radius: 999px; padding: 8px 12px; cursor: pointer; color: var(--fg); }
+
+    /* Sections */
+    main { max-width: 1120px; margin: 0 auto; padding: 28px 20px 60px; }
+    .section { padding: 48px 0; }
+    .section h2 { font-size: 1.75rem; margin: 0 0 8px; }
+    .section p { color: var(--muted); }
+
+    /* Hero */
+    .hero {
+      display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 28px;
+      padding: 28px 0 20px;
+    }
+    .hero-content { padding: 8px; }
+    .avatar {
+      width: 140px; height: 140px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #e2e8f0; color: #1f2937; font-weight: 700;
+      font-size: 40px;
+      box-shadow: var(--shadow);
+    }
+    .tagline { color: var(--muted); margin-top: 6px; }
+    .hero-cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+
+    /* Cards & grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--card); border-radius: var(--radius);
+      padding: 16px; box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,.05);
+    }
+    .card h3 { margin: 0 0 6px; font-size: 1.05rem; }
+    .card p { margin: 6px 0 10px; color: var(--muted); }
+    .chip { display: inline-block; background: rgba(79,70,229,.08); color: var(--fg); padding: 4px 8px; border-radius: 999px; font-size: 12px; margin: 2px; }
+    .card a { color: var(--primary); text-decoration: none; font-weight: 500; }
+
+    /* Resume layout */
+    .resume-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .resume-section { padding: 6px 0; }
+    .resume h3 { margin: 0 0 6px; }
+    .resume ul { margin: 0; padding-left: 20px; color: var(--muted); }
+    .download-area { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+    /* Contact form */
+    form { display: grid; gap: 12px; max-width: 720px; }
+    label { font-size: 0.9rem; color: var(--muted); }
+    input, textarea {
+      width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #d1d5db;
+      background: #fff; font: inherit;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .status { font-size: 0.92rem; color: var(--muted); }
+
+    /* Footer */
+    footer { text-align: center; padding: 28px 0; color: var(--muted); }
+
+    /* Accessibility helpers */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; text-align: center; }
+      .resume-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Nav -->
+  <header aria-label="Site header">
+    <div class="nav" role="navigation">
+      <a href="#home" class="brand" aria-label="Go to home">
+        <span class="brand-logo" aria-label="Logo" title="Logo">AD</span>
+        <span style="font-weight:700; letter-spacing:.2px;">Alex Doe</span>
+        <span style="color:var(--muted); margin-left:6px; font-weight:500;">&middot; Front-End Developer</span>
+      </a>
+
+      <nav aria-label="Main">
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#resume">Resume</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><button class="theme-toggle" id="theme-toggle" aria-label="Toggle color theme">Toggle Theme</button></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="home" role="main">
+    <!-- Hero / Intro -->
+    <section class="section hero" aria-label="Intro section">
+      <div class="hero-content">
+        <div class="avatar" aria-label="Profile avatar" title="Profile avatar">AD</div>
+        <h1 style="margin:8px 0 4px; font-size: 1.9rem;">Alex Doe</h1>
+        <div style="font-weight:500; color:var(--muted); margin-bottom:6px;">Front-End Developer • Accessible UI • Performance-minded</div>
+        <p class="tagline" style="max-width: 60ch;">
+          I craft polished, inclusive web interfaces and delightful user experiences. I specialize in accessible front-end development, responsive design, and collaborative product work.
+        </p>
+        <div class="hero-cta" aria-label="Primary actions">
+          <a href="#projects" class="cta-btn" title="View projects">See Projects</a>
+          <a href="#resume" class="cta-btn" style="border:1px solid rgba(0,0,0,.15); background: rgba(0,0,0,.03);" title="View resume">View Resume</a>
+        </div>
+      </div>
+      <div aria-label="Decorative illustration" style="display:flex; align-items:center; justify-content:center;">
+        <!-- Simple decorative SVG -->
+        <svg width="260" height="150" viewBox="0 0 260 150" role="img" aria-label="Decorative wave">
+          <defs>
+            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+              <stop stop-color="#4f46e5" offset="0"/>
+              <stop stop-color="#22d3ee" offset="1"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,120 C40,100 80,110 120,120 C160,130 200,110 240,100 L260,100 L260,140 L0,140 Z" fill="url(#g)" opacity="0.25"/>
+          <circle cx="60" cy="60" r="28" fill="url(#g)" opacity="0.8"/>
+          <circle cx="200" cy="50" r="18" fill="url(#g)" opacity="0.8"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Bio / About -->
+    <section id="bio" class="section" aria-label="About section">
+      <div class="container" style="max-width:1100px; margin:0 auto;">
+        <h2>About me</h2>
+        <p>
+          I’m a passionate front-end engineer focused on building fast, accessible, and maintainable interfaces. I thrive in small teams where collaboration, thoughtful UX, and clean code are valued.
+        </p>
+        <p>
+          Based in NYC, available for remote or hybrid roles. I enjoy turning complex problems into simple, delightful user experiences.
+        </p>
+        <div class="resume-grid" aria-label="Skills & contact quick view">
+          <div class="card" aria-label="Highlighted skills">
+            <h3>Core Skills</h3>
+            <div>
+              <span class="chip">HTML5</span><span class="chip">CSS3</span><span class="chip">JavaScript</span>
+              <span class="chip">Accessible UI</span><span class="chip">React</span><span class="chip">Responsive Design</span>
+              <span class="chip">Performance</span><span class="chip">Version Control</span>
+            </div>
+          </div>
+          <div class="card
+
+</body>
+</html>
