@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unified Design System - MPA + SPA in a Single HTML</title>
+  <meta name="description" content="A minimal runnable single-file SPA/MPA-ready template using a cohesive design system with accessible, responsive UI and a toggle between MPA and SPA modes." />
+  <style>
+    /* Design Tokens (color, typography, spacing, radii, shadows, breakpoints) */
+    :root {
+      /* Palette as provided */
+      --color-primary: #264653;
+      --color-secondary: #2A9D8F;
+      --color-accent: #E9C46A;
+      --color-cta: #F4A261;
+      --color-danger: #E76F51;
+
+      --bg: #ffffff;
+      --text: #0e1b24;
+
+      --surface: #ffffff;
+      --muted: #5a6b77;
+
+      --radius: 12px;
+      --shadow: 0 6px 18px rgba(0,0,0,.08);
+
+      /* Typographic scale (mobile-first) */
+      --font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      --fs-2: 2rem;
+      --fs-3: 1.5rem;
+      --fs-4: 1.25rem;
+      --fs-5: 1rem;
+      --line: 1.5;
+
+      /* Layout */
+      --gap: 1rem;
+      --container: 1120px;
+      --break-md: 960px;
+      --break-lg: 1280px;
+    }
+
+    /* Reduced motion policy */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--font-family);
+      color: var(--text);
+      background: var(--bg);
+      line-height: var(--line);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* Simple utility */
+    .container { width: 90%; max-width: var(--container); margin: 0 auto; }
+    .row { display: flex; gap: var(--gap); align-items: center; }
+    .grid { display: grid; gap: var(--gap); }
+
+    /* Focus styles for accessibility */
+    :focus-visible {
+      outline: 3px solid var(--color-secondary);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    /* Layout: header and content area */
+    .site-header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: saturate(1.2) blur(6px);
+      border-bottom: 1px solid #eee;
+    }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+    .logo { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+    .brand-name { font-weight: 700; font-size: 1.05rem; letter-spacing: .2px; }
+    .logo-svg { width: 34px; height: 34px; }
+
+    .main-nav ul { list-style: none; padding: 0; margin: 0; display: flex; gap: 16px; }
+    .main-nav a {
+      text-decoration: none; color: var(--text);
+      padding: 8px 12px; border-radius: 8px; transition: all .2s ease;
+    }
+    .main-nav a:hover, .main-nav a:focus { background: #f0f4f6; }
+    .mode-switch { display: inline-flex; gap: 6px; align-items: center; }
+    .mode-btn {
+      border: 1px solid #cbd5e1; background: #fff; color: #1f2937;
+      padding: 6px 10px; border-radius: 999px; font-size: .92rem; cursor: pointer;
+    }
+    .mode-btn.active { background: var(--color-secondary); color: #fff; border-color: var(--color-secondary); }
+    .skip-link {
+      position: absolute; left: -999px; top: auto; width: 1px; height: 1px; overflow: hidden;
+      background: #000; color: #fff; padding: 8px; z-index: 1000;
+    }
+    .skip-link:focus { left: 8px; top: 8px; width: auto; height: auto; padding: 8px 12px; border-radius: 6px; }
+
+    /* Hero and sections */
+    .hero {
+      padding: 72px 0 48px;
+      background: linear-gradient(135deg, rgba(38,70,101,.08), rgba(42,157,143,.04) 60%), #fff;
+    }
+    .hero h1 {
+      font-size: clamp(1.75rem, 2.5vw + 1rem, 3rem);
+      margin: 0 0 .5rem;
+      color: var(--color-primary);
+    }
+    .hero p { color: var(--muted); font-size: 1.05rem; margin-bottom: 1.25rem; }
+    .cta { display: inline-flex; gap: 12px; padding: 12px 18px; border-radius: 999px; text-decoration: none;
+           border: 0; cursor: pointer; align-items: center; font-weight: 600;
+           transition: transform .25s ease; }
+    .cta.primary { background: var(--color-cta); color: #fff; }
+    .cta.secondary { background: #f0f4f8; color: var(--color-primary); }
+    .cta:hover { transform: translateY(-1px); }
+    .blocks { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 20px; }
+
+    .card {
+      background: var(--surface); border-radius: 12px; padding: 16px; box-shadow: var(--shadow);
+      border: 1px solid #eef2f6;
+    }
+    .card h3 { margin: 0 0 .5rem; font-size: 1.1rem; }
+    .card p { margin: 0; color: var(--muted); font-size: .95rem; }
+
+    /* Sections for MPA */
+    #mpa-content { display: block; }
+    .page-section { padding: 72px 0; scroll-margin-top: 80px; }
+    .section-title { font-size: clamp(1.25rem, 1vw + 1rem, 1.75rem); margin: 0 0 .5rem; color: var(--color-primary); }
+    .section-sub { color: var(--muted); margin-bottom: 1rem; }
+
+    /* Portfolio grid (MPA) */
+    .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .portfolio-item { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #eee; }
+    .portfolio-item img { width: 100%; height: 140px; object-fit: cover; display: block; background: #ddd; }
+    .portfolio-item .pbody { padding: 12px; }
+
+    /* SPA layout */
+    #spa-area { padding: 24px 0 60px; }
+    .spa-header { padding: 8px 0 12px; border-bottom: 1px solid #eee; margin-bottom: 12px; }
+    .spa-sections { display: flex; flex-wrap: wrap; gap: 8px; padding: 6px 0; }
+    .spa-link { padding: 8px 12px; border-radius: 999px; border: 1px solid #dbe4ea; background: #fff; cursor: pointer; }
+    .spa-link.active { background: var(--color-secondary); color: #fff; border-color: var(--color-secondary); }
+    #spa-content { padding-top: 8px; }
+
+    /* Shared content area within SPA and MPA */
+    .content { padding: 20px; border-radius: var(--radius); background: #fff; border: 1px solid #eef2f6; box-shadow: var(--shadow); }
+
+    /* Footer */
+    .site-footer { padding: 32px 0; margin-top: 40px; border-top: 1px solid #eee; color: var(--muted); font-size: .9rem; }
+
+    /* Responsive tweaks */
+    @media (max-width: 900px) {
+      .main-nav { display: none; } /* simple responsive simplification; mobile focus on SPA/sections */
+      .hero { padding: 48px 0 28px; }
+    }
+    @media (min-width: 901px) {
+      .hero { padding: 88px 0 56px; }
+    }
+
+  </style>
+</head>
+<body data-mode="mpa" class="mode-mpa">
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <!-- Header with navigation and mode toggle -->
+  <header class="site-header" role="banner" aria-label="Site header">
+    <div class="container header-inner">
+      <a class="logo" href="#home" aria-label="Home">
+        <!-- Simple inline logo -->
+        <svg class="logo-svg" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+          <circle cx="50" cy="50" r="42" fill="#2A9D8F"></circle>
+          <circle cx="34" cy="40" r="8" fill="#fff"></circle>
+          <circle cx="66" cy="40" r="8" fill="#fff"></circle>
+          <path d="M28 68 C40 60, 60 60, 72 68" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-name">Unified UI</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Primary">
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#blog">Blog</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="mode-switch" aria-label="Layout mode switch" role="group" title="Toggle between MPA and SPA">
+        <button class="mode-btn active" data-mode="mpa" aria-pressed="true">MPA</button>
+        <button class="mode-btn" data-mode="spa" aria-pressed="false">SPA</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content area with MPA sections and a separate SPA area -->
+  <main id="main" role="main" aria-label="Main content">
+
+    <!-- MPA content wrapper (default visible) -->
+    <section id="mpa-content" aria-label="MPA pages" class="container" style="padding-bottom:40px;">
+      <!-- Home / Hero -->
+      <section id="home" class="page-section" aria-label="Home" >
+        <div class="hero content" role="region" aria-label="Hero section">
+          <h1>Modern, cohesive UI for MPA and SPA</h1>
+          <p>Deliver a unified design system that powers both multi-page and single-page experiences with accessibility, responsive behavior, and purposeful motion.</p>
+          <div class="row" style="gap:12px; align-items: center;">
+            <a href="#services" class="cta primary" aria-label="See our services">
+              Explore Services
+              <span aria-hidden="true" style="display:inline-block;">→</span>
+            </a>
+            <a href="#portfolio" class="cta secondary" aria-label="View portfolio">
+              View Portfolio
+              <span aria-hidden="true" style="display:inline-block;">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="blocks" aria-label="Feature highlights">
+          <div class="card">
+            <h3>Design Tokens</h3>
+            <p>Color, typography, spacing, radii, and shadows centralized for consistency.</p>
+          </div>
+          <div class="card">
+            <h3>Accessibility</h3>
+            <p> WCAG 2.1 aligned, keyboard navigable, and reduced motion aware.</p>
+          </div>
+          <div class="card">
+            <h3>Responsive Grid</h3>
+            <p>Fluid grids with CSS Grid & Flexbox for flexible layouts.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- About -->
+      <section id="about" class="page-section" aria-label="About">
+        <div class="content" role="region" aria-label="About section content">
+          <h2 class="section-title">About the Design System</h2>
+          <p class="section-sub">A unified UI system that scales from mobile to desktop. It provides a single source of truth for colors, typography, spacing, and components, enabling seamless transitions between MPA and SPA patterns.</p>
+          <ul class="grid" style="grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); padding:0; margin:0; list-style:none;">
+            <li class="card" style="padding:14px;">
+              <strong>Consistency</strong>
+              <p>One codebase, two modes, identical components.</p>
+            </li>
+            <li class="card" style="padding:14px;">
+              <strong>Performance</strong>
+              <p>Lightweight, lazy-loaded assets, minimal JS.</p>
+            </li>
+            <li class="card" style="padding:14px;">
+              <strong>Accessibility</strong>
+              <p>Clear focus states, semantic markup, proper landmarks.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Services -->
+      <section id="services" class="page-section" aria-label="Services">
+        <div class="content" role="region" aria-label="Services content">
+          <h2 class="section-title">Services & Projects</h2>
+          <p class="section-sub">A compact set of cards and sections that map cleanly to both MPA and SPA patterns.</p>
+          <div class="grid" style="grid-template-columns: repeat(auto-fill,minmax(240px,1fr));">
+            <div class="card">
+              <h3>Component Library</h3>
+              <p>Header, Hero, Cards, Forms, Modals, and more, with consistent tokens.</p>
+            </div>
+            <div class="card">
+              <h3>Content Strategy</h3>
+              <p>Guided content blocks, sections, and sections navigation for SPA.</p>
+            </div>
+            <div class="card">
+              <h3>Performance Ready</h3>
+              <p>Code-splitting, lazy assets, and efficient rendering.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Portfolio -->
+      <section id="portfolio" class="page-section" aria-label="Portfolio">
+        <div class="content" role="region" aria-label="Portfolio content">
+          <h2 class="section-title">Portfolio</h2>
+          <p class="section-sub">Sample grid of projects to demonstrate layout consistency across modes.</p>
+          <div class="portfolio-grid" aria-label="Portfolio items">
+            <div class="portfolio-item">
+              <div style="height:140px;background:#e6f2f0; display:flex;align-items:center;justify-content:center; font-weight:600; color:#037a6f;">Project A</div>
+              <div class="pbody">
+                <strong>Audit & Design</strong>
+                <p>Responsive grid & accessible UI.</p>
+              </div>
+            </div>
+            <div class="portfolio-item">
+              <div style="height:140px;background:#fff2e5; display:flex;align-items:center;justify-content:center; font-weight:600; color:#c36d00;">Project B</div>
+              <div class="pbody">
+                <strong>Systemize Tokens</strong>
+                <p>Scale color/typography across pages.</p>
+              </div>
+            </div>
+            <div class="portfolio-item">
+              <div style="height:140px;background:#e9e7ff; display:flex;align-items:center;justify-content:center; font-weight:600; color:#4b2f8a;">Project C</div>
+              <div class="pbody">
+                <strong>SPA Routing mock</strong>
+                <p>In-page section navigation with transitions.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Blog -->
+      <section id="blog" class="page-section" aria-label="Blog">
+        <div class="content" role="region" aria-label="Blog content">
+          <h2 class="section-title">Blog / News</h2>
+          <p class="section-sub">Content placeholders to be populated later.</p>
+          <div class="grid" style="grid-template-columns: repeat(auto-fill,minmax(260px,1fr));">
+            <article class="card">
+              <h3>Design Tokens in Practice</h3>
+              <p>Using tokens to enforce consistency and theming across MPAs and SPAs.</p>
+            </article>
+            <article class="card">
+              <h3>Accessible Motion</h3>
+              <p>Animations that respect reduced-motion preferences.</p>
+            </article>
+            <article class="card">
+              <h3>Responsive Typography</h3>
+              <p>Fluid scales for readability on all devices.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact -->
+      <section id="contact" class="page-section" aria-label="Contact">
+        <div class="content" role="region" aria-label="Contact content">
+          <h2 class="section-title">Get in touch</h2>
+          <p class="section-sub">Use this form to simulate a contact flow. No real submission in this demo.</p>
+          <form id="contact-form" onsubmit="return false;" aria-label="Contact form" style="max-width:700px;">
+            <div class="row" style="flex-wrap:wrap; gap:12px;">
+              <label style="flex:1 1 200px;">
+                <span class="section-sub" style="display:block; margin:4px 0 6px;">Name</span>
+                <input type="text" name="name" required placeholder="Your name" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd;">
+              </label>
+              <label style="flex:1 1 200px;">
+                <span class="section-sub" style="display:block; margin:4px 0 6px;">Email</span>
+                <input type="email" name="email" required placeholder="you@example.com" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd;">
+              </label>
+            </div>
+            <label style="display:block; margin-top:12px;">
+              <span class="section-sub" style="display:block; margin:4px 0 6px;">Message</span>
+              <textarea name="message" required placeholder="Your message…" rows="4" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd;"></textarea>
+            </label>
+            <div style="margin-top:12px;">
+              <button class="cta primary" type="submit" aria-label="Send message" style="min-width:180px;">Send Message</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </section>
+
+    <!-- SPA area (hidden by default) -->
+    <section id="spa-area" aria-label="SPA navigation and content" hidden>
+      <div class="container spa-header" role="region" aria-label="SPA header">
+        <div class="row" style="justify-content: space-between; align-items: center;">
+          <div class="row" style="gap:8px; align-items:center;">
+            <!-- Simple SPA logo at top of SPA area for clarity -->
+            <span aria-hidden="true" style="width:28px;height:28px;display:inline-block;background:var(--color-primary);border-radius:6px;box-shadow:0 0 0 3px #fff inset;"></span>
+            <strong style="font-size:1.05rem;">SPA Section</strong>
+          </div>
+          <div class="row" style="gap:6px;">
+            <button class="mode-btn" data-mode="mpa" aria-pressed="false">Back to MPA</button>
+          </div>
+        </div>
+      </div>
+
+      <nav class="container spa-header" aria-label="SPA Sections" role="navigation" style="border-top:1px solid #eee; padding-top:12px;">
+        <div class="spa-sections" id="spa-nav" style="gap:8px; flex-wrap: wrap;">
+          <button class="spa-link active" data-spa="home">Home</button>
+          <button class="spa-link" data-spa="about">About</button>
+          <button class="spa-link" data-spa="services">Services</button>
+          <button class="spa-link" data-spa="portfolio">Portfolio</button>
+          <button class="spa-link" data-spa="blog">Blog</button>
+          <button class="spa-link" data-spa="contact">Contact</button>
+        </div>
+      </nav>
+
+      <section id="spa-content" class="container" aria-label="SPA content area" role="region" style="padding-top:10px;">
+        <!-- SPA content will be injected here via JavaScript -->
+      </section>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" role="contentinfo" aria-label="Site footer">
+    <div class="container" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <span>© 2025 Unified UI — MPA + SPA in a single design system</span>
+      <span>Palette: primary #264653, secondary #2A9D8F, accent #E9C46A, CTA #F4A261, danger #E76F51</span>
+    </div>
+  </footer>
+
+  <!-- Design Tokens (design-system package) as a readable JSON snippet for handoff -->
+  <script type="application/json" id="design-tokens" aria-label="Design tokens">
+  {
+    "colors": {
+      "primary": "#264653",
+      "secondary": "#2A9D8F",
+      "accent": "#E9C46A",
+      "cta": "#F4A261",
+      "danger": "#E76F51",
+      "surface": "#ffffff",
+      "text": "#0e1b24",
+      "muted": "#5a6b77"
+    },
+    "typography": {
+      "fontFamily": "\"ui-sans-serif\", system-ui, -apple-system, \"Segoe UI\", Roboto, Arial",
+      "sizes": { "h1": "2rem", "h2": "1.5rem", "body": "1rem" }
+    },
+    "spacing": { "xs": "8px", "sm": "12px", "md": "16px", "lg": "24px" },
+    " radii": { "sm": "6px", "md": "12px", "lg": "16px" },
+    "breakpoints": { "sm": 640, "md": 960, "lg": 1280 }
+  }
+  </script>
+
+  <script>
+    // Lightweight SPA/MPA switching logic
+    (function(){
+      const spaArea = document.getElementById('spa-area');
+      const mpaContent = document.getElementById('mpa-content');
+      const spaContent = document.getElementById('spa-content');
+      const spaNav = document.getElementById('spa-nav');
+      const modeBtns = document.querySelectorAll('.mode-btn');
+
+      // SPA sections data
+      const SPA_SECTIONS = ['home','about','services','portfolio','blog','contact'];
+      const SPATITLE = {
+        home: "Home",
+        about: "About",
+        services: "Services",
+        portfolio: "Portfolio",
+        blog: "Blog",
+        contact: "Contact"
+      };
+
+      // Basic templates for SPA sections
+      const SPA_TEMPLATES = {
+        home: `
+          <section class="content" aria-label="SPA Home">
+            <h2 style="color:var(--color-primary); margin-top:0;">Welcome to the SPA experience</h2>
+            <p>Navigate sections below or from the header to see content swap with smooth transitions, while preserving a cohesive design system.</p>
+            <div class="grid" style="grid-template-columns: repeat(auto-fill,minmax(240px,1fr));">
+              ${[1,2,3].map(i => `
+                <div class="card" aria-label="SPA feature ${i}">
+                  <h3>Feature Block ${i}</h3>
+                  <p>Deliberate motion, accessible controls, and reusable components.</p>
+                </div>
+              `).join('')}
+            </div>
+          </section>
+        `,
+        about: `
+          <section class="content" aria-label="SPA About">
+            <h2 style="color:var(--color-primary); margin-top:0;">About the System</h2>
+            <p>Single source truth for UI tokens, with a focus on accessibility and mobile-first design.</p>
+            <ul>
+              <li>Consistent typography & color usage</li>
+              <li>Adaptive layouts with CSS Grid & Flexbox</li>
+              <li>Progressive enhancement and graceful degradation</li>
+            </ul>
+          </section>
+        `,
+        services: `
+          <section class="content" aria-label="SPA Services">
+            <h2 style="color:var(--color-primary); margin-top:0;">Services</h2>
+            <div class="grid" style="grid-template-columns: repeat(auto-fill,minmax(240px,1fr));">
+              <div class="card"><strong>Design System</strong><p>Tokens, components, and accessible patterns.</p></div>
+              <div class="card"><strong>UI Engineering</strong><p>Performance-minded implementation.</p></div>
+              <div class="card"><strong>Content Strategy</strong><p>Guided blocks and sections for clarity.</p></div>
+            </div>
+          </section>
+        `,
+        portfolio: `
+          <section class="content" aria-label="SPA Portfolio">
+            <h2 style="color:var(--color-primary); margin-top:0;">Portfolio</h2>
+            <div class="portfolio-grid" aria-label="SPA portfolio items" style="grid-template-columns: repeat(auto-fill,minmax(240px,1fr));">
+              ${[ 'A','B','C','D' ].map((id) => `
+                <div class="portfolio-item">
+                  <div style="height:140px;background:#f2f4f8; display:flex;align-items:center;justify-content:center;font-weight:600;">Project ${id}</div>
+                  <div class="pbody" style="padding:12px;">
+                    <strong>Project ${id}</strong><p>SPA-driven card layout.</p>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </section>
+        `,
+        blog: `
+          <section class="content" aria-label="SPA Blog">
+            <h2 style="color:var(--color-primary); margin-top:0;">Blog</h2>
+            <div class="grid" style="grid-template-columns: repeat(auto-fill,minmax(260px,1fr));">
+              <article class="card" aria-label="Blog post 1">
+                <h3>Design tokens in practice</h3>
+                <p>Implementing a consistent design language across pages.</p>
+              </article>
+              <article class="card" aria-label="Blog post 2">
+                <h3>Accessible motion</h3>
+                <p>Respecting user preferences while providing delightful interactions.</p>
+              </article>
+            </div>
+          </section>
+        `,
+        contact: `
+          <section class="content" aria-label="SPA Contact">
+            <h2 style="color:var(--color-primary); margin-top:0;">Contact</h2>
+            <p>Reach out to discuss a design-system-driven project.</p>
+            <form aria-label="SPA contact form" onsubmit="return false;">
+              <div class="row" style="flex-wrap:wrap; gap:12px;">
+                <label style="flex:1 1 200px;">
+                  <span class="section-sub" style="display:block; margin:4px 0 6px;">Name</span>
+                  <input type="text" required placeholder="Your name" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd;">
+                </label>
+                <label style="flex:1 1 200px;">
+                  <span class="section-sub" style="display:block; margin:4px 0 6px;">Email</span>
+                  <input type="email" required placeholder="you@example.com" style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd;">
+                </label>
+              </div>
