@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Me — AI Software Engineer Portfolio</title>
+  <meta name="description" content="Professional portfolio for an AI Software Engineer focusing on AI/ML, MLOps, model deployment, and scalable data pipelines. Learn about skills, experience, projects, talks, and how to engage." />
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --text: #1f2a37;
+      --muted: #5b6470;
+      --primary: #2563eb;   /* blue-600 */
+      --primary-600: #2563eb;
+      --primary-500: #3b82f6;
+      --secondary: #10b981; /* emerald-500 */
+      --accent: #f59e0b;
+      --ring: 0 0 0 3px rgba(37,99,235,.25);
+      --radius: 14px;
+      --shadow: 0 6px 18px rgba(0,0,0,.08);
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;
+      --code: ui-monospace, SFMono-Regular, Menlo, Consolas;
+    }
+    [data-theme="dark"] {
+      --bg: #0b111a;
+      --surface: #141923;
+      --text: #e6eaf3;
+      --muted: #a7b2c3;
+      --primary: #7aa2ff;
+      --secondary: #34d399;
+      --accent: #facc15;
+      --shadow: 0 6px 20px rgba(0,0,0,.6);
+      --ring: 0 0 0 3px rgba(122,162,255,.35);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; }
+    body {
+      font-family: var(--font);
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(37,99,235,.08), rgba(37,99,235,.04) 60%), var(--bg);
+      line-height: 1.6;
+    }
+
+    /* Accessibility: skip link */
+    .skip-link { position: absolute; left: -999px; top: -999px; }
+    .skip-link:focus { left: 8px; top: 8px; padding: 12px; background: #111; color: #fff; border-radius: 8px; z-index: 1000; }
+
+    /* Layout helpers */
+    .container { width: min(1100px, 92%); margin: 0 auto; padding: 24px 0 48px; }
+
+    header.site-header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: saturate(1.2) blur(6px);
+      border-bottom: 1px solid rgba(0,0,0,.05);
+    }
+    [data-theme="dark"] header.site-header {
+      background: rgba(20,24,35,.8);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .4px; }
+    .brand .badge { display: inline-block; padding: 6px 10px; border-radius: 999px; background: var(--primary); color: white; font-size: 12px; }
+    nav a { color: var(--text); text-decoration: none; margin: 0 8px; font-size: 14px; }
+    nav a:hover { text-decoration: underline; }
+
+    .theme-toggle {
+      border: 1px solid rgba(0,0,0,.08);
+      background: white; color: #111;
+      padding: 8px 12px; border-radius: 8px; cursor: pointer;
+    }
+    [data-theme="dark"] .theme-toggle {
+      background: #1f2a37; color: #e8ebf5; border: 1px solid rgba(255,255,255,.08);
+    }
+
+    /* Hero */
+    #hero {
+      padding: 52px 0 28px;
+    }
+    .hero-inner { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 28px; align-items: center; }
+    @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; } }
+
+    h1 {
+      font-size: clamp(2rem, 2.8vw + 1rem, 3.6rem);
+      line-height: 1.08;
+      margin: 0 0 12px;
+    }
+    .tagline { color: var(--muted); font-size: 1.05rem; margin-bottom: 18px; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+    .btn {
+      padding: 12px 16px; border-radius: 10px; border: 0; cursor: pointer;
+      font-weight: 600; font-size: 14px;
+      background: var(--primary); color: white;
+    }
+    .btn.secondary { background: #e9eefc; color: #0b2546; }
+    .btn.ghost { background: transparent; color: var(--text); border: 1px solid #dbe3f3; }
+    .hero-visual {
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(37,99,235,.15), rgba(16,185,129,.15) 60%), var(--surface);
+      padding: 18px; box-shadow: var(--shadow);
+      min-height: 260px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .hero-visual .pulse {
+      width: 180px; height: 180px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(37,99,235,.9), rgba(37,99,235,.2) 40%), rgba(0,0,0,.0);
+      animation: float 6s ease-in-out infinite;
+      opacity: .9;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+    /* Sections */
+    section.section { padding: 28px 0; border-bottom: 1px solid rgba(0,0,0,.06); }
+    .section h2 { font-size: 1.6rem; margin-bottom: 12px; }
+    .section p { color: var(--muted); }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--surface); border-radius: 12px; padding: 14px; box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,.04);
+    }
+    .card h3 { margin: 6px 0 8px; font-size: 1.05rem; }
+    .skill-bar {
+      height: 8px; border-radius: 6px; background: #e5e7eb; overflow: hidden;
+    }
+    .skill-bar > span { display: block; height: 100%; background: var(--primary); width: 0%; }
+
+    .timeline { position: relative; padding-left: 20px; }
+    .timeline::before { content: ""; position: absolute; left: 9px; top: 0; bottom: 0; width: 2px; background: rgba(0,0,0,.08); }
+    .timeline-item { margin: 14px 0 14px 0; padding-left: 12px; }
+    .timeline-item .date { font-size: 12px; color: var(--muted); }
+
+    details { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; background: #fff; }
+    [data-theme="dark"] details { background: #0f1220; border: 1px solid rgba(255,255,255,.08); }
+    summary { cursor: pointer; font-weight: 600; list-style: none; }
+    summary::-webkit-details-marker { display: none; }
+
+    .project { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,.08); background: #fff; }
+    .project h3 { margin: 0; font-size: 1.05rem; }
+    .tech { font-family: var(--code); font-size: 12px; color: #374151; background: #f3f4f6; padding: 4px 6px; border-radius: 6px; display: inline-block; }
+    .link { color: var(--primary); text-decoration: none; }
+    .link:hover { text-decoration: underline; }
+
+    .typewriter { display: inline-block; background: linear-gradient(90deg, rgba(37,99,235,.15), rgba(37,99,235,.05)); padding: 2px 6px; border-radius: 6px; }
+
+    .visually-hidden { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+
+    footer { padding: 20px 0; text-align: center; color: var(--muted); font-size: 13px; }
+
+    /* small utilities */
+    .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .col { flex: 1 1 0; }
+
+    /* Print-friendly tweaks */
+    @media print {
+      header, nav, .theme-toggle { display: none !important; }
+      body { background: white; color: #000; }
+      .section { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main" aria-label="Skip to content">Skip to content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container nav" aria-label="Site navigation">
+      <div class="brand" aria-label="Brand">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-label="Logo">
+          <path d="M12 3l3 6 6 1-4.5 4.5 1 6-5.5-3-5.5 3 1-6L3 10l6-1 3-6z" fill="currentColor" opacity=".85"/>
+        </svg>
+        <span>Me — AI Software Engineer</span>
+        <span class="badge" aria-label="Portfolio tag">Portfolio</span>
+      </div>
+      <nav aria-label="Main">
+        <a href="#hero">Home</a>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#publications">Publications</a>
+        <a href="#education">Education</a>
+        <a href="#contact">Contact</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle color theme">Toggle Theme</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" role="main" class="container">
+    <!-- Hero -->
+    <section id="hero" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <h1 id="hero-title" style="margin-bottom:6px;">
+            Me
+            <span class="typewriter" aria-label="Pronouns they them" style="margin-left:8px;">
+              AI Software Engineer
+            </span>
+          </h1>
+          <p class="tagline">
+            I design and implement AI-powered software systems, ML platforms, and scalable data pipelines.
+            Focus areas include model deployment, MLOps, performance optimization, and explainable AI.
+          </p>
+          <div class="cta-row" role="group" aria-label="Primary actions">
+            <a class="btn" href="#contact" aria-label="Contact me">Get in touch</a>
+            <a class="btn secondary" href="#projects" aria-label="View projects">View Projects</a>
+            <button class="btn ghost" id="downloadResumeBtn" aria-label="Download resume">Download Resume</button>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Illustrative AI visualization">
+          <div class="pulse" aria-label="AI pulse" role="img" style="position:relative;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section" aria-labelledby="about-title">
+      <h2 id="about-title">About</h2>
+      <p>
+        I am an AI software engineer with a track record of delivering production-grade ML solutions. My expertise spans end-to-end ML systems, data pipelines, and scalable backends—from data ingestion and feature engineering to model deployment and monitoring in cloud-native environments.
+      </p>
+      <p>
+        I emphasize measurable impact: latency reductions, throughput gains, model accuracy improvements, and cost optimization. I value clean architecture, robust testing, observability, and explainability to make AI systems trustworthy and maintainable.
+      </p>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills" class="section" aria-labelledby="skills-title">
+      <h2 id="skills-title">Skills & Expertise</h2>
+      <div class="grid" aria-label="Skills grid">
+        <!-- Repeated skill cards -->
+        <div class="card" aria-label="Skill: Python">
+          <h3>Python</h3>
+          <div class="skill-bar" aria-label="Proficiency bar"><span style="width:92%"></span></div>
+        </div>
+        <div class="card" aria-label="Skill: PyTorch">
+          <h3>PyTorch</h3>
+          <div class="skill-bar" aria-label="Proficiency bar"><span style="width:88%"></span></div>
+        </div>
+        <div class="card" aria-label="Skill: TensorFlow">
+          <h3>TensorFlow
