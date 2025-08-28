@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Palette Studio — Modern, Color-Driven SPA</title>
+  <meta name="description" content="A responsive single-page website scaffold built with HTML, CSS, and vanilla JS. Color palette guided by #264653, #2A9D8F, #E9C46A, #F4A261, #E76F51." />
+  <style>
+    /* Design Tokens (colors, typography, spacing) */
+    :root {
+      --color-primary: #264653; /* deep teal */
+      --color-accent: #2A9D8F;  /* teal-green */
+      --color-yellow: #E9C46A;  /* mustard */
+      --color-cta: #F4A261;     /* orange */
+      --color-warn: #E76F51;    /* red-orange */
+
+      --bg: #f7f7fb;
+      --surface: #ffffff;
+      --text: #1f2937;
+      --muted: #5b6470;
+
+      --radius: 14px;
+      --shadow: 0 6px 18px rgba(0,0,0,.08);
+      --shadow-soft: 0 2px 6px rgba(0,0,0,.05);
+
+      --space-1: 6px;
+      --space-2: 12px;
+      --space-3: 18px;
+      --space-4: 24px;
+      --space-5: 32px;
+
+      --container: 1100px;
+      --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";
+    }
+
+    @media (min-width: 1200px) {
+      :root { --container: 1200px; }
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Accessibility: skip link */
+    .skip-link {
+      position: absolute;
+      left: 0;
+      top: -40px;
+      background: #111;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      z-index: 100;
+      transition: top .2s ease;
+    }
+    .skip-link:focus {
+      top: 8px;
+    }
+
+    /* Layout helpers */
+    .container {
+      width: 100%;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    .section {
+      padding: calc(var(--space-4) * 1.25) calc(var(--space-4) * 1.25);
+    }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    /* Header / Navbar */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: #fff;
+      border-bottom: 1px solid #eaeef3;
+      backdrop-filter: saturate(1.2) blur(0px);
+    }
+    .site-header .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .logo-mark {
+      width: 34px; height: 34px;
+      display: inline-block;
+    }
+    .logo-text {
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: .2px;
+    }
+    nav.main-nav {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--color-primary);
+      padding: 8px 12px;
+      border-radius: 999px;
+      transition: transform .2s ease, background-color .2s ease;
+      border: 1px solid transparent;
+    }
+    nav a:hover, nav a:focus-visible {
+      background: #f0f5f4;
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    /* Hero */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 40px;
+      align-items: center;
+      padding: 64px 0;
+    }
+    .hero-content h1 {
+      font-size: 2.6rem;
+      line-height: 1.08;
+      margin: 0 0 var(--space-3) 0;
+      color: var(--color-primary);
+    }
+    .hero-content p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 60ch;
+      margin-bottom: var(--space-3);
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 999px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .btn:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-accent), var(--color-cta));
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(42, 157, 143, .35);
+    }
+    .btn-secondary {
+      background: #fff;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+    }
+    .hero-art {
+      width: 100%;
+      height: 320px;
+      min-height: 240px;
+      border-radius: var(--radius);
+      background: conic-gradient(from 180deg at 50% 50%, #d9f1ec, #e6f3f0, #f2efe6, #e9f0f7, #d9f1ec);
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-soft);
+    }
+    .hero-art svg {
+      width: 70%;
+      height: auto;
+    }
+
+    /* Sections grid / cards */
+    .grid {
+      display: grid;
+      gap: var(--space-4);
+    }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-1 { grid-template-columns: 1fr; }
+
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; padding: 48px 0; }
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
+      .hero-art { height: 260px; }
+    }
+    @media (max-width: 640px) {
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
+      .hero-content h1 { font-size: 2rem; }
+      .hero { padding: 28px 0; }
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid #eef2f5;
+    }
+    .card h3 { margin-top: 0; font-size: 1.1rem; color: var(--color-primary); }
+    .card p { color: var(--muted); margin: 6px 0 0; font-size: .98rem; }
+
+    .icon {
+      width: 28px; height: 28px; display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+      color: var(--color-accent);
+    }
+
+    /* Portfolio gallery */
+    .portfolio-item {
+      aspect-ratio: 1.1 / 1;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      background: #e9eef3;
+      display: grid;
+      place-items: end;
+      color: #fff;
+    }
+    .portfolio-item .overlay {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 12px;
+      background: linear-gradient(to top, rgba(0,0,0,.6), rgba(0,0,0,0));
+      font-size: .92rem;
+    }
+
+    /* Testimonials / Carousel */
+    .testimonials {
+      position: relative;
+      overflow: hidden;
+      min-height: 180px;
+    }
+    .testi-track {
+      display: flex;
+      gap: var(--space-4);
+      transition: transform .6s ease;
+    }
+    .testi {
+      min-width: 320px;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid #eef2f7;
+    }
+
+    /* About / CTA blocks */
+    .about-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      align-items: center;
+    }
+    @media (max-width: 900px) {
+      .about-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Contact form */
+    form > div { margin-bottom: 14px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; }
+    input, textarea {
+      width: 100%; padding: 12px 12px;
+      border: 1px solid #dbe3ea;
+      border-radius: 8px;
+      font: inherit;
+      background: #fff;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .form-hint { font-size: .85rem; color: var(--muted); }
+
+    /* Footer */
+    .site-footer {
+      padding: 28px 0;
+      text-align: center;
+      color: var(--muted);
+      border-top: 1px solid #eee;
+      margin-top: 40px;
+      background: #fff;
+    }
+
+    /* Animations (triggered on in-view) */
+    .animate {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .animate.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Minor decorative accents */
+    .long-underline {
+      height: 3px; width: 60px; background: linear-gradient(90deg, var(--color-yellow), var(--color-accent));
+      border-radius: 3px; margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <!-- Header / Nav -->
+  <header class="site-header" role="banner" aria-label="Site header">
+    <div class="container header-inner" style="display:flex; align-items:center; justify-content:space-between;">
+      <a class="logo" href="#hero" aria-label="Palette Studio home">
+        <span class="logo-mark" aria-hidden="true">
+          <!-- Minimal inline logo mark (SVG) -->
+          <svg width="34" height="34" viewBox="0 0 64 64" role="img" aria-label="Palette mark">
+            <circle cx="32" cy="32" r="14" fill="#264653"/>
+            <circle cx="40" cy="20" r="6" fill="#2A9D8F"/>
+            <circle cx="20" cy="28" r="6" fill="#E9C46A"/>
+            <circle cx="28" cy="44" r="6" fill="#F4A261"/>
+          </svg>
+        </span>
+        <span class="logo-text">Palette Studio</span>
+      </a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="#hero">Home</a>
+        <a href="#features">Features</a>
+        <a href="#portfolio">Work</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content" role="main">
+    <!-- HERO -->
+    <section id="hero" class="section" aria-label="Hero">
+      <div class="container" style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap:40px; align-items:center;">
+        <div class="hero-content">
+          <h1 class="animate" style="font-weight:800; font-size: clamp(2rem, 4vw + 1rem, 3.4rem); color: var(--color-primary);">
+            Design with color-led clarity
+          </h1>
+          <p class="animate" style="font-size:1.05rem;">
+            A modern, responsive single-page scaffold built with a cohesive design system and a strict color palette.
+            Clean UI, smooth motion, accessible by default.
+          </p>
+          <div class="animate" style="display:flex; gap:12px; align-items:center;">
+            <a href="#contact" class="btn btn-primary" aria-label="Start a project">Start a project</a>
+            <a href="#features" class="btn btn-secondary" aria-label="View features">View features</a>
+          </div>
+          <div class="long-underline" aria-hidden="true"></div>
+        </div>
+        <div class="hero-art" aria-label="Abstract color composition">
+          <!-- Decorative inline SVG art to avoid external assets -->
+          <svg viewBox="0 0 400 260" width="100%" height="100%" role="img" aria-label="Abstract color composition">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+                <stop stop-color="#264653" offset="0" />
+                <stop stop-color="#2A9D8F" offset="1" />
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="400" height="260" fill="url(#g1)" opacity=".25"/>
+            <circle cx="100" cy="140" r="60" fill="#E9C46A" opacity=".9"/>
+            <circle cx="240" cy="70" r="50" fill="#F4A261" opacity=".9"/>
+            <circle cx="320" cy="180" r="70" fill="#E76F51" opacity=".9"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="section" aria-labelledby="features-title">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="features-title" class="animate" style="margin:0; font-size:1.4rem;">Design system in code</h2>
+          <span class="animate" style="color:var(--muted);">Palette-driven UI primitives</span>
+        </div>
+
+        <div class="grid grid-3" aria-label="Key features">
+          <article class="card animate" aria-label="Feature: cohesive tokens" style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="icon" aria-hidden="true">
+                <!-- inline icon -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 7h12M3 12h9M3 17h6" />
+                  <rect x="15" y="5" width="6" height="14" rx="2" fill="currentColor" opacity=".2"/>
+                </svg>
+              </span>
+              <strong>Design tokens</strong>
+            </div>
+            <p>Color, typography, spacing, and radii are centralized for consistency and scalable design.</p>
+          </article>
+          <article class="card animate" aria-label="Feature: responsive grid" style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 7h18M3 12h18M3 17h18" />
+                </svg>
+              </span>
+              <strong>Responsive grid</strong>
+            </div>
+            <p>Fluid breakpoints ensure a cohesive layout from mobile to desktop.</p>
+          </article>
+          <article class="card animate" aria-label="Feature: accessible interactions" style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14" /><path d="M12 5l7 7-7 7" />
+                </svg>
+              </span>
+              <strong>Accessible by default</strong>
+            </div>
+            <p>Semantic markup, keyboard focus, and color contrast are prioritized.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO / GALLERY -->
+    <section id="portfolio" class="section" aria-labelledby="portfolio-title">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="portfolio-title" class="animate" style="margin:0;">Portfolio gallery</h2>
+          <span class="animate" style="color:var(--muted);">A sample grid of projects</span>
+        </div>
+
+        <div class="grid grid-3" aria-label="Portfolio grid">
+          <!-- Reusable card blocks with color blocks acting as visuals -->
+          <div class="portfolio-item card animate" style="aspect-ratio: 4 / 3; background: #2A9D8F;">
+            <div class="overlay" aria-label="Project 1">Brand identity • 2024</div>
+          </div>
+          <div class="portfolio-item card animate" style="aspect-ratio: 4 / 3; background: #264653;">
+            <div class="overlay" aria-label="Project 2" style="background: linear-gradient(to top, rgba(0,0,0,.5), rgba(0,0,0,0));">Website redesign • 2023</div>
+          </div>
+          <div class="portfolio-item card animate" style="aspect-ratio: 4 / 3; background: #E9C46A;">
+            <div class="overlay" aria-label="Project 3">Campaign visuals • 2022</div>
+          </div>
+          <div class="portfolio-item card animate" style="aspect-ratio: 4 / 3; background: #F4A261;">
+            <div class="overlay" aria-label="Project 4">Product UI • 2024</div>
+          </div>
+          <div class="portfolio-item card animate" style="aspect-ratio: 4 / 3; background: #E76F51;">
+            <div class="overlay" aria-label="Project 5">App design • 2023</div>
+          </div>
+          <div class="portfolio-item card animate" style="aspect-ratio: 4 / 3; background: #2A9D8F;">
+            <div class="overlay" aria-label="Project 6">Illustration suite • 2022</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="section" aria-labelledby="testimonials-title">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="testimonials-title" class="animate" style="margin:0;">What clients say</h2>
+          <span class="animate" style="color:var(--muted);">Trusted feedback from partners</span>
+        </div>
+
+        <div class="testimonials animate" aria-label="Client testimonials">
+          <div class="testi-track" id="testi-track" style="will-change: transform;">
+            <figure class="testi" aria-label="Testimonial 1">
+              <blockquote style="margin:0 0 8px;">
+                Palette Studio helped us achieve a vibrant, cohesive brand presence with minimal effort.
+              </blockquote>
+              <figcaption style="font-size:.92rem; color:var(--muted);">— Jordan P., Creative Director</figcaption>
+            </figure>
+            <figure class="testi" aria-label="Testimonial 2">
+              <blockquote style="margin:0 0 8px;">
+                The motion and accessibility improvements were seamless, and the design system is incredibly scalable.
+              </blockquote>
+              <figcaption style="font-size:.92rem; color:var(--muted);">— Aisha R., Product Lead</figcaption>
+            </figure>
+            <figure class="testi" aria-label="Testimonial 3">
+              <blockquote style="margin:0 0 8px;">
+                A clean, modern UI that respects performance budgets without sacrificing aesthetics.
+              </blockquote>
+              <figcaption style="font-size:.92rem; color:var(--muted);">— Miguel S., CTO</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section" aria-labelledby="about-title">
+      <div class="container about-layout">
+        <div class="card animate" aria-label="About Palette Studio statement" style="padding:28px;">
+          <h3 style="margin-top:0; color: var(--color-primary);">About Palette Studio</h3>
+          <p style="margin-top:6px;">
+            We design modern, accessible, color-forward front-ends. This scaffold demonstrates a cohesive design system, optimistic motion, and responsive experience
+            using only HTML, CSS, and vanilla JavaScript.
+          </p>
+          <p style="margin-top:6px;">
+            Content blocks can be swapped in and out easily. The structure is production-ready for handoff or rapid prototyping.
+          </p>
+        </div>
+        <div class="card animate" aria-label="Capabilities" style="padding:28px;">
+          <h3 style="margin-top:0; color: var(--color-primary);">What we ship</h3>
+          <ul style="margin:8px 0 0 18px; color:var(--muted);">
+            <li>Design tokens and a scalable system</li>
+            <li>Accessible, responsive components</li>
+            <li>Performance-conscious interactions</li>
+            <li>In-page navigation and smooth motion</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALL TO ACTION / CONTACT -->
+    <section id="cta" class="section" aria-labelledby="cta-title" style="background: #fff; border-top: 1px solid #eee;">
+      <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:20px; padding: 28px 0;">
+        <div class="animate" style="flex: 1;">
+          <h2 id="cta-title" style="margin:0 0 6px; font-size:1.4rem; color:var(--color-primary);">Ready to start your color-led design?</h2>
+          <p style="margin:0; color:var(--muted);">Let's collaborate to build a cohesive, high-performance front-end.</p>
+        </div>
+        <a href="#contact" class="btn btn-primary" aria-label="Contact us">Contact us</a>
+      </div>
+    </section>
+
+    <!-- CONTACT FORM -->
+    <section id="contact" class="section" aria-labelledby="contact-title">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="contact-title" class="animate" style="margin:0;">Contact</h2>
+          <span class="animate" style="color:var(--muted);">Tell us about your project</span>
+        </div>
+
+        <form id="contact-form" class="animate" aria-label="Contact form" novalidate>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div>
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required placeholder="Your name" />
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required placeholder="you@example.com" />
+            </div>
+          </div>
+          <div>
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell us about your project, timeline, and goals." required></textarea>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <button type="submit" class="btn btn-primary" aria-label="Send message">Send message</button>
+            <span id="form-status" class="form-hint" aria-live="polite"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p style="margin:0;">
+        Palette Studio — color-led UI scaffold. Palette: #264653, #2A9D8F, #E9C46A, #F4A261, #E76F51.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Minimal in-view animation controller
+    (function () {
+      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const animated = document.querySelectorAll('.animate');
+      const observerOpts = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.12
+      };
+
+      function reveal(entries, observer) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      }
+
+      if (!prefersReducedMotion) {
+        const observer = new IntersectionObserver(reveal, observerOpts);
+        animated.forEach(el => {
+          // delay stagger for nicer feel
+          el.style.transitionDelay = (Math.random() * 0.18).toFixed(2) + 's';
+          observer.observe(el);
+        });
+      } else {
+        // If reduced motion is preferred, reveal immediately
+        animated.forEach(el => el.classList.add('in-view'));
+      }
+    })();
+
+    // Simple testimonials auto-scroll
+    (function () {
+      const track = document.getElementById('testi-track');
+      if (!track) return;
+      const items = track.children;
+      let index = 0;
+      const step = 1; // items to move (by index)
+      const slidesToShow = 1;
+      const total = items.length;
+      function move() {
+        index = (index + step) % total;
+        const translateX = -index * (items[0].getBoundingClientRect().width + parseInt(getComputedStyle(items[0]).marginRight || 0));
+        track.style.transform = `translateX(${translateX}px)`;
+      }
+      // Auto-rotate every 5 seconds
+      setInterval(move, 5000);
+      // Pause on hover
+      track.parentElement.addEventListener('mouseenter', () => clearInterval());
+    })();
+
+    // Contact form submission (demo)
+    (function () {
+      const form = document.getElementById('contact-form');
+      const status = document.getElementById('form-status');
+      if (!form) return;
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        // Basic validation (built-in HTML validation also runs)
+        const name = document.getElementById('name');
+        const email = document.getElementById('email');
+        const message = document.getElementById('message');
+        if (!name.value.trim() || !email.value.trim() || !message.value.trim()) {
+          status.textContent = 'Please fill out all fields.';
+          status.style.color = '#e76f51';
+          return;
+        }
+        // Simulated delay
+        status.textContent = 'Sending...';
+        status.style.color = 'var(--muted)';
+        setTimeout(() => {
+          form.reset();
+          status.textContent = 'Thank you! Your message has been received.';
+          status.style.color = 'var(--color-accent)';
+        }, 800);
+      });
+    })();
+
+    // Optional: smooth-scroll for in-page anchors (native + CSS handles this)
+  </script>
+
+  <!-- DESIGN NOTES:
+       - This single-file SPA demonstrates a clean, responsive layout with a cohesive color system.
+       - Sections are organized: Hero -> Features -> Portfolio -> Testimonials -> About -> CTA -> Contact.
+       - Animations are CSS-driven with a JS observer to respect reduced-motion preferences.
+       - All assets are inline to keep this as a standalone scaffold. Extend by adding more sections or components as needed.
+       - To extend: implement a real CMS-driven content section, or replace placeholder blocks with real data.
+  -->
+</body>
+</html>
