@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Colorful Bookstore - Frontend Scaffold</title>
+  <style>
+    :root{
+      --c-forest:#264653;
+      --c-teal:#2A9D8F;
+      --c-gold:#E9C46A;
+      --c-sand:#F4A261;
+      --c-warm:#E76F51;
+
+      --bg:#f7f7f7;
+      --surface:#ffffff;
+      --text:#1f2a37;
+      --muted:#5a5f6b;
+
+      --radius:12px;
+      --shadow: 0 8px 20px rgba(0,0,0,.08);
+      --btn: linear-gradient(135deg, var(--c-teal), var(--c-forest));
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system;
+      color:var(--text);
+      background: var(--bg);
+    }
+
+    /* Layout */
+    header {
+      position: sticky; top:0; z-index: 50;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 20px;
+      background: rgba(255,255,255,.95);
+      backdrop-filter: saturate(1.2) blur(6px);
+      border-bottom:1px solid #eaeaea;
+    }
+    .brand {
+      display:flex; align-items:center; gap:12px;
+    }
+    .brand .logo {
+      width:34px; height:34px; border-radius:8px;
+      background: conic-gradient(from 180deg at 50% 50%, var(--c-teal), var(--c-gold), var(--c-warm));
+      display:inline-block;
+    }
+    .brand h1 { font-size:1.1rem; margin:0; }
+    nav a {
+      margin:0 8px; text-decoration:none; color:var(--text);
+      padding:8px 12px; border-radius:999px;
+    }
+    nav a:hover{ background:#f0f4f7; }
+
+    .header-actions { display:flex; align-items:center; gap:8px; }
+
+    .btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px; border:0; border-radius:999px;
+      color:white; cursor:pointer; font-weight:600;
+      background: var(--btn);
+      min-width: 120px;
+      text-decoration:none;
+    }
+    .btn.secondary {
+      background: #e9eef5; color:#1f2a37;
+    }
+    .badge {
+      background: var(--c-warm);
+      color:white; border-radius:999px; padding:2px 8px; font-size:12px; margin-left:6px;
+    }
+
+    main { padding: 20px; max-width:1100px; margin:0 auto; }
+
+    section.section { padding: 48px 0; border-bottom:1px solid #eef0f2; }
+
+    /* Hero */
+    .hero {
+      display:flex; align-items:stretch; gap:28px;
+    }
+    .hero-content { flex:1; min-width: 280px; }
+    .hero h2, .hero h1 { margin:0 0 8px 0; }
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height:1.05;
+      letter-spacing:.2px;
+    }
+    .hero-sub {
+      color:var(--muted);
+      font-size:1.05rem;
+    }
+    .hero-visual {
+      flex:1; min-width: 260px; display:flex; align-items:center; justify-content:center;
+    }
+    .hero-visual .book-stack {
+      width: 100%; max-width: 420px;
+      aspect-ratio: 3/2; display:flex; align-items:center; justify-content:center;
+      position: relative;
+    }
+    .hero-visual .book-stack svg { width:90%; height:auto; }
+
+    @media (max-width: 900px){
+      .hero { flex-direction: column; }
+      .hero-visual { order: -1; }
+    }
+
+    /* Catalog grid */
+    #product-grid {
+      display:grid; gap:16px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 980px){
+      #product-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px){
+      #product-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:16px;
+      display:flex; flex-direction:column; height:100%;
+    }
+    .thumb {
+      height:140px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+      margin-bottom:12px; overflow:hidden;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+    }
+    .card h3 { font-size:1.05rem; margin:6px 0 6px; }
+    .card p { color:var(--muted); font-size: .92rem; margin:0 0 8px; flex:1; }
+    .stock { font-size: .8rem; padding:4px 8px; border-radius:999px; display:inline-block; }
+
+    .in { background:#eafff0; color:#0c7a43; }
+    .out { background:#ffecec; color:#a13c3c; }
+
+    .card .price { font-weight:700; font-size: 1.05rem; margin:6px 0 8px; }
+
+    .card .row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+
+    /* Cart panel */
+    .cart-panel {
+      position: fixed; top: 0; right: 0; height: 100%; width: 360px;
+      background: #fff; border-left:1px solid #e6e6e6; box-shadow: -6px 0 20px rgba(0,0,0,.08);
+      transform: translateX(100%); transition: transform .25s ease-out;
+      display:flex; flex-direction:column;
+      z-index: 60;
+    }
+    .cart-panel.open { transform: translateX(0); }
+    .cart-header { padding:14px 16px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; }
+    .cart-items { flex:1; overflow:auto; padding:12px 16px; display:flex; flex-direction:column; gap:10px; }
+    .cart-item { display:flex; gap:10px; padding:8px; border:1px solid #eee; border-radius:8px; align-items:center; }
+    .cart-thumb { width:48px; height:60px; background:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:6px; }
+    .cart-item-name { font-size:.95rem; margin:0; }
+    .cart-item-price { font-size:.8rem; color:var(--muted); }
+    .qty { display:flex; align-items:center; gap:6px; }
+    .qty button { width:26px; height:26px; border-radius:6px; border:1px solid #ddd; background:#f6f6f6; cursor:pointer; }
+    .cart-total { padding:12px 16px; border-top:1px solid #eee; }
+    .empty { text-align:center; color:var(--muted); padding:40px 0; }
+
+    /* Contact form */
+    form input, form textarea, input, textarea {
+      width:100%; padding:10px 12px; border-radius:8px; border:1px solid #ddd; font: inherit;
+      background:white;
+    }
+    form .field { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+    form button { margin-top:6px; }
+
+    /* Chat widget (mock) */
+    .chat-toggle {
+      position: fixed; right: 20px; bottom: 20px;
+      width:54px; height:54px; border-radius:50%; background: var(--c-teal);
+      display:flex; align-items:center; justify-content:center; color:white; font-size:22px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.15); cursor:pointer;
+      z-index: 70;
+    }
+    .chat-window {
+      position: fixed; right: 20px; bottom: 90px;
+      width: 360px; height: 420px; border-radius:12px;
+      background:white; box-shadow: var(--shadow);
+      display:flex; flex-direction:column; overflow:hidden; z-index: 75;
+    }
+    .chat-window header { padding:10px 12px; background:#f6f6f6; border-bottom:1px solid #eee; }
+    .chat-body { flex:1; padding:12px; overflow:auto; display:flex; flex-direction:column; gap:8px; background:#fafafa; }
+    .msg { max-width:80%; padding:8px 10px; border-radius:12px; font-size:0.92rem; }
+    .user { align-self:flex-end; background:var(--c-teal); color:white; border-bottom-right-radius:4px; }
+    .bot { align-self:flex-start; background:#eee; color:#333; }
+    .chat-input { display:flex; padding:8px; border-top:1px solid #eee; }
+    .chat-input input{ flex:1; padding:10px; border-radius:8px; border:1px solid #ddd; }
+    .chat-input button{ margin-left:8px; padding:10px 14px; border-radius:8px; border:0; background:var(--c-gold); cursor:pointer; }
+
+    /* Utilities */
+    .section-title { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+    .section-title h2 { margin:0; font-size:1.25rem; }
+    .sr-only { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+
+    /* Accessibility / Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header aria-label="Site header">
+    <div class="brand" aria-label="Brand">
+      <span class="logo" aria-hidden="true"></span>
+      <h1>Colorful Bookstore</h1>
+    </div>
+
+    <nav aria-label="Main navigation">
+      <a href="#catalog" data-i18n="nav.catalog" aria-label="Catalog link">Catalog</a>
+      <a href="#about" aria-label="About link" data-i18n="nav.about">About</a>
+      <a href="#contact" aria-label="Contact link" data-i18n="nav.contact">Contact</a>
+    </nav>
+
+    <div class="header-actions" aria-label="Header actions">
+      <button id="cart-toggle" class="btn" aria-controls="cart-panel" aria-expanded="false" title="Open cart">
+        🧺 <span id="cart-count" class="badge" aria-live="polite">0</span>
+      </button>
+
+      <label for="locale-select" class="sr-only">Language</label>
+      <select id="locale-select" aria-label="Language switcher" style="padding:10px;border-radius:8px;border:1px solid #ddd;background:white;">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section id="hero" class="section hero" aria-label="Intro section">
+      <div class="hero-content">
+        <h1 class="hero-title" data-i18n="hero.title">Colorful Bookstore</h1>
+        <p class="hero-sub" data-i18n="hero.subtitle">Discover, collect, and enjoy reading</p>
+        <div style="margin-top:12px;">
+          <a href="#catalog" class="btn" data-i18n="hero.cta" aria-label="Shop now button">Shop now</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="Hero illustration">
+        <div class="book-stack" aria-label="Stack of colorful books">
+          <!-- Simple decorative SVG stack -->
+          <svg viewBox="0 0 300 200" role="img" aria-label="Stack of books">
+            <rect x="30" y="60" width="80" height="120" rx="6" fill="#2A9D8F"/>
+            <rect x="110" y="40" width="60" height="140" rx="6" fill="#E76F51"/>
+            <rect x="180" y="70" width="90" height="110" rx="6" fill="#E9C46A"/>
+            <rect x="60" y="90" width="80" height="30" rx="4" fill="#264653" opacity=".4"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Catalog -->
+    <section id="catalog" class="section" aria-label="Catalog section">
+      <div class="section-title">
+        <h2 data-i18n="nav.catalog">Catalog</h2>
+      </div>
+      <div id="product-grid" aria-label="Product catalog grid"></div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section" aria-label="About section">
+      <div class="section-title">
+        <h2 data-i18n="about.title">About Us</h2>
+      </div>
+      <p data-i18n="about.text" style="max-width:720px; color:var(--muted);"></p>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section" aria-label="Contact section">
+      <div class="section-title">
+        <h2 data-i18n="contact.title">Contact Us</h2>
+      </div>
+      <form id="contact-form" aria-label="Contact form" style="max-width:720px;">
+        <div class="field">
+          <label for="name" data-i18n="contact.name-label">Name</label>
+          <input id="name" name="name" type="text" required placeholder="Jane Doe" />
+        </div>
+        <div class="field">
+          <label for="email" data-i18n="contact.email-label">Email</label>
+          <input id="email" name="email" type="email" required placeholder="jane@example.com" />
+        </div>
+        <div class="field">
+          <label for="message" data-i18n="contact.message-label">Message</label>
+          <textarea id="message" name="message" rows="4" required placeholder="Your message..."></textarea>
+        </div>
+        <button type="submit" class="btn" aria-label="Send message" data-i18n="contact.send">Send</button>
+      </form>
+      <p id="form-status" aria-live="polite" style="color:var(--muted); margin-top:8px;"></p>
+    </section>
+  </main>
+
+  <!-- Shopping Cart (drawer) -->
+  <aside id="cart-panel" class="cart-panel" aria-label="Shopping cart panel" aria-hidden="true">
+    <div class="cart-header">
+      <strong data-i18n="cart.title">Your Cart</strong>
+      <button id="cart-close" class="btn secondary" aria-label="Close cart" style="padding:6px 10px;">Close</button>
+    </div>
+    <div class="cart-items" id="cart-items" aria-label="Cart items"></div>
+    <div class="cart-total" aria-label="Cart total">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span data-i18n="cart.total-label" style="font-weight:600;">Total</span>
+        <span id="cart-total" aria-live="polite" style="font-weight:700;">$0.00</span>
+      </div>
+      <button class="btn" id="checkout" style="width:100%; margin-top:8px;" aria-label="Checkout button" data-i18n="cart.checkout">Checkout</button>
+    </div>
+    <p style="padding:0 12px 12px; color:var(--muted); font-size:12px;">This is a frontend scaffold. No real payment processing is performed.</p>
+  </aside>
+
+  <!-- Mock Chat Widget -->
+  <div class="chat-toggle" id="chat-toggle" aria-label="Open support chat" title="Chat with support">💬</div>
+  <div class="chat-window" id="chat-window" aria-label="Support chat window" hidden>
+    <header aria-label="Chat header">
+      <strong>Support</strong>
+      <span style="float:right; font-size:12px; color:var(--muted);" aria-live="polite" id="chat-status">Online</span>
+    </header>
+    <div class="chat-body" id="chat-body" aria-label="Chat messages">
+      <!-- Messages will be injected here -->
+    </div>
+    <form class="chat-input" id="chat-form" aria-label="Chat input">
+      <input id="chat-input" type="text" placeholder="Type your message..." autocomplete="on" />
+      <button type="submit" aria-label="Send chat message">Send</button>
+    </form>
+  </div>
+
+  <!-- Data & Script -->
+  <script>
+    // Data: sample catalog
+    const PRODUCTS = [
+      { id: 'bk-001', title: 'Sea of Stories', price: 12.99, stock: true, description: 'A tidal collection of adventures and legends.', color: '#2A9D8F' },
+      { id: 'bk-002', title: 'Golden Atlas', price: 18.50, stock: true, description: 'A luminous atlas of maps and myths.', color: '#E9C46A' },
+      { id: 'bk-003', title: 'Crimson Threads', price: 9.75, stock: false, description: 'Novellas stitched with emotion and depth.', color: '#E76F51' },
+      { id: 'bk-004', title: 'Verdant Hours', price: 14.25, stock: true, description: 'Essays that bloom with fresh perspectives.', color: '#264653' },
+      { id: 'bk-005', title: 'Azure Echoes', price: 11.99, stock: true, description: 'Poems that ripple through time.', color: '#2A9D8F' },
+      { id: 'bk-006', title: 'Sunset Cartography', price: 16.49, stock: true, description: 'A travelogue painted in light and memory.', color: '#F4A261' }
+    ];
+
+    // Translations (nested keys)
+    const translations = {
+      en: {
+        nav: { catalog: "Catalog", about: "About", contact: "Contact" },
+        hero: { title: "Colorful Bookstore", subtitle: "Discover, collect, and enjoy reading", cta: "Shop now" },
+        product: { add: "Add to cart" },
+        cart: { title: "Your Cart", totalLabel: "Total", checkout: "Checkout" },
+        about: { title: "About Us", text: "We’re a playful storefront prototype designed to showcase a colorful, accessible, frontend SPA. This scaffold includes a catalog, cart, localization, and a mock support chat." },
+        contact: { title: "Contact Us", nameLabel: "Name", emailLabel: "Email", messageLabel: "Message", send: "Send" },
+        chat: { welcome: "Hi there! How can we help you today?", typing: "Support is typing...", send: "Send" }
+      },
+      fr: {
+        nav: { catalog: "Catalogue", about: "À propos", contact: "Contact" },
+        hero: { title: "Librairie Colorée", subtitle: "Découvrir, collectionner et lire avec plaisir", cta: "Magasiner" },
+        product: { add: "Ajouter au panier" },
+        cart: { title: "Votre Panier", totalLabel: "Total", checkout: "Passer à la caisse" },
+        about: { title: "À Propos", text: "Nous sommes une maquette de boutique ludique conçue pour démontrer une SPA frontend colorée et accessible. Ce scaffold comprend un catalogue, un panier, la localisation et un chat d’assistance mock." },
+        contact: { title: "Contactez-nous", nameLabel: "Nom", emailLabel: "Courriel", messageLabel: "Message", send: "Envoyer" },
+        chat: { welcome: "Bonjour ! Comment puis-je vous aider ?", typing: "Le support réagit...", send: "Envoyer" }
+      },
+      es: {
+        nav: { catalog: "Catálogo", about: "Acerca de", contact: "Contacto" },
+        hero: { title: "Librería Colorida", subtitle: "Descubre, colecciona y disfruta de la lectura", cta: "Comprar ahora" },
+        product: { add: "Agregar al carrito" },
+        cart: { title: "Tu Carrito", totalLabel: "Total", checkout: "Pagar" },
+        about: { title: "Acerca de Nosotros", text: "Somos un prototipo de tienda divertido diseñado para demostrar una SPA frontend colorida y accesible. Este scaffold incluye catálogo, carrito, localización y un chat de soporte simulado." },
+        contact: { title: "Contáctanos", nameLabel: "Nombre", emailLabel: "Correo", messageLabel: "Mensaje", send: "Enviar" },
+        chat: { welcome: "¡Hola! ¿Cómo podemos ayudarte hoy?", typing: "El soporte está escribiendo...", send: "Enviar" }
+      }
+    };
+
+    // Localization state
+    let locale = (function(){
+      const saved = localStorage.getItem('locale');
+      if (saved && ['en','fr','es'].includes(saved)) return saved;
+      // Fallback based on browser
+      const lang = (navigator.language || navigator.userLanguage || 'en').slice(0,2);
+      return ['en','fr','es'].includes(lang) ? lang : 'en';
+    })();
+
+    // App state
+    const state = {
+      cart: [], // { id, title, price, qty }
+      messages: [] // chat messages
+    };
+
+    // DOM refs
+    const productGrid = document.getElementById('product-grid');
+    const cartPanel = document.getElementById('cart-panel');
+    const cartItemsEl = document.getElementById('cart-items');
+    const cartTotalEl = document.getElementById('cart-total');
+    const cartToggle = document.getElementById('cart-toggle');
+    const cartClose = document.getElementById('cart-close');
+    const localeSelect = document.getElementById('locale-select');
+    const chatWindow = document.getElementById('chat-window');
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatBody = document.getElementById('chat-body');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const formStatus = document.getElementById('form-status');
+    const form = document.getElementById('contact-form');
+
+    // Utility: translate a dot-path key
+    function t(path) {
+      const keys = path.split('.');
+      let v = translations[locale];
+      for (const k of keys) {
+        if (v && Object.prototype.hasOwnProperty.call(v, k)) v = v[k];
+        else { v = undefined; break; }
+      }
+      // Fallback to English or key path
+      if (typeof v === 'undefined') {
+        v = path.split('.').slice(-1)[0];
+      }
+      return v;
+    }
+
+    // Persist & helper functions
+    function saveCart() {
+      localStorage.setItem('cart', JSON.stringify(state.cart));
+    }
+    function loadCart() {
+      const raw = localStorage.getItem('cart');
+      if (raw) {
+        try { state.cart = JSON.parse(raw); } catch { state.cart = []; }
+      }
+    }
+    function saveLocale() {
+      localStorage.setItem('locale', locale);
+    }
+    function formatPrice(value) {
+      const currency = (locale === 'en') ? 'USD' : 'EUR';
+      try {
+        return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(value);
+      } catch {
+        return '$' + value.toFixed(2);
+      }
+    }
+
+    // Render catalog
+    function renderCatalog() {
+      productGrid.innerHTML = '';
+      PRODUCTS.forEach(p => {
+        const stockLabel = p.stock ? `<span class="stock in" aria-label="In stock status" title="In stock">In stock</span>` :
+                                     `<span class="stock out" aria-label="Out of stock status" title="Out of stock" style="opacity:.6">Out of stock</span>`;
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="thumb" aria-label="${p.title} cover" style="background:${p.color};">
+            <!-- simple inline decorative book icon -->
+            <svg width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Book icon">
+              <rect x="8" y="8" width="34" height="48" rx="4" ry="4" fill="white" opacity=".9"/>
+              <path d="M12 8h20c2.2 0 4 1.8 4 4v38" fill="none" stroke="#333" stroke-width="2"/>
+              <path d="M46 8h10v48H46" fill="none" stroke="#333" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>${p.title}</h3>
+          <p>${p.description}</p>
+          ${stockLabel}
+          <div class="row" aria-label="Price and action">
+            <span class="price" aria-label="Price">${formatPrice(p.price)}</span>
+            <button class="btn add-to-cart" data-id="${p.id}" aria-label="Add ${p.title} to cart">${t('product.add')}</button>
+          </div>
+        `;
+        // Disable if out of stock
+        const btn = card.querySelector('.add-to-cart');
+        if (!p.stock) {
+          btn.disabled = true;
+          btn.style.opacity = .6;
+          btn.setAttribute('aria-disabled', 'true');
+        }
+        productGrid.appendChild(card);
+      });
+    }
+
+    // Cart operations
+    function addToCart(productId) {
+      const prod = PRODUCTS.find(p => p.id === productId);
+      if (!prod || !prod.stock) return;
+      const item = state.cart.find(i => i.id === productId);
+      if (item) item.qty += 1;
+      else state.cart.push({ id: productId, title: prod.title, price: prod.price, qty: 1 });
+      renderCart();
+      saveCart();
+    }
+
+    function removeFromCart(productId) {
+      state.cart = state.cart.filter(i => i.id !== productId);
+      renderCart();
+      saveCart();
+    }
+
+    function updateQty(productId, delta) {
+      const item = state.cart.find(i => i.id === productId);
+      if (!item) return;
+      item.qty = Math.max(1, item.qty + delta);
+      renderCart();
+      saveCart();
+    }
+
+    function renderCart() {
+      cartItemsEl.innerHTML = '';
+      if (state.cart.length === 0) {
+        cartItemsEl.innerHTML = `<div class="empty" aria-live="polite">Your cart is empty.</div>`;
+        cartTotalEl.textContent = formatPrice(0);
+        return;
+      }
+      let subtotal = 0;
+      state.cart.forEach(it => {
+        subtotal += it.price * it.qty;
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        row.innerHTML = `
+          <div class="cart-thumb" aria-label="Item image">
+            <!-- small colored square thumbnail -->
+            <span style="display:block;width:20px;height:20px;background:#ccc;border-radius:4px;"></span>
+          </div>
+          <div style="flex:1;">
+            <p class="cart-item-name" style="margin:0;">${it.title}</p>
+            <span class="cart-item-price" aria-label="Item price">${formatPrice(it.price)} x ${it.qty}</span>
+          </div>
+          <div class="qty" aria-label="Quantity control">
+            <button data-id="${it.id}" class="qty-decr" aria-label="Decrease quantity">−</button>
+            <span style="min-width:20px; text-align:center; display:inline-block;">${it.qty}</span>
+            <button data-id="${it.id}" class="qty-incr" aria-label="Increase quantity">＋</button>
+          </div>
+          <button class="btn secondary" data-id="${it.id}" aria-label="Remove item" style="padding:6px 10px;">Remove</button>
+        `;
+        cartItemsEl.appendChild(row);
+      });
+      cartTotalEl.textContent = formatPrice(subtotal);
+    }
+
+    // Chat widget
+    function addBotMessage(text) {
+      const msgEl = document.createElement('div');
+      msgEl.className = 'msg bot';
+      msgEl.textContent = text;
+      chatBody.appendChild(msgEl);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+    function addUserMessage(text) {
+      const msgEl = document.createElement('div');
+      msgEl.className = 'msg user';
+      msgEl.style.textAlign = 'right';
+      msgEl.textContent = text;
+      chatBody.appendChild(msgEl);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function openChat() {
+      chatWindow.hidden = false;
+      chatWindow.style.display = 'flex';
+      chatToggle.setAttribute('aria-expanded', 'true');
+      // Initialize with welcome message if first time
+      if (state.messages.length === 0) {
+        addBotMessage(t('chat.welcome'));
+      }
+    }
+    function closeChat() {
+      chatWindow.hidden = true;
+      chatToggle.setAttribute('aria-expanded', 'false');
+    }
+    function simulateBotReply(userText) {
+      // simple canned response
+      const reply = userText.toLowerCase().includes('price') ? 'Prices vary by book. Check the catalog for current offers.' :
+                    'Thanks for reaching out! We will assist you shortly.';
+      setTimeout(() => addBotMessage(reply), 800);
+    }
+
+    // Localization of UI text on load / locale change
+    function localizeUI() {
+      // Update locale in select
+      localeSelect.value = locale;
+      // Update all elements with data-i18n attribute
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const val = t(key);
+        if (typeof el.value === 'string') el.value = val;
+        if (el.tagName.toLowerCase() === 'input' || el.tagName.toLowerCase() === 'textarea') {
+          el.placeholder = val;
+        } else {
+          el.textContent = val;
+        }
+      });
+      // Update header cart button aria
+      document.getElementById('cart-toggle').setAttribute('aria-label', (locale==='en'?'Open cart':'Ouvrir le panier') );
+    }
+
+    // Init
+    function init() {
+      // Load cart
+      loadCart();
+      // Locale from state
+      locale = locale;
+      // Build catalog
+      renderCatalog();
+      // Restore cart UI
+      renderCart();
+
+      // Set locale in UI
+      localizeUI();
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', init);
+
+    // Add-to-cart delegation
+    productGrid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.add-to-cart');
+      if (!btn) return;
+      const pid = btn.getAttribute('data-id');
+      addToCart(pid);
+    });
+
+    // Cart drawer controls
+    cartToggle.addEventListener('click', () => {
+      cartPanel.classList.add('open');
+      cartPanel.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      renderCart();
+    });
+    cartClose.addEventListener('click', () => {
+      cartPanel.classList.remove('open');
+      cartPanel.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    });
+    // Close cart when clicking outside (optional)
+    window.addEventListener('click', (e) => {
+      if (cartPanel.classList.contains('open') && !cartPanel.contains(e.target) && !cartToggle.contains(e.target)) {
+        cartPanel.classList.remove('open');
+        cartPanel.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Cart item interactions
+    cartItemsEl.addEventListener('click', (e) => {
+      const id = e.target.getAttribute('data-id');
+      if (!id) return;
+      if (e.target.classList.contains('qty-incr')) {
+        updateQty(id, 1);
+      } else if (e.target.classList.contains('qty-decr')) {
+        updateQty(id, -1);
+      } else if (e.target.textContent.toLowerCase() === 'remove') {
+        removeFromCart(id);
+      }
+    });
+
+    // Checkout
+    document.getElementById('checkout').addEventListener('click', () => {
+      if (state.cart.length === 0) return;
+      alert('This is a frontend scaffold. In a real app, proceed to checkout.');
+    });
+
+    // Language switcher
+    localeSelect.addEventListener('change', (e) => {
+      const newLocale = e.target.value;
+      if (['en','fr','es'].includes(newLocale) && newLocale !== locale) {
+        locale = newLocale;
+        saveLocale();
+        localizeUI();
+        renderCatalog();
+        renderCart();
+      }
+    });
+
+    // Contact form
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      if (!name || !email || !message) {
+        formStatus.textContent = 'Please fill in all fields.';
+        return;
+      }
+      formStatus.textContent = 'Message sent. We will contact you shortly.';
+      form.reset();
+      setTimeout(() => { formStatus.textContent = ''; }, 4000);
+    });
+
+    // Chat integration
+    chatToggle.addEventListener('click', () => {
+      if (chatWindow.hidden) {
+        openChat();
+      } else {
+        closeChat();
+      }
+    });
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = chatInput.value.trim();
+      if (!text) return;
+      addUserMessage(text);
+      chatInput.value = '';
+      simulateBotReply(text);
+    });
+
+    // Seed initial chat (shown on first open)
+    // Optional: auto-open chat on first visit
+  </script>
+
+  <!-- Localization and data required for accessibility and SPA-like behavior. Extend here as needed. -->
+
+  <!-- End of SPA scaffold -->
+
+  
+</body>
+</html>
