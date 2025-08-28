@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Palette Shop — Single Page Catalog & Cart</title>
+  <style>
+    /* Color tokens (palette) */
+    :root {
+      --brand-900: #264653; /* deep teal/blue-green */
+      --brand-700: #2A9D8F; /* teal-green */
+      --sand: #E9C46A;       /* sand/yellow */
+      --orange: #F4A261;     /* orange */
+      --coral: #E76F51;      /* coral/red-orange */
+      --bg: #f7f7f7;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    /* Layout containers */
+    .container { width: min(1100px, 92%); margin: 0 auto; padding: 1rem 0.5rem; }
+
+    /* Header / Nav */
+    .site-header {
+      background: var(--brand-900);
+      color: white;
+      padding: 0.75rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    }
+    .header-inner { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 0.75rem; align-items: center; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; font-size: 1.1rem; }
+    .logo .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--sand); display: inline-block; }
+    .search-area { display: flex; justify-content: center; }
+    #search { width: 100%; padding: 0.6rem 0.75rem; border-radius: 6px; border: 0; outline: none; font-size: 1rem; }
+    .filters { display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center; }
+    select, input[type="text"] { min-height: 38px; border-radius: 6px; border: 1px solid #ddd; padding: 0.4rem 0.6rem; font-size: 0.95rem; }
+
+    /* Main grid: catalog + details panel (modal) */
+    main { padding: 1rem 0; }
+    .section-title { font-size: 1.25rem; font-weight: 700; margin: 0.25rem 0 0.75rem; color: #0b1b28; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+    .card { background: var(--card); border: 1px solid #eee; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; min-height: 100%; box-shadow: var(--shadow); }
+    .card img { width: 100%; height: 160px; object-fit: cover; background: #ddd; }
+    .card-body { padding: 0.75rem; display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
+    .card-title { font-size: 1rem; font-weight: 600; margin: 0; }
+    .price { font-weight: 700; color: var(--brand-700); }
+    .rating { font-size: 0.9rem; color: #f59e0b; }
+    .stock { font-size: 0.8rem; color: var(--muted); }
+    .card-actions { display: flex; justify-content: space-between; align-items: center; padding-top: 0.25rem; }
+    .btn { border: none; border-radius: 6px; padding: 0.5rem 0.75rem; cursor: pointer; font-weight: 600; }
+    .btn-primary { background: var(--brand-700); color: #fff; }
+    .btn-secondary { background: #fff; color: var(--brand-700); border: 1px solid var(--brand-700); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Cart (slide-over) */
+    .cart { position: fixed; top: 0; right: 0; height: 100%; width: 360px; transform: translateX(100%); transition: transform 0.3s ease; background: #fff; border-left: 1px solid #eee; box-shadow: -6px 0 20px rgba(0,0,0,.08); display: flex; flex-direction: column; z-index: 20; }
+    .cart.open { transform: translateX(0); }
+    .cart-header { display: flex; justify-content: space-between; align-items: center; padding: 0.9rem 1rem; border-bottom: 1px solid #eee; }
+    .cart-items { overflow: auto; padding: 0.5rem 0.8rem; flex: 1; }
+    .cart-item { display: grid; grid-template-columns: 48px 1fr auto; gap: 0.5rem; align-items: center; padding: 0.5rem; border-bottom: 1px solid #f0f0f0; }
+    .cart-item img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; }
+    .qty { display: inline-flex; align-items: center; gap: 4px; }
+    .qty button { width: 26px; height: 26px; border-radius: 6px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
+    .cart-total { padding: 0.75rem 1rem; border-top: 1px solid #eee; }
+    .cart-row { display: flex; justify-content: space-between; margin: 0.25rem 0; }
+    .cart-summary { padding: 0.75rem 1rem; border-top: 1px solid #eee; }
+    #checkout { width: 100%; padding: 0.75rem; border-radius: 6px; background: var(--coral); color: #fff; font-weight: 700; border: none; cursor: pointer; }
+    .open-cart-btn { position: fixed; right: 14px; bottom: 14px; z-index: 30; padding: 12px 16px; border-radius: 999px; border: none; background: var(--brand-700); color: #fff; font-weight: 700; box-shadow: 0 6px 14px rgba(0,0,0,.15); cursor: pointer; }
+
+    /* Product detail modal */
+    .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.4); z-index: 40; padding: 1rem; }
+    .modal[aria-hidden="false"] { display: flex; }
+    .modal-content { width: min(720px, 92%); background: #fff; border-radius: 12px; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; box-shadow: 0 20px 40px rgba(0,0,0,.25); }
+    .modal-media { padding: 1rem; display: flex; align-items: center; justify-content: center; border-right: 1px solid #eee; background: #fafafa; }
+    .modal-media img { width: 100%; height: auto; max-height: 420px; object-fit: contain; }
+    .modal-content-body { padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .modal-close { align-self: flex-end; background: transparent; border: none; font-size: 1.4rem; cursor: pointer; }
+    .modal-title { font-size: 1.25rem; font-weight: 700; margin: 0; }
+    .modal-desc { color: #555; }
+    .modal-actions { margin-top: 0.5rem; display: flex; gap: 0.5rem; }
+    @media (max-width: 900px) {
+      .modal-content { grid-template-columns: 1fr; }
+      .cart { width: 100%; }
+      .header-inner { grid-template-columns: 1fr; }
+      .filters { justify-content: stretch; }
+    }
+
+    /* Footer */
+    .site-footer { text-align: center; padding: 1rem; color: var(--muted); }
+
+  </style>
+</head>
+<body>
+  <header class="site-header" aria-label="Site header">
+    <div class="container header-inner">
+      <div class="logo" aria-label="Palette Shop logo">
+        <span class="dot" aria-hidden="true"></span>
+        <span>Palette</span><span style="opacity:.75;">Shop</span>
+      </div>
+      <div class="search-area" aria-label="Search area">
+        <input id="search" type="text" placeholder="Search products…" aria-label="Search products"/>
+      </div>
+      <div class="filters" aria-label="Filters and sorting">
+        <select id="categoryFilter" aria-label="Filter by category">
+          <option value="all">All categories</option>
+        </select>
+        <select id="sortSelect" aria-label="Sort products">
+          <option value="relevance">Sort: Relevance</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="rating-desc">Rating</option>
+          <option value="name-asc">Name A-Z</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="app" aria-label="Product catalog">
+    <section class="catalog" aria-label="Product catalog">
+      <div class="section-title">Product Catalog</div>
+      <div id="product-grid" class="grid" role="list">
+        <!-- Product cards render here -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Cart (slide-over) toggle button -->
+  <button id="openCart" class="open-cart-btn" aria-label="Open cart">Cart</button>
+
+  <!-- Cart panel -->
+  <aside id="cart" class="cart" aria-label="Shopping cart" role="complementary" aria-hidden="true">
+    <div class="cart-header">
+      <strong>Your cart</strong>
+      <button id="closeCart" aria-label="Close cart" style="background:transparent;border:0;font-size:1.2rem;cursor:pointer;">✕</button>
+    </div>
+    <div id="cart-items" class="cart-items" aria-live="polite"></div>
+
+    <div class="cart-summary" aria-label="Cart totals">
+      <div class="cart-row"><span>Subtotal</span><span id="subtotal" aria-label="Cart subtotal">$0.00</span></div>
+      <div class="cart-row"><span>Tax</span><span id="tax" aria-label="Cart tax">$0.00</span></div>
+      <div class="cart-row" style="font-weight:700;"><span>Total</span><span id="grand-total" aria-label="Cart total">$0.00</span></div>
+      <button id="checkout" title="Checkout" disabled>Checkout</button>
+    </div>
+  </aside>
+
+  <!-- Product detail modal -->
+  <div id="modal" class="modal" role="dialog" aria-hidden="true" aria-label="Product details">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close" aria-label="Close details">✕</button>
+      <div class="modal-media" id="modal-media">
+        <!-- image -->
+      </div>
+      <div class="modal-content-body">
+        <h3 id="modal-title" class="modal-title">Product Name</h3>
+        <p id="modal-desc" class="modal-desc">Product description goes here.</p>
+        <div id="modal-details" class="modal-details" style="font-size:.95rem;color:#444;">
+          <span id="modal-price" class="price" style="font-weight:700;">$0.00</span>
+          <span id="modal-stock" style="margin-left:8px;"></span>
+        </div>
+        <div class="modal-actions" aria-label="Modal actions">
+          <button id="modal-add" class="btn btn-primary" style="flex:0 0 auto;">Add to cart</button>
+          <button id="modal-view" class="btn btn-secondary" style="flex:0 0 auto;">View similar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer" aria-label="Footer">
+    <div>© Palette Shop — a simple SPA catalog & cart demo. No real payments. This is a UI scaffold with localStorage persistence.</div>
+  </footer>
+
+  <script>
+    // Data: mock product catalog
+    const makeImg = (label, color) => {
+      const w = 600, h = 400;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
+        <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+          <stop stop-color="${color}" offset="0"/>
+          <stop stop-color="#ffffff" offset="1"/>
+        </linearGradient></defs>
+        <rect width="100%" height="100%" fill="url(#g)"/>
+        <text x="50%" y="52%" text-anchor="middle" fill="#fff" font-family="Arial" font-size="34" font-weight="bold">${label}</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    };
+
+    const products = [
+      { id: 'p1', name: 'Nimbus Hoodie', description: 'Cozy fleece-lined hoodie built for chilly days. Soft inner lining, modern fit.', price: 59.99, category: 'Apparel', rating: 4.5, stock: 20, image: makeImg('Nimbus Hoodie', '#2A9D8F') },
+      { id: 'p2', name: 'Eclipse Throw Blanket', description: 'Warm, plush throw blanket to lounge with on the couch.', price: 24.99, category: 'Home', rating: 4.2, stock: 30, image: makeImg('Eclipse Throw', '#E9C46A') },
+      { id: 'p3', name: 'Sunrise Mug', description: 'Ceramic mug with generous capacity and a sunny glaze.', price: 12.5, category: 'Home', rating: 4.8, stock: 100, image: makeImg('Sunrise Mug', '#F4A261') },
+      { id: 'p4', name: 'Cascade Jacket', description: 'Lightweight windbreaker with waterproof finish.', price: 89.0, category: 'Apparel', rating: 4.7, stock: 5, image: makeImg('Cascade Jacket', '#264653') },
+      { id: 'p5', name: 'Aqua Bottle', description: 'Insulated stainless bottle to keep drinks cold for hours.', price: 18.0, category: 'Outdoors', rating: 4.4, stock: 40, image: makeImg('Aqua Bottle', '#2A9D8F') },
+      { id: 'p6', name: 'Trail Notebook', description: 'Rugged notebook for field notes with waterproof cover.', price: 9.99, category: 'Outdoors', rating: 4.1, stock: 60, image: makeImg('Trail Notebook', '#E76F51') },
+      { id: 'p7', name: 'Pulse Earbuds', description: 'Wireless earbuds with clear sound and quick pairing.', price: 39.99, category: 'Accessories', rating: 4.0, stock: 0, image: makeImg('Pulse Earbuds', '#F4A261') },
+      { id: 'p8', name: 'Cloud Bath Robe', description: 'Ultra-soft robe for spa-like comfort at home.', price: 29.99, category: 'Home', rating: 4.3, stock: 15, image: makeImg('Cloud Robe', '#2A9D8F') },
+      { id: 'p9', name: 'Summit Cap', description: 'Breathable cap for sunny days on the trail.', price: 15.0, category: 'Apparel', rating: 4.6, stock: 25, image: makeImg('Summit Cap', '#264653') },
+      { id: 'p10', name: 'Stellar Lantern', description: 'Portable lantern with warm glow for camping.', price: 22.0, category: 'Outdoors', rating: 4.5, stock: 8, image: makeImg('Stellar Lantern', '#E9C46A') }
+    ];
+
+    // State
+    let cart = [];
+    let currentModalProduct = null;
+    const LOCAL_CART_KEY = 'palette_cart_v1';
+
+    // Elements
+    const productGrid = document.getElementById('product-grid');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const sortSelect = document.getElementById('sortSelect');
+    const searchInput = document.getElementById('search');
+
+    const cartPanel = document.getElementById('cart');
+    const openCartBtn = document.getElementById('openCart');
+    const closeCartBtn = document.getElementById('closeCart');
+    const cartItemsEl = document.getElementById('cart-items');
+    const subtotalEl = document.getElementById('subtotal');
+    const taxEl = document.getElementById('tax');
+    const grandTotalEl = document.getElementById('grand-total');
+    const checkoutBtn = document.getElementById('checkout');
+
+    const modal = document.getElementById('modal');
+    const modalClose = document.getElementById('modal-close');
+    const modalMedia = document.getElementById('modal-media');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalPrice = document.getElementById('modal-price');
+    const modalStock = document.getElementById('modal-stock');
+    const modalAdd = document.getElementById('modal-add');
+    const modalView = document.getElementById('modal-view');
+    const modalImgWrap = document.getElementById('modal-media');
+
+    // Helpers
+    const currency = (n) => `$${n.toFixed(2)}`;
+    const findProduct = (id) => products.find(p => p.id === id);
+    const saveCart = () => {
+      localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(cart));
+    };
+    const loadCart = () => {
+      try {
+        const raw = localStorage.getItem(LOCAL_CART_KEY);
+        if (raw) cart = JSON.parse(raw);
+      } catch {
+        cart = [];
+      }
+    };
+
+    // Cart calculations
+    const calcTotals = () => {
+      const subtotal = cart.reduce((sum, item) => {
+        const p = findProduct(item.productId);
+        return sum + (p ? p.price * item.quantity : 0);
+      }, 0);
+      const taxRate = 0.08;
+      const tax = subtotal * taxRate;
+      const grand = subtotal + tax;
+      return { subtotal, tax, grand };
+    };
+
+    const renderCart = () => {
+      cartItemsEl.innerHTML = '';
+      if (cart.length === 0) {
+        cartItemsEl.innerHTML = '<div style="padding:1rem;color:var(--muted);">Your cart is empty. Add items from the catalog.</div>';
+        checkoutBtn.disabled = true;
+      } else {
+        cart.forEach(item => {
+          const p = findProduct(item.productId);
+          if (!p) return;
+          const el = document.createElement('div');
+          el.className = 'cart-item';
+          el.innerHTML = `
+            <img src="${p.image}" alt="${p.name}">
+            <div style="min-width:0">
+              <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
+              <div style="font-size:0.85rem;color:var(--muted)">${p.category} • ${currency(p.price)}</div>
+            </div>
+            <div class="qty" aria-label="Quantity for ${p.name}">
+              <button data-id="${p.id}" data-op="dec" aria-label="Decrease">−</button>
+              <span style="min-width:22px;text-align:center;display:inline-block">${item.quantity}</span>
+              <button data-id="${p.id}" data-op="inc" aria-label="Increase">＋</button>
+            </div>
+          `;
+          cartItemsEl.appendChild(el);
+        });
+        // Bind quantity buttons
+        cartItemsEl.querySelectorAll('button[data-id]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = btn.getAttribute('data-id');
+            const op = btn.getAttribute('data-op');
+            if (op === 'inc') updateCartQty(id, 1);
+            else if (op === 'dec') updateCartQty(id, -1);
+          });
+        });
+      }
+
+      const { subtotal, tax, grand } = calcTotals();
+      subtotalEl.textContent = currency(subtotal);
+      taxEl.textContent = currency(tax);
+      grandTotalEl.textContent = currency(grand);
+
+      checkoutBtn.disabled = cart.length === 0;
+    };
+
+    const updateCartQty = (productId, delta) => {
+      const p = findProduct(productId);
+      if (!p) return;
+      const idx = cart.findIndex(c => c.productId === productId);
+      if (idx === -1) {
+        if (delta > 0) cart.push({ productId, quantity: delta });
+      } else {
+        const newQty = cart[idx].quantity + delta;
+        if (newQty <= 0) cart.splice(idx, 1);
+        else cart[idx].quantity = newQty;
+        // Stock guard
+        if (cart[idx] && cart[idx].quantity > p.stock) cart[idx].quantity = p.stock;
+      }
+      saveCart();
+      renderCart();
+      renderCatalog(); // reflect stock states if needed
+    };
+
+    // Catalog rendering
+    const renderCard = (p) => {
+      const inStock = p.stock > 0;
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.role = 'listitem';
+      card.innerHTML = `
+        <img src="${p.image}" alt="${p.name}">
+        <div class="card-body">
+          <div class="card-title" title="${p.name}">${p.name}</div>
+          <div class="rating" aria-label="Rating">${'★'.repeat(Math.floor(p.rating))}${p.rating % 1 >= 0.5 ? '☆' : ''}</div>
+          <div class="card-desc" style="font-size:.9rem;color:#555;height:2.2em;overflow:hidden;text-overflow:ellipsis;">${p.description}</div>
+          <div class="price" style="margin-top:2px;">${currency(p.price)}</div>
+          <div class="stock" aria-label="Stock status">${inStock ? 'In stock' : 'Out of stock'}</div>
+        </div>
+        <div class="card-actions" style="padding:0.75rem;">
+          <button class="btn btn-secondary" data-id="${p.id}" ${p.stock <= 0 ? 'disabled' : ''}>View</button>
+          <button class="btn btn-primary" data-id="${p.id}" ${p.stock <= 0 ? 'disabled' : ''}>Add to cart</button>
+        </div>
+      `;
+      // Bind actions
+      const buttons = card.querySelectorAll('button');
+      buttons.forEach(b => {
+        b.addEventListener('click', (e) => {
+          const id = b.getAttribute('data-id');
+          if (b.classList.contains('btn-primary')) {
+            // Add to cart (default +1)
+            const prod = findProduct(id);
+            if (prod && prod.stock > 0) {
+              const idx = cart.findIndex(c => c.productId === id);
+              if (idx === -1) cart.push({ productId: id, quantity: 1 });
+              else cart[idx].quantity = Math.min(cart[idx].quantity + 1, prod.stock);
+              saveCart();
+              renderCart();
+            }
+          } else if (b.classList.contains('btn-secondary')) {
+            openProductModal(id);
+          }
+        });
+      });
+      // Click on card to view
+      card.addEventListener('click', (ev) => {
+        if (ev.target.tagName.toLowerCase() === 'button') return;
+        openProductModal(p.id);
+      });
+      return card;
+    };
+
+    const renderCatalog = () => {
+      // Apply filters
+      const query = searchInput.value.toLowerCase();
+      const cat = categoryFilter.value;
+      const sorted = [...products].filter(p => {
+        const matchesCat = (cat === 'all' || p.category === cat);
+        const matchesQuery = (p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query));
+        return matchesCat && matchesQuery;
+      });
+
+      // Sorting
+      const s = sortSelect.value;
+      sorted.sort((a,b) => {
+        if (s === 'price-asc') return a.price - b.price;
+        if (s === 'price-desc') return b.price - a.price;
+        if (s === 'rating-desc') return b.rating - a.rating;
+        if (s === 'name-asc') return a.name.localeCompare(b.name);
+        // relevance default: keep original order
+        return 0;
+      });
+
+      productGrid.innerHTML = '';
+      if (sorted.length === 0) {
+        productGrid.innerHTML = '<div style="padding:1rem;color:var(--muted);">No products match your search. Try adjusting filters.</div>';
+        return;
+      }
+      sorted.forEach(p => {
+        const card = renderCard(p);
+        productGrid.appendChild(card);
+      });
+
+      // Update counts, etc. (optional)
+      // e.g., show total products somewhere if needed
+    };
+
+    // Product modal
+    const openProductModal = (productId) => {
+      const p = findProduct(productId);
+      if (!p) return;
+      currentModalProduct = p;
+      modalMedia.innerHTML = `<img src="${p.image}" alt="${p.name}" style="max-width:100%; height:auto; display:block;"/>`;
+      modalTitle.textContent = p.name;
+      modalDesc.textContent = p.description;
+      modalPrice.textContent = currency(p.price);
+      modalStock.textContent = p.stock > 0 ? `In stock: ${p.stock}` : 'Out of stock';
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    };
+    // Bind modal actions
+    modalClose.addEventListener('click', () => {
+      modal.setAttribute('aria-hidden', 'true');
+      currentModalProduct = null;
+      document.body.style.overflow = '';
+    });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.setAttribute('aria-hidden', 'true');
+        currentModalProduct = null;
+        document.body.style.overflow = '';
+      }
+    });
+    modalAdd.addEventListener('click', () => {
+      if (!currentModalProduct) return;
+      if (currentModalProduct.stock <= 0) return;
+      // Add to cart from modal
+      const existing = cart.find(c => c.productId === currentModalProduct.id);
+      if (!existing) cart.push({ productId: currentModalProduct.id, quantity: 1 });
+      else existing.quantity = Math.min(existing.quantity + 1, currentModalProduct.stock);
+      saveCart();
+      renderCart();
+    });
+
+    // Checkout flow (simulated)
+    checkoutBtn.addEventListener('click', () => {
+      // Simulated flow: show a simple confirmation overlay
+      const orderId = 'ORD-' + Math.random().toString(36).slice(2,7).toUpperCase();
+      cart = [];
+      saveCart();
+      renderCart();
+      // Simple alert-like overlay
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.inset = '0';
+      overlay.style.background = 'rgba(0,0,0,.5)';
+      overlay.style.display = 'grid';
+      overlay.style.placeItems = 'center';
+      overlay.style.zIndex = '50';
+      overlay.innerHTML = `
+        <div style="background:#fff; padding:1.25rem 1.5rem; border-radius:10px; max-width:90%; text-align:center;">
+          <h3 style="margin:0 0 0.5rem;">Checkout complete</h3>
+          <p style="margin:0 0 1rem;">Thank you! Your order <strong>${orderId}</strong> has been placed (simulated).</p>
+          <button id="close-confirm" class="btn btn-primary" style="padding:0.6rem 1rem;">Close</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      document.getElementById('close-confirm').addEventListener('click', () => {
+        overlay.remove();
+      });
+    });
+
+    // Cart toggle
+    openCartBtn.addEventListener('click', () => {
+      cartPanel.classList.add('open');
+      cartPanel.setAttribute('aria-hidden', 'false');
+      renderCart();
+    });
+    closeCartBtn.addEventListener('click', () => {
+      cartPanel.classList.remove('open');
+      cartPanel.setAttribute('aria-hidden', 'true');
+    });
+    // Click outside cart to close (optional)
+    document.addEventListener('click', (e) => {
+      const withinCart = cartPanel.contains(e.target);
+      const isOpen = cartPanel.classList.contains('open');
+      if (isOpen && !withinCart && !openCartBtn.contains(e.target)) {
+        cartPanel.classList.remove('open');
+        cartPanel.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    // Filters & search handlers
+    categoryFilter.addEventListener('change', renderCatalog);
+    sortSelect.addEventListener('change', renderCatalog);
+    searchInput.addEventListener('input', () => {
+      // Debounce-like feel (very simple)
+      clearTimeout(window.__searchTimer);
+      window.__searchTimer = setTimeout(renderCatalog, 120);
+    });
+
+    // Init: load cart & render
+    const init = () => {
+      // Populate category filter options
+      const cats = Array.from(new Set(products.map(p => p.category)));
+      cats.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        categoryFilter.appendChild(opt);
+      });
+
+      loadCart();
+      renderCart();
+      renderCatalog();
+
+      // Accessibility: trap focus in modal when open (basic)
+      document.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+          modal.setAttribute('aria-hidden','true');
+          currentModalProduct = null;
+          document.body.style.overflow = '';
+        }
+      });
+    };
+
+    // Run
+    init();
+  </script>
+
+  
+</body>
+</html>
