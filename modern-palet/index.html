@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modern Palette SPA</title>
+  <meta name="description" content="A production-ready, single-page scaffold using a five-color palette with accessibility, responsiveness, and smooth micro-interactions." />
+  <style>
+    /* Design tokens (CSS variables) - palette-driven for branding consistency */
+    :root {
+      --bg: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+
+      /* Palette colors (exact colors from prompt) */
+      --brand-1: #FFADAD;
+      --brand-2: #FFD6A5;
+      --brand-3: #FDFFB6;
+      --brand-4: #CAFFBF;
+      --brand-5: #9BF6FF;
+
+      --surface: #ffffff;
+      --radius: 14px;
+      --shadow: 0 8px 26px rgba(0, 0, 0, 0.08);
+
+      --focus-ring: 0 0 0 3px rgba(155, 246, 255, 0.5);
+
+      /* Spacing scale (fluid, easy to extend) */
+      --space-1: 8px;
+      --space-2: 12px;
+      --space-3: 16px;
+      --space-4: 20px;
+      --space-5: 28px;
+      --space-6: 40px;
+      --space-7: 64px;
+
+      /* Breakpoints (mobile-first) */
+      --bp-sm: 600px;
+      --bp-md: 900px;
+      --bp-lg: 1200px;
+    }
+
+    /* Global resets and base styles */
+    *,
+    *::before,
+    *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;
+      color: var(--text);
+      background: radial-gradient(circle at 20% -10%, rgba(255, 213, 165, 0.14) 0%, transparent 40%),
+                  radial-gradient(circle at 100% 0%, rgba(156, 246, 255, 0.15) 0%, transparent 40%),
+                  var(--bg);
+    }
+
+    /* Layout helpers */
+    .container {
+      width: 92%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Skip link for accessibility */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      width: 1px; height: 1px;
+      overflow: hidden;
+    }
+    .skip-link:focus {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      padding: 10px 14px;
+      background: #111;
+      color: #fff;
+      border-radius: 8px;
+      z-index: 9999;
+      text-decoration: none;
+    }
+
+    /* Header / Nav */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: saturate(1.2) blur(6px);
+      background: rgba(255,255,255,0.92);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(var(--space-3)) 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .logo-mark {
+      width: 34px; height: 34px;
+      display: inline-block;
+      border-radius: 9px;
+      background: conic-gradient(from 180deg at 50% 50%, var(--brand-5), var(--brand-4), var(--brand-3), var(--brand-2), var(--brand-1), var(--brand-5));
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.6);
+    }
+    .brand-name {
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: .2px;
+    }
+
+    .nav {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+    }
+    .nav-link {
+      display: inline-block;
+      padding: 10px 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+    .nav-link:hover, .nav-link:focus {
+      outline: none;
+      background: rgba(0,0,0,0.04);
+    }
+    .nav-link.active {
+      background: linear-gradient(135deg, var(--brand-5), var(--brand-2));
+      color: #062a2e;
+      border-color: rgba(0,0,0,0.08);
+    }
+
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    @media (max-width: var(--bp-sm)) {
+      .nav-links {
+        position: absolute;
+        top: 64px;
+        right: 16px;
+        left: 16px;
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 12px;
+        padding: 12px;
+        display: none;
+        flex-direction: column;
+        gap: 8px;
+        box-shadow: var(--shadow);
+      }
+      .nav-links.show {
+        display: flex;
+      }
+      .menu-toggle {
+        display: inline-flex;
+      }
+    }
+
+    /* Hero section */
+    .hero {
+      padding: 72px 0 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+    .hero-copy {
+      z-index: 1;
+    }
+    .hero-title {
+      font-size: 2.6rem;
+      line-height: 1.04;
+      margin: 0 0 12px;
+      letter-spacing: -0.5px;
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 60ch;
+      margin-bottom: calc(var(--space-4) * 1.25);
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      border-radius: 999px;
+      font-weight: 700;
+      text-decoration: none;
+      border: 0;
+      cursor: pointer;
+      color: #062a2e;
+      background: linear-gradient(135deg, var(--brand-5), var(--brand-2), var(--brand-1));
+      box-shadow: 0 6px 16px rgba(0,0,0,.08);
+    }
+    .cta.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 2px solid rgba(0,0,0,0.08);
+    }
+
+    .hero-art {
+      position: relative;
+      height: 320px;
+      min-height: 320px;
+      border-radius: var(--radius);
+      background: radial-gradient(circle at 25% 20%, rgba(255,255,255,0.9), rgba(255,255,255,0.1) 40%), linear-gradient(135deg, #fff, #f7f7f7);
+      border: 1px solid rgba(0,0,0,0.06);
+      display: grid; place-items: center;
+      overflow: hidden;
+    }
+    /* Decorative blobs using the palette colors */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(28px);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .blob.b1 { width: 260px; height: 260px; background: var(--brand-1); left: -60px; top: -60px; }
+    .blob.b2 { width: 320px; height: 320px; background: var(--brand-5); right: -100px; bottom: -100px; }
+    .blob.b3 { width: 240px; height: 240px; background: var(--brand-4); left: 40%; top: 20%; transform: translate(-50%, -50%); opacity: 0.6; }
+
+    /* Sections styling */
+    .section {
+      padding: calc(var(--space-6)) 0;
+    }
+    .section h2 {
+      font-size: 1.75rem;
+      margin: 0 0 calc(var(--space-3) / 2);
+    }
+    .section p { color: var(--muted); }
+
+    /* Features grid */
+    .features-grid {
+      display: grid;
+      gap: var(--space-4);
+      grid-template-columns: 1fr;
+    }
+    .feature {
+      padding: calc(var(--space-3)) var(--space-4);
+      border-radius: var(--radius);
+      border: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 14px;
+      align-items: start;
+      min-height: 110px;
+    }
+    .feature-icon {
+      width: 56px; height: 56px; border-radius: 14px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--brand-2), var(--brand-3));
+      color: #06313a;
+      font-weight: 800;
+    }
+    .feature h3 { margin: 0 0 6px; font-size: 1.05rem; }
+    .feature p { margin: 0; color: var(--muted); }
+
+    /* Portfolio grid */
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+    .card {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+      display: grid;
+      grid-template-rows: 120px auto;
+      min-height: 210px;
+    }
+    .card-visual {
+      background: linear-gradient(135deg, var(--brand-5), var(--brand-2));
+      display: grid; align-items: center; justify-items: center;
+      color: #06313a;
+      font-weight: 800;
+      font-size: 1.2rem;
+    }
+    .card-content {
+      padding: 12px 14px;
+    }
+
+    /* About / Testimonials / Contact sections */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+
+    @media (min-width: var(--bp-sm)) {
+      .hero-grid { grid-template-columns: 1.1fr 0.9fr; align-items: center; }
+      .section { padding-top: calc(var(--space-6)); padding-bottom: calc(var(--space-6)); }
+    }
+
+    @media (min-width: var(--bp-md)) {
+      .features-grid { grid-template-columns: repeat(3, 1fr); }
+      .portfolio-grid { grid-template-columns: repeat(3, 1fr); }
+      .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (min-width: var(--bp-lg)) {
+      .hero { padding-bottom: 80px; }
+      .portfolio-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    /* Animations (intersections) */
+    .in-view {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 600ms ease-out, transform 600ms ease-out;
+    }
+    .hidden {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 600ms ease-out, transform 600ms ease-out;
+    }
+
+    /* Reduced motion considerations */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .in-view,
+      .hidden { transition: none !important; transform: none !important; opacity: 1 !important; }
+    }
+
+    /* Footer */
+    footer {
+      padding: 40px 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+      border-top: 1px solid rgba(0,0,0,0.08);
+      background: #fcfcfc;
+    }
+
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <!-- Header / Navigation -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner" aria-label="Site header">
+      <a class="logo" href="#hero" aria-label="Go to home">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span class="brand-name">Palette Studio</span>
+      </a>
+
+      <nav class="nav" aria-label="Main navigation">
+        <button class="menu-toggle" aria-label="Toggle navigation" aria-controls="nav-links" aria-expanded="false">Menu</button>
+        <ul id="nav-links" class="nav-links" role="menubar">
+          <li><a class="nav-link" href="#features" role="menuitem">Features</a></li>
+          <li><a class="nav-link" href="#portfolio" role="menuitem">Portfolio</a></li>
+          <li><a class="nav-link" href="#about" role="menuitem">About</a></li>
+          <li><a class="nav-link" href="#testimonials" role="menuitem">Testimonials</a></li>
+          <li><a class="nav-link" href="#contact" role="menuitem">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main id="main" class="container" role="main" tabindex="-1">
+    <!-- Hero -->
+    <section id="hero" class="hero" aria-label="Hero section">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 class="hero-title">Design fast. Ship beautifully. Pitch-perfect UX.</h1>
+          <p class="hero-sub">
+            A modern, responsive single-page scaffold built with a clean UI, smooth micro-interactions, and accessibility in mind.
+            Seamlessly substitute your content and assets while keeping the palette intact.
+          </p>
+          <a href="#contact" class="cta" aria-label="Get started with a quote">Get started</a>
+          <button class="cta secondary" style="margin-left:12px;" aria-label="Learn more about the project">Learn more</button>
+        </div>
+        <div class="hero-art" aria-label="Decorative hero artwork">
+          <svg width="260" height="180" viewBox="0 0 260 180" role="img" aria-label="Abstract palette shape">
+            <defs>
+              <linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
+                <stop stop-color="#FFADAD" offset="0"/>
+                <stop stop-color="#9BF6FF" offset="1"/>
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="60" r="40" fill="url(#grad)" opacity="0.9"/>
+            <circle cx="180" cy="40" r="28" fill="#FFD6A5" opacity="0.9"/>
+            <circle cx="140" cy="120" r="46" fill="#CAFFBF" opacity="0.85"/>
+            <rect x="60" y="90" width="140" height="60" rx="12" fill="none" stroke="#9BF6FF" stroke-width="3" />
+          </svg>
+          <span class="sr-only" aria-hidden="true" style="position:absolute; clip:rect(1px,1px,1px,1px);">Brand decorative shapes</span>
+          <!-- Decorative blobs purely presentational -->
+          <span class="blob b1" aria-hidden="true"></span>
+          <span class="blob b2" aria-hidden="true"></span>
+          <span class="blob b3" aria-hidden="true"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section" aria-label="Features">
+      <h2>What you get</h2>
+      <p>Modular, accessible components that emphasize brand color usage and smooth interactions. Built for rapid content substitution.</p>
+
+      <div class="features-grid" aria-label="Feature list">
+        <article class="feature hidden" aria-label="Feature One">
+          <div class="feature-icon" aria-label="Icon illustrating speed">⚡</div>
+          <div>
+            <h3>Performance-first</h3>
+            <p>Lean JS, semantic HTML and CSS that respect reduced-motion preferences while remaining snappy on all devices.</p>
+          </div>
+        </article>
+
+        <article class="feature hidden" aria-label="Feature Two">
+          <div class="feature-icon" aria-label="Icon illustrating accessibility">♿</div>
+          <div>
+            <h3>Accessible by default</h3>
+            <p>Proper focus states, ARIA roles where needed, and high-contrast tokens for readability.</p>
+          </div>
+        </article>
+
+        <article class="feature hidden" aria-label="Feature Three">
+          <div class="feature-icon" aria-label="Icon illustrating responsiveness">📱</div>
+          <div>
+            <h3>Responsive & flexible</h3>
+            <p>Mobile-first grid with clear typography and scalable components for any viewport.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Portfolio / Gallery -->
+    <section id="portfolio" class="section" aria-label="Portfolio gallery">
+      <h2>Gallery</h2>
+      <p>Placeholder cards you can replace with real works. All cards adapt to layout changes gracefully.</p>
+
+      <div class="portfolio-grid" aria-label="Portfolio grid">
+        <article class="card hidden" aria-label="Gallery item 1">
+          <div class="card-visual" aria-label="Preview tile">ITEM 1</div>
+          <div class="card-content">
+            <strong>Project Title</strong>
+            <p style="margin:6px 0 0; color:var(--muted);">Brief description or caption for the project.</p>
+          </div>
+        </article>
+
+        <article class="card hidden" aria-label="Gallery item 2">
+          <div class="card-visual" aria-label="Preview tile">ITEM 2</div>
+          <div class="card-content">
+            <strong>Project Title</strong>
+            <p style="margin:6px 0 0; color:var(--muted);">Brief description or caption for the project.</p>
+          </div>
+        </article>
+
+        <article class="card hidden" aria-label="Gallery item 3">
+          <div class="card-visual" aria-label="Preview tile">ITEM 3</div>
+          <div class="card-content">
+            <strong>Project Title</strong>
+            <p style="margin:6px 0 0; color:var(--muted);">Brief description or caption for the project.</p>
+          </div>
+        </article>
+
+        <article class="card hidden" aria-label="Gallery item 4">
+          <div class="card-visual" aria-label="Preview tile">ITEM 4</div>
+          <div class="card-content">
+            <strong>Project Title</strong>
+            <p style="margin:6px 0 0; color:var(--muted);">Brief description or caption for the project.</p>
+          </div>
+        </article>
+
+        <article class="card hidden" aria-label="Gallery item 5">
+          <div class="card-visual" aria-label="Preview tile">ITEM 5</div>
+          <div class="card-content">
+            <strong>Project Title</strong>
+            <p style="margin:6px 0 0; color:var(--muted);">Brief description or caption for the project.</p>
+          </div>
+        </article>
+
+        <article class="card hidden" aria-label="Gallery item 6">
+          <div class="card-visual" aria-label="Preview tile">ITEM 6</div>
+          <div class="card-content">
+            <strong>Project Title</strong>
+            <p style="margin:6px 0 0; color:var(--muted);">Brief description or caption for the project.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section" aria-label="About">
+      <h2>About</h2>
+      <div class="grid-3" aria-label="About content">
+        <div class="hidden" style="padding:12px; border:1px solid rgba(0,0,0,.08); border-radius:12px; background:#fff;">
+          <h3>Mission</h3>
+          <p>Provide a production-ready front-end scaffold that you can customize quickly while preserving accessibility and performance.</p>
+        </div>
+        <div class="hidden" style="padding:12px; border:1px solid rgba(0,0,0,.08); border-radius:12px; background:#fff;">
+          <h3>Philosophy</h3>
+          <p>Palette-driven design, semantic markup, and minimal JS that scales with your content needs.</p>
+        </div>
+        <div class="hidden" style="padding:12px; border:1px solid rgba(0,0,0,.08); border-radius:12px; background:#fff;">
+          <h3>Automation</h3>
+          <p>Clear tokens and reusable components to accelerate delivery and maintain consistency.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="section" aria-label="Testimonials">
+      <h2>What clients say</h2>
+      <p>Concise, accessible feedback blocks you can replace with real testimonials.</p>
+      <div class="grid-3" aria-label="Testimonials grid">
+        <blockquote class="hidden" style="padding:14px; border-radius:12px; border:1px solid rgba(0,0,0,.08); background:#fff;">
+          “This scaffold cut our time-to-market in half. The palette is tasteful and the interactions are subtle yet delightful.”
+          <footer style="margin-top:8px; font-size:0.9em; color:var(--muted)">— UX Lead, Acme Co.</footer>
+        </blockquote>
+        <blockquote class="hidden" style="padding:14px; border-radius:12px; border:1px solid rgba(0,0,0,.08); background:#fff;">
+          “Accessible by default and incredibly easy to customize. A solid starting point for our next product.”
+          <footer style="margin-top:8px; font-size:0.9em; color:var(--muted)">— Frontend Engineer, Nova Labs</footer>
+        </blockquote>
+        <blockquote class="hidden" style="padding:14px; border-radius:12px; border:1px solid rgba(0,0,0,.08); background:#fff;">
+          “Beautiful color system. The components are clean and work across breakpoints without breaking layout.”
+          <footer style="margin-top:8px; font-size:0.9em; color:var(--muted)">— Designer, PixelForge</footer>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section" aria-label="Contact">
+      <h2>Contact</h2>
+      <p>Provide your details and a quick message. This is a self-contained front-end scaffold ready for content substitution.</p>
+
+      <form aria-label="Contact form" onsubmit="handleFormSubmit(event)" style="display:grid; grid-template-columns:1fr 1fr; gap: var(--space-4); align-items:end;">
+        <div>
+          <label for="name" style="display:block; font-weight:600; margin-bottom:6px;">Name</label>
+          <input id="name" name="name" type="text" required placeholder="Your name" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;">
+        </div>
+        <div>
+          <label for="email" style="display:block; font-weight:600; margin-bottom:6px;">Email</label>
+          <input id="email" name="email" type="email" required placeholder="you@example.com" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;">
+        </div>
+        <div style="grid-column:1 / -1;">
+          <label for="message" style="display:block; font-weight:600; margin-bottom:6px;">Message</label>
+          <textarea id="message" name="message" rows="4" required placeholder="Tell us about your project..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd;"></textarea>
+        </div>
+        <div style="grid-column:1 / 3; display:flex; gap:12px; align-items:center;">
+          <button class="cta" type="submit" aria-label="Send message">Send message</button>
+          <span id="form-status" aria-live="polite" style="color:var(--muted); font-size:0.95em;"></span>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <div class="container" style="padding: 20px 0;">
+      © <span id="year"></span> Palette Studio. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    // Small, production-friendly JavaScript for interactivity
+    (function () {
+      // Update year in footer
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Mobile nav toggle
+      const toggle = document.querySelector('.menu-toggle');
+      const navLinks = document.getElementById('nav-links');
+      toggle.addEventListener('click', () => {
+        const isOpen = navLinks.classList.toggle('show');
+        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+
+      // Active link highlighting based on section in view
+      const sections = ['hero','features','portfolio','about','testimonials','contact'].map(id => document.getElementById(id));
+      const links = Array.from(document.querySelectorAll('.nav-link'));
+
+      function setActiveLink() {
+        let index = sections.findIndex(sec => {
+          const rect = sec.getBoundingClientRect();
+          return rect.top <= 120 && rect.bottom >= 120;
+        });
+        if (index < 0) index = 0;
+        links.forEach((a, i) => {
+          a.classList.toggle('active', i === (index >= 0 ? index : 0));
+        });
+      }
+
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const id = entry.target.id;
+          const el = document.querySelector('a[href="#' + id + '"]');
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            entry.target.classList.remove('hidden');
+            if (el) el.classList.add('active');
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach(sec => {
+        if (sec) {
+          sec.classList.add('hidden');
+          observer.observe(sec);
+        }
+      });
+
+      // Initial active link
+      setActiveLink();
+
+      // Intersection observer to set active link on scroll
+      document.addEventListener('scroll', setActiveLink, { passive: true });
+
+      // Close mobile nav on resize to desktop
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 600) {
+          navLinks.classList.remove('show');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // Form handling (no network)
+      window.handleFormSubmit = function (e) {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const message = document.getElementById('message').value.trim();
+        const status = document.getElementById('form-status');
+        if (!name || !email || !message) {
+          status.textContent = 'Please fill in all fields.';
+          status.style.color = '#b91c1c';
+          return;
+        }
+        status.textContent = 'Thank you! Your message has been captured in this demo.';
+        status.style.color = '#1e293b';
+        e.target.reset();
+      };
+
+      // Respect reduced motion: disable non-essential animations if user prefers reduced motion
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        document.querySelectorAll('.hidden, .in-view').forEach(el => {
+          el.style.opacity = 1;
+          el.style.transform = 'none';
+          el.style.transition = 'none';
+        });
+      }
+
+    })();
+  </script>
+</body>
+</html>
