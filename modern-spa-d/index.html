@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Design System SPA Scaffold</title>
+  <style>
+    /* Design System Tokens
+       - Color tokens derived from the required palette
+       - Typography, spacing, and radius scale
+       - Naming: color tokens, semantic roles, and component tokens
+    */
+
+    :root {
+      /* Core surface and typography */
+      --color-bg: #f7f7fb;
+      --color-surface: #ffffff;
+      --color-text: #1b1b1b;
+      --color-muted: #6b7280;
+
+      --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono";
+
+      /* Color palette tokens (five colors) */
+      --amber: #FFBE0B;     /* warm accent */
+      --orange: #FB5607;    /* energetic emphasis */
+      --pink: #FF006E;      /* bold accent / callout */
+      --purple: #8338EC;    /* brand hue */
+      --blue: #3A86FF;      /* primary action */
+
+      /* Semantic color roles (token-driven) */
+      --color-primary: var(--blue);
+      --color-accent: var(--pink);
+      --color-warn: var(--amber);
+      --color-surprise: var(--purple);
+      --color-info: #0b5fff;
+
+      /* UI tokens */
+      --radius: 14px;
+      --radius-sm: 10px;
+      --gap: 1rem;
+      --gap-lg: 1.5rem;
+      --shadow-1: 0 6px 18px rgba(0,0,0,.08);
+      --shadow-2: 0 12px 28px rgba(0,0,0,.12);
+    }
+
+    /* Global styles */
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font-family-sans);
+      color: var(--color-text);
+      background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(247,247,251,1) 60%), var(--color-bg);
+      line-height: 1.6;
+    }
+
+    /* Layout helpers */
+    .container {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
+
+    /* Navigation */
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: saturate(1.2) blur(6px);
+      border-bottom: 1px solid #eee;
+    }
+    nav.nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      text-decoration: none;
+      color: var(--color-text);
+      font-weight: 700;
+      letter-spacing: .4px;
+    }
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      display: inline-block;
+    }
+    ul.nav-links {
+      list-style: none;
+      display: flex;
+      gap: 12px;
+      padding: 0;
+      margin: 0;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--color-text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+    }
+    .nav-links a:hover,
+    .nav-links a:focus {
+      outline: none;
+      background: #f2f4f8;
+      border-color: #e5e7eb;
+    }
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .2s ease, background-color .2s ease, color .2s ease;
+    }
+    .btn:focus-visible { outline: 3px solid #000; outline-offset: 2px; }
+
+    /* Button variants */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-surprise));
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(58,134,255,.4);
+    }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text);
+      border: 1px solid #d8d8d8;
+    }
+    .btn-secondary {
+      background: var(--color-warn);
+      color: #1b1b1b;
+    }
+
+    /* Sections */
+    section.section {
+      padding: 72px 0;
+    }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    h2.section-title {
+      font-size: 1.8rem;
+      margin: 0;
+      letter-spacing: .2px;
+    }
+
+    /* Hero styles */
+    section#hero {
+      position: relative;
+      color: #0b0b0b;
+      padding-top: 90px;
+      padding-bottom: 90px;
+      overflow: hidden;
+      background: linear-gradient(120deg, rgba(58,134,255,.08), rgba(131,56,236,.08) 60%), #fff;
+    }
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+    .hero-copy {
+      max-width: 700px;
+    }
+    .hero-visual {
+      display: grid;
+      place-items: center;
+    }
+    .hero-card {
+      padding: 20px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #eee;
+      box-shadow: var(--shadow-1);
+      text-align: center;
+    }
+
+    /* Features grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      padding: 18px;
+      border-radius: var(--radius-sm);
+      background: #fff;
+      border: 1px solid #eee;
+      box-shadow: var(--shadow-1);
+    }
+    .card h3 { margin: 0 0 6px; font-size: 1.05rem; }
+    .card p { margin: 0; color: var(--color-muted); }
+
+    /* Gallery demo blocks with color tokens */
+    .gallery-grid .tile {
+      height: 120px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: .3px;
+      text-shadow: 0 1px 2px rgba(0,0,0,.25);
+    }
+    .tile.t-blue { background: var(--blue); }
+    .tile.t-pink { background: var(--pink); }
+    .tile.t-amber { background: var(--amber); }
+    .tile.t-purple { background: var(--purple); }
+    .tile.t-orange { background: var(--orange); }
+
+    /* Testimonials carousel (basic) */
+    .carousel {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .testi {
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      background: #fff;
+      border: 1px solid #eee;
+    }
+    .testi + .testi { margin-top: 8px; }
+
+    /* Contact form */
+    form#contact-form {
+      display: grid;
+      gap: 12px;
+      max-width: 680px;
+    }
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+    label { font-weight: 600; font-size: .95rem; }
+    input, textarea {
+      border: 1px solid #dcdcdc;
+      border-radius: 8px;
+      padding: 12px;
+      font: inherit;
+      width: 100%;
+      background: #fff;
+    }
+    textarea { resize: vertical; min-height: 120px; }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(0,0,0,.5);
+      z-index: 60;
+    }
+    .modal[hidden] { display: none; }
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      width: min(520px, 92%);
+      box-shadow: var(--shadow-2);
+    }
+
+    /* Footer */
+    footer.site-footer {
+      padding: 32px 0;
+      text-align: center;
+      color: var(--color-muted);
+    }
+
+    /* Design System panel (documentation-like) - collapsible for scope clarity */
+    details.design-system {
+      margin-top: 8px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #eee;
+    }
+    summary.design-system__summary {
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Accessibility: reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition: none !important; }
+    }
+
+    /* Responsive tweaks for smaller screens */
+    @media (max-width: 860px) {
+      .hero-content { grid-template-columns: 1fr; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="site-header" aria-label="Site header">
+    <div class="container nav" role="navigation">
+      <a class="brand" href="#hero" aria-label="Home">
+        <span class="brand-icon" aria-hidden="true"></span>
+        <span>NovaSPA</span>
+      </a>
+      <ul class="nav-links" aria-label="Main">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#about">Design System</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="btn btn-primary" id="open-tour" aria-controls="tour-modal" aria-haspopup="dialog" aria-expanded="false">Open Tour</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section id="hero" class="section" aria-label="Hero">
+      <div class="container hero-content">
+        <div class="hero-copy">
+          <h1 style="font-size: clamp(2rem, 2.5vw + 1rem, 3rem); margin:0 0 12px;">
+            A modern, responsive single-page scaffold
+          </h1>
+          <p style="font-size:1.05rem; color:var(--color-muted);">
+            Built with a clean UI, smooth micro-interactions, and a flexible design system.
+            Color palette used: amber, orange, pink, purple and blue to harmonize visuals.
+          </p>
+          <div style="display:flex; gap:.75rem; flex-wrap: wrap; align-items:center;">
+            <a href="#features" class="btn btn-primary" aria-label="Explore features">Explore Features</a>
+            <button class="btn btn-ghost" id="learn-more" aria-label="Learn more about design system">Design System</button>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Illustrative panel">
+          <div class="hero-card" role="img" aria-label="Colorful UI surface">
+            <div style="font-weight:700; margin-bottom:6px;">UI Kit Preview</div>
+            <div style="font-size:.9rem; color:var(--color-muted);">
+              Tokens: primary-blue, accent-pink, warn-amber, purple, amber
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inline Documentation / Design System teaser -->
+      <div class="container" style="margin-top:28px;">
+        <details class="design-system" open>
+          <summary class="design-system__summary">Design System Snapshot (unchanged for handoff)</summary>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:8px;">
+            <div class="card" aria-label="Color tokens">
+              <strong>Color tokens</strong>
+              <ul style="margin:6px 0 0 18px; padding:0;">
+                <li> --color-primary: #3A86FF </li>
+                <li> --color-accent: #FF006E </li>
+                <li> --color-warn: #FFBE0B </li>
+                <li> --color-surprise: #8338EC </li>
+                <li> --color-info:  #3A86FF </li>
+              </ul>
+            </div>
+            <div class="card" aria-label="Typography & spacing">
+              <strong>Typography & tokens</strong>
+              <div style="margin-top:6px; color:var(--color-muted); font-family: var(--font-family-sans);">
+                Font: system-ui stack; Spacing scale: 4px, 8px, 12px, 16px, 24px
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section" aria-labelledby="features-title">
+      <div class="container section-header">
+        <h2 id="features-title" class="section-title">Features & Components</h2>
+        <span style="color:var(--color-muted); font-size:.9rem;">
+          Responsive grid, accessible tokens, smooth transitions
+        </span>
+      </div>
+
+      <div class="container grid" aria-label="Feature cards">
+        <article class="card" aria-label="Feature 1">
+          <h3>Responsive Grid System</h3>
+          <p>Fluid, token-driven spacing adapts from mobile to desktop with minimal CSS.</p>
+        </article>
+        <article class="card" aria-label="Feature 2">
+          <h3>Accessible UI Kit</h3>
+          <p>WCAG-conscious color usage, keyboard navigation, and ARIA labels baked-in.</p>
+        </article>
+        <article class="card" aria-label="Feature 3">
+          <h3>Smooth Micro-Interactions</h3>
+          <p>Soft transitions that respect motion preferences and maintain readability.</p>
+        </article>
+        <article class="card" aria-label="Feature 4">
+          <h3>Anchor-based SPA</h3>
+          <p>Single-page flow with sections and in-page navigation anchors.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- About / Design System deeper dive -->
+    <section id="about" class="section" aria-labelledby="about-title">
+      <div class="container section-header">
+        <h2 id="about-title" class="section-title">Design System & Tokens (Reference)</h2>
+        <span style="color:var(--color-muted); font-size:.9rem;">Naming conventions and usage guidelines</span>
+      </div>
+
+      <div class="container" style="margin-bottom: 18px;">
+        <div class="grid" aria-label="System grid">
+          <div class="card" aria-label="Typography">
+            <h3>Typography</h3>
+            <p>Font-family: system sans; Heading scale: 2rem–3rem; Body: 1rem–1.125rem</p>
+          </div>
+          <div class="card" aria-label="Spacing">
+            <h3>Spacing</h3>
+            <p>0.5x, 1x, 1.5x, 2x units for predictable rhythm</p>
+          </div>
+          <div class="card" aria-label="Color usage">
+            <h3>Color usage</h3>
+            <p>Five tokens mapped to UI roles (primary, accent, warn, surprise, info)</p>
+          </div>
+          <div class="card" aria-label="Tokens">
+            <h3>Tokens naming</h3>
+            <p>Color tokens follow --color-<role> naming; components consume via CSS variables</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery / Visual samples -->
+    <section id="gallery" class="section" aria-labelledby="gallery-title">
+      <div class="container section-header">
+        <h2 id="gallery-title" class="section-title">Gallery / UI Demos</h2>
+        <span style="color:var(--color-muted); font-size:.9rem;">Colorful tiles showcase token usage</span>
+      </div>
+
+      <div class="container gallery-grid grid" aria-label="Gallery tiles" style="gap:12px;">
+        <div class="tile t-blue" aria-label="Tile blue">Blue</div>
+        <div class="tile t-pink" aria-label="Tile pink">Pink</div>
+        <div class="tile t-amber" aria-label="Tile amber">Amber</div>
+        <div class="tile t-purple" aria-label="Tile purple">Purple</div>
+        <div class="tile t-orange" aria-label="Tile orange" style="background: var(--orange);">Orange</div>
+        <div class="tile t-blue" aria-label="Tile blue 2" style="opacity:.92;">Blue 2</div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="section" aria-labelledby="testimonials-title">
+      <div class="container section-header">
+        <h2 id="testimonials-title" class="section-title">What people say</h2>
+      </div>
+
+      <div class="container carousel" aria-label="Testimonials">
+        <div class="testi" role="group" aria-label="Testimonial 1">
+          <strong>Alex</strong> — <span style="color:var(--color-muted); font-size:.9em;">Designer</span>
+          <p style="margin:6px 0 0;">"Clean, scalable system with calm animations. A joy to work with."</p>
+        </div>
+        <div class="testi" role="group" aria-label="Testimonial 2">
+          <strong>Priya</strong> — <span style="color:var(--color-muted); font-size:.9em;">Developer</span>
+          <p style="margin:6px 0 0;">"Token-driven design makes handoff to devs effortless."</p>
+        </div>
+        <div class="testi" role="group" aria-label="Testimonial 3">
+          <strong>Chen</strong> — <span style="color:var(--color-muted); font-size:.9em;">PM</span>
+          <p style="margin:6px 0 0;">"Accessible by default, with reduced-motion options. Great baseline."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section" aria-labelledby="contact-title">
+      <div class="container section-header">
+        <h2 id="contact-title" class="section-title">Get in touch</h2>
+        <span style="color:var(--color-muted); font-size:.9rem;">We’ll respond within 1-2 business days</span>
+      </div>
+
+      <div class="container" aria-label="Contact form area" style="margin-top:6px;">
+        <form id="contact-form" autocomplete="on">
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Your name" required />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" required />
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Your message..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" aria-label="Send message">Send Message</button>
+        </form>
+        <div id="form-status" role="status" aria-live="polite" hidden style="margin-top:8px;">
+          Thanks! Your message has been sent (demo).
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" aria-label="Footer">
+    <p>© 2025 NovaSPA — Design System Scaffold. All rights reserved.</p>
+  </footer>
+
+  <!-- Modal: Tour -->
+  <div id="tour-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tour-title" hidden>
+    <div class="modal-content" role="document">
+      <h3 id="tour-title" style="margin-top:0;">Quick Tour</h3>
+      <p style="color:var(--color-muted);">A concise walkthrough of tokens, grid, and components baked into this scaffold.</p>
+      <ul style="margin:8px 0 0 20px; color:var(--color-muted);">
+        <li>Color tokens mapped to UI roles</li>
+        <li>Accessible navigation and focus management</li>
+        <li>Anchor-based single-page layout with smooth transitions</li>
+      </ul>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+        <button class="btn" id="modal-close" aria-label="Close tour">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Minor in-page helper script to handle modal, anchors, and simple interactions -->
+  <script>
+    // Focus management and simple interactions
+    (function () {
+      const openTourBtn = document.getElementById('open-tour');
+      const tourModal = document.getElementById('tour-modal');
+      const modalClose = document.getElementById('modal-close');
+      const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+      let lastFocused = null;
+
+      function openModal() {
+        lastFocused = document.activeElement;
+        tourModal.hidden = false;
+        // trap focus inside modal
+        const focusable = tourModal.querySelectorAll(focusableSelectors);
+        if (focusable.length) focusable[0].focus();
+        document.body.style.overflow = 'hidden';
+        openTourBtn.setAttribute('aria-expanded', 'true');
+      }
+
+      function closeModal() {
+        tourModal.hidden = true;
+        document.body.style.overflow = '';
+        if (lastFocused) lastFocused.focus();
+        openTourBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      openTourBtn.addEventListener('click', openModal);
+      modalClose.addEventListener('click', closeModal);
+      tourModal.addEventListener('click', (e) => {
+        if (e.target === tourModal) closeModal();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !tourModal.hidden) closeModal();
+        // Basic trap: keep focus inside modal while open
+        if (!tourModal.hidden && e.key === 'Tab') {
+          const focusables = tourModal.querySelectorAll(focusableSelectors);
+          if (focusables.length === 0) return;
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            last.focus();
+            e.preventDefault();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            first.focus();
+            e.preventDefault();
+          }
+        }
+      });
+    })();
+
+    // Smooth reveal: simple intersection observer to fade in sections
+    (function revealOnView() {
+      const sections = document.querySelectorAll('.section');
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.style.transition = 'opacity 600ms ease, transform 600ms ease';
+            e.target.style.opacity = 1;
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.transform = 'translateY(0)';
+            e.target.style.willChange = 'opacity, transform';
+            e.target.style.opacity = 1;
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08 });
+
+      sections.forEach((sec) => {
+        sec.style.opacity = 0;
+        sec.style.transform = 'translateY(20px)';
+        obs.observe(sec);
+      });
+    })();
+
+    // Contact form submission (demo without backend)
+    (function handleForm() {
+      const form = document.getElementById('contact-form');
+      const status = document.getElementById('form-status');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // basic validation (HTML5 handles required fields)
+        status.hidden = false;
+        status.textContent = 'Thanks! Your message has been sent (demo).';
+        form.reset();
+      });
+    })();
+
+    // Learn more / Design System button in hero
+    (function learnMoreToggle() {
+      const btn = document.getElementById('learn-more');
+      btn.addEventListener('click', () => {
+        const about = document.getElementById('about');
+        if (about) {
+          about.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
