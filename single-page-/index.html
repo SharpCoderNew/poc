@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PixelCart - Scalable SPA E-commerce Scaffold</title>
+  <style>
+    /* Design Tokens (Palette) - enforce color palette across the app */
+    :root {
+      --color-background: #f6f7f8;
+      --color-surface: #ffffff;
+      --color-text: #1c1f23;
+      --color-muted: #5f6b73;
+
+      /* Palette tokens provided in the prompt */
+      --color-primary: #06D6A0;   /* emerald-teal */
+      --color-accent: #1B9AAA;    /* teal-blue */
+      --color-accent-2: #EF476F;  /* pink-red */
+      --color-warn: #FFC43D;       /* warm yellow */
+      --color-dark: #393E41;       /* deep charcoal */
+
+      /* UI-specific tokens for consistency */
+      --radius: 12px;
+      --shadow: 0 6px 18px rgba(0,0,0,.08);
+      --gap: 16px;
+    }
+
+    /* Global / layout */
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color: var(--color-text);
+      background: var(--color-background);
+    }
+
+    /* Layout containers */
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .brand-logo {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      display: inline-block;
+    }
+    .brand-name { font-weight: 700; font-size: 1.05rem; }
+
+    .searchbar {
+      display: flex; align-items: center; gap: 8px;
+      flex: 1;
+      max-width: 720px;
+      margin-left: auto;
+    }
+    .searchbar input {
+      width: 100%; padding: 10px 12px;
+      border: 1px solid #ddd; border-radius: 999px;
+      outline: none;
+      background: #fff;
+    }
+    .searchbar input:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(27,154,170,.15);
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 10px 14px; border-radius: 999px; border: none;
+      background: var(--color-primary); color: #fff;
+      cursor: pointer; font-weight: 600;
+    }
+    .btn.secondary {
+      background: #fff; color: var(--color-dark);
+      border: 1px solid #ddd;
+    }
+    .btn.ghost {
+      background: transparent; border: none; color: var(--color-dark);
+      padding: 8px 12px; cursor: pointer;
+    }
+    .btn:focus { outline: 2px solid #000; outline-offset: 2px; }
+
+    main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--gap);
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Catalog grid */
+    .panel {
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid #eee;
+    }
+    .panel-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .panel-title { font-size: 1.1rem; font-weight: 700; }
+    .filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    .catalog {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #eee;
+      padding: 12px;
+      display: flex; flex-direction: column;
+      height: 100%;
+    }
+    .card-media {
+      width: 100%; height: 140px; border-radius: 10px;
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+      background: #f5f5f5;
+    }
+    .card-media img { width: 100%; height: 100%; object-fit: cover; }
+    .card-title { font-size: 1rem; font-weight: 700; margin: 8px 0 6px; }
+    .card-desc { font-size: .85rem; color: var(--color-muted); min-height: 38px; }
+    .card-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: auto; }
+    .price { font-weight: 800; color: var(--color-dark); }
+    .stock { font-size: .75rem; color: var(--color-warn); }
+
+    .badge {
+      font-size: 11px; padding: 4px 8px; border-radius: 999px;
+      background: #f0f0f0; color: #333;
+    }
+
+    /* Cart Drawer (side panel) */
+    .cart-drawer {
+      position: fixed; top: 0; right: 0; height: 100%;
+      width: 360px; max-width: 100%; background: #fff;
+      border-left: 1px solid #ddd;
+      transform: translateX(100%);
+      transition: transform .25s ease-in-out;
+      display: flex; flex-direction: column;
+      z-index: 20;
+    }
+    .cart-drawer.open { transform: translateX(0%); }
+    .cart-header {
+      padding: 16px; border-bottom: 1px solid #eee;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .cart-items {
+      padding: 12px 16px; overflow: auto; flex: 1;
+    }
+    .cart-item {
+      display: grid; grid-template-columns: 48px 1fr auto; gap: 12px;
+      align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0;
+    }
+    .cart-thumb { width: 48px; height: 48px; border-radius: 6px; overflow: hidden; background: #f5f5f5; }
+    .cart-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .cart-meta { display: flex; flex-direction: column; min-width: 0; }
+    .cart-price { font-weight: 700; }
+    .qty-controls { display: inline-flex; align-items: center; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; }
+    .qty-controls button { border: none; background: #f8f8f8; padding: 6px 8px; cursor: pointer; }
+    .qty-controls input { width: 40px; text-align: center; border: none; outline: none; padding: 6px 0; }
+    .cart-total {
+      padding: 14px 16px; border-top: 1px solid #eee;
+      display: grid; gap: 8px;
+    }
+    .checkout {
+      display: flex; gap: 8px; align-items: center;
+    }
+    @media (min-width: 720px) {
+      main { grid-template-columns: 1fr 360px; align-items: start; }
+    }
+  </style>
+</head>
+<body>
+  <header aria-label="Site header">
+    <div class="brand" aria-label="Brand">
+      <span class="brand-logo" aria-label="Logo"></span>
+      <span class="brand-name">PixelCart</span>
+      <span class="badge" aria-label="Palette badge" title="Uses provided color tokens">Palette SPA</span>
+    </div>
+
+    <div class="searchbar" role="search">
+      <input id="search" type="search" placeholder="Search products..." aria-label="Search products" />
+      <select id="categoryFilter" aria-label="Filter by category" class="btn secondary" style="padding: 10px 12px;">
+        <option value="All">All Categories</option>
+      </select>
+      <button id="openCart" class="btn" aria-label="Open cart" title="Open cart">Cart</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Catalog Panel -->
+    <section class="panel" aria-labelledby="catalog-title">
+      <div class="panel-header">
+        <div class="panel-title" id="catalog-title">Product Catalog</div>
+        <div class="filters" aria-label="Catalog filters">
+          <span class="badge" id="countDisplay">0 items</span>
+        </div>
+      </div>
+
+      <div class="catalog" id="catalog"></div>
+    </section>
+
+    <!-- Cart Drawer (side panel) -->
+    <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart">
+      <div class="cart-header">
+        <strong>Your Cart</strong>
+        <button class="btn ghost" id="closeCart" aria-label="Close cart">Close</button>
+      </div>
+      <div class="cart-items" id="cartItems" aria-label="Cart items"></div>
+      <div class="cart-total" aria-live="polite">
+        <div style="display:flex; justify-content: space-between;">
+          <span>Subtotal</span><span id="subtotal" aria-label="Subtotal">$0.00</span>
+        </div>
+        <div style="display:flex; justify-content: space-between;">
+          <span>Estimated Tax</span><span id="tax" aria-label="Estimated tax">$0.00</span>
+        </div>
+        <div style="display:flex; justify-content: space-between; font-weight: 700;">
+          <span>Total</span><span id="total" aria-label="Total">$0.00</span>
+        </div>
+      </div>
+      <div class="cart-total" style="border-top:1px solid #eee; padding-top:12px;">
+        <div class="checkout" role="group" aria-label="Checkout actions" style="justify-content: space-between;">
+          <button class="btn" id="checkoutBtn" aria-label="Proceed to checkout">Checkout (Mock)</button>
+          <button class="btn secondary" id="clearCart" aria-label="Clear cart">Clear</button>
+        </div>
+        <small id="cartNote" style="color:var(--color-muted);">This is a mock checkout flow for scaffold purposes only.</small>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Optional: a tiny guide footer (extensible) -->
+  <footer style="opacity:.8; text-align:center; padding:20px;">
+    <span style="font-size:.9rem;">SPA scaffold with accessible, responsive catalog and cart using the specified color tokens.</span>
+  </footer>
+
+  <script>
+    // Data Model: Catalog and Cart
+    const rawProducts = [
+      { id: 'p1', name: 'Aurora Wireless Headphones', description: 'Crisp, immersive sound with 40h battery life.', price: 99.99, category: 'Audio', rating: 4.5, stock: 12 },
+      { id: 'p2', name: 'Nimbus Mechanical Keyboard', description: 'Ergonomic layout with hot-swappable switches.', price: 129.00, category: 'Computers', rating: 4.7, stock: 6 },
+      { id: 'p3', name: 'Pulse Fitness Band', description: 'Track activity with sleep analysis and heart rate.', price: 59.99, category: 'Wearables', rating: 4.2, stock: 25 },
+      { id: 'p4', name: 'Luma Portable Speaker', description: 'Rugged, compact speaker with rich bass.', price: 74.99, category: 'Audio', rating: 4.3, stock: 18 },
+      { id: 'p5', name: 'Oasis Smart Lamp', description: 'Voice and app-controlled ambient lighting.', price: 39.99, category: 'Home', rating: 4.1, stock: 30 },
+      { id: 'p6', name: 'CloudCam Mini', description: 'Compact security camera with 1080p streaming.', price: 89.99, category: 'Security', rating: 4.6, stock: 8 }
+    ];
+
+    // Internal state
+    let products = []; // will hold augmented product data (including image)
+    let cart = [];     // { productId, qty }
+
+    // DOM references
+    const catalogEl = document.getElementById('catalog');
+    const searchEl = document.getElementById('search');
+    const categoryFilterEl = document.getElementById('categoryFilter');
+    const openCartBtn = document.getElementById('openCart');
+    const cartDrawer = document.getElementById('cartDrawer');
+    const closeCartBtn = document.getElementById('closeCart');
+    const cartItemsEl = document.getElementById('cartItems');
+    const subtotalEl = document.getElementById('subtotal');
+    const taxEl = document.getElementById('tax');
+    const totalEl = document.getElementById('total');
+    const clearCartBtn = document.getElementById('clearCart');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const countDisplay = document.getElementById('countDisplay');
+
+    // Helpers: currency and placeholders
+    const formatUSD = (n) => `$${n.toFixed(2)}`;
+
+    // Generate a simple SVG placeholder as a data URL
+    function makePlaceholder(label, color) {
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="${color}" offset="0"/>
+              <stop stop-color="#ffffff" offset="1"/>
+            </linearGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#g)"/>
+          <text x="50%" y="54%" font-family="Arial, Helvetica, sans-serif" font-size="42" text-anchor="middle" fill="#ffffff" opacity="0.95">${label}</text>
+        </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    // Cart utilities
+    function findCartItem(productId) {
+      return cart.find(ci => ci.productId === productId);
+    }
+    function addToCart(productId, qty = 1) {
+      const existing = findCartItem(productId);
+      if (existing) existing.qty += qty;
+      else cart.push({ productId, qty });
+      renderCart();
+    }
+    function updateCartQty(productId, newQty) {
+      const item = findCartItem(productId);
+      if (!item) return;
+      item.qty = Math.max(1, Math.min(newQty, getProductById(productId).stock));
+      renderCart();
+    }
+    function removeFromCart(productId) {
+      cart = cart.filter(ci => ci.productId !== productId);
+      renderCart();
+    }
+    function clearCart() {
+      cart = [];
+      renderCart();
+    }
+    function getProductById(id) {
+      return products.find(p => p.id === id);
+    }
+
+    // Rendering
+    function renderCatalog(filter = { term: '', category: 'All' }) {
+      // compute displayed products
+      const term = filter.term?.toLowerCase() ?? '';
+      const category = filter.category ?? 'All';
+      const items = products.filter(p => {
+        const inCategory = category === 'All' || p.category === category;
+        const inTerm = !term || p.name.toLowerCase().includes(term) || p.description.toLowerCase().includes(term);
+        return inCategory && inTerm;
+      });
+
+      catalogEl.innerHTML = '';
+      for (const p of items) {
+        const inCartQty = cart.find(ci => ci.productId === p.id)?.qty ?? 0;
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.setAttribute('aria-label', p.name);
+        card.innerHTML = `
+          <div class="card-media" aria-label="${p.name} image">
+            <img src="${p.image}" alt="${p.name}" />
+          </div>
+          <div class="card-title">${p.name}</div>
+          <div class="card-desc" aria-label="Product description">${p.description}</div>
+          <div class="card-meta" style="gap:6px; align-items: center;">
+            <span class="badge" aria-label="Category">${p.category}</span>
+            <span class="price" aria-label="Price">${formatUSD(p.price)}</span>
+          </div>
+          <div style="display:flex; justify-content: space-between; align-items:center; margin-top:8px;">
+            <span class="stock" aria-label="Stock status">${p.stock > 0 ? 'In stock' : 'Out of stock'}</span>
+            <button class="btn" data-add="${p.id}" ${p.stock<=0 ? 'disabled' : ''}>Add to Cart${inCartQty>0 ? ` (${inCartQty})` : ''}</button>
+          </div>
+        `;
+        // Event: Add to cart
+        const btn = card.querySelector('[data-add]');
+        btn.addEventListener('click', () => {
+          if (p.stock <= 0) return;
+          addToCart(p.id, 1);
+          // Optional small feedback could be added here
+        });
+
+        catalogEl.appendChild(card);
+      }
+
+      // Update count display
+      countDisplay.textContent = `${cart.reduce((a, c) => a + c.qty, 0)} item${cart.length === 1 ? '' : 's'}`;
+    }
+
+    function renderCart() {
+      cartItemsEl.innerHTML = '';
+      if (cart.length === 0) {
+        cartItemsEl.innerHTML = `
+          <div style="padding:12px 4px; color:var(--color-muted); text-align:center;">
+            Your cart is empty. Add some products to get started.
+          </div>`;
+        updateTotals();
+        return;
+      }
+
+      for (const ci of cart) {
+        const prod = getProductById(ci.productId);
+        const item = document.createElement('div');
+        item.className = 'cart-item';
+        item.innerHTML = `
+          <div class="cart-thumb" aria-label="${prod.name} thumbnail">
+            <img src="${prod.image}" alt="" />
+          </div>
+          <div class="cart-meta" style="min-width:0;">
+            <span style="font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${prod.name}</span>
+            <span style="font-size:.8rem; color:var(--color-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              ${prod.category} • ${formatUSD(prod.price)}
+            </span>
+          </div>
+          <div aria-label="Quantity" class="qty-controls" role="group" style="margin-left:8px;">
+            <button class="dec" aria-label="Decrease quantity" data-action="decrement" data-id="${prod.id}">−</button>
+            <input type="number" min="1" max="${prod.stock}" value="${ci.qty}" aria-label="Quantity for ${prod.name}" data-id="${prod.id}" style="width:42px;">
+            <button class="inc" aria-label="Increase quantity" data-action="increment" data-id="${prod.id}">＋</button>
+          </div>
+          <div style="margin-left: auto; display:flex; align-items:center;">
+            <span class="cart-price" aria-label="Item total">
+              ${formatUSD(prod.price * ci.qty)}
+            </span>
+            <button class="btn ghost" aria-label="Remove item" data-remove="${prod.id}" style="margin-left:8px;">Remove</button>
+          </div>
+        `;
+        // Bind controls
+        const decBtn = item.querySelector('[data-action="decrement"]');
+        const incBtn = item.querySelector('[data-action="increment"]');
+        const qtyInput = item.querySelector(`input[data-id="${prod.id}"]`);
+        const removeBtn = item.querySelector(`[data-remove="${prod.id}"]`);
+
+        decBtn.addEventListener('click', () => {
+          updateCartQty(prod.id, ci.qty - 1);
+        });
+        incBtn.addEventListener('click', () => {
+          updateCartQty(prod.id, ci.qty + 1);
+        });
+        qtyInput.addEventListener('change', (e) => {
+          const val = parseInt(e.target.value, 10) || 1;
+          updateCartQty(prod.id, val);
+        });
+        removeBtn.addEventListener('click', () => removeFromCart(prod.id));
+
+        cartItemsEl.appendChild(item);
+      }
+
+      updateTotals();
+    }
+
+    function updateTotals() {
+      const subtotal = cart.reduce((sum, ci) => {
+        const p = getProductById(ci.productId);
+        return sum + p.price * ci.qty;
+      }, 0);
+      const tax = subtotal * 0.08; // simple mock tax
+      const total = subtotal + tax;
+
+      subtotalEl.textContent = formatUSD(subtotal);
+      taxEl.textContent = formatUSD(tax);
+      totalEl.textContent = formatUSD(total);
+      // Update cart count badge on catalog items as well
+      countDisplay.textContent = `${cart.reduce((a,c)=>a+c.qty,0)} item${cart.length===1?'':'s'}`;
+    }
+
+    // UI actions
+    function openCart() {
+      cartDrawer.classList.add('open');
+      renderCart();
+      // Trap focus (simple)
+      cartDrawer.querySelector('button[data-remove]')?.focus();
+    }
+    function closeCart() {
+      cartDrawer.classList.remove('open');
+    }
+
+    // Initialization
+    function initCatalogData() {
+      // augment products with placeholder images
+      // Choose a color per product deterministically from id
+      const palette = ['#06D6A0', '#1B9AAA', '#EF476F', '#FFC43D', '#393E41'];
+      products = rawProducts.map((p, idx) => {
+        const color = palette[idx % palette.length];
+        const image = makePlaceholder(p.name, color);
+        return { ...p, image };
+      });
+    }
+
+    function populateCategories() {
+      const cats = Array.from(new Set(products.map(p => p.category)));
+      // sort for stable order
+      cats.sort();
+      // add All
+      const select = categoryFilterEl;
+      // Clear existing options except the first "All"
+      // We'll ensure "All" is present
+      // Build options
+      const existingValues = new Set(Array.from(select.options).map(o => o.value));
+      if (!existingValues.has('All')) {
+        const optAll = document.createElement('option');
+        optAll.value = 'All';
+        optAll.textContent = 'All Categories';
+        select.insertBefore(optAll, select.firstChild);
+      }
+      cats.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        // Only add if not present
+        if (!Array.from(select.options).some(o => o.value === cat)) {
+          select.appendChild(option);
+        }
+      });
+    }
+
+    // Event wiring
+    function wireUI() {
+      // Search and category filter
+      const currentFilter = { term: '', category: 'All' };
+      function applyFilters() {
+        renderCatalog(currentFilter);
+      }
+
+      searchEl.addEventListener('input', () => {
+        currentFilter.term = searchEl.value;
+        applyFilters();
+      });
+      categoryFilterEl.addEventListener('change', () => {
+        currentFilter.category = categoryFilterEl.value;
+        applyFilters();
+      });
+
+      openCartBtn.addEventListener('click', openCart);
+      closeCartBtn.addEventListener('click', closeCart);
+
+      // Checkout mock
+      checkoutBtn.addEventListener('click', () => {
+        if (cart.length === 0) {
+          alert('Your cart is empty. Add items to checkout.');
+          return;
+        }
+        alert('Mock checkout complete. Thank you for trying this scaffold!');
+        clearCart();
+        closeCart();
+      });
+
+      clearCartBtn.addEventListener('click', () => {
+        if (confirm('Clear all items from cart?')) {
+          clearCart();
+        }
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && cartDrawer.classList.contains('open')) {
+          closeCart();
+        }
+      });
+    }
+
+    // Boot
+    document.addEventListener('DOMContentLoaded', () => {
+      initCatalogData();
+      populateCategories();
+      renderCatalog({ term: '', category: 'All' });
+      wireUI();
+
+      // Load persisted cart if available (optional)
+      try {
+        const saved = localStorage.getItem('pc_cart');
+        if (saved) {
+          cart = JSON.parse(saved);
+          // Validate against current products
+          cart = cart.filter(ci => products.find(p => p.id === ci.productId));
+        }
+      } catch {
+        // ignore
+      }
+      // Persist whenever cart changes (simple debounce)
+      const persist = () => {
+        try {
+          localStorage.setItem('pc_cart', JSON.stringify(cart));
+        } catch {
+          // ignore
+        }
+      };
+      // Observe cart mutations via a simple proxy: we hook renderCart to persist
+      const origRenderCart = renderCart;
+      renderCart = () => {
+        origRenderCart();
+        persist();
+      };
+      // Initial render
+      renderCart();
+    });
+  </script>
+</body>
+</html>
