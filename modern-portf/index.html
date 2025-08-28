@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>One-Page Modern UI — Palette by Color</title>
+  <style>
+    /* Design Tokens (design-system) */
+    :root{
+      /* Palette (core) */
+      --color-brand-900: #264653; /* deep teal / primary text accents */
+      --color-brand-700: #2A9D8F; /* teal/aqua accents */
+      --color-brand-500: #E9C46A; /* mustard accent */
+      --color-brand-400: #F4A261; /* warm orange */
+      --color-brand-600: #E76F51; /* coral/red for CTA emphasis */
+
+      --color-bg: #ffffff;
+      --color-surface: #ffffff;
+      --color-text: #1f2a37;
+      --color-muted: #5b6b7b;
+
+      /* Layout & typography scales */
+      --radius: 12px;
+      --radius-sm: 9px;
+      --gap: 1rem;
+      --gap-lg: 2rem;
+      --shadow-soft: 0 8px 24px rgba(0,0,0,.08);
+      --shadow-card: 0 6px 20px rgba(0,0,0,.08);
+      --font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+
+      /* Type scale (responsive adjustments via media queries) */
+      --font-h1: 2.75rem;
+      --font-h2: 1.75rem;
+      --font-body: 1rem;
+      --font-weight-regular: 400;
+      --font-weight-medium: 600;
+      --font-weight-bold: 700;
+
+      /* Motion */
+      --duration-fast: 260ms;
+      --duration-med: 480ms;
+      --easing: cubic-bezier(.22,.61,.36,1);
+    }
+
+    /* Reset-ish baseline */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; color: var(--color-text);
+      font-family: var(--font-family);
+      background: var(--color-bg);
+      line-height: 1.6;
+    }
+
+    /* Accessibility: respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+
+    /* Layout helpers */
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* Skip link for accessibility */
+    .skip-link {
+      position: absolute; left: -999px; top: -999px;
+    }
+    .skip-link:focus {
+      position: static; padding: 10px 14px; margin: 8px;
+      background: var(--color-brand-700); color: white; border-radius: 8px;
+      z-index: 1000;
+    }
+
+    /* Header / Nav */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: saturate(1.2) blur(6px);
+      border-bottom: 1px solid #e9e9e9;
+    }
+    .nav {
+      max-width: 1100px; margin: 0 auto; padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; letter-spacing: .2px;
+    }
+    .brand .logo {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--color-brand-700), var(--color-brand-500));
+      display: inline-block;
+      box-shadow: inset 0 0 0 2px #fff;
+    }
+    nav ul { display: flex; list-style: none; gap: 14px; margin: 0; padding: 0; }
+    nav a { padding: 8px 12px; border-radius: 8px; color: var(--color-brand-900); font-weight: 600; }
+    nav a:hover, nav a.active {
+      background: rgba(42,157,143,.15);
+      color: var(--color-brand-900);
+    }
+
+    /* Mobile toggle (simple) */
+    .menu-toggle {
+      display: none;
+      background: none; border: 0; font: inherit; cursor: pointer;
+      padding: 8px; border-radius: 8px;
+    }
+    @media (max-width: 860px){
+      nav ul { position: absolute; top: 58px; left: 0; right: 0;
+        background: #fff; flex-direction: column; align-items: flex-start;
+        padding: 12px 16px; gap: 6px; border-bottom: 1px solid #eee;
+        display: none;
+      }
+      nav ul.open { display: flex; }
+      .menu-toggle { display: inline-block; }
+    }
+
+    /* Sections wrapper spacing and container */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+    section.section { padding: 72px 0; }
+    .section h2 { margin: 0 0 12px; font-size: clamp(1.4rem, 2vw + 1rem, 1.9rem); color: var(--color-brand-900); }
+    .section p { color: var(--color-muted); margin: 0 0 8px; }
+
+    /* Hero */
+    #hero {
+      min-height: 78vh; display: grid; place-items: center;
+      background: linear-gradient(135deg, #f7fbff 0%, #f3fcfb 60%, #fff 100%);
+    }
+    .hero-content {
+      text-align: left;
+      display: grid; gap: 14px;
+      align-items: center;
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+    .hero-copy h1 {
+      font-size: clamp(2rem, 1.8vw + 2rem, 3.6rem);
+      line-height: 1.04; letter-spacing: -0.02em;
+      margin: 0 0 12px;
+      color: var(--color-brand-900);
+      text-shadow: 0 1px 0 rgba(255,255,255,.7);
+    }
+    .hero-copy p { color: var(--color-muted); font-size: 1.05rem; }
+    .cta {
+      display: inline-flex; gap: 12px; align-items: center;
+      padding: 12px 18px; border-radius: 999px;
+      border: 0; cursor: pointer;
+      font-weight: 700; letter-spacing: .3px;
+      background: linear-gradient(135deg, var(--color-brand-700), var(--color-brand-600));
+      color: white;
+      box-shadow: 0 6px 16px rgba(0,0,0,.08);
+      transition: transform var(--duration-fast) var(--easing);
+    }
+    .cta.secondary {
+      background: #fff; color: var(--color-brand-900);
+      border: 1px solid #e5e7eb;
+      box-shadow: none;
+    }
+    .hero-media {
+      width: 100%; height: 340px; border-radius: var(--radius);
+      background: conic-gradient(from 180deg at 50% 50%, #2A9D8F 0 90deg, #E76F51 0 180deg, #E9C46A 0 270deg, #2A9D8F 360deg);
+      display: grid; place-items: center;
+      position: relative; overflow: hidden;
+      box-shadow: var(--shadow-soft);
+    }
+    .hero-media svg { width: 70%; height: 70%; opacity: .9; filter: drop-shadow(0 6px 14px rgba(0,0,0,.12)); }
+
+    /* Features */
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card { background: var(--color-surface); border: 1px solid #f0f0f0; border-radius: var(--radius-sm);
+      padding: 16px; box-shadow: var(--shadow-card); min-height: 140px;
+    }
+    .card h3 { margin: 6px 0 8px; font-size: 1.05rem; color: var(--color-brand-900); }
+    .card p { color: var(--color-muted); font-size: .95rem; }
+
+    /* Portfolio Gallery */
+    .portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .portfolio-item {
+      background: #fff; border: 1px solid #eee; border-radius: 12px;
+      overflow: hidden; cursor: pointer; transition: transform .25s var(--easing);
+    }
+    .portfolio-item:hover { transform: translateY(-3px); }
+    .portfolio-thumb {
+      height: 170px; display: grid; place-items: center;
+      background: #fafafa;
+    }
+    .portfolio-item .title { padding: 12px; font-weight: 600; color: var(--color-brand-900); }
+
+    /* Testimonials */
+    .testimonials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .testi { background: #fff; padding: 14px; border-radius: 12px; border: 1px solid #eee; min-height: 120px; }
+    .testi p { color: var(--color-muted); font-size: .95rem; }
+    .testi .author { font-weight: 600; margin-top: 8px; color: var(--color-brand-900); }
+
+    /* About / CTA / Contact */
+    .about-copy { color: var(--color-muted); }
+    .section-cta {
+      display: grid; grid-template-columns: 1fr auto; align-items: center;
+      gap: 16px; padding: 28px; border-radius: 12px;
+      background: linear-gradient(135deg, #fff, #fbfeff);
+      border: 1px solid #eef4f7;
+      box-shadow: var(--shadow-soft);
+    }
+    .section-cta h3 { margin: 0 0 6px; color: var(--color-brand-900); }
+    .section-cta .cta { padding: 12px 18px; }
+
+    /* Contact form */
+    form { display: grid; gap: 12px; }
+    label { font-size: .9rem; color: var(--color-brand-900); }
+    input, textarea {
+      width: 100%; padding: 12px 14px; border-radius: 8px;
+      border: 1px solid #d6dce5; font: inherit; font-size: 1rem;
+      background: #fff;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .submit { background: var(--color-brand-700); color: white; border: 0; padding: 12px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; }
+    .form-hint { font-size: .85rem; color: var(--color-muted); }
+
+    /* Lightbox modal for portfolio items */
+    .modal {
+      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,.5); z-index: 60;
+      padding: 20px;
+    }
+    .modal.open { display: flex; }
+    .modal-content { width: min(860px, 90vw); background: #fff; border-radius: 12px; padding: 18px; box-shadow: 0 8px 28px rgba(0,0,0,.25); }
+    .modal-header { display:flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .modal-header h4 { margin:0; }
+    .modal-body { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-media { height: 320px; background: #f5f5f5; display: grid; place-items: center; border-radius: 8px; }
+    .modal-close { background: #eee; border: 0; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+
+    /* Footer */
+    footer { padding: 28px; text-align: center; color: var(--color-muted); font-size: .9rem; }
+
+    /* Responsive behavior */
+    @media (max-width: 1024px){
+      .hero-content { grid-template-columns: 1fr 1fr; }
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+      .testimonials { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px){
+      .hero-content { grid-template-columns: 1fr; text-align: left; }
+      .hero-media { height: 260px; }
+      .cards { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .testimonials { grid-template-columns: 1fr; }
+      .section-cta { grid-template-columns: 1fr; padding: 18px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* Minor helpers */
+    .muted { color: var(--color-muted); }
+    .center { text-align: center; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <!-- Header / Navigation -->
+  <header>
+    <div class="nav container" id="topnav" aria-label="Main navigation">
+      <div class="brand" aria-label="Brand">
+        <span class="logo" aria-hidden="true"></span>
+        <span>BrandPalette</span>
+      </div>
+
+      <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" id="menuToggle">Menu</button>
+
+      <nav aria-label="Primary" id="navMenu">
+        <ul id="navList">
+          <li><a href="#hero" class="nav-link active">Home</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#features" class="nav-link">Features</a></li>
+          <li><a href="#portfolio" class="nav-link">Portfolio</a></li>
+          <li><a href="#testimonials" class="nav-link">Testimonials</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="content">
+    <!-- HERO -->
+    <section id="hero" class="section" aria-label="Hero">
+      <div class="container hero-content">
+        <div class="hero-copy" style="padding-right: 8px;">
+          <h1>Design the future with a clean, modern UI</h1>
+          <p>We craft responsive, accessible interfaces using a cohesive color system and motion design. Lightweight, framework-free front-end scaffolding ready for production.</p>
+          <div style="margin-top: 8px;">
+            <button class="cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Start a project</button>
+            <button class="cta secondary" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'})" style="margin-left:8px;">View portfolio</button>
+          </div>
+        </div>
+        <div class="hero-media" aria-label="Hero illustration">
+          <!-- Inline SVG decorative motif -->
+          <svg viewBox="0 0 600 400" role="img" aria-label="Abstract design">
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                <stop stop-color="#2A9D8F" offset="0"/>
+                <stop stop-color="#E76F51" offset="1"/>
+              </linearGradient>
+            </defs>
+            <rect width="600" height="400" fill="url(#grad)" opacity="0.15"/>
+            <circle cx="180" cy="120" r="90" fill="#264653" opacity="0.18"/>
+            <circle cx="420" cy="180" r="110" fill="#E9C46A" opacity="0.24"/>
+            <path d="M60,320 C180,280 360,360 540,300" fill="none" stroke="#2A9D8F" stroke-width="8" opacity="0.6"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section" aria-label="About">
+      <div class="container">
+        <h2>About our approach</h2>
+        <p class="about-copy">We embrace a modern UI philosophy with accessible components, a cohesive color system, and motion designed to enhance clarity. Our workflow emphasizes performance, semantic HTML, and scalable design tokens to support handoff and future growth.</p>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="section" aria-label="Features">
+      <div class="container">
+        <h2>Core features</h2>
+        <p class="muted" style="margin-top:0;">A lean, accessible design system with responsive components.</p>
+        <div class="cards" role="list">
+          <article class="card" role="listitem" aria-label="Feature: Clean UI">
+            <!-- Inline icon -->
+            <h3>Clean UI & Consistent Tokens</h3>
+            <p>Structured tokens map colors to roles, ensuring visual harmony and easy theming across sections.</p>
+          </article>
+          <article class="card" role="listitem" aria-label="Feature: Accessibility">
+            <h3>Accessible by Default</h3>
+            <p>WCAG AA-ready contrast, keyboard focus, ARIA labeling, and skip links baked in.</p>
+          </article>
+          <article class="card" role="listitem" aria-label="Feature: Performance">
+            <h3>Performance First</h3>
+            <p>Minimal JS, CSS-driven animations, lazy loading patterns, and a lightweight component surface.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO -->
+    <section id="portfolio" class="section" aria-label="Portfolio Gallery">
+      <div class="container">
+        <h2>Portfolio Gallery</h2>
+        <p class="muted" style="margin-top:0;">A snapshot of projects and design explorations rendered in a responsive grid.</p>
+
+        <div class="portfolio-grid" role="grid" aria-label="Gallery grid">
+          <!-- Portfolio item (repeated) -->
+          <button class="portfolio-item" data-item="project-a" aria-label="Open project A" style="border:0; background: #fff;">
+            <div class="portfolio-thumb" aria-label="Project thumbnail">
+              <svg width="100%" height="100%" viewBox="0 0 300 180" role="img" aria-label="Project A preview">
+                <defs>
+                  <linearGradient id="pgrad1" x1="0" y1="0" x2="1" y2="1">
+                    <stop stop-color="#2A9D8F" offset="0"/>
+                    <stop stop-color="#264653" offset="1"/>
+                  </linearGradient>
+                </defs>
+                <rect width="300" height="180" fill="url(#pgrad1)" opacity=".25"/>
+                <circle cx="60" cy="60" r="28" fill="#E76F51" opacity=".6"/>
+                <rect x="120" y="40" width="120" height="90" rx="8" fill="#E9C46A" opacity=".8"/>
+              </svg>
+            </div>
+            <div class="title">Project A</div>
+          </button>
+
+          <button class="portfolio-item" data-item="project-b" aria-label="Open project B" style="border:0; background: #fff;">
+            <div class="portfolio-thumb" aria-label="Project thumbnail">
+              <svg width="100%" height="100%" viewBox="0 0 300 180" role="img" aria-label="Project B preview">
+                <defs>
+                  <linearGradient id="pgrad2" x1="0" y1="0" x2="1" y2="1">
+                    <stop stop-color="#E9C46A" offset="0"/>
+                    <stop stop-color="#F4A261" offset="1"/>
+                  </linearGradient>
+                </defs>
+                <rect width="300" height="180" fill="url(#pgrad2)" opacity=".25"/>
+                <circle cx="210" cy="60" r="28" fill="#264653" opacity=".6"/>
+                <rect x="40" y="90" width="180" height="70" rx="12" fill="#2A9D8F" opacity=".8"/>
+              </svg>
+            </div>
+            <div class="title">Project B</div>
+          </button>
+
+          <button class="portfolio-item" data-item="project-c" aria-label="Open project C" style="border:0; background: #fff;">
+            <div class="portfolio-thumb" aria-label="Project thumbnail">
+              <svg width="100%" height="100%" viewBox="0 0 300 180" role="img" aria-label="Project C preview">
+                <defs>
+                  <linearGradient id="pgrad3" x1="0" y1="0" x2="1" y2="1">
+                    <stop stop-color="#F4A261" offset="0"/>
+                    <stop stop-color="#E76F51" offset="1"/>
+                  </linearGradient>
+                </defs>
+                <rect width="300" height="180" fill="url(#pgrad3)" opacity=".25"/>
+                <path d="M20 120 Q150 20 280 120" stroke="#264653" stroke-width="6" fill="none" opacity=".8"/>
+              </svg>
+            </div>
+            <div class="title">Project C</div>
+          </button>
+
+          <button class="portfolio-item" data-item="project-d" aria-label="Open project D" style="border:0; background: #fff;">
+            <div class="portfolio-thumb" aria-label="Project thumbnail">
+              <svg width="100%" height="100%" viewBox="0 0 300 180" role="img" aria-label="Project D preview">
+                <rect width="300" height="180" fill="#fff" opacity=".0"/>
+                <circle cx="100" cy="90" r="40" fill="#2A9D8F" opacity=".7"/>
+                <rect x="140" y="60" width="120" height="60" rx="12" fill="#E9C46A" opacity=".9"/>
+              </svg>
+            </div>
+            <div class="title">Project D</div>
+          </button>
+
+          <button class="portfolio-item" data-item="project-e" aria-label="Open project E" style="border:0; background: #fff;">
+            <div class="portfolio-thumb" aria-label="Project thumbnail">
+              <svg width="100%" height="100%" viewBox="0 0 300 180" role="img" aria-label="Project E preview">
+                <rect width="300" height="180" fill="#fff" opacity=".0"/>
+                <rect x="40" y="40" width="90" height="90" rx="12" fill="#264653" opacity=".8"/>
+                <rect x="140" y="60" width="120" height="70" rx="10" fill="#2A9D8F" opacity=".9"/>
+              </svg>
+            </div>
+            <div class="title">Project E</div>
+          </button>
+
+          <button class="portfolio-item" data-item="project-f" aria-label="Open project F" style="border:0; background: #fff;">
+            <div class="portfolio-thumb" aria-label="Project thumbnail">
+              <svg width="100%" height="100%" viewBox="0 0 300 180" role="img" aria-label="Project F preview">
+                <rect width="300" height="180" fill="#fff" opacity=".0"/>
+                <polygon points="20,150 120,60 220,140 300,80" fill="#E76F51" opacity=".9"/>
+              </svg>
+            </div>
+            <div class="title">Project F</div>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="section" aria-label="Testimonials">
+      <div class="container">
+        <h2>What clients say</h2>
+        <p class="muted" style="margin-top:0;">Short quotes that reflect outcomes like clarity, speed, and accessibility.</p>
+
+        <div class="testimonials" role="list">
+          <blockquote class="testi" role="listitem" aria-label="Testimonial one">
+            <p>"Clear, thoughtful design that supports our business goals. The site feels faster and more accessible."</p>
+            <div class="author">- Alex, Director of Design</div>
+          </blockquote>
+          <blockquote class="testi" role="listitem" aria-label="Testimonial two">
+            <p>"The token system makes it easy to re-theme for campaigns without a full rebuild."</p>
+            <div class="author">- Priya, Marketing Manager</div>
+          </blockquote>
+          <blockquote class="testi" role="listitem" aria-label="Testimonial three">
+            <p>"A lightweight frontend that respects performance budgets and user needs."</p>
+            <div class="author">- Mateo, CTO</div>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALL TO ACTION -->
+    <section id="cta" class="section" aria-label="Call to action">
+      <div class="container section-cta" role="region" aria-label="Get in touch call to action">
+        <div>
+          <h3>Ready to craft a cohesive UI?</h3>
+          <p class="muted" style="margin:0;">Let us build a scalable front-end scaffold tailored to your brand.</p>
+        </div>
+        <button class="cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Let’s talk</button>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section" aria-label="Contact">
+      <div class="container">
+        <h2>Contact</h2>
+        <p class="muted" style="margin-top:0;">Have a brief? Send us a note and we’ll respond quickly.</p>
+
+        <form id="contactForm" aria-label="Contact form" novalidate>
+          <div class="form-row">
+            <div>
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" placeholder="Your name" required autocomplete="name" />
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="you@example.com" required autocomplete="email" />
+            </div>
+          </div>
+          <div>
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell us about your project, goals, and timeline." required></textarea>
+          </div>
+          <div class="form-hint" id="formHint" aria-live="polite">We typically respond within 1 business day.</div>
+          <button class="submit" type="submit">Send message</button>
+        </form>
+
+        <div id="toast" role="alert" aria-live="polite" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #111; color: #fff; padding: 12px 16px; border-radius: 8px; display: none;">
+          Message sent! We'll be in touch soon.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer aria-label="Site footer">
+    <div class="container" style="padding: 8px 0;">
+      © <span id="year"></span> BrandPalette. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    // Simple interactive behaviors (vanilla JS, no libraries)
+    // 1) Mobile nav toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const navList = document.getElementById('navList');
+    menuToggle.addEventListener('click', () => {
+      const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+      menuToggle.setAttribute('aria-expanded', String(!expanded));
+      navList.classList.toggle('open');
+    });
+
+    // 2) Active nav link highlight on scroll (intersection observer)
+    const sections = Array.from(document.querySelectorAll('section[id]'));
+    const navLinks = Array.from(document.querySelectorAll('.nav-link'));
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const id = entry.target.getAttribute('id');
+        const link = document.querySelector('.nav-link[href="#' + id + '"]');
+        if (entry.isIntersecting) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-40% 0px -50% 0px', threshold: 0.01 });
+
+    sections.forEach(sec => observer.observe(sec));
+
+    // 3) Portfolio modal viewer
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.setAttribute('role','dialog');
+    modal.setAttribute('aria-label','Portfolio item detail');
+    modal.innerHTML = `
+      <div class="modal-content" role="document">
+        <div class="modal-header">
+          <h4 id="modalTitle">Project Detail</h4>
+          <button class="modal-close" aria-label="Close" id="modalClose">Close</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-media" id="modalMedia" aria-label="Modal media area"></div>
+          <div id="modalText" style="padding:6px;">
+            <p class="muted" id="modalDesc" style="margin:0;">Details about the project will appear here. This scaffold demonstrates a lightweight lightbox interaction.</p>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    const openModal = (title, mediaHTML, description) => {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalMedia').innerHTML = mediaHTML;
+      document.getElementById('modalDesc').textContent = description;
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    };
+    const closeModal = () => {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    };
+    // Attach click handlers to portfolio items
+    document.querySelectorAll('.portfolio-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const title = item.querySelector('.title').textContent;
+        // Simple placeholder media for modal
+        const media = `
+          <svg viewBox="0 0 600 350" width="100%" height="100%" role="img" aria-label="Detail preview">
+            <defs><linearGradient id="mgrad" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2A9D8F" offset="0"/><stop stop-color="#E76F51" offset="1"/></linearGradient></defs>
+            <rect width="600" height="350" fill="url(#mgrad)" opacity=".25"/>
+            <circle cx="150" cy="180" r="60" fill="#264653" opacity=".6"/>
+            <rect x="260" y="90" width="240" height="140" rx="14" fill="#E9C46A" opacity=".8"/>
+          </svg>
+        `;
+        const desc = 'Expanded view for ' + title + '. This is a placeholder describing project scope and outcomes in a production-ready SPA.';
+        openModal(title, media, desc);
+      });
+    });
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    // 4) Contact form submission (client-side only)
+    const form = document.getElementById('contactForm');
+    const toast = document.getElementById('toast');
+    const yearEl = document.getElementById('year');
+    yearEl.textContent = new Date().getFullYear();
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Simple validation
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const msg = document.getElementById('message').value.trim();
+      if (!name || !email || !msg) {
+        document.getElementById('formHint').textContent = 'Please fill out all fields to continue.';
+        return;
+      }
+      // Simulate success
+      form.reset();
+      document.getElementById('formHint').textContent = 'We received your message!';
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    });
+
+    // Ensure keyboard focus order on anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          a.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
