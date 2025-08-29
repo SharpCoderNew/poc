@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Realtime Chat UI Mock</title>
+  <style>
+    /* Design tokens based on the required color palette */
+    :root{
+      --bg: #BDE0FE;           /* page background */
+      --sidebar: #A2D2FF;      /* conversation list surface */
+      --header: #CDB4DB;        /* chat header surface */
+      --incoming: #FFC8DD;       /* incoming message bubble */
+      --outgoing: #FFAFCC;       /* outgoing message bubble */
+      --accent: #A2D2FF;         /* accents (buttons, icons) */
+      --text: #1a1a1a;
+      --muted: #3a3a3a;
+      --shadow: rgba(0,0,0,.08);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; color: var(--text); background: var(--bg); }
+    .app { display: grid; grid-template-columns: 320px 1fr; height: 100vh; max-height: 100vh; overflow: hidden; }
+
+    /* Sidebar (Conversation List) */
+    .sidebar {
+      background: var(--sidebar);
+      border-right: 1px solid rgba(0,0,0,.05);
+      display: flex; flex-direction: column;
+    }
+    .sidebar-header { padding: 12px 12px 8px; border-bottom: 1px solid rgba(0,0,0,.05); }
+    .sidebar-header h1 { font-size: 16px; margin: 0 0 6px; font-weight: 700; }
+    .search { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,.15); font-size: 14px; }
+    .convo-list { list-style: none; padding: 6px; margin: 0; overflow-y: auto; }
+    .convo-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px; border-radius: 10px; cursor: pointer;
+      transition: transform .1s;
+    }
+    .convo-item:hover { background: rgba(0,0,0,.05); }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; color: #0a0a0a; background: white; }
+    .convo-name { font-weight: 600; font-size: 14px; }
+    .convo-meta { font-size: 11px; color: #555; margin-left: auto; }
+    .presence { width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; margin-left: 6px; display: inline-block; }
+    .presence.online { background: #28a745; }
+    .presence.offline { background: #888; }
+
+    /* Chat area */
+    .chat { display: flex; flex-direction: column; height: 100%; background: #fff; }
+    .chat-header {
+      background: var(--header);
+      padding: 12px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(0,0,0,.05);
+    }
+    .chat-title { display: flex; align-items: center; gap: 10px; }
+    .chat-title .channel { font-weight: 700; font-size: 14px; }
+    .presence-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: green; }
+    .chat-actions { display: flex; gap: 8px; }
+    .icon-btn {
+      border: none; background: rgba(0,0,0,.05); padding: 8px; border-radius: 8px; cursor: pointer;
+      font-size: 14px;
+    }
+    .icon-btn:hover { background: rgba(0,0,0,.12); }
+
+    .messages { padding: 16px; overflow-y: auto; flex: 1; background: #fff; display: flex; flex-direction: column; gap: 8px; }
+    .message { max-width: 70%; padding: 8px 10px; border-radius: 14px; position: relative; display: inline-block; line-height: 1.25; white-space: pre-wrap; word-break: break-word; }
+    .message.from-me { align-self: flex-end; background: var(--outgoing); color: #1a1a1a; }
+    .message.from-them { align-self: flex-start; background: var(--incoming); color: #1a1a1a; }
+    .message .meta { display: block; font-size: 11px; margin-top: 4px; color: #333; }
+    .message.edited { font-style: italic; font-size: 11px; opacity: .8; margin-left: 4px; }
+
+    .attachments { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
+    .attachment { font-size: 12px; color: #0645AD; text-decoration: underline; cursor: pointer; }
+
+    .message-actions {
+      position: absolute; top: 6px; right: -26px;
+      display: flex; gap: 6px; opacity: 0; pointer-events: none;
+    }
+    .message:hover .message-actions { opacity: 1; pointer-events: auto; }
+    .small-btn { border: none; background: rgba(255,255,255,.9); padding: 4px 6px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .msg-content { white-space: pre-wrap; }
+
+    /* Input bar */
+    .input-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px; border-top: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+    }
+    #inputMessage { flex: 1; resize: none; min-height: 40px; max-height: 120px; padding: 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,.2); font-size: 14px; }
+    #btnSend { padding: 10px 14px; border-radius: 8px; border: none; background: var(--accent); color: #001018; font-weight: 700; cursor: pointer; }
+    #btnSend:disabled { opacity: .5; cursor: not-allowed; }
+
+    .emoji-picker {
+      position: absolute; bottom: 70px; right: 20px;
+      background: #fff; border: 1px solid rgba(0,0,0,.15); padding: 8px; border-radius: 8px;
+      box-shadow: 0 6px 14px rgba(0,0,0,.08);
+      display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px;
+    }
+    .emoji { font-size: 16px; cursor: pointer; padding: 4px; border-radius: 6px; }
+    .typing-indicator { padding: 6px 14px; font-size: 12px; color: #555; height: 22px; }
+
+    /* Responsive adjustments */
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; height: auto; }
+      .sidebar { display: none; }
+      .chat { height: calc(100vh - 0px); }
+    }
+
+    /* Accessibility helpers (focus) */
+    :focus { outline: 2px solid #000; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <div class="app" id="appRoot">
+    <!-- Sidebar: Conversation list -->
+    <aside class="sidebar" aria-label="Conversations">
+      <div class="sidebar-header">
+        <h1>Channels</h1>
+        <input id="searchConvo" class="search" type="search" placeholder="Search conversations" aria-label="Search conversations" />
+      </div>
+      <ul id="convoList" class="convo-list" role="list">
+        <!-- populated by JS -->
+      </ul>
+    </aside>
+
+    <!-- Chat area -->
+    <section class="chat" aria-label="Chat window">
+      <header class="chat-header" aria-label="Chat header">
+        <div class="chat-title">
+          <span class="channel" id="currentChannelLabel">general</span>
+          <span class="presence" id="channelPresence" title="Channel presence" style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#28a745; margin-left:6px;"></span>
+        </div>
+        <div class="chat-actions" aria-label="Chat actions">
+          <button class="icon-btn" id="btnEmoji" title="Emoji" aria-label="Emoji picker">😊</button>
+          <button class="icon-btn" id="btnAttach" title="Attach" aria-label="Attach file">📎</button>
+        </div>
+      </header>
+
+      <div id="messageList" class="messages" role="log" aria-label="Messages">
+        <!-- messages rendered here -->
+      </div>
+
+      <div class="typing-indicator" id="typingIndicator" aria-live="polite" style="display:none;">
+        <span id="typingText">Someone is typing...</span>
+      </div>
+
+      <div class="input-bar" role="group" aria-label="Message composer">
+        <textarea id="inputMessage" placeholder="Type a message..." rows="1" aria-label="Message input"></textarea>
+        <button id="btnSend" aria-label="Send message" disabled>Send</button>
+      </div>
+
+      <div class="emoji-picker" id="emojiPicker" aria-label="Emoji picker" hidden>
+        <!-- basic emoji set -->
+        <span class="emoji" data-emoji="😀">😀</span>
+        <span class="emoji" data-emoji="😂">😂</span>
+        <span class="emoji" data-emoji="😊">😊</span>
+        <span class="emoji" data-emoji="😍">😍</span>
+        <span class="emoji" data-emoji="👍">👍</span>
+        <span class="emoji" data-emoji="🎉">🎉</span>
+        <span class="emoji" data-emoji="💬">💬</span>
+        <span class="emoji" data-emoji="🔥">🔥</span>
+        <span class="emoji" data-emoji="🙏">🙏</span>
+        <span class="emoji" data-emoji="💡">💡</span>
+        <span class="emoji" data-emoji="🚀">🚀</span>
+        <span class="emoji" data-emoji="✨">✨</span>
+        <span class="emoji" data-emoji="🧠">🧠</span>
+        <span class="emoji" data-emoji="🎯">🎯</span>
+        <span class="emoji" data-emoji="✅">✅</span>
+        <span class="emoji" data-emoji="❤️">❤️</span>
+      </div>
+
+      <!-- Hidden attachment input -->
+      <input type="file" id="fileInput" style="display:none" />
+    </section>
+  </div>
+
+  <script>
+    // Minimal mock real-time layer and front-end API surface
+    // This mock is designed for development and UI demonstration only.
+    // It provides hooks: sendMessage, onMessage, onTyping, onPresence, subscribeToConversation
+
+    // Data models
+    const currentUser = { id: 'me', name: 'You', initials: 'You' };
+    const users = {
+      me: currentUser,
+      ava: { id: 'ava', name: 'Ava', initials: 'AV', online: true },
+      liam: { id: 'liam', name: 'Liam', initials: 'LI', online: false }
+    };
+
+    const conversations = [
+      { id: 'conv-general', name: 'general', participants: ['me','ava','liam'] },
+      { id: 'conv-design', name: 'design', participants: ['me','ava'] },
+      { id: 'conv-random', name: 'random', participants: ['me','liam'] }
+    ];
+
+    // Message store per conversation
+    const messagesStore = {
+      'conv-general': [
+        { id: 'm1', conversationId: 'conv-general', senderId: 'ava', text: 'Welcome to the general channel!', timestamp: Date.now() - 60000, status: 'read', edited: false, attachments: [] },
+        { id: 'm2', conversationId: 'conv-general', senderId: 'me', text: 'Hi Ava 👋', timestamp: Date.now() - 55000, status: 'read', edited: false, attachments: [] }
+      ],
+      'conv-design': [
+        { id: 'd1', conversationId: 'conv-design', senderId: 'ava', text: 'New design mockups are live.', timestamp: Date.now() - 40000, status: 'read', edited: false, attachments: [{name:'mockup.png'}] }
+      ],
+      'conv-random': [
+        { id: 'r1', conversationId: 'conv-random', senderId: 'liam', text: 'Friday vibes 🎈', timestamp: Date.now() - 30000, status: 'read', edited: false, attachments: [] }
+      ]
+    };
+
+    // UI state
+    let currentConvId = 'conv-general';
+    let typingUsers = new Set();
+    let emojiPickerVisible = false;
+    const attachmentsBuffer = []; // pending attachments before send
+
+    // DOM elements
+    const convoListEl = document.getElementById('convoList');
+    const currentChannelLabel = document.getElementById('currentChannelLabel');
+    const channelPresence = document.getElementById('channelPresence');
+    const messageListEl = document.getElementById('messageList');
+    const inputMessageEl = document.getElementById('inputMessage');
+    const btnSendEl = document.getElementById('btnSend');
+    const emojiPickerEl = document.getElementById('emojiPicker');
+    const btnEmojiEl = document.getElementById('btnEmoji');
+    const btnAttachEl = document.getElementById('btnAttach');
+    const fileInputEl = document.getElementById('fileInput');
+    const typingIndicatorEl = document.getElementById('typingIndicator');
+    const typingTextEl = document.getElementById('typingText');
+    const searchConvoEl = document.getElementById('searchConvo');
+
+    // Initialize
+    function init() {
+      renderConversations();
+      subscribeToChannel(currentConvId);
+      bindUI();
+      // Simulate presence presence updates
+      mockPresenceUpdates();
+      // Simulate occasional typing by others
+      mockTypingActivity();
+      // Enable initial send
+      updateSendState();
+    }
+
+    // Render conversation list
+    function renderConversations(filter = '') {
+      convoListEl.innerHTML = '';
+      const f = filter.toLowerCase();
+      conversations.forEach(conv => {
+        if (f && !conv.name.includes(f)) return;
+        const li = document.createElement('li');
+        li.className = 'convo-item';
+        li.setAttribute('role','button');
+        li.style.cursor = 'pointer';
+        li.dataset.convId = conv.id;
+
+        // Avatar (pseudo)
+        const avatar = document.createElement('div');
+        avatar.className = 'avatar';
+        // initials based on channel name
+        const initials = conv.name.substring(0,2).toUpperCase();
+        avatar.textContent = initials;
+
+        // Name + presence
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'convo-name';
+        nameSpan.textContent = '#' + conv.name;
+
+        const meta = document.createElement('span');
+        meta.className = 'convo-meta';
+        // presence count (how many online among participants)
+        const onlineCount = conv.participants.filter(id => id !== 'me' && users[id]?.online).length;
+        meta.textContent = onlineCount > 0 ? `${onlineCount} online` : 'offline';
+        // presence dot
+        const presenceDot = document.createElement('span');
+        presenceDot.className = 'presence';
+        presenceDot.style.background = onlineCount > 0 ? '#28a745' : '#888';
+        presenceDot.title = onlineCount > 0 ? 'Online' : 'Offline';
+        presenceDot.style.marginLeft = '6px';
+        // Append
+        li.appendChild(avatar);
+        li.appendChild(nameSpan);
+        li.appendChild(presenceDot);
+        li.appendChild(meta);
+
+        li.addEventListener('click', () => {
+          subscribeToChannel(conv.id);
+        });
+
+        convoListEl.appendChild(li);
+      });
+    }
+
+    // Subscribe to a conversation (switch channel)
+    function subscribeToChannel(convId) {
+      currentConvId = convId;
+      // update UI
+      currentChannelLabel.textContent = convId === 'conv-general' ? 'general' : convId.replace('conv-','');
+      // update presence (simple heuristic)
+      updateChannelPresence(convId);
+      // render messages
+      renderMessages();
+    }
+
+    function updateChannelPresence(convId) {
+      // naive: if there are online members besides me, show online
+      const conv = conversations.find(c => c.id === convId);
+      const onlineCount = conv.participants.filter(id => id !== 'me' && users[id]?.online).length;
+      channelPresence.style.background = onlineCount > 0 ? '#28a745' : '#888';
+      channelPresence.title = onlineCount > 0 ? 'Online members active' : 'No online members';
+    }
+
+    // Render messages for currentConvId
+    function renderMessages() {
+      messageListEl.innerHTML = '';
+      const msgs = messagesStore[currentConvId] || [];
+      msgs.forEach(m => {
+        const own = m.senderId === 'me';
+        const bubble = document.createElement('div');
+        bubble.className = 'message ' + (own ? 'from-me' : 'from-them');
+        bubble.dataset.msgId = m.id;
+
+        // content
+        const content = document.createElement('div');
+        content.className = 'msg-content';
+        content.textContent = m.text;
+        bubble.appendChild(content);
+
+        // attachments
+        if (m.attachments && m.attachments.length > 0) {
+          const attBox = document.createElement('div');
+          attBox.className = 'attachments';
+          m.attachments.forEach(a => {
+            const aEl = document.createElement('div');
+            aEl.className = 'attachment';
+            aEl.textContent = 'Attachment: ' + a.name;
+            aEl.addEventListener('click', (e) => {
+              e.preventDefault();
+              alert('Pretend downloading: ' + a.name);
+            });
+            attBox.appendChild(aEl);
+          });
+          bubble.appendChild(attBox);
+        }
+
+        // edited flag
+        if (m.edited) {
+          const edited = document.createElement('span');
+          edited.className = 'meta edited';
+          edited.textContent = ' (edited)';
+          bubble.appendChild(edited);
+        }
+
+        // timestamp
+        const ts = document.createElement('span');
+        ts.className = 'meta';
+        ts.textContent = new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        bubble.appendChild(ts);
+
+        // read receipts for own messages
+        if (own) {
+          const status = document.createElement('span');
+          status.className = 'meta';
+          status.style.marginLeft = '6px';
+          status.style.fontSize = '11px';
+          status.textContent = m.status === 'read' ? '✓✓' : m.status === 'delivered' ? '✓✓' : '✓';
+          bubble.appendChild(status);
+        }
+
+        // actions (copy, edit, delete) for own messages
+        if (own) {
+          const actions = document.createElement('div');
+          actions.className = 'message-actions';
+          // Copy
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'small-btn';
+          copyBtn.textContent = 'Copy';
+          copyBtn.title = 'Copy message';
+          copyBtn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            navigator.clipboard.writeText(m.text);
+          });
+          // Edit
+          const editBtn = document.createElement('button');
+          editBtn.className = 'small-btn';
+          editBtn.textContent = 'Edit';
+          editBtn.title = 'Edit message';
+          editBtn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            startInlineEdit(m.id);
+          });
+          // Delete
+          const delBtn = document.createElement('button');
+          delBtn.className = 'small-btn';
+          delBtn.textContent = 'Delete';
+          delBtn.title = 'Delete message';
+          delBtn.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            deleteMessage(m.id);
+          });
+
+          [copyBtn, editBtn, delBtn].forEach(n => actions.appendChild(n));
+          bubble.appendChild(actions);
+        }
+
+        messageListEl.appendChild(bubble);
+      });
+
+      // Auto-scroll to bottom
+      messageListEl.scrollTop = messageListEl.scrollHeight;
+    }
+
+    // Add message to current conversation (with optional attachments)
+    function sendMessage() {
+      const text = inputMessageEl.value.trim();
+      if (!text && attachmentsBuffer.length === 0) return;
+
+      const newMsg = {
+        id: 'm' + Math.floor(Math.random() * 999999),
+        conversationId: currentConvId,
+        senderId: 'me',
+        text: text,
+        timestamp: Date.now(),
+        status: 'sent',
+        edited: false,
+        attachments: attachmentsBuffer.length ? attachmentsBuffer.map(a => ({ name: a.name })) : []
+      };
+
+      // push to store
+      if (!messagesStore[currentConvId]) messagesStore[currentConvId] = [];
+      messagesStore[currentConvId].push(newMsg);
+
+      // reset input and attachments buffer
+      inputMessageEl.value = '';
+      attachmentsBuffer.length = 0;
+
+      // render
+      renderMessages();
+
+      // mock server ack -> delivered -> read
+      setTimeout(() => {
+        newMsg.status = 'delivered';
+        renderMessages();
+      }, 400);
+
+      setTimeout(() => {
+        newMsg.status = 'read';
+        renderMessages();
+      }, 900);
+
+      // simulate "server" delivering to others in channel
+      mockIncomingFromOthers(currentConvId, newMsg);
+    }
+
+    // Start editing a message inline
+    function startInlineEdit(msgId) {
+      const msgBubble = Array.from(document.querySelectorAll('.message')).find(b => b.dataset.msgId === msgId);
+      if (!msgBubble) return;
+      const oldText = (msgBubble.querySelector('.msg-content')?.textContent) || '';
+      // replace content with an input
+      const input = document.createElement('textarea');
+      input.value = oldText;
+      input.style.width = '100%';
+      input.style.height = '2em';
+      input.style.fontFamily = 'inherit';
+      input.style.fontSize = '14px';
+      input.style.border = '1px solid #999';
+      input.style.borderRadius = '6px';
+      // replace content area
+      const contentDiv = msgBubble.querySelector('.msg-content');
+      contentDiv.replaceWith(input);
+      input.focus();
+
+      // save on blur or Enter
+      const save = () => {
+        const newText = input.value.trim();
+        if (newText.length > 0) {
+          // update store
+          const msgs = messagesStore[currentConvId];
+          const m = msgs.find(x => x.id === msgId);
+          if (m) {
+            m.text = newText;
+            m.edited = true;
+            m.timestamp = Date.now();
+          }
+        }
+        renderMessages();
+      };
+
+      input.addEventListener('blur', save, { once: true });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          save();
+        }
+      }, { once: true });
+    }
+
+    // Delete a message
+    function deleteMessage(msgId) {
+      const msgs = messagesStore[currentConvId] || [];
+      const idx = msgs.findIndex(m => m.id === msgId);
+      if (idx >= 0) {
+        msgs.splice(idx, 1);
+        renderMessages();
+      }
+    }
+
+    // Attachments handling
+    function attachFile() {
+      fileInputEl.click();
+    }
+
+    // When file selected, push to buffer and show placeholder text in input area
+    fileInputEl.addEventListener('change', () => {
+      if (fileInputEl.files.length > 0) {
+        const f = fileInputEl.files[0];
+        attachmentsBuffer.push({ name: f.name });
+        // Show a small hint in the input area
+        const existing = inputMessageEl.value;
+        const suffix = existing.includes('[Attachment:') ? existing : existing;
+        inputMessageEl.value = (suffix ? suffix + '\n' : '') + '[Attachment: ' + f.name + ']';
+      }
+      // reset input for next selection
+      fileInputEl.value = '';
+      updateSendState();
+    });
+
+    // Emoji picker
+    function toggleEmojiPicker() {
+      emojiPickerVisible = !emojiPickerVisible;
+      emojiPickerEl.style.display = emojiPickerVisible ? 'grid' : 'none';
+    }
+    function insertEmoji(emoji) {
+      inputMessageEl.value += (inputMessageEl.value.endsWith(' ') || inputMessageEl.value.length === 0) ? emoji : ' ' + emoji;
+      updateSendState();
+      // keep focus
+      inputMessageEl.focus();
+    }
+
+    // Typing indicator management
+    function showTyping(usersTyping) {
+      if (!usersTyping || usersTyping.length === 0) {
+        typingIndicatorEl.style.display = 'none';
+        return;
+      }
+      typingIndicatorEl.style.display = 'block';
+      typingTextEl.textContent = usersTyping.map(u => (u === 'ava' ? 'Ava' : u === 'liam' ? 'Liam' : 'Someone')).join(', ') + ' typing...';
+    }
+
+    // Mock presence updates
+    function mockPresenceUpdates() {
+      // flip online status randomly every 8-12 seconds
+      setInterval(() => {
+        const userKeys = Object.keys(users).filter(k => k !== 'me');
+        const userId = userKeys[Math.floor(Math.random() * userKeys.length)];
+        if (users[userId]) {
+          users[userId].online = Math.random() > 0.5;
+          // refresh convo list presence indicator
+          renderConversations();
+          updateChannelPresence(currentConvId);
+        }
+      }, 12000 + Math.random() * 8000);
+    }
+
+    // Typing activity simulation for realism
+    function mockTypingActivity() {
+      setInterval(() => {
+        // randomly pick a user and a channel
+        const other = Math.random() > 0.5 ? 'ava' : 'liam';
+        const convId = currentConvId;
+        // randomly start typing
+        if (Math.random() > 0.6) {
+          typingUsers.add(other);
+          showTyping(Array.from(typingUsers));
+          setTimeout(() => {
+            typingUsers.delete(other);
+            showTyping(Array.from(typingUsers));
+          }, 1500 + Math.random() * 1500);
+        }
+      }, 3500);
+    }
+
+    // Mock incoming message from others
+    function mockIncomingFromOthers(convId, outgoingMsg) {
+      // pick a random other user to reply
+      const sender = Math.random() > 0.5 ? 'ava' : 'liam';
+      const replyText = sender === 'ava' ? 'Nice! I like that.' : 'Interesting point.';
+      setTimeout(() => {
+        if (convId !== currentConvId) return; // only show in current view for simplicity
+        const m = {
+          id: 'm' + Math.floor(Math.random() * 999999),
+          conversationId: convId,
+          senderId: sender,
+          text: replyText,
+          timestamp: Date.now(),
+          status: 'read',
+          edited: false,
+          attachments: []
+        };
+        if (!messagesStore[convId]) messagesStore[convId] = [];
+        messagesStore[convId].push(m);
+        renderMessages();
+      }, 600 + Math.random() * 1200);
+    }
+
+    // Bind UI events
+    function bindUI() {
+      // conversation search
+      searchConvoEl.addEventListener('input', (e) => {
+        renderConversations(e.target.value);
+      });
+
+      // send
+      btnSendEl.addEventListener('click', () => sendMessage());
+      inputMessageEl.addEventListener('input', () => updateSendState());
+      inputMessageEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // emoji
+      btnEmojiEl.addEventListener('click', () => {
+        toggleEmojiPicker();
+      });
+      emojiPickerEl.addEventListener('click', (e) => {
+        if (e.target && e.target.closest('.emoji')) {
+          const el = e.target.closest('.emoji');
+          const emoji = el.getAttribute('data-emoji');
+          if (emoji) insertEmoji(emoji);
+        }
+      });
+
+      // attach
+      btnAttachEl.addEventListener('click', () => attachFile());
+
+      // file input
+      fileInputEl.addEventListener('change', () => {
+        // handled in change listener above
+      });
+
+      // emoji click outside to close (basic)
+      document.addEventListener('click', (e) => {
+        if (!emojiPickerEl.contains(e.target) && e.target !== btnEmojiEl) {
+          emojiPickerEl.style.display = 'none';
+          emojiPickerVisible = false;
+        }
+      });
+    }
+
+    function updateSendState() {
+      const hasContent = inputMessageEl.value.trim().length > 0 || attachmentsBuffer.length > 0;
+      btnSendEl.disabled = !hasContent;
+    }
+
+    // Public API for potential integration
+    function onMessage(callback) {
+      // Placeholder for external integration
+    }
+    function onTyping(userId, isTyping) {
+      if (isTyping) typingUsers.add(userId);
+      else typingUsers.delete(userId);
+      showTyping(Array.from(typingUsers));
+    }
+    function onPresence(userId, online) {
+      if (users[userId]) users[userId].online = online;
+      renderConversations(); // reflect presence in list
+    }
+    function subscribeToConversation(convId) {
+      subscribeToChannel(convId);
+    }
+
+    // Kickoff
+    init();
+  </script>
+
+  
+</body>
+</html>
