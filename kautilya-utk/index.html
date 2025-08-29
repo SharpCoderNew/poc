@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kautilya Utkarsh — AI Engineer | Portfolio</title>
+  <meta name="description" content="Professional single-page portfolio of Kautilya Utkarsh, AI Engineer. Bio, projects, experience, education, skills, publications, and contact." />
+  <style>
+    /* Core color tokens (Palette: #264653, #2A9D8F, #E9C46A, #F4A261, #E76F51) */
+    :root {
+      --brand: #264653;
+      --teal:  #2A9D8F;
+      --amber: #E9C46A;
+      --amber2:#F4A261;
+      --coral: #E76F51;
+
+      --bg: #f7f6f4;
+      --surface: #ffffff;
+      --text: #1f2937;
+      --muted: #5b6b74;
+      --card: #ffffff;
+      --shadow: 0 6px 18px rgba(0,0,0,.08);
+      --radius: 14px;
+      --focus: 4px; /* focus ring thickness */
+      --gap: 1.25rem;
+    }
+
+    [data-theme="dark"]{
+      --bg: #0e1116;
+      --surface: #141922;
+      --card: #171c2a;
+      --text: #e9f0f7;
+      --muted: #a5b6c2;
+      --shadow: 0 6px 20px rgba(0,0,0,.55);
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      background: linear-gradient(135deg, var(--bg), #f2f4f7 60%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Accessibility: visible focus */
+    :focus-visible {
+      outline: 3px solid var(--teal);
+      outline-offset: 2px;
+    }
+
+    /* Layout helpers */
+    .container {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: color-m-mix(in oklab, var(--surface) 90%, white);
+      backdrop-filter: saturate(1.2) blur(4px);
+      border-bottom: 1px solid rgba(0,0,0,.05);
+    }
+
+    .brand {
+      display: flex; align-items: center; gap: .75rem;
+    }
+
+    .brand .avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      display: grid; place-items: center;
+      font-weight: 700; color: #fff;
+      background: conic-gradient(from 180deg at 50% 50%, #2A9D8F, #264653 40%, #E76F51 70%, #2A9D8F 100%);
+    }
+
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .nav-links {
+      display: flex; gap: .5rem; list-style: none; padding: 0; margin: 0;
+    }
+
+    .nav-links a {
+      padding: .5rem .75rem; border-radius: 8px; color: var(--text);
+      font-weight: 600; font-size: .92rem;
+    }
+
+    .nav-links a[aria-current="page"] {
+      background: var(--teal);
+      color: white;
+    }
+
+    .theme-toggle {
+      border: 1px solid rgba(0,0,0,.08);
+      background: var(--surface);
+      color: var(--text);
+      padding: .5rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .hero {
+      display: grid; gap: 1.25rem; padding: 64px 0 32px;
+      align-items: center;
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 4vw + 1rem, 3.75rem);
+      margin: 0 0 .25rem;
+    }
+
+    .hero .subtitle {
+      color: var(--muted); font-size: 1.05rem;
+    }
+
+    .cta-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: .5rem; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .72rem 1.1rem; border-radius: 999px;
+      border: none; cursor: pointer; font-weight: 700;
+      transition: transform .2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--teal); color: white; }
+    .btn-outline { background: transparent; border: 2px solid var(--teal); color: var(--teal); }
+
+    .hero-card {
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      background: linear-gradient(135deg, rgba(38,70,101,.08), rgba(42,157,143,.04));
+      border: 1px solid rgba(38,70,101,.15);
+      display: grid; place-items: center; min-height: 180px;
+      box-shadow: var(--shadow);
+    }
+
+    .avatar-big {
+      width: 120px; height: 120px; border-radius: 50%;
+      display: grid; place-items: center; font-weight: 800;
+      color: #fff;
+      background: radial-gradient(circle at 30% 30%, #2A9D8F 0 40%, #264653 40% 100%), #2A9D8F;
+    }
+
+    main { padding: 28px 0 60px; }
+
+    section { padding: 48px 0; }
+    section h2 { font-size: 1.75rem; margin-bottom: .75rem; }
+
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+
+    .card {
+      background: var(--card); border-radius: 12px; padding: 1rem; box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,.05);
+    }
+
+    .card h3 { margin: .25rem 0 .5rem; font-size: 1.15rem; }
+
+    .tag { display: inline-block; padding: .25rem .5rem; border-radius: 999px;
+      background: rgba(42,157,143,.1); color: #2c7a74; font-size: .75rem; margin-right: .25rem;
+    }
+
+    ul.timeline { list-style: none; padding: 0; margin: 0; }
+    ul.timeline li { padding: .75rem 0; border-left: 3px solid var(--teal); margin-left: .75rem; }
+    .timeline-item { padding-left: .75rem; }
+
+    .skills { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .chip {
+      padding: .4rem .75rem; border-radius: 999px;
+      background: rgba(42,157,143,.15); border: 1px solid rgba(42,157,143,.35);
+      font-weight: 600; font-size: .85rem;
+    }
+
+    .contact-form {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .field { display: grid; gap: .25rem; }
+    .field label { font-size: .87rem; color: var(--muted); }
+    .field input, .field textarea {
+      padding: .75rem .8rem; border-radius: 8px; border: 1px solid #d3d8de;
+      background: #fff; font: inherit;
+    }
+    .field textarea { min-height: 120px; resize: vertical; }
+
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: .75rem;
+    }
+
+    .muted { color: var(--muted); }
+
+    footer { padding: 28px 0; text-align: center; color: var(--muted); font-size: .9rem; }
+
+    /* Responsive tweaks */
+    @media (max-width: 900px){
+      .hero { grid-template-columns: 1fr; padding: 40px 0 20px; }
+      .hero-card { order: -1; }
+      .contact-form { grid-template-columns: 1fr; }
+      .brand { gap: 0.5rem; }
+    }
+    /* Simple accessibility helper for users preferring reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip to content for accessibility -->
+  <a href="#content" class="sr-only" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">Skip to content</a>
+
+  <header aria-label="Site header">
+    <div class="container" style="display:flex; justify-content: space-between; align-items:center; padding:14px 0;">
+      <div class="brand" aria-label="Brand">
+        <div class="avatar" aria-label="Profile initials">KU</div>
+        <div style="display:flex; flex-direction:column;">
+          <strong style="font-size:1rem; letter-spacing:.2px;">Kautilya Utkarsh</strong>
+          <span class="muted" style="font-size:.85rem;">AI Engineer</span>
+        </div>
+      </div>
+
+      <nav aria-label="Primary">
+        <ul class="nav-links" id="nav-links">
+          <li><a href="#about" data-section="about">About</a></li>
+          <li><a href="#projects" data-section="projects">Projects</a></li>
+          <li><a href="#experience" data-section="experience">Experience</a></li>
+          <li><a href="#education" data-section="education">Education</a></li>
+          <li><a href="#skills" data-section="skills">Skills</a></li>
+          <li><a href="#publications" data-section="publications">Publications</a></li>
+          <li><a href="#contact" data-section="contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle color theme">
+        ☀️
+      </button>
+    </div>
+  </header>
+
+  <main id="content" role="main" aria-label="Main content">
+    <!-- HERO -->
+    <section class="hero" aria-label="Intro section">
+      <div class="container" style="display:flex; flex-direction:column; gap:1rem;">
+        <div class="text" style="max-width: 60ch;">
+          <h1>Kautilya Utkarsh</h1>
+          <div class="subtitle" style="font-weight:600; color:var(--muted);">
+            AI Engineer • Building scalable AI-powered systems
+          </div>
+          <p style="margin: .75rem 0 0; color: var(--muted);">
+            I design and deploy AI solutions that turn complex data into actionable insights. From ML pipelines to production-ready services, I aim for robust performance, accessibility, and impact.
+          </p>
+          <div class="cta-row" aria-label="Intro actions">
+            <a class="btn btn-primary" href="#projects" aria-label="View projects">
+              View Projects
+            </a>
+            <a class="btn btn-outline" href="#contact" aria-label="Contact me">
+              Get in touch
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" aria-label="Profile summary card">
+        <div class="hero-card" role="img" aria-label="Profile summary visual">
+          <div class="avatar-big" aria-label="Profile initials">KU</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" aria-labelledby="about-title">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="about-title">About</h2>
+          <span class="muted" style="font-size:.9rem;">Location: Remote • Open to collaborations</span>
+        </div>
+        <p style="max-width: 70ch;">
+          Passionate AI engineer with experience in end-to-end ML system design, data pipelines, model optimization, and deployment. I enjoy translating business problems into AI-driven solutions and communicating complex ideas to cross-functional teams.
+        </p>
+        <p style="max-width: 70ch;">
+          Core strengths include NLP, computer vision, reinforcement learning, ML Ops, and scalable architectures. I advocate accessible, inclusive design and performance-first thinking.
+        </p>
+        <!-- Extend: add a short bio paragraph or a downloadable resume link -->
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" aria-labelledby="projects-title">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="projects-title">Projects</h2>
+          <span class="muted" style="font-size:.9rem;">Selected work demonstrating AI-centric engineering</span>
+        </div>
+
+        <div class="grid-3" role="list">
+          <!-- Project Card 1 -->
+          <article class="card" role="listitem" aria-label="Project: Efficient NLP Transformer for low-resource languages">
+            <span class="tag" aria-label="Tech">Python • PyTorch • NLP</span>
+            <h3>Efficient NLP Transformer for Low-Resource Languages</h3>
+            <p class="muted" style="color:var(--muted);">
+              A compact transformer architecture with training optimizations to enable on-device inference for languages with limited datasets.
+            </p>
+            <p class="muted" style="font-size:.85rem;">
+              Technologies: PyTorch, HuggingFace, ONNX, distillation
+            </p>
+            <div style="margin-top:.5rem;">
+              <a href="#" aria-label="Demo link" style="margin-right:.5rem;">Demo</a>
+              <a href="#" aria-label="Repository link">Repository</a>
+            </div>
+          </article>
+
+          <!-- Project Card 2 -->
+          <article class="card" role="listitem" aria-label="Project: Real-time anomaly detection in IoT">
+            <span class="tag" aria-label="Tech">Python • ML • IoT</span>
+            <h3>Real-time Anomaly Detection in Industrial IoT</h3>
+            <p class="muted" style="color:var(--muted);">
+              Lightweight streaming model that detects anomalies with sub-second latency, enabling proactive maintenance.
+            </p>
+            <p class="muted" style="font-size:.85rem;">
+              Technologies: PySpark, Kafka, TensorFlow Lite
+            </p>
+            <div style="margin-top:.5rem;">
+              <a href="#" aria-label="Demo link" style="margin-right:.5rem;">Demo</a>
+              <a href="#" aria-label="Repository link">Repository</a>
+            </div>
+          </article>
+
+          <!-- Project Card 3 -->
+          <article class="card" role="listitem" aria-label="Project: RL-based autonomous route planning">
+            <span class="tag" aria-label="Tech">RL • Control</span>
+            <h3>Autonomous Route Planning with Reinforcement Learning</h3>
+            <p class="muted" style="color:var(--muted);">
+              Learned policies for dynamic routing in simulated environments, focusing on safety and efficiency.
+            </p>
+            <p class="muted" style="font-size:.85rem;">
+              Technologies: Python, Gym, Stable Baselines
+            </p>
+            <div style="margin-top:.5rem;">
+              <a href="#" aria-label="Demo link" style="margin-right:.5rem;">Demo</a>
+              <a href="#" aria-label="Repository link">Repository</a>
+            </div>
+          </article>
+        </div>
+
+        <!-- Extend: add more project cards by duplicating the block above -->
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" aria-labelledby="experience-title">
+      <div class="container">
+        <h2 id="experience-title" style="margin-bottom:.5rem;">Experience</h2>
+        <ul class="timeline" aria-label="Professional experience timeline">
+          <li>
+            <div class="timeline-item">
+              <strong>Senior AI Engineer</strong> at <em>Acme Tech Labs</em> (2021 — Present)
+              <ul>
+                <li>Architected end-to-end ML systems for customer-facing analytics platform.</li>
+                <li>Optimized inference pipelines achieving 3x throughput reduction.</li>
+                <li>Led cross-functional collaboration with product and data teams.</li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div class="timeline-item">
+              <strong>ML Engineer</strong> at <em>Nova Analytics</em> (2018 — 2021)
+              <ul>
+                <li>Implemented NLP models for customer support and sentiment analysis.</li>
+                <li>Built MLOps pipelines with CI/CD integration and monitoring.</li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education" aria-labelledby="education-title">
+      <div class="container">
+        <h2 id="education-title">Education</h2>
+        <ul class="timeline" aria-label="Education timeline">
+          <li>
+            <div class="timeline-item">
+              <strong>M.S. in Computer Science (AI/ML)</strong> — Tech University, 2016–2018
+              <ul>
+                <li>Thesis: Scalable Transformer Architectures for Resource-Constrained Environments</li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div class="timeline-item">
+              <strong>B.S. in Information Technology</strong> — City College, 2012–2016
+              <ul><li>Specialization in Data Science</li></ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PUBLICATIONS -->
+    <section id="publications" aria-labelledby="publications-title">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="publications-title">Publications</h2>
+          <span class="muted" style="font-size:.9rem;">Optional — placeholder entries</span>
+        </div>
+        <ul aria-label="Publications list" style="list-style: none; padding: 0; display: grid; gap: .75rem;">
+          <li class="card" style="padding:.75rem;">
+            <strong>Lead author:</strong> Efficient Transformer Models for Low-Resource Languages, Journal of AI Systems, 2023.
+          </li>
+          <li class="card" style="padding:.75rem;">
+            <strong>Co-author:</strong> RL-based Autonomous Control in Dynamic Environments, Conference on AI Innovations, 2022.
+          </li>
+        </ul>
+        <!-- Extend: replace with real publications or remove section -->
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" aria-labelledby="skills-title">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="skills-title">Skills</h2>
+          <span class="muted" style="font-size:.9rem;">Tech stack and tools</span>
+        </div>
+        <div class="skills" aria-label="Skills list">
+          <span class="chip">Python</span>
+          <span class="chip">PyTorch</span>
+          <span class="chip">TensorFlow</span>
+          <span class="chip">NLP</span>
+          <span class="chip">CV</span>
+          <span class="chip">Reinforcement Learning</span>
+          <span class="chip">ML Ops</span>
+          <span class="chip">Docker</span>
+          <span class="chip">Kubernetes</span>
+          <span class="chip">AWS / GCP</span>
+          <span class="chip">Data Pipeline</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" aria-labelledby="contact-title">
+      <div class="container">
+        <div class="section-header">
+          <h2 id="contact-title">Contact</h2>
+          <span class="muted" style="font-size:.9rem;">Let's discuss your AI needs</span>
+        </div>
+        <div class="contact-form" aria-label="Contact form">
+          <form id="contactForm" class="card" style="padding:1rem;" autocomplete="on" novalidate>
+            <div class="field" style="grid-column: span 1;">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required placeholder="Your name" />
+            </div>
+            <div class="field" style="grid-column: span 1;">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required placeholder="you@example.com" />
+            </div>
+            <div class="field" style="grid-column: span 2;">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" required placeholder="How can I help?"></textarea>
+            </div>
+            <div class="field" style="grid-column: span 2; display:flex; align-items:center; justify-content:flex-start;">
+              <button class="btn btn-primary" type="submit" aria-label="Send message">Send message</button>
+              <span id="formStatus" class="muted" style="margin-left:.75rem;"></span>
+            </div>
+          </form>
+
+          <aside class="card" aria-label="Alternative contact methods" style="padding:1rem;">
+            <strong>Or reach me at:</strong>
+            <ul style="list-style:none; padding:0; margin: .5rem 0 0;">
+              <li><a href="mailto:kautilya.utkarsh@example.com" aria-label="Email Me" >kautilya.utkarsh@example.com</a></li>
+              <li><a href="#" aria-label="LinkedIn profile" >LinkedIn</a></li>
+              <li><a href="#" aria-label="GitHub profile" >GitHub</a></li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site footer">
+    <div class="container">
+      <p>© <span id="year"></span> Kautilya Utkarsh. All rights reserved.</p>
+      <p class="muted" style="font-size:.8rem;">
+        This template is a starter portfolio. Replace placeholder content with your own details.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Animation helpers and UX enhancements
+    (function(){
+      // Set current year
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Theme persistence
+      const themeBtn = document.getElementById('themeToggle');
+      const root = document.documentElement;
+      const storedTheme = localStorage.getItem('theme');
+      function applyTheme(t){
+        if(t === 'dark'){
+          root.setAttribute('data-theme','dark');
+          themeBtn.textContent = '🌙';
+        } else {
+          root.setAttribute('data-theme','');
+          themeBtn.textContent = '☀️';
+        }
+      }
+      if(storedTheme){
+        applyTheme(storedTheme);
+      } else {
+        // default to light
+        applyTheme('light');
+      }
+      themeBtn.addEventListener('click', () => {
+        const current = root.getAttribute('data-theme');
+        const next = (current === 'dark') ? 'light' : 'dark';
+        applyTheme(next === 'dark' ? 'dark' : 'light');
+        localStorage.setItem('theme', next);
+      });
+
+      // Navbar active link highlighting based on section in view
+      const links = Array.from(document.querySelectorAll('#nav-links a'));
+      const sections = links.map(a => {
+        const id = a.getAttribute('href').slice(1);
+        return document.getElementById(id);
+      });
+
+      function onScroll(){
+        let currentIdx = 0;
+        sections.forEach((sec, idx) => {
+          if(!sec) return;
+          const rect = sec.getBoundingClientRect();
+          if(rect.top <= 120 && rect.bottom >= 120){
+            currentIdx = idx;
+          }
+        });
+        links.forEach(a => a.removeAttribute('aria-current'));
+        const activeId = sections[currentIdx]?.id;
+        const activeLink = document.querySelector('#nav-links a[href="#'+activeId+'"]');
+        if(activeLink){
+          activeLink.setAttribute('aria-current','page');
+        }
+      }
+      window.addEventListener('scroll', onScroll, {passive:true});
+      onScroll();
+
+      // Contact form submission (demo)
+      const form = document.getElementById('contactForm');
+      const status = document.getElementById('formStatus');
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        // Very lightweight validation
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const message = document.getElementById('message').value.trim();
+        if(!name || !email || !message){
+          status.textContent = 'Please fill in all fields.';
+          status.style.color = '#b00020';
+          return;
+        }
+        // Simulate sending
+        status.textContent = 'Sending...';
+        status.style.color = 'var(--muted)';
+        setTimeout(() => {
+          status.textContent = 'Thank you! Your message has been received.';
+          status.style.color = 'var(--teal)';
+          form.reset();
+        }, 600);
+      });
+
+      // Smooth anchor scrolling for any future in-page anchors
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', function(e){
+          const id = this.getAttribute('href');
+          if(id.length > 1){
+            const target = document.querySelector(id);
+            if(target){
+              e.preventDefault();
+              target.scrollIntoView({behavior:'smooth', block:'start'});
+            }
+          }
+        });
+      });
+    })();
+  </script>
+
+  <!-- Extend: add more content blocks or sections as needed -->
+</body>
+</html>
