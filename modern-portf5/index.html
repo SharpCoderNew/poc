@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Palette Studio — Modern SPA Scaffold</title>
+  <meta name="description" content="A modern, responsive single-page site scaffold built with vanilla HTML, CSS, and JavaScript. Includes a design system, tokens, and animated UI components." />
+  <style>
+    /* DESIGN SYSTEM NOTES (inline for quick reference)
+       Tokens (CSS variables):
+       --brand-0: #264653
+       --brand-1: #2A9D8F
+       --brand-2: #E9C46A
+       --brand-3: #F4A261
+       --brand-4: #E76F51
+
+       --color-bg: #f7f7f7
+       --color-surface: #ffffff
+       --color-text: #1f2a2e
+       --color-muted: #5e6b72
+       --radius: 12px
+       --shadow: 0 8px 24px rgba(0,0,0,.08)
+
+       Design principles:
+       - Accessible focus styles
+       - Reduced-motion support
+       - Responsive grid with fluid typography
+    */
+
+    :root {
+      --brand-0: #264653;
+      --brand-1: #2A9D8F;
+      --brand-2: #E9C46A;
+      --brand-3: #F4A261;
+      --brand-4: #E76F51;
+
+      --color-bg: #f7f7f7;
+      --color-surface: #ffffff;
+      --color-text: #1f2a2e;
+      --color-muted: #5e6b72;
+      --radius: 12px;
+      --shadow: 0 8px 24px rgba(0,0,0,.08);
+      --line: 1px solid rgba(0,0,0,.08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Inter, Arial;
+      color: var(--color-text);
+      background: var(--color-bg);
+    }
+
+    /* Layout helpers */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: saturate(1.2) blur(6px);
+      border-bottom: var(--line);
+    }
+
+    /* Skip link for accessibility */
+    .skip-link {
+      position: absolute;
+      left: 0;
+      top: -40px;
+      background: var(--brand-1);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 0 0 6px 6px;
+      transition: top .2s ease;
+      z-index: 100;
+    }
+    .skip-link:focus { top: 8px; }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      font-weight: 700;
+      letter-spacing: .4px;
+      color: var(--brand-0);
+      text-decoration: none;
+    }
+
+    .logo-badge {
+      width: 34px; height: 34px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 9px;
+      background: conic-gradient(from 180deg at 50% 50%, var(--brand-1), var(--brand-0), var(--brand-4));
+      box-shadow: inset 0 0 0 2px #fff;
+    }
+
+    nav.primary-nav {
+      display: flex; align-items: center; gap: 1rem;
+    }
+
+    nav.primary-nav a {
+      color: var(--brand-0);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 999px;
+    }
+    nav.primary-nav a:hover, nav.primary-nav a:focus {
+      background: rgba(42, 157, 143, 0.15);
+      outline: none;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: 2px solid var(--brand-0);
+      color: var(--brand-0);
+      padding: 6px 9px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Hero section */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: 2rem;
+      padding: 72px 0 60px;
+      min-height: 60vh;
+      background: radial-gradient( circle at 20% -10%, rgba(38,70,101,.12), transparent 40% ),
+                  linear-gradient(135deg, rgba(42,156,143,.08), rgba(38,70,101,.04) 60%);
+    }
+
+    .hero-content h1 {
+      font-size: clamp(2rem, 2.5vw + 1rem, 3rem);
+      line-height: 1.08;
+      margin: 0 0 0.75rem;
+      color: var(--brand-0);
+    }
+
+    .hero-content p {
+      font-size: 1.05rem;
+      color: var(--color-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .cta-row { display: flex; gap: .75rem; flex-wrap: wrap; }
+    .btn {
+      padding: .85rem 1.25rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform .2s ease, background .3s ease;
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--brand-0), var(--brand-1));
+      color: white;
+    }
+    .btn.secondary {
+      background: white;
+      color: var(--brand-0);
+      border: 2px solid var(--brand-0);
+    }
+    .hero-art {
+      min-height: 340px;
+      display: grid; place-items: center;
+    }
+
+    .hero-art svg {
+      width: 100%; height: auto;
+      max-width: 540px;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,.08));
+    }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Sections */
+    section { padding: 72px 0; }
+    h2.section-title {
+      font-size: 1.95rem;
+      margin: 0 0 0.75rem;
+      color: var(--brand-0);
+    }
+    .section-sub { color: var(--color-muted); margin-bottom: 1.25rem; }
+
+    .grid {
+      display: grid;
+      gap: 1.25rem;
+    }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+    .card {
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      padding: 1rem;
+      box-shadow: var(--shadow);
+      border: var(--line);
+    }
+
+    .feature-icon {
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--brand-1), var(--brand-0));
+      color: white; margin-bottom: .75rem;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    figure {
+      margin: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.06);
+      display: block;
+    }
+
+    figure img, figure svg { width: 100%; height: 140px; display: block; }
+
+    figcaption { padding: .75rem; font-size: .92rem; color: var(--color-muted); }
+
+    .testimonial {
+      display: grid; grid-template-columns: 1fr; gap: 1rem;
+    }
+
+    blockquote {
+      margin: 0;
+      padding: 12px 16px;
+      border-left: 4px solid var(--brand-1);
+      background: #fff;
+      border-radius: 6px;
+    }
+
+    form input, form textarea {
+      width: 100%; padding: .8rem; border-radius: 8px;
+      border: 1px solid #d6d6d6; outline: none;
+    }
+    form input:focus, form textarea:focus { border-color: var(--brand-1); box-shadow: 0 0 0 3px rgba(42,157,143,.15); }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 800px) {
+      .hero { grid-template-columns: 1fr; padding: 40px 0 20px; }
+      .row { grid-template-columns: 1fr; }
+      .menu-toggle { display: inline-block; }
+      nav.primary-nav { display: none; }
+      nav.primary-nav.expanded { display: flex; flex-direction: column; position: absolute; top: 54px; right: 12px; background: white; padding: 12px; border-radius: 12px; box-shadow: var(--shadow); }
+    }
+
+    footer {
+      padding: 2rem 0; text-align: center; color: var(--color-muted);
+      border-top: var(--line);
+      background: #fff;
+    }
+
+    /* Accessibility helpers for color contrast on small devices */
+    @media (prefers-color-scheme: light) {
+      :root { color-scheme: light; }
+    }
+
+    /* Reduced motion guard */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { transition: none; opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Side-note: This is a self-contained SPA scaffold with a design system and tokens implemented via CSS variables. Extend components by duplicating cards or adding new sections that reuse the grid utilities and tokens. -->
+
+  <!-- Skip to content for accessibility -->
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container nav-inner" aria-label="Main navigation">
+      <a class="logo" href="#">
+        <span class="logo-badge" aria-hidden="true"></span>
+        Palette Studio
+      </a>
+
+      <button class="menu-toggle" aria-label="Open navigation menu" aria-expanded="false" id="menuToggle">Menu</button>
+
+      <nav class="primary-nav" aria-label="Primary">
+        <a href="#hero">Home</a>
+        <a href="#features">Features</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content" role="main">
+
+    <!-- HERO -->
+    <section id="hero" class="hero container" aria-label="Intro" role="region">
+      <div class="hero-content reveal" aria-label="Intro content">
+        <h1>Build a modern, accessible website with a polished design system</h1>
+        <p>A responsive single-page scaffold using vanilla HTML, CSS and JavaScript. Clean UI, CSS-driven animations, and production-ready structure ready for handoff.</p>
+        <div class="cta-row" aria-label="Call to action">
+          <button class="btn primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Get started</button>
+          <button class="btn secondary" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">View portfolio</button>
+        </div>
+      </div>
+
+      <div class="hero-art reveal" aria-label="Decorative artwork">
+        <!-- Simple inline SVG illustration to avoid external assets -->
+        <svg viewBox="0 0 520 320" role="img" aria-label="Abstract decorative shapes">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
+              <stop stop-color="#2A9D8F" offset="0"/>
+              <stop stop-color="#264653" offset="1"/>
+            </linearGradient>
+          </defs>
+          <rect width="520" height="320" fill="#ffffff" rx="20"/>
+          <circle cx="120" cy="180" r="90" fill="url(#grad)" fill-opacity="0.25"/>
+          <circle cx="260" cy="110" r="60" fill="#E9C46A" fill-opacity="0.25"/>
+          <circle cx="420" cy="210" r="70" fill="#F4A261" fill-opacity="0.25"/>
+          <g fill="#fff" opacity="0.9">
+            <circle cx="140" cy="170" r="8"/>
+            <rect x="310" y="90" width="28" height="28" rx="6"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="container" aria-label="Features" role="region">
+      <h2 class="section-title reveal">Design system and components</h2>
+      <p class="section-sub reveal" aria-live="polite">Consistent tokens, accessible interactions, and responsive layouts designed for handoff.</p>
+
+      <div class="grid grid-3 reveal" id="featuresGrid" style="margin-top:8px;">
+        <div class="card" aria-label="Feature: Responsive grid">
+          <div class="feature-icon" aria-hidden="true"> Grid </div>
+          <h3 style="margin:6px 0 6px;">Responsive Grid</h3>
+          <p style="margin:0; color:var(--color-muted);">Fluid breakpoints, accessible typography, and predictable spacing across devices.</p>
+        </div>
+        <div class="card" aria-label="Feature: Accessible components">
+          <div class="feature-icon" aria-hidden="true"> A11Y </div>
+          <h3 style="margin:6px 0 6px;">Accessible UI</h3>
+          <p style="margin:0; color:var(--color-muted);">Keyboard navigable controls, high-contrast defaults, and ARIA-friendly semantics.</p>
+        </div>
+        <div class="card" aria-label="Feature: Design tokens">
+          <div class="feature-icon" aria-hidden="true"> Tokens </div>
+          <h3 style="margin:6px 0 6px;">Design Tokens</h3>
+          <p style="margin:0; color:var(--color-muted);">Color, typography, spacing and radii centralized for scalable design systems.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="gallery" class="container" aria-label="Portfolio gallery" role="region">
+      <h2 class="section-title reveal" style="margin-top:0;">Gallery</h2>
+      <p class="section-sub reveal" aria-live="polite">A small showcase of layout blocks and UI patterns rendered with pure CSS and SVGs.</p>
+
+      <div class="gallery reveal" aria-label="Gallery items">
+        <!-- Item 1 -->
+        <figure>
+          <svg width="100%" height="140" viewBox="0 0 400 140" preserveAspectRatio="none" role="img" aria-label="Gallery item placeholder 1">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+                <stop stop-color="#2A9D8F" offset="0"/>
+                <stop stop-color="#264653" offset="1"/>
+              </linearGradient>
+            </defs>
+            <rect width="400" height="140" fill="#fff"/>
+            <rect x="0" y="0" width="400" height="60" fill="url(#g1)" opacity="0.25"/>
+            <circle cx="320" cy="90" r="40" fill="url(#g1)" opacity="0.5"/>
+          </svg>
+          <figcaption>Layout sample A</figcaption>
+        </figure>
+        <!-- Item 2 -->
+        <figure>
+          <svg width="100%" height="140" viewBox="0 0 400 140" preserveAspectRatio="none" role="img" aria-label="Gallery item placeholder 2">
+            <defs>
+              <linearGradient id="g2" x1="0" x2="1" y1="0" y2="1">
+                <stop stop-color="#E76F51" offset="0"/>
+                <stop stop-color="#F4A261" offset="1"/>
+              </linearGradient>
+            </defs>
+            <rect width="400" height="140" fill="#fff"/>
+            <rect x="0" y="60" width="400" height="50" fill="url(#g2)" opacity="0.25"/>
+            <circle cx="80" cy="40" r="28" fill="url(#g2)" opacity="0.5"/>
+          </svg>
+          <figcaption>Layout sample B</figcaption>
+        </figure>
+        <!-- Item 3 -->
+        <figure>
+          <svg width="100%" height="140" viewBox="0 0 400 140" preserveAspectRatio="none" role="img" aria-label="Gallery item placeholder 3">
+            <defs>
+              <linearGradient id="g3" x1="0" x2="1" y1="0" y2="1">
+                <stop stop-color="#264653" offset="0"/>
+                <stop stop-color="#2A9D8F" offset="1"/>
+              </linearGradient>
+            </defs>
+            <rect width="400" height="140" fill="#fff"/>
+            <rect x="60" y="20" width="260" height="40" fill="url(#g3)" opacity="0.6" rx="8"/>
+            <circle cx="320" cy="110" r="22" fill="url(#g3)" opacity="0.4"/>
+          </svg>
+          <figcaption>Layout sample C</figcaption>
+        </figure>
+        <!-- Item 4 -->
+        <figure>
+          <svg width="100%" height="140" viewBox="0 0 400 140" preserveAspectRatio="none" role="img" aria-label="Gallery item placeholder 4">
+            <defs>
+              <linearGradient id="g4" x1="0" x2="1" y1="0" y2="1">
+                <stop stop-color="#E9C46A" offset="0"/>
+                <stop stop-color="#F4A261" offset="1"/>
+              </linearGradient>
+            </defs>
+            <rect width="400" height="140" fill="#fff"/>
+            <path d="M0,90 Q200,20 400,90 L400,140 L0,140Z" fill="url(#g4)" opacity="0.25"/>
+          </svg>
+          <figcaption>Layout sample D</figcaption>
+        </figure>
+        <!-- Item 5 -->
+        <figure>
+          <svg width="100%" height="140" viewBox="0 0 400 140" preserveAspectRatio="none" role="img" aria-label="Gallery item placeholder 5">
+            <defs>
+              <linearGradient id="g5" x1="0" x2="1" y1="0" y2="1">
+                <stop stop-color="#2A9D8F" offset="0"/>
+                <stop stop-color="#E76F51" offset="1"/>
+              </linearGradient>
+            </defs>
+            <rect width="400" height="140" fill="#fff"/>
+            <rect x="40" y="40" width="320" height="60" fill="url(#g5)" rx="12"/>
+          </svg>
+          <figcaption>Layout sample E</figcaption>
+        </figure>
+        <!-- Item 6 -->
+        <figure>
+          <svg width="100%" height="140" viewBox="0 0 400 140" preserveAspectRatio="none" role="img" aria-label="Gallery item placeholder 6">
+            <rect width="400" height="140" fill="#fff"/>
+            <circle cx="200" cy="70" r="38" fill="#264653" opacity="0.25"/>
+            <circle cx="100" cy="70" r="20" fill="#2A9D8F" opacity="0.25"/>
+          </svg>
+          <figcaption>Layout sample F</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="container" aria-label="About" role="region">
+      <h2 class="section-title reveal">About this scaffold</h2>
+      <p class="section-sub reveal">
+        This single-page site demonstrates a modular layout with a clean UI, CSS-driven animations, and a lightweight design system. The palette provides strong contrast and visual harmony across components.
+      </p>
+
+      <div class="grid grid-3 reveal" style="margin-top: 8px;">
+        <div class="card" aria-label="About point 1">
+          <h3>Performance-first</h3>
+          <p style="margin:0; color:var(--color-muted);">Lean DOM, CSS only for most animations, and lazy loading ready components.</p>
+        </div>
+        <div class="card" aria-label="About point 2">
+          <h3>Accessible by default</h3>
+          <p style="margin:0; color:var(--color-muted);">Keyboard operable interactions, proper focus rings, and semantic markup.</p>
+        </div>
+        <div class="card" aria-label="About point 3">
+          <h3>Extensible design system</h3>
+          <p style="margin:0; color:var(--color-muted);">Tokens centralized for consistent theming and easy handoff.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="container" aria-label="Testimonials" role="region">
+      <h2 class="section-title reveal">What people say</h2>
+      <p class="section-sub reveal">Thoughtful UX, crisp visuals, and friendly developer ergonomics.</p>
+
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+        <div class="card reveal" aria-label="Testimonial 1">
+          <blockquote>
+            Palette Studio demonstrates a clean, accessible UI with a friendly, production-ready structure. The token-driven approach makes handoffs painless.
+          </blockquote>
+          <figcaption style="font-weight:600; margin-top:.25rem;">— Alex, Product Designer</figcaption>
+        </div>
+        <div class="card reveal" aria-label="Testimonial 2">
+          <blockquote>
+            The vanilla stack keeps things fast and predictable. Animations feel purposeful and respect users who prefer reduced motion.
+          </blockquote>
+          <figcaption style="font-weight:600; margin-top:.25rem;">— Priya, Frontend Engineer</figcaption>
+        </div>
+        <div class="card reveal" aria-label="Testimonial 3">
+          <blockquote>
+            A robust scaffold with a clear design system. Extends well; easy for a dev team to pick up and expand.
+          </blockquote>
+          <figcaption style="font-weight:600; margin-top:.25rem;">— Luca, CTO</figcaption>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section id="cta" class="container" aria-label="Call to action" role="region">
+      <div class="card reveal" style="display:flex; align-items:center; justify-content:space-between; padding:1.25rem; background: linear-gradient(135deg, #fff, #fbfbfb);">
+        <div>
+          <strong>Ready to ship a production-ready front-end?</strong>
+          <p style="margin:0; color:var(--color-muted);">Use this scaffold as a starting point for your next project.</p>
+        </div>
+        <button class="btn primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Start your project</button>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="container" aria-label="Contact" role="region">
+      <h2 class="section-title reveal">Get in touch</h2>
+      <p class="section-sub reveal">Tell us about your project, timeline, and goals. We'll respond promptly.</p>
+
+      <form class="reveal" aria-label="Contact form" onsubmit="return handleSubmit(event)">
+        <div class="row" style="margin-bottom: .75rem;">
+          <div>
+            <label for="name" style="display:block; font-weight:600; margin-bottom:.25rem;">Name</label>
+            <input id="name" name="name" type="text" required placeholder="Your name" />
+          </div>
+          <div>
+            <label for="email" style="display:block; font-weight:600; margin-bottom:.25rem;">Email</label>
+            <input id="email" name="email" type="email" required placeholder="you@example.com" />
+          </div>
+        </div>
+        <div style="margin-bottom:.75rem;">
+          <label for="message" style="display:block; font-weight:600; margin-bottom:.25rem;">Message</label>
+          <textarea id="message" name="message" rows="4" placeholder="Tell us about your project..." required></textarea>
+        </div>
+        <button class="btn primary" type="submit">Send message</button>
+        <span id="formStatus" aria-live="polite" style="margin-left:.75rem; color:var(--color-muted);"></span>
+      </form>
+    </section>
+  </main>
+
+  <footer role="contentinfo" aria-label="Site footer">
+    <div class="container" style="padding: 1rem 0;">
+      <p>&copy; <span id="year"></span> Palette Studio. All rights reserved.</p>
+      <p style="margin:0; color:var(--color-muted); font-size:.9rem;">This is a minimal, self-contained SPA scaffold intended for design-system exploration and handoff workflows.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Basic year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile menu toggle for accessibility
+    (function(){
+      const toggle = document.getElementById('menuToggle');
+      const nav = document.querySelector('nav.primary-nav');
+      if(!toggle) return;
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        if(!expanded) {
+          nav.classList.add('expanded');
+        } else {
+          nav.classList.remove('expanded');
+        }
+      });
+    })();
+
+    // Reveal-on-scroll (with prefers-reduced-motion guard)
+    (function(){
+      const reveals = document.querySelectorAll('.reveal');
+      const shouldAnimate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(!shouldAnimate) {
+        reveals.forEach(el => el.classList.add('visible'));
+        return;
+      }
+      const obs = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+      reveals.forEach(el => obs.observe(el));
+    })();
+
+    // Simple form submission handler (no network)
+    function handleSubmit(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      const status = document.getElementById('formStatus');
+
+      if(!name || !email || !message){
+        status.textContent = 'Please fill in all fields.';
+        status.style.color = 'var(--brand-4)';
+        return false;
+      }
+      // Basic email format check
+      const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if(!emailValid){
+        status.textContent = 'Please enter a valid email address.';
+        status.style.color = 'var(--brand-4)';
+        return false;
+      }
+
+      status.textContent = 'Thank you! Your message has been captured locally (demo).';
+      status.style.color = 'var(--brand-1)';
+      // Reset form for UX
+      e.target.reset();
+      return false;
+    }
+
+    // Placeholder to illustrate design tokens usage in DOM
+    // This block can be extended to generate dynamic content or components.
+  </script>
+</body>
+</html>
