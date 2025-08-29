@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modern Portfolio — Clean UI with Purposeful Motion</title>
+  <meta name="description" content="A modern, responsive single-page website scaffold with a clean UI, smooth animations, and a design system built on a curated color palette." />
+  <style>
+    /* Design System Tokens (CSS variables)
+       - Palette mapped to the requested hex colors
+       - Spacing, typography, radii, and shadows to ensure cohesive UI
+       - All tokens are defined here for easy theming and extension
+    */
+    :root {
+      /* Color palette (mapped to UI roles) */
+      --color-dark: #264653;
+      --color-teal: #2A9D8F;     /* primary accent */
+      --color-gold: #E9C46A;     /* secondary */
+      --color-sand: #F4A261;     /* accent */
+      --color-rose: #E76F51;     /* call-to-action */
+
+      --color-bg: #ffffff;
+      --color-text: #1f2937;
+      --color-muted: #6b7280;
+
+      /* Semantic roles */
+      --brand-primary: var(--color-teal);
+      --brand-secondary: var(--color-gold);
+      --brand-accent: var(--color-sand);
+      --cta: var(--color-rose);
+
+      /* Typography scale (responsive-friendly) */
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono";
+
+      --font-title: 700;
+      --font-subtle: 500;
+
+      --text-size-0: 14px;
+      --text-size-1: 16px;
+      --text-size-2: 18px;
+      --text-size-3: 22px;
+      --text-size-4: 28px;
+      --text-size-5: 34px;
+      --text-size-6: 48px;
+
+      /* Layout spacing */
+      --space-1: 8px;
+      --space-2: 12px;
+      --space-3: 16px;
+      --space-4: 24px;
+      --space-5: 32px;
+      --space-6: 40px;
+      --space-7: 48px;
+      --space-8: 64px;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+
+      --shadow-sm: 0 2px 6px rgba(0,0,0,.08);
+      --shadow-md: 0 6px 20px rgba(0,0,0,.08);
+      --shadow-lg: 0 10px 30px rgba(0,0,0,.12);
+
+      --grid-gap: 24px;
+
+      /* Responsive breakpoints */
+      --bp-sm: 640px;
+      --bp-md: 960px;
+      --bp-lg: 1200px;
+    }
+
+    /* Global resets & base styles */
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    img[loading="lazy"] { filter: saturate(1.05); }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Accessibility: skip link */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--brand-primary);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 0 0 6px 6px;
+      z-index: 999;
+      transition: top .2s ease;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* Layout */
+    .container {
+      width: 92%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: saturate(1.2) blur(6px);
+      border-bottom: 1px solid rgba(0,0,0,.05);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--color-text);
+    }
+    .brand-mark {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      display: inline-block;
+    }
+    .brand-name {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    nav.ul {
+      display: flex;
+      gap: 14px;
+    }
+
+    nav.ul a {
+      text-decoration: none;
+      color: var(--color-dark);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    nav.ul a:hover, nav ul a:focus {
+      background: rgba(42,157,143,.08);
+      outline: none;
+    }
+
+    /* HERO */
+    section.hero {
+      position: relative;
+      padding: 72px 0 40px;
+      overflow: hidden;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: var(--grid-gap);
+    }
+    .hero-copy {
+      padding: 8px;
+    }
+    .hero-eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(38,70,101,.08);
+      color: var(--color-dark);
+      font-size: 12px;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: var(--text-size-5);
+      line-height: 1.08;
+      margin: 14px 0 12px;
+      color: var(--color-dark);
+    }
+    .hero p {
+      font-size: var(--text-size-2);
+      color: #374151;
+      margin: 12px 0 20px;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      border: 0;
+      cursor: pointer;
+      transition: transform .2s ease;
+      background: var(--cta);
+      color: white;
+    }
+    .cta:hover { transform: translateY(-1px); }
+    .secondary {
+      background: transparent;
+      color: var(--color-dark);
+      border: 2px solid var(--color-teal);
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 320px;
+      display: grid;
+      place-items: center;
+    }
+    .hex {
+      width: 260px; height: 260px;
+      background: conic-gradient(from 180deg at 50% 50%, var(--brand-primary), var(--color-gold), var(--color-sand), var(--brand-primary));
+      clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%);
+      filter: drop-shadow(0 8px 20px rgba(0,0,0,.15));
+    }
+
+    /* SECTIONS: generic card/grid styles */
+    section.section {
+      padding: 72px 0;
+    }
+    h2.section-title {
+      font-size: var(--text-size-4);
+      margin: 0 0 12px;
+    }
+    .section-sub {
+      color: var(--color-muted);
+      margin-bottom: 28px;
+    }
+
+    .grid {
+      display: grid;
+      gap: var(--grid-gap);
+    }
+    .features-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .feature-card {
+      padding: 20px;
+      border-radius: var(--radius-md);
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.05);
+      box-shadow: var(--shadow-sm);
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .feature-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      color: white;
+      font-size: 20px;
+    }
+    .feature-title { font-weight: 700; font-size: 16px; }
+    .feature-desc { font-size: 14px; color: #555; }
+
+    /* Portfolio gallery */
+    .portfolio-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .portfolio-item {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.05);
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      grid-template-rows: 160px auto;
+      cursor: pointer;
+    }
+    .portfolio-thumb {
+      display: flex; align-items: center; justify-content: center;
+      background: #f7f7f7;
+    }
+    .portfolio-thumb svg { width: 60%; height: 60%; }
+    .portfolio-info { padding: 12px; font-size: 13px; color: #333; }
+
+    /* Testimonials */
+    .testimonials-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .testimonial {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.05);
+      box-shadow: var(--shadow-sm);
+    }
+    .testimonial blockquote {
+      margin: 6px 0 0;
+      font-style: italic;
+    }
+    .testimonial .author { font-weight: 700; font-size: 13px; margin-top: 8px; }
+
+    /* About & CTA blocks */
+    .about-content { display: grid; grid-template-columns: 1fr 1fr; gap: var(--grid-gap); }
+    .about-content p { color: #555; }
+
+    /* Contact form */
+    form.contact-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--grid-gap);
+    }
+    .field { display: grid; gap: 6px; }
+    label { font-size: 12px; color: var(--color-muted); }
+    input, textarea {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      background: #fff;
+      width: 100%;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .form-actions { grid-column: span 2; display: flex; gap: 12px; align-items: center; justify-content: flex-start; }
+
+    .message {
+      font-size: 13px;
+      color: green;
+      min-height: 18px;
+    }
+
+    /* Footer */
+    footer.site-footer {
+      padding: 40px 0;
+      border-top: 1px solid rgba(0,0,0,.05);
+      text-align: center;
+      color: var(--color-muted);
+      font-size: 13px;
+    }
+
+    /* Responsive rules */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: left; }
+      .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+      .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .about-content { grid-template-columns: 1fr; }
+      form.contact-form { grid-template-columns: 1fr; }
+      .form-actions { grid-column: 1 / -1; }
+    }
+    @media (max-width: 640px) {
+      .hero { padding: 40px 0 20px; }
+      .portfolio-grid, .testimonials-grid, .features-grid { grid-template-columns: 1fr; }
+      .cta { width: auto; }
+      .hero h1 { font-size: 28px; }
+    }
+
+    /* Simple in-view animation hooks */
+    [data-animate] { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+    [data-animate].in-view { opacity: 1; transform: translateY(0); }
+
+    /* Reduced motion respect */
+    @media (prefers-reduced-motion: reduce) {
+      [data-animate] { transition: none; opacity: 1; transform: none; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Skip to content for accessibility -->
+  <a class="skip-link" href="#hero">Skip to content</a>
+
+  <!-- Header / Navigation -->
+  <header class="site-header" role="banner">
+    <div class="container nav" aria-label="Main navigation">
+      <a href="#hero" class="brand" aria-label="Go to home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">Modern Studio</span>
+      </a>
+
+      <nav class="ul" aria-label="Site sections">
+        <a href="#features" >Features</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#about">About</a>
+        <a href="#contact" class="cta" style="padding:10px 16px; background:var(--cta); color:white; text-decoration:none; border-radius:999px; border:0;">
+          Contact
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="hero" class="hero" aria-label="Intro hero">
+    <div class="container hero-inner">
+      <div class="hero-copy" data-animate>
+        <span class="hero-eyebrow" aria-label="Intro badge">New • Fast • Accessible</span>
+        <h1>Crafting modern, accessible web experiences with purpose</h1>
+        <p>A clean, responsive single-page layout that feels effortless. Smooth micro-interactions, performance-minded, and designed with a scalable system using a curated color palette.</p>
+        <a href="#contact" class="cta" aria-label="Contact us">Get in touch</a>
+        <a href="#portfolio" class="cta secondary" aria-label="View portfolio" style="margin-left:12px;">View portfolio</a>
+      </div>
+
+      <div class="hero-visual" aria-label="Decorative hero visual">
+        <div class="hex" aria-hidden="true"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES / SERVICES -->
+  <section id="features" class="section" aria-label="Features and services">
+    <div class="container">
+      <h2 class="section-title" style="color:var(--color-dark)">Core features</h2>
+      <p class="section-sub">A concise design system, scalable components, and accessible interactions designed for performance and clarity.</p>
+
+      <div class="grid features-grid" data-animate>
+        <article class="feature-card" aria-label="Design system and tokens">
+          <div class="feature-icon" aria-hidden="true">DS</div>
+          <div class="feature-title">Design system and tokens</div>
+          <div class="feature-desc">Consistent typography, spacing, and color usage across components with accessible defaults.</div>
+        </article>
+
+        <article class="feature-card" aria-label="Animation and motion">
+          <div class="feature-icon" aria-hidden="true">⚡</div>
+          <div class="feature-title">Purposeful motion</div>
+          <div class="feature-desc">CSS-driven transitions with a JS orchestrator to reveal content on scroll and respect reduced-motion preferences.</div>
+        </article>
+
+        <article class="feature-card" aria-label="Accessibility-first">
+          <div class="feature-icon" aria-hidden="true">A</div>
+          <div class="feature-title">Accessibility-first</div>
+          <div class="feature-desc">Keyboard navigation, semantic landmarks, aria labeling, and color-contrast-safe UI.</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO / GALLERY -->
+  <section id="portfolio" class="section" aria-label="Portfolio gallery">
+    <div class="container">
+      <h2 class="section-title" style="color:var(--color-dark)">Portfolio gallery</h2>
+      <p class="section-sub">A selection of projects rendered in a responsive grid with accessible interactions. Click an item for details.</p>
+
+      <div class="grid portfolio-grid" data-animate>
+        <!-- Portfolio item 1 -->
+        <article class="portfolio-item" role="button" aria-label="Project One" tabindex="0" onclick="openModal('Project One','A modern landing page with clean UI and fast performance.')" onkeydown="if(event.key==='Enter'){openModal('Project One','A modern landing page with clean UI and fast performance.') }">
+          <div class="portfolio-thumb" aria-label="Thumbnail for Project One">
+            <!-- Inline SVG placeholder (no external assets) -->
+            <svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Project illustration">
+              <defs>
+                <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                  <stop stop-color="#2A9D8F"/>
+                  <stop offset="1" stop-color="#264653"/>
+                </linearGradient>
+              </defs>
+              <rect width="120" height="120" rx="14" fill="url(#g1)"></rect>
+              <circle cx="60" cy="40" r="14" fill="#fff" opacity=".8"></circle>
+              <rect x="26" y="68" width="68" height="28" rx="6" fill="rgba(255,255,255,.9)"></rect>
+            </svg>
+          </div>
+          <div class="portfolio-info">Project One — Landing page UI</div>
+        </article>
+
+        <!-- Portfolio item 2 -->
+        <article class="portfolio-item" role="button" aria-label="Project Two" tabindex="0" onclick="openModal('Project Two','Portfolio-style gallery with responsive cards and animation.')"
+                 onkeydown="if(event.key==='Enter'){openModal('Project Two','Portfolio-style gallery with responsive cards and animation.') }">
+          <div class="portfolio-thumb" aria-label="Thumbnail for Project Two">
+            <svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Project illustration">
+              <defs>
+                <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+                  <stop stop-color="#E9C46A"/>
+                  <stop offset="1" stop-color="#F4A261"/>
+                </linearGradient>
+              </defs>
+              <rect width="120" height="120" rx="14" fill="url(#g2)"></rect>
+              <circle cx="60" cy="40" r="14" fill="#fff" opacity=".8"></circle>
+              <rect x="26" y="68" width="68" height="28" rx="6" fill="rgba(255,255,255,.9)"></rect>
+            </svg>
+          </div>
+          <div class="portfolio-info">Project Two — Gallery grid</div>
+        </article>
+
+        <!-- Portfolio item 3 -->
+        <article class="portfolio-item" role="button" aria-label="Project Three" tabindex="0" onclick="openModal('Project Three','Component library and design tokens showcase.')"
+                 onkeydown="if(event.key==='Enter'){openModal('Project Three','Component library and design tokens showcase.') }">
+          <div class="portfolio-thumb" aria-label="Thumbnail for Project Three">
+            <svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Project illustration">
+              <defs>
+                <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+                  <stop stop-color="#2A9D8F"/>
+                  <stop offset="1" stop-color="#E76F51"/>
+                </linearGradient>
+              </defs>
+              <rect width="120" height="120" rx="14" fill="url(#g3)"></rect>
+              <path d="M20 70 L100 70" stroke="#fff" stroke-width="6" stroke-linecap="round" />
+              <path d="M20 50 L100 50" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".7" />
+            </svg>
+          </div>
+          <div class="portfolio-info">Project Three — Tokens & UI kit</div>
+        </article>
+
+        <!-- Portfolio item 4 -->
+        <article class="portfolio-item" role="button" aria-label="Project Four" tabindex="0" onclick="openModal('Project Four','Responsive dashboard with accessible charts.')"
+                 onkeydown="if(event.key==='Enter'){openModal('Project Four','Responsive dashboard with accessible charts.') }">
+          <div class="portfolio-thumb" aria-label="Thumbnail for Project Four">
+            <svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Project illustration">
+              <rect width="120" height="120" rx="14" fill="#264653"></rect>
+              <circle cx="60" cy="40" r="14" fill="#fff" opacity=".8"></circle>
+              <rect x="28" y="66" width="64" height="28" rx="6" fill="rgba(255,255,255,.9)"></rect>
+            </svg>
+          </div>
+          <div class="portfolio-info">Project Four — Dashboard UI</div>
+        </article>
+
+        <!-- Portfolio item 5 -->
+        <article class="portfolio-item" role="button" aria-label="Project Five" tabindex="0" onclick="openModal('Project Five','E-commerce storefront with accessible components.')"
+                 onkeydown="if(event.key==='Enter'){openModal('Project Five','E-commerce storefront with accessible components.') }">
+          <div class="portfolio-thumb" aria-label="Thumbnail for Project Five">
+            <svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Project illustration">
+              <rect width="120" height="120" rx="14" fill="#F4A261"></rect>
+              <path d="M20 90 H100" stroke="#fff" stroke-width="6" stroke-linecap="round" />
+              <path d="M20 60 H72" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".7" />
+            </svg>
+          </div>
+          <div class="portfolio-info">Project Five — Shop UI</div>
+        </article>
+
+        <!-- Portfolio item 6 -->
+        <article class="portfolio-item" role="button" aria-label="Project Six" tabindex="0" onclick="openModal('Project Six','Marketing site with motion and a11y considerations.')"
+                 onkeydown="if(event.key==='Enter'){openModal('Project Six','Marketing site with motion and a11y considerations.') }">
+          <div class="portfolio-thumb" aria-label="Thumbnail for Project Six">
+            <svg width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Project illustration">
+              <rect width="120" height="120" rx="14" fill="#2A9D8F"></rect>
+              <circle cx="60" cy="40" r="14" fill="#fff" opacity=".8"></circle>
+              <rect x="26" y="66" width="68" height="28" rx="6" fill="rgba(255,255,255,.9)"></rect>
+            </svg>
+          </div>
+          <div class="portfolio-info">Project Six — Marketing site</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials" class="section" aria-label="Testimonials">
+    <div class="container">
+      <h2 class="section-title" style="color:var(--color-dark)">What clients say</h2>
+      <p class="section-sub">Thoughtful, clear communication and reliable delivery. Here is what people say about working with us.</p>
+
+      <div class="grid testimonials-grid" data-animate>
+        <blockquote class="testimonial" aria-label="Testimonial 1">
+          <p>“The site launched on time and exceeded accessibility expectations. The UI feels calm and confident.”</p>
+          <div class="author">— Dana M.</div>
+        </blockquote>
+
+        <blockquote class="testimonial" aria-label="Testimonial 2">
+          <p>“A lean, fast, and scalable front-end scaffold. The color system is cohesive and the motion is meaningful.”</p>
+          <div class="author">— Liam R.</div>
+        </blockquote>
+
+        <blockquote class="testimonial" aria-label="Testimonial 3">
+          <p>“Clear design tokens made handoff to our devs painless. Great balance of aesthetics and performance.”</p>
+          <div class="author">— Priya S.</div>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section" aria-label="About the team or project">
+    <div class="container about-content" data-animate>
+      <div>
+        <h2 class="section-title" style="color:var(--color-dark)">About this design system</h2>
+        <p>This single-page scaffold demonstrates a practical approach to building a cohesive, responsive UI with a modern aesthetic. It emphasizes accessibility, performance, and a scalable design system based on the provided color palette.</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:6px">What to customize</h3>
+        <ul style="margin:0; padding-left:20px; color:#555;">
+          <li>Replace placeholder content with real copy and imagery</li>
+          <li>Extend the token set (typography, spacing, shadows) as needed</li>
+          <li>Connect the contact form to a backend or email service</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALL TO ACTION / CONTACT -->
+  <section id="contact" class="section" aria-label="Contact us">
+    <div class="container" data-animate>
+      <h2 class="section-title" style="color:var(--color-dark)">Get in touch</h2>
+      <p class="section-sub">Tell us about your project and goals. We’ll respond within 1 business day.</p>
+
+      <form class="contact-form" action="#" method="POST" novalidate aria-label="Contact form" onsubmit="return handleSubmit(event)">
+        <div class="field">
+          <label for="name">Your name</label>
+          <input id="name" name="name" type="text" placeholder="Jane Doe" required aria-required="true" />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required aria-required="true" />
+        </div>
+        <div class="field" style="grid-column: 1 / -1;">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Tell us about your project, goals, and timeline." required aria-required="true"></textarea>
+        </div>
+        <div class="form-actions" aria-label="Form actions">
+          <button type="submit" class="cta" style="background:var(--brand-primary); color:white;">Send message</button>
+          <span class="message" id="formMessage" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container" aria-label="Footer">
+      © <span id="year"></span> Modern Studio • Built with vanilla HTML CSS JS
+    </div>
+  </footer>
+
+  <!-- Simple modal for portfolio items (inline, no external assets) -->
+  <div id="modal" role="dialog" aria-label="Project details" aria-hidden="true" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; background: rgba(0,0,0,.5); z-index:9999;">
+    <div style="width:min(90vw,700px); background:white; border-radius:12px; padding:20px; box-shadow: var(--shadow-lg); position:relative;">
+      <button onclick="closeModal()" aria-label="Close" style="position:absolute; right:12px; top:12px; background:transparent; border:0; font-size:18px; cursor:pointer;">✕</button>
+      <h3 id="modalTitle" style="margin-top:0; color:var(--color-dark)"></h3>
+      <p id="modalBody" style="color:#555;"></p>
+    </div>
+  </div>
+
+  <script>
+    // Simple utility: set current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Accessibility: reveal sections on scroll using IntersectionObserver
+    (function initRevealOnScroll(){
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) {
+        // If reduced motion is enabled, skip animations
+        document.querySelectorAll('[data-animate]').forEach(el => el.classList.add('in-view'));
+        return;
+      }
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in-view');
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.15 });
+      document.querySelectorAll('[data-animate]').forEach(el => {
+        observer.observe(el);
+      });
+    })();
+
+    // Portfolio modal helpers
+    function openModal(title, body) {
+      const m = document.getElementById('modal');
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalBody').textContent = body;
+      m.style.display = 'flex';
+      m.setAttribute('aria-hidden', 'false');
+      // Trap focus for accessibility
+      m.querySelector('button').focus();
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      const m = document.getElementById('modal');
+      m.style.display = 'none';
+      m.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    // Close modal on backdrop click
+    document.getElementById('modal').addEventListener('click', function(e){
+      if (e.target === this) closeModal();
+    });
+
+    // Simple form validation / submit handler (demo)
+    function handleSubmit(ev) {
+      ev.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      const msgEl = document.getElementById('formMessage');
+      if (!name || !email || !message) {
+        msgEl.style.color = 'crimson';
+        msgEl.textContent = 'Please fill in all fields.';
+        return false;
+      }
+      // Minimal email pattern
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!emailOk) {
+        msgEl.style.color = 'crimson';
+        msgEl.textContent = 'Please provide a valid email address.';
+        return false;
+      }
+      // Simulated success
+      msgEl.style.color = '#1e8a2b';
+      msgEl.textContent = 'Thank you! Your message has been sent (demo).';
+      ev.target.reset();
+      return false;
+    }
+
+    // Keyboard accessibility: close modal with Escape
+    window.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && document.getElementById('modal').style.display === 'flex') {
+        closeModal();
+      }
+    });
+
+  </script>
+</body>
+</html>
