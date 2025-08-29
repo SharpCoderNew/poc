@@ -1,105 +1,183 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chat Website</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f5f5f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Projects</title>
+    <style>
+      :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;line-height:1.4}
+      body{max-width:900px;margin:48px auto;padding:0 20px;color:#0b1220}
+      h1{font-size:clamp(20px,4vw,32px);margin-bottom:6px}
+      p.lead{color:#334155}
+      ul.folders{list-style:none;padding:0;margin:24px 0}
+      ul.folders li{padding:10px 12px;border:1px solid #e6e9ee;border-radius:8px;margin:8px 0}
+      a.folder{color:#0b61ff;text-decoration:none;font-weight:600}
+      .meta{color:#667085;font-size:13px;margin-top:8px}
+      .small{font-size:13px;color:#94a3b8}
 
-    .chat-container {
-      width: 400px;
-      height: 600px;
-      background: #fff;
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      overflow: hidden;
-    }
+      /* Card grid */
+      .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:16px}
+      .card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:#fff;border:1px solid #eef2f7;text-decoration:none;color:inherit;box-shadow:0 6px 18px rgba(16,24,40,0.04);transition:transform .12s ease,box-shadow .12s ease}
+      .card:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(16,24,40,0.08)}
+      .thumb{width:56px;height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;color:rgba(0,0,0,0.6);font-size:14px}
+      .info{flex:1;min-width:0}
+      .title{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .desc{color:#6b7280;font-size:13px;margin-top:4px}
 
-    .chat-header {
-      background: #4a76a8;
-      color: white;
-      padding: 15px;
-      font-size: 18px;
-      font-weight: bold;
-    }
+      @media (max-width:520px){
+        body{margin:20px 12px}
+        .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+      }
+    </style>
+  </head>
+  <body>
+    <header style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div>
+        <h1>Projects</h1>
+        <p class="lead">Auto-generated list of top-level project folders. Add folders to the repo and run the generator or update <code>folders.json</code>.</p>
+      </div>
+      <div style="min-width:220px;flex:0 0 240px">
+        <label for="q" class="small" style="display:block;margin-bottom:6px">Search projects</label>
+        <input id="q" placeholder="Filter by name..." style="width:100%;padding:8px 10px;border-radius:8px;border:1px solid #e6e9ee"> 
+      </div>
+    </header>
 
-    .chat-messages {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-      background: #f9f9f9;
-    }
+    <main>
+      <div id="meta" class="meta">Loading…</div>
+      <div id="grid" aria-live="polite"> 
+        <p class="small">Loading folders...</p>
+      </div>
+    </main>
 
-    .message {
-      margin: 10px 0;
-      padding: 10px 15px;
-      border-radius: 20px;
-      max-width: 70%;
-      clear: both;
-    }
+    <script>
+      // Contract:
+      // - Inputs: optional `folders.json` at site root (array of folder names). If absent, try parsing a server directory listing.
+      // - Output: clickable list of folders linking to <folder>/
+      // - Errors: show a helpful message and a fallback manual link to Git root.
 
-    .message.user {
-      background: #4a76a8;
-      color: white;
-      float: right;
-    }
+      async function fetchManifest() {
+        try {
+          const res = await fetch('folders.json', {cache: 'no-store'});
+          if (!res.ok) throw new Error('no manifest');
+          const data = await res.json();
+          if (!Array.isArray(data)) throw new Error('manifest bad');
+          return data;
+        } catch (e) {
+          return null;
+        }
+      }
 
-    .message.bot {
-      background: #e5e5ea;
-      color: #000;
-      float: left;
-    }
+      function renderList(folders) {
+        const grid = document.getElementById('grid');
+        const meta = document.getElementById('meta');
+        if (!folders || folders.length === 0) {
+          grid.innerHTML = '<p class="small">No folders found. If you host this on a server that exposes directory listings, the page will try to parse them. For a reliable listing, create a <code>folders.json</code> at the site root or run the provided generator script.</p>';
+          meta.textContent = '';
+          return;
+        }
 
-    .chat-input {
-      display: flex;
-      border-top: 1px solid #ccc;
-    }
+        // normalize names
+        const items = folders.map(f => f.replace(/\/$/, '')).filter(Boolean);
+        meta.textContent = `${items.length} project${items.length === 1 ? '' : 's'}`;
 
-    .chat-input input {
-      flex: 1;
-      padding: 15px;
-      border: none;
-      outline: none;
-      font-size: 14px;
-    }
+        function makeCard(name) {
+          const a = document.createElement('a');
+          a.className = 'card';
+          a.href = encodeURI(name) + '/';
+          a.title = name;
 
-    .chat-input button {
-      padding: 15px 20px;
-      background: #4a76a8;
-      border: none;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
-    }
+          const thumb = document.createElement('div');
+          thumb.className = 'thumb';
+          // simple color from name hash
+          let h = 0; for (let i=0;i<name.length;i++) h = name.charCodeAt(i) + ((h<<5)-h);
+          const color = `hsl(${Math.abs(h)%360} 70% 65%)`;
+          thumb.style.background = `linear-gradient(135deg, ${color}, #ffffff00)`;
+          thumb.textContent = name.slice(0,2).toUpperCase();
 
-    .chat-input button:hover {
-      background: #3a5c82;
-    }
-  </style>
-</head>
-<body>
-  <div class="chat-container">
-    <div class="chat-header">Chat Room</div>
-    <div class="chat-messages">
-      <div class="message bot">Hello! How can I help you today?</div>
-      <div class="message user">I need some test HTML template.</div>
-      <div class="message bot">Here you go!</div>
-    </div>
-    <div class="chat-input">
-      <input type="text" placeholder="Type a message..." />
-      <button>Send</button>
-    </div>
-  </div>
-</body>
+          const info = document.createElement('div');
+          info.className = 'info';
+          const title = document.createElement('div');
+          title.className = 'title';
+          title.textContent = name;
+          const desc = document.createElement('div');
+          desc.className = 'desc';
+          desc.textContent = 'Open project folder';
+
+          info.appendChild(title);
+          info.appendChild(desc);
+
+          a.appendChild(thumb);
+          a.appendChild(info);
+          return a;
+        }
+
+        // render grid
+        grid.innerHTML = '';
+        const container = document.createElement('div');
+        container.className = 'grid';
+        items.forEach(name => container.appendChild(makeCard(name)));
+        grid.appendChild(container);
+
+        // filter
+        const q = document.getElementById('q');
+        q.addEventListener('input', () => {
+          const v = q.value.trim().toLowerCase();
+          const cards = container.children;
+          let visible = 0;
+          for (const c of cards) {
+            const t = c.querySelector('.title').textContent.toLowerCase();
+            const show = v === '' || t.includes(v);
+            c.style.display = show ? '' : 'none';
+            if (show) visible++;
+          }
+          meta.textContent = visible === items.length ? `${items.length} project${items.length===1?'':'s'}` : `${visible} / ${items.length}`;
+        });
+      }
+
+      // Try to parse a directory listing HTML response
+      async function tryParseDirectoryListing() {
+        try {
+          const res = await fetch(window.location.pathname, {cache: 'no-store'});
+          if (!res.ok) return null;
+          const text = await res.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(text, 'text/html');
+          const anchors = Array.from(doc.querySelectorAll('a'));
+          const names = anchors.map(a => a.getAttribute('href')).filter(Boolean)
+            .map(h => {
+              // Normalize
+              if (h === '../') return null;
+              // If link ends with '/', treat as folder
+              if (h.endsWith('/')) return h.replace(/\/$/, '');
+              // If link is a filename without dot (rare), skip
+              return null;
+            })
+            .filter(Boolean);
+          // Remove duplicates and empty
+          return Array.from(new Set(names)).sort((a,b)=>a.localeCompare(b, undefined, {sensitivity:'base'}));
+        } catch (e) {
+          return null;
+        }
+      }
+
+      (async function main(){
+        // 1) preferred: manifest
+        let folders = await fetchManifest();
+        if (folders) {
+          renderList(folders);
+          return;
+        }
+
+        // 2) fallback: try parsing server directory listing
+        folders = await tryParseDirectoryListing();
+        if (folders && folders.length>0) {
+          renderList(folders);
+          return;
+        }
+
+        // 3) final fallback: no folders
+        renderList([]);
+      })();
+    </script>
+  </body>
 </html>
