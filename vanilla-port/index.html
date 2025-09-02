@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modern Vanilla SPA — Portfolio</title>
+  <meta name="description" content="A modern, responsive single-page portfolio built with vanilla HTML/CSS/JS using a cohesive color palette." />
+  <style>
+    /* Design Tokens (design-system) */
+    :root{
+      /* Palette inspired by: #264653, #2A9D8F, #E9C46A, #F4A261, #E76F51 */
+      --c-brand-deep: #264653;
+      --c-brand-teal: #2A9D8F;
+      --c-accent: #E9C46A;
+      --c-warm: #F4A261;
+      --c-danger: #E76F51;
+
+      --c-bg: #f7f9fb;
+      --c-surface: #ffffff;
+      --c-text: #1f2937;
+      --c-muted: #64748b;
+
+      --radius: 12px;
+      --shadow-sm: 0 2px 6px rgba(0,0,0,.08);
+      --shadow: 0 8px 24px rgba(0,0,0,.08);
+      --grid-gap: 1.25rem;
+
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      --heading: 700;
+      --body: 400;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    /* Global styling */
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--c-text);
+      background: var(--c-bg);
+      line-height: 1.6;
+    }
+
+    /* Accessibility: skip link focus */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--c-brand-teal);
+      color: white;
+      padding: 8px 12px;
+      z-index: 100;
+      border-radius: 0 0 6px 6px;
+      transition: top .2s;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* Layout helpers */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    header, main, footer { width: 100%; }
+
+    /* Navbar */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: saturate(1.2) blur(2px);
+      background: rgba(255,255,255,.92);
+      border-bottom: 1px solid rgba(0,0,0,.04);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: .6rem;
+      font-weight: 700;
+      color: var(--c-brand-deep);
+      text-decoration: none;
+    }
+    .brand-badge {
+      width: 28px; height: 28px; border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: conic-gradient(from 180deg at 50% 50%, var(--c-brand-teal), var(--c-accent), var(--c-warm), var(--c-brand-deep));
+      color: white; font-size: 14px;
+    }
+    nav ul {
+      list-style: none; margin: 0; padding: 0; display: flex; gap: 12px;
+    }
+    nav a {
+      color: var(--c-text);
+      text-decoration: none;
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+    nav a:hover, nav a:focus { background: #f1f5f9; outline: none; }
+    .nav-toggle {
+      display: none; background: none; border: none; font-size: 28px;
+      cursor: pointer;
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      padding: 72px 0 56px;
+      overflow: hidden;
+    }
+    .hero-inner {
+      display: grid; grid-template-columns: 1.1fr .9fr; gap: 2rem; align-items: center;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 4vw + 1rem, 3.5rem);
+      line-height: 1.08;
+      margin: 0 0 12px;
+      letter-spacing: -.02em;
+      background: linear-gradient(90deg, var(--c-brand-deep), var(--c-brand-teal), var(--c-accent));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero p { color: var(--c-muted); font-size: 1.05rem; max-width: 60ch; }
+    .cta-row { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+    .btn {
+      background: var(--c-brand-teal); color: white; border: none;
+      padding: 12px 18px; border-radius: 10px; cursor: pointer;
+      font-weight: 600; text-decoration: none;
+      box-shadow: 0 4px 10px rgba(42,157,143,.25);
+    }
+    .btn.secondary {
+      background: transparent; color: var(--c-brand-teal); border: 2px solid var(--c-brand-teal);
+      box-shadow: none;
+    }
+    .hero-visual {
+      width: 100%; height: 320px; border-radius: var(--radius);
+      background: radial-gradient(circle at 20% 20%, rgba(38,70,83,.25), transparent 40%),
+                  radial-gradient(circle at 80% 20%, rgba(233,196,106,.25), transparent 40%),
+                  linear-gradient(135deg, #eaf2f0, #ffffff);
+      border: 1px solid rgba(0,0,0,.05);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .hero-visual svg { width: 90%; height: 90%; opacity: .95; }
+
+    /* Sections */
+    section { padding: 72px 0; }
+    .section-title { font-size: 1.8rem; margin: 0 0 8px; color: var(--c-brand-deep); }
+    .section-sub { color: var(--c-muted); margin-bottom: 20px; }
+
+    /* Features Grid */
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); }
+    .card {
+      background: var(--c-surface);
+      border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--shadow-sm);
+      display: flex; flex-direction: column; gap: 10px;
+      min-height: 140px;
+    }
+    .icon {
+      width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 9px;
+      background: rgba(42,157,143,.15);
+    }
+    .card h3 { margin: 0; font-size: 1.05rem; }
+    .card p { margin: 0; color: var(--c-muted); font-size: .95rem; }
+
+    /* Portfolio Grid + Modal */
+    .portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); }
+    .portfolio-item {
+      position: relative; border-radius: 12px; overflow: hidden; cursor: pointer;
+      border: 1px solid rgba(0,0,0,.05);
+      background: #fff; display: block;
+    }
+    .portfolio-thumb {
+      width: 100%; height: 180px; display: block;
+      object-fit: cover;
+      background: #f5f7fa;
+    }
+    .portfolio-item:hover .overlay { opacity: 1; }
+    .overlay {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      height: 60px; background: linear-gradient(to top, rgba(0,0,0,.6), transparent);
+      color: white; display: flex; align-items: flex-end; padding: 12px;
+      opacity: 0; transition: opacity .25s ease;
+    }
+
+    /* Testimonials Slider */
+    .testimonial-wrap { position: relative; overflow: hidden; }
+    .slides { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; gap: 0; transition: transform .5s ease; }
+    .slide { padding: 20px; display: grid; gap: 8px; min-height: 120px; background: #fff; border-radius: 12px; box-shadow: var(--shadow-sm); }
+    .slide p { margin: 0; color: var(--c-text); }
+    .slide .author { font-weight: 600; color: var(--c-brand-deep); }
+    .slide-controls { display:flex; gap:8px; justify-content: flex-end; margin-top: 8px; }
+    .icon-btn { width:34px; height:34px; border-radius:8px; border:1px solid rgba(0,0,0,.08); background:#fff; cursor: pointer; }
+    @media (max-width: 1024px) {
+      .features { grid-template-columns: repeat(2, 1fr); }
+      .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero { padding: 48px 0 40px; }
+      .hero-visual { height: 260px; }
+    }
+    @media (max-width: 640px) {
+      nav ul { display: none; }
+      .nav-toggle { display: inline-flex; }
+      .hero { padding: 40px 0 20px; }
+      .hero-visual { height: 180px; width: 100%; }
+      .features { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Contact Form */
+    form { display: grid; gap: 12px; }
+    label { font-size: .9rem; color: var(--c-muted); }
+    input[type="text"], input[type="email"], textarea {
+      width: 100%; padding: 12px 12px; border-radius: 8px;
+      border: 1px solid #d1d5db; background: #fff;
+      font: inherit; font-size: 1rem;
+    }
+    textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .status { font-size: .92rem; color: var(--c-muted); }
+    .hidden { display: none; }
+
+    /* Footer */
+    footer { padding: 24px 0; text-align: center; color: var(--c-muted); font-size: .9rem; }
+
+    /* Reduce motion for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; scroll-behavior: auto; }
+      .slides { transition: none; }
+      .portfolio-item, .overlay { transition: none; }
+    }
+
+    /* Simple decorative shapes (non-intrusive) */
+    .shape {
+      position: absolute; width: 240px; height: 240px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(38,70,83,.25), transparent 40%);
+      filter: blur(0.2px);
+      opacity: .5;
+      pointer-events: none;
+    }
+    .shape.one { top: -40px; left: -60px; }
+    .shape.two { bottom: -60px; right: -40px; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link" aria-label="Skip to content">Skip to content</a>
+
+  <!-- Navigation -->
+  <header class="nav" role="banner">
+    <div class="nav-inner container" aria-label="Site navigation bar">
+      <a href="#" class="brand" aria-label="Brand home">
+        <span class="brand-badge" aria-hidden="true">P</span>
+        <span>Portfolio<span style="color:var(--c-accent)">Studio</span></span>
+      </a>
+
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" id="navToggle">☰</button>
+
+      <nav aria-label="Primary">
+        <ul id="navLinks">
+          <li><a href="#hero" data-scroll>Home</a></li>
+          <li><a href="#about" data-scroll>About</a></li>
+          <li><a href="#features" data-scroll>Features</a></li>
+          <li><a href="#portfolio" data-scroll>Portfolio</a></li>
+          <li><a href="#testimonials" data-scroll>Testimonials</a></li>
+          <li><a href="#contact" data-scroll>Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" role="main">
+    <!-- Hero Section -->
+    <section id="hero" class="hero" aria-label="Hero section">
+      <span class="shape one" aria-hidden="true"></span>
+      <span class="shape two" aria-hidden="true"></span>
+
+      <div class="container hero-inner">
+        <div>
+          <h1>Beautiful, fast, and accessible web experiences — built with vanilla HTML, CSS, and JS.</h1>
+          <p>A cohesive design system powered by a bold color palette. Modern single-page flow: hero, about, features, portfolio, testimonials, CTA, and contact.</p>
+          <div class="cta-row" role="group" aria-label="Hero primary actions">
+            <a href="#portfolio" class="btn" data-scroll>View Portfolio</a>
+            <a href="#contact" class="btn secondary" data-scroll>Get in Touch</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Hero visual representation">
+          <!-- Lightweight inline illustration (SVG) -->
+          <svg viewBox="0 0 600 360" role="img" aria-label="Abstract illustration">
+            <defs>
+              <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="1">
+                <stop stop-color="#2A9D8F" offset="0"/>
+                <stop stop-color="#264653" offset=".5"/>
+                <stop stop-color="#E76F51" offset="1"/>
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="600" height="360" fill="url(#grad1)" opacity=".15"/>
+            <circle cx="120" cy="120" r="60" fill="#2A9D8F" opacity=".25"/>
+            <circle cx="260" cy="100" r="40" fill="#E9C46A" opacity=".25"/>
+            <circle cx="420" cy="180" r="90" fill="#F4A261" opacity=".25"/>
+            <rect x="80" y="210" width="440" height="120" rx="14" fill="white" opacity=".9"/>
+            <path d="M80 210 Q180 240 280 210 T520 210" fill="none" stroke="#E76F51" stroke-width="6" opacity=".6"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section" aria-label="About the studio">
+      <div class="container">
+        <h2 class="section-title">Who we are</h2>
+        <p class="section-sub">We craft accessible, high-performance front-ends with a calm design language. Our approach emphasizes clarity, consistency, and fast delivery for business and portfolio sites.</p>
+        <div class="form-row" style="grid-template-columns:1fr 1fr;">
+          <div class="card" style="padding:18px;">
+            <strong>Philosophy</strong>
+            <p>Less clutter, more impact. We rely on CSS design tokens, semantic HTML, and progressive enhancement to ensure a robust experience across devices and browsers.</p>
+          </div>
+          <div class="card" style="padding:18px;">
+            <strong>Performance</strong>
+            <p>Lightweight assets, lazy-loading, and responsive images keep the experience snappy without sacrificing quality.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section" aria-label="Key features">
+      <div class="container">
+        <h2 class="section-title">Design system primitives</h2>
+        <p class="section-sub">A cohesive set of components, tokens, and guidelines to scale the product confidently.</p>
+        <div class="features" aria-label="Feature cards">
+          <article class="card" aria-label="Feature accessibility">
+            <div class="icon" aria-hidden="true">
+              <!-- simple SVG icon -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12h18" /><path d="M12 3v18" />
+              </svg>
+            </div>
+            <h3>Accessible by default</h3>
+            <p> WCAG-aligned contrasts, keyboard navigation, and meaningful ARIA labels.</p>
+          </article>
+          <article class="card" aria-label="Feature performance">
+            <div class="icon" aria-hidden="true" style="background: rgba(42,157,143,.25);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12h18" /><path d="M12 3v18" />
+              </svg>
+            </div>
+            <h3>Performance-first</h3>
+            <p> Light DOM, CSS-driven visuals, and an unobtrusive JS layer for interactions.</p>
+          </article>
+          <article class="card" aria-label="Feature responsiveness">
+            <div class="icon" aria-hidden="true" style="background: rgba(233,196,106,.25);">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 7h16" /><path d="M4 12h10" /><path d="M4 17h7" />
+              </svg>
+            </div>
+            <h3>Responsive grid</h3>
+            <p> Fluid layouts with predictable breakpoints and scalable typography.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Portfolio / Gallery -->
+    <section id="portfolio" class="section" aria-label="Portfolio gallery">
+      <div class="container">
+        <h2 class="section-title">Portfolio / Gallery</h2>
+        <p class="section-sub">A curated set of projects rendered as responsive tiles with accessible modals.</p>
+
+        <div class="portfolio-grid" role="grid" aria-label="Gallery grid">
+          <!-- Tile 1 -->
+          <button class="portfolio-item" role="gridcell" aria-label="Project Alpha" data-title="Project Alpha" data-desc="A responsive landing page built with semantic HTML and CSS tokens." style="border:0;background:transparent;">
+            <img class="portfolio-thumb" src="" alt="" loading="lazy" aria-label="Project Alpha thumbnail" style="background:linear-gradient(#fff,#f2f3f7);">
+            <span class="overlay">
+              <strong>Project Alpha</strong>
+            </span>
+          </button>
+
+          <!-- Tile 2 -->
+          <button class="portfolio-item" role="gridcell" aria-label="Project Beta" data-title="Project Beta" data-desc="A e-commerce storefront optimized for performance." style="border:0;background:transparent;">
+            <img class="portfolio-thumb" src="" alt="" style="background: linear-gradient(#eef6ff,#fff);" loading="lazy">
+            <span class="overlay">
+              <strong>Project Beta</strong>
+            </span>
+          </button>
+
+          <!-- Tile 3 -->
+          <button class="portfolio-item" role="gridcell" aria-label="Project Gamma" data-title="Project Gamma" data-desc="A portfolio site with a modular design system." style="border:0;background:transparent;">
+            <img class="portfolio-thumb" src="" alt="" style="background: linear-gradient(#fff1e5,#fff);" loading="lazy">
+            <span class="overlay">
+              <strong>Project Gamma</strong>
+            </span>
+          </button>
+
+          <!-- Tile 4 -->
+          <button class="portfolio-item" role="gridcell" aria-label="Project Delta" data-title="Project Delta" data-desc="A data-driven dashboard prototype." style="border:0;background:transparent;">
+            <img class="portfolio-thumb" src="" alt="" style="background: linear-gradient(#e9f7f0,#fff);" loading="lazy">
+            <span class="overlay">
+              <strong>Project Delta</strong>
+            </span>
+          </button>
+
+          <!-- Tile 5 -->
+          <button class="portfolio-item" role="gridcell" aria-label="Project Epsilon" data-title="Project Epsilon" data-desc="A content-driven marketing site." style="border:0;background:transparent;">
+            <img class="portfolio-thumb" src="" alt="" style="background: linear-gradient(#f0e6ff,#fff);" loading="lazy">
+            <span class="overlay">
+              <strong>Project Epsilon</strong>
+            </span>
+          </button>
+
+          <!-- Tile 6 -->
+          <button class="portfolio-item" role="gridcell" aria-label="Project Zeta" data-title="Project Zeta" data-desc="A mobile-first redesign concept." style="border:0;background:transparent;">
+            <img class="portfolio-thumb" src="" alt="" style="background: linear-gradient(#e6f7ff,#fff);" loading="lazy">
+            <span class="overlay">
+              <strong>Project Zeta</strong>
+            </span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="section" aria-label="Testimonials">
+      <div class="container">
+        <h2 class="section-title">What clients say</h2>
+        <p class="section-sub">Short quotes from collaborators and stakeholders.</p>
+
+        <div class="testimonial-wrap" aria-label="Client testimonials" role="region" id="testimonialWrap">
+          <div class="slides" id="slides" tabindex="0" aria-roledescription="carousel" aria-label="Testimonials carousel">
+            <figure class="slide" aria-label="Testimonial 1">
+              <blockquote style="margin:0;font-style:italic;">“The site loads fast, looks polished, and is accessible out of the box.”</blockquote>
+              <figcaption class="author">— Jordan, Chief Product Officer</figcaption>
+            </figure>
+            <figure class="slide" aria-label="Testimonial 2">
+              <blockquote style="margin:0;font-style:italic;">“A clean design system that our team can extend confidently.”</blockquote>
+              <figcaption class="author">— Priya, Lead Designer</figcaption>
+            </figure>
+            <figure class="slide" aria-label="Testimonial 3">
+              <blockquote style="margin:0;font-style:italic;">“Performance budgets kept us on track without sacrificing aesthetics.”</blockquote>
+              <figcaption class="author">— Mateo, CTO</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <div class="slide-controls" aria-label="Testimonials controls">
+          <button class="icon-btn" id="prevTestimonial" aria-label="Previous testimonial">❮</button>
+          <button class="icon-btn" id="nextTestimonial" aria-label="Next testimonial">❯</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section id="cta" class="section" aria-label="Call to action">
+      <div class="container" style="text-align:center;">
+        <h2 class="section-title" style="margin-bottom:8px;">Ready to start your project?</h2>
+        <p class="section-sub" style="margin:0 auto 20px; max-width: 720px;">Tell us your goals and we’ll map a clean, accessible front-end plan with a production-ready scaffold you can deploy today.</p>
+        <a href="#contact" class="btn" data-scroll>Start a Conversation</a>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section" aria-label="Contact form">
+      <div class="container">
+        <h2 class="section-title">Get in touch</h2>
+        <p class="section-sub">We typically respond within one business day. No spam, ever.</p>
+
+        <form id="contactForm" novalidate>
+          <div class="form-row" style="gap:12px;">
+            <div>
+              <label for="name">Your name</label>
+              <input type="text" id="name" name="name" required placeholder="Jane Doe" autocomplete="name" />
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required placeholder="jane@example.com" autocomplete="email" />
+            </div>
+          </div>
+          <div>
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" placeholder="Project inquiry" />
+          </div>
+          <div>
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required placeholder="Tell us about your project, goals, and timeline..."></textarea>
+          </div>
+          <div>
+            <button class="btn" type="submit">Send Message</button>
+            <span class="status" id="formStatus" aria-live="polite"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer aria-label="Site footer">
+    <div class="container" style="padding:8px 0;">
+      © <span id="year"></span> Portfolio Studio. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- Inline JavaScript (no external dependencies) -->
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile nav toggle
+    (function(){
+      const toggle = document.getElementById('navToggle');
+      const nav = document.getElementById('navLinks');
+      let opened = false;
+      function closeMenu(){
+        nav.style.display = '';
+        toggle.setAttribute('aria-expanded','false');
+        opened = false;
+      }
+      toggle.addEventListener('click', () => {
+        opened = !opened;
+        nav.style.display = opened ? 'flex' : '';
+        toggle.setAttribute('aria-expanded', String(opened));
+      });
+      // close on resize to desktop layout
+      window.addEventListener('resize', closeMenu);
+    })();
+
+    // Smooth scroll for in-page links (data-scroll)
+    document.querySelectorAll('a[data-scroll]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if(target){
+          e.preventDefault();
+          target.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      });
+    });
+
+    // Portfolio modal (simple inline modal using native dialog-like approach)
+    const portfolioItems = document.querySelectorAll('.portfolio-item');
+    portfolioItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const title = item.getAttribute('data-title') || "Project";
+        const desc = item.getAttribute('data-desc') || "Details coming soon.";
+        showModal(title, desc);
+      });
+    });
+
+    function showModal(title, desc){
+      // Create a simple modal structure
+      let overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.inset = '0';
+      overlay.style.background = 'rgba(0,0,0,.55)';
+      overlay.style.display = 'grid';
+      overlay.style.placeItems = 'center';
+      overlay.style.zIndex = '999';
+      overlay.style.padding = '20px';
+
+      const dialog = document.createElement('div');
+      dialog.style.maxWidth = '720px';
+      dialog.style.width = '100%';
+      dialog.style.background = '#fff';
+      dialog.style.borderRadius = '12px';
+      dialog.style.padding = '20px';
+      dialog.style.boxShadow = '0 20px 60px rgba(0,0,0,.2)';
+      dialog.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <strong>${title}</strong>
+          <button id="modalClose" aria-label="Close" style="border:0;background:#f0f0f0;border-radius:8px;padding:6px 10px;cursor:pointer;">Close</button>
+        </div>
+        <p style="margin:0;color:#333;">${desc}</p>
+      `;
+      overlay.appendChild(dialog);
+      document.body.appendChild(overlay);
+      document.getElementById('modalClose').addEventListener('click', () => {
+        document.body.removeChild(overlay);
+      });
+      overlay.addEventListener('click', (e) => {
+        if(e.target === overlay) document.body.removeChild(overlay);
+      });
+      // Trap basic focus
+      const focusable = dialog.querySelectorAll('button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
+      if(focusable.length) focusable[0].focus();
+    }
+
+    // Testimonials carousel
+    (function(){
+      const slides = document.getElementById('slides');
+      const total = slides.children.length;
+      let index = 0;
+
+      function show(i){
+        index = (i + total) % total;
+        slides.style.transform = `translateX(-${index * 100}%)`;
+      }
+
+      document.getElementById('nextTestimonial').addEventListener('click', () => show(index + 1));
+      document.getElementById('prevTestimonial').addEventListener('click', () => show(index - 1));
+
+      // Auto-rotate
+      let timer = setInterval(() => show(index + 1), 7000);
+      // Pause on hover/focus
+      const wrap = document.getElementById('testimonialWrap');
+      wrap.addEventListener('mouseenter', ()=> clearInterval(timer));
+      wrap.addEventListener('mouseleave', ()=> timer = setInterval(() => show(index + 1), 7000));
+      wrap.addEventListener('focusin', ()=> clearInterval(timer));
+      wrap.addEventListener('focusout', ()=> timer = setInterval(() => show(index + 1), 7000));
+
+      // Pause when user navigates via keyboard
+      slides.addEventListener('keydown', (e) => {
+        if(e.key === 'ArrowRight') { show(index + 1); }
+        if(e.key === 'ArrowLeft') { show(index - 1); }
+      });
+    })();
+
+    // Contact form submission (client-side only)
+    (function(){
+      const form = document.getElementById('contactForm');
+      const status = document.getElementById('formStatus');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Very lightweight validation
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const message = document.getElementById('message').value.trim();
+        if(!name || !email || !message){
+          status.textContent = 'Please fill in all required fields.';
+          status.style.color = '#E76F51';
+          return;
+        }
+        // Simulated success
+        status.textContent = 'Thank you! Your message has been received.';
+        status.style.color = '#2A9D8F';
+        form.reset();
+      });
+    })();
+
+    // Build-in progressive enhancement: ensure sections have IDs for skip and anchors
+    // Additional extension points:
+    // - Extend design-tokens JSON file and load via JS
+    // - Add more sections or components with consistent token usage
+
+  </script>
+</body>
+</html>
