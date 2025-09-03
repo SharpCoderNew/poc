@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kautilya Utkarsh – AI Engineer</title>
+  <meta name="description" content="Polished single-page portfolio for Kautilya Utkarsh, AI Engineer with 2 years of experience. Accessible, responsive, and fast." />
+  <style>
+    :root{
+      --bg: #f6f8f9;
+      --surface: #ffffff;
+      --text: #0f1b2d;
+      --muted: #5f6b75;
+      --shadow: 0 6px 20px rgba(0,0,0,.08);
+
+      /* Palette provided */
+      --brand-1: #264653;
+      --brand-2: #2A9D8F;
+      --accent:  #E9C46A;
+      --amber:   #F4A261;
+      --hot:     #E76F51;
+
+      --radius: 14px;
+      --gap: 1rem;
+      --container: 1100px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color: var(--text);
+      background: linear-gradient(180deg, #fbfcfd 0%, #f6f8fa 60%, #f6f8f9 100%);
+    }
+
+    /* Skip link for accessibility */
+    .skip-link { position:absolute; left:-999px; top:auto; width:1px; height:1px; overflow:hidden; }
+    .skip-link:focus { position:static; width:auto; height:auto; padding:8px 12px; margin:8px; background:#111; color:white; border-radius:6px; }
+
+    header {
+      position: sticky; top: 0; z-index: 50; backdrop-filter: saturate(1.2) blur(6px);
+      background: rgba(255,255,255,0.92);
+      border-bottom: 1px solid #e6eef8;
+    }
+    .nav {
+      max-width: var(--container);
+      margin:0 auto; display:flex; align-items:center; justify-content:space-between;
+      padding: 14px 20px;
+    }
+    .brand {
+      display:flex; align-items:center; gap:12px;
+      text-decoration:none; color:var(--text);
+    }
+    .brand-logo {
+      width:34px; height:34px; border-radius:9px;
+      background: conic-gradient(from 180deg at 50% 50%, var(--brand-1), var(--brand-2), var(--accent));
+      display:flex; align-items:center; justify-content:center; color:white; font-weight:700;
+    }
+    nav ul { list-style:none; display:flex; gap:.5rem; margin:0; padding:0; }
+    nav a {
+      text-decoration:none; color:var(--text);
+      padding:8px 12px; border-radius:8px;
+    }
+    nav a[aria-current="page"], nav a:hover {
+      background: #eef5f9; color: var(--brand-1);
+    }
+    .cta { display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:8px; border:1px solid var(--brand-2); color:var(--brand-2); text-decoration:none; font-weight:600; }
+
+    main { width:100%; max-width: var(--container); margin: 0 auto; padding: 28px 20px 60px; }
+
+    /* Sections */
+    section { padding: 64px 0; }
+    .section-title { font-size: clamp(1.6rem, 2.5vw + 1rem, 2.4rem); margin: 0 0 10px; color: var(--brand-1); }
+    .section-sub { color:var(--muted); margin-bottom: 20px; }
+
+    /* Hero */
+    .hero {
+      display:grid; grid-template-columns: 1.05fr 0.95fr; gap: 28px; align-items:center;
+    }
+    .hero-card {
+      background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+      padding: 28px; display:flex; flex-direction:column; gap:14px;
+    }
+    .hero h1 { font-size: clamp(2rem, 1.6rem + 2vw, 3rem); margin:0; color:#0b1b2b; }
+    .tagline { font-size:1.05rem; color:var(--muted); }
+    .hero-cta { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top:8px; }
+
+    .avatar {
+      width:100%; max-width:420px; height: auto; aspect-ratio:1/1;
+      border-radius: 50%; display:flex; align-items:center; justify-content:center;
+      background: radial-gradient(circle at 30% 30%, #fff 0 30%, #eef2f7 30% 100%), linear-gradient(135deg, #e8f0f6, #dce7f0);
+      border: 4px solid #fff;
+      box-shadow: 0 12px 24px rgba(0,0,0,.08);
+      overflow:hidden;
+    }
+    .avatar svg { width:100%; height:100%; display:block; }
+    .lead { font-size:1rem; color:var(--muted); }
+
+    /* Cards layout */
+    .grid {
+      display:grid; gap: var(--gap);
+    }
+    .card {
+      background: #fff; border-radius: 12px; padding: 18px; box-shadow: var(--shadow);
+      border: 1px solid #eef3f7;
+    }
+
+    /* Skills chips */
+    .skills { display:flex; flex-wrap:wrap; gap:8px; }
+    .chip {
+      background: #f3f7f9; color: var(--brand-1);
+      border:1px solid #e1ecf4; padding:8px 12px; border-radius:999px; font-weight:600; font-size: .9rem;
+    }
+
+    /* Projects cards */
+    .project {
+      display:flex; flex-direction:column; gap:12px;
+    }
+    .project-thumb {
+      height:180px; border-radius:12px; background: #e9eef4; display:flex; align-items:center; justify-content:center;
+      overflow:hidden; border:1px solid #e5eaef;
+    }
+    .project-thumb svg { width:100%; height:100%; }
+    .project-title { font-size:1.05rem; font-weight:700; margin:0; }
+    .project-desc { color: var(--muted); font-size:.95rem; line-height:1.4; }
+
+    .btn {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 14px; border-radius:8px; border:1px solid var(--brand-2);
+      background: #fff; color: var(--brand-2); text-decoration:none; font-weight:600;
+      cursor:pointer;
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed; inset: 0; display:flex; align-items:center; justify-content:center;
+      background: rgba(0,0,0,.4); padding:20px; z-index: 60;
+    }
+    .modal-content {
+      background:#fff; border-radius:12px; max-width: 640px; width: 100%; padding:20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.25);
+    }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:8px; margin-bottom:8px; }
+    .modal-body { padding:6px 0; }
+    .modal-close { background: transparent; border: none; font-size: 1.2rem; cursor: pointer; }
+
+    /* Experience / Education lists */
+    .timeline { position: relative; padding-left: 16px; }
+    .timeline-item { margin-bottom: 16px; padding-left: 8px; border-left: 2px solid var(--brand-2); }
+    .timeline-item h4 { margin:0 0 4px; }
+    .timeline-item .sub { color: var(--muted); font-size:.9rem; }
+
+    /* Contact form */
+    form { display:flex; flex-direction:column; gap:12px; }
+    label { font-weight:600; font-size:.92rem; color: #233046; }
+    input, textarea {
+      border:1px solid #dbe4ee; padding:12px; border-radius:8px; font-size:1rem;
+      background: #fff;
+    }
+    textarea { min-height:120px; resize: vertical; }
+    .form-row { display:flex; gap:12px; flex-wrap:wrap; }
+    .hint { font-size:.85rem; color: var(--muted); }
+
+    .alert { padding:12px 14px; border-radius:8px; background: #e6f4ea; color:#1e6b3d; border:1px solid #b9e6c2; }
+
+    /* Footer note space */
+    .spacer { height: 20px; }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero { grid-template-columns: 1fr; }
+      .avatar { width: 70%; margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main" aria-label="Skip to content">Skip to content</a>
+
+  <header aria-label="Main navigation" role="navigation">
+    <div class="nav" id="nav">
+      <a class="brand" href="#">
+        <span class="brand-logo" aria-hidden="true">KU</span>
+        <span style="font-weight:700; font-size:1.05rem;">Kautilya Utkarsh</span>
+      </a>
+      <nav aria-label="Site sections">
+        <ul id="nav-links">
+          <li><a href="#hero" data-section="hero" aria-label="Go to Home" class="nav-link" >Home</a></li>
+          <li><a href="#about" data-section="about" aria-label="Go to About" class="nav-link">About</a></li>
+          <li><a href="#skills" data-section="skills" aria-label="Go to Skills" class="nav-link">Skills</a></li>
+          <li><a href="#projects" data-section="projects" aria-label="Go to Projects" class="nav-link">Projects</a></li>
+          <li><a href="#experience" data-section="experience" aria-label="Go to Experience" class="nav-link">Experience</a></li>
+          <li><a href="#education" data-section="education" aria-label="Go to Education" class="nav-link">Education</a></li>
+          <li><a href="#certifications" data-section="certifications" aria-label="Go to Certifications" class="nav-link">Certifications</a></li>
+          <li><a href="#contact" data-section="contact" aria-label="Go to Contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+      <button class="cta" id="downloadResume" aria-label="Download resume">Download Resume</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section id="hero" aria-label="Hero" class="section hero" > 
+      <div class="hero-card" role="region" aria-label="Intro">
+        <h1>Kautilya Utkarsh</h1>
+        <div class="tagline">AI Engineer • 2 years of experience • Building practical AI systems</div>
+        <p style="color:var(--muted); margin:0;">I design and deploy end-to-end AI solutions, focusing on robust models, data pipelines, and impact-driven product outcomes. I enjoy collaborating across teams to turn complexity into simple, scalable experiences.</p>
+        <div class="hero-cta">
+          <button class="btn" id="scrollToContact" aria-label="Contact me">
+            Contact Me
+          </button>
+          <button class="btn" id="quickViewProjects" aria-label="View projects quick">
+            See Projects
+          </button>
+        </div>
+      </div>
+      <div class="avatar" aria-label="Headshot placeholder">
+        <!-- Inline SVG headshot placeholder -->
+        <svg viewBox="0 0 200 200" role="img" aria-label="Headshot placeholder">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#2A9D8F" offset="0"/>
+              <stop stop-color="#264653" offset="1"/>
+            </linearGradient>
+          </defs>
+          <circle cx="100" cy="90" r="60" fill="url(#g1)" opacity="0.9"/>
+          <circle cx="85" cy="82" r="7" fill="#fff"/>
+          <circle cx="115" cy="82" r="7" fill="#fff"/>
+          <path d="M70 120 C85 140,115 140,130 120" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <rect x="60" y="140" width="80" height="26" rx="13" fill="#fff" opacity="0.8"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" aria-label="About me" class="section">
+      <h2 class="section-title">About</h2>
+      <p class="section-sub">Kautilya is an AI engineer with hands-on experience in building reliable ML pipelines, NLP systems, and experimental frameworks. He emphasizes measurable impact, code quality, and collaboration with product and data teams.</p>
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap:20px;">
+        <div class="card" aria-label="Quick bio">
+          <h3 style="margin:0 0 8px; color:var(--brand-1);">Core strengths</h3>
+          <ul style="margin:0; padding-left:20px; color:var(--muted); line-height:1.6;">
+            <li>End-to-end ML product development</li>
+            <li>Model evaluation and deployment (CI/CD for ML)</li>
+            <li>Data processing, feature engineering, and experimentation</li>
+            <li>Cross-functional collaboration and clear communication</li>
+          </ul>
+        </div>
+        <div class="card" aria-label="Headshot note">
+          <h3 style="margin:0 0 8px; color:var(--brand-1);">Approach</h3>
+          <p style="margin:0; color:var(--muted);">I value clarity, maintainability, and performance. My projects prioritize reproducibility, scalable architectures, and user-focused outcomes.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" aria-label="Skills" class="section">
+      <h2 class="section-title">Skills</h2>
+      <p class="section-sub">Proficiencies across AI/ML, data, and frontend collaboration. Adaptable to junior–mid-level challenges with practical, production-ready tooling.</p>
+      <div class="card" style="padding:16px;">
+        <div class="skills" aria-label="Technical skills">
+          <span class="chip">Python</span>
+          <span class="chip">TensorFlow</span>
+          <span class="chip">PyTorch</span>
+          <span class="chip">NLP</span>
+          <span class="chip">Computer Vision</span>
+          <span class="chip">ML Ops</span>
+          <span class="chip">Data Engineering</span>
+          <span class="chip">Docker</span>
+          <span class="chip">Kubernetes</span>
+          <span class="chip">SQL</span>
+          <span class="chip">React</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" aria-label="Projects" class="section">
+      <h2 class="section-title">Projects</h2>
+      <p class="section-sub">Selected projects demonstrating applied AI, data engineering, and product-focused outcomes.</p>
+      <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+        <!-- Project 1 -->
+        <article class="card project" aria-label="Project 1: Resource Allocation Optimizer">
+          <div class="project-thumb" aria-label="Project thumbnail">
+            <svg viewBox="0 0 400 200" role="img" aria-label="Allocation chart placeholder">
+              <rect x="0" y="0" width="400" height="200" fill="#eaf2f8"/>
+              <polyline fill="none" stroke="#2A9D8F" stroke-width="6" points="20,160 100,120 180,140 260,80 340,110"/>
+              <circle cx="100" cy="120" r="6" fill="#2A9D8F"/>
+              <circle cx="180" cy="140" r="6" fill="#2A9D8F"/>
+              <circle cx="260" cy="80" r="6" fill="#2A9D8F"/>
+            </svg>
+          </div>
+          <h3 class="project-title">Resource Allocation Optimizer</h3>
+          <p class="project-desc">ML-driven optimizer for allocating compute resources with SLA guarantees in edge environments. Includes constraint satisfaction and quick heuristics.</p>
+          <button class="btn" onclick="openProjectModal({title:'Resource Allocation Optimizer', details:'Tech: Python, PuLP, PyTorch; Deployment: Docker, Kubernetes. Outcome: reduced idle resources by 18% in pilot.', links:['https://example.com']})" aria-label="View details of Resource Allocation Optimizer">View details</button>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="card project" aria-label="Project 2: Sentiment Analysis for Feedback">
+          <div class="project-thumb" aria-label="Sentiment analysis placeholder">
+            <svg viewBox="0 0 400 200" role="img" aria-label="Sentiment placeholder">
+              <rect x="0" y="0" width="400" height="200" fill="#f5efe0"/>
+              <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#E76F51" font-family="Arial" font-size="28">NLP Sentiment</text>
+            </svg>
+          </div>
+          <h3 class="project-title">Customer Feedback Sentiment</h3>
+          <p class="project-desc">Scalable NLP model to classify sentiment and extract key topics from reviews, enabling product iteration feedback loops.</p>
+          <button class="btn" onclick="openProjectModal({title:'Customer Feedback Sentiment', details:'Tech: PyTorch, Transformers; Data: streaming pipeline with Kafka. Outcome: faster insight cycles by 2x.', links:['https://example.com']})" aria-label="View details of Sentiment Analysis project">View details</button>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="card project" aria-label="Project 3: AutoML Pipeline">
+          <div class="project-thumb" aria-label="AutoML placeholder">
+            <svg viewBox="0 0 400 200" role="img" aria-label="AutoML placeholder">
+              <rect x="0" y="0" width="400" height="200" fill="#e8f0ff"/>
+              <circle cx="120" cy="100" r="40" fill="#2A9D8F"/>
+              <circle cx="240" cy="100" r="40" fill="#264653"/>
+              <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#264653" font-family="Arial" font-size="18">AutoML Pipeline</text>
+            </svg>
+          </div>
+          <h3 class="project-title">AutoML Pipeline</h3>
+          <p class="project-desc">End-to-end automated ML workflow: data prep, model selection, hyperparameter tuning, and deployment harness.</p>
+          <button class="btn" onclick="openProjectModal({title:'AutoML Pipeline', details:'Tech: Python, MLFlow, Docker; Orchestration: Airflow. Outcome: 3x faster model iteration.', links:['https://example.com']})" aria-label="View details of AutoML project">View details</button>
+        </article>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" aria-label="Experience" class="section">
+      <h2 class="section-title">Experience</h2>
+      <div class="timeline" aria-label="Professional experience timeline">
+        <div class="timeline-item">
+          <h4>AI Engineer, Innovative AI Labs</h4>
+          <div class="sub">2023 — Present • Remote</div>
+          <p style="margin:0; color:var(--muted);">Led development of NLP feature stores and deployed ML models with CI/CD pipelines. Collaborated with product to translate real-world problems into measurable AI solutions.</p>
+        </div>
+        <div class="timeline-item">
+          <h4>Junior AI Engineer, TechNova Solutions</h4>
+          <div class="sub">2022 — 2023 • Onsite</div>
+          <p style="margin:0; color:var(--muted);">Contributed to vision systems and ML experiments; implemented data pipelines, monitoring, and basic ML tooling for rapid iteration.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education" aria-label="Education" class="section">
+      <h2 class="section-title">Education</h2>
+      <div class="timeline" aria-label="Education timeline">
+        <div class="timeline-item">
+          <h4>B.Sc. in Computer Science</h4>
+          <div class="sub">ABC University, 2018 — 2022</div>
+          <p style="margin:0; color:var(--muted);">Specialization in AI, ML, and data systems. Completed senior projects in NLP and ML deployment.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CERTIFICATIONS -->
+    <section id="certifications" aria-label="Certifications" class="section">
+      <h2 class="section-title">Certifications</h2>
+      <div class="card" aria-label="Certifications list" style="max-width:700px;">
+        <ul style="margin:0; padding-left:20px; color:var(--muted); line-height:1.6;">
+          <li>Deep Learning Specialization — Coursera</li>
+          <li>ML Engineer Nanodegree — Udacity</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" aria-label="Contact" class="section">
+      <h2 class="section-title">Contact</h2>
+      <p class="section-sub">I'm open to opportunities and collaborations. Use the form to start a conversation, or email me at hello@example.com.</p>
+      <div class="grid" style="grid-template-columns: 1.1fr 0.9fr; gap:20px;">
+        <form id="contactForm" class="card" aria-label="Contact form">
+          <div class="form-row">
+            <div style="flex:1 1 45%;">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" required placeholder="Your name" autocomplete="name" />
+            </div>
+            <div style="flex:1 1 45%;">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email" />
+            </div>
+          </div>
+          <div>
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell me about your project or opportunity..." required></textarea>
+          </div>
+          <button class="btn" type="submit" aria-label="Send message">Send Message</button>
+          <p class="hint" id="formHint">By submitting, you agree to be contacted back via the provided email.</p>
+          <div id="formStatus" role="status" aria-live="polite" style="margin-top:6px;"></div>
+        </form>
+
+        <aside class="card" aria-label="Contact details" style="padding:16px;">
+          <h3 style="margin-top:0;">Reach me at</h3>
+          <p style="margin:0; color:var(--muted);">hello@example.com</p>
+          <p style="margin:8px 0 0; color:var(--muted);">Location: Remote / Available for onsite</p>
+          <hr style="border:none; height:1px; background:#eee; margin:12px 0;">
+          <div style="display:flex; gap:8px;">
+            <a class="btn" href="#" role="button" aria-label="LinkedIn (placeholder)" style="padding:8px 10px; font-size:.9rem; border-color:#0a66c2; color:#0a66c2;">LinkedIn</a>
+            <a class="btn" href="#" role="button" aria-label="GitHub (placeholder)" style="padding:8px 10px; font-size:.9rem; border-color:#333; color:#333;">GitHub</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="spacer" aria-hidden="true"></div>
+  </main>
+
+  <!-- Project details modal (dynamic) -->
+  <div id="projectModal" class="modal" style="display:none;" aria-modal="true" role="dialog" aria-label="Project details">
+    <div class="modal-content">
+      <div class="modal-header">
+        <strong id="modalTitle">Project Details</strong>
+        <button class="modal-close" aria-label="Close" onclick="closeProjectModal()">×</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- dynamic content -->
+      </div>
+    </div>
+  </div>
+
+  <footer aria-label="Site footer" style="text-align:center; color:var(--muted); padding:40px 20px;">
+    © <span id="year"></span> Kautilya Utkarsh. All rights reserved.
+  </footer>
+
+  <script>
+    // Helpers
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = Array.from(document.querySelectorAll('section[id]'));
+    const yearEl = document.getElementById('year');
+    yearEl.textContent = new Date().getFullYear();
+
+    // Active nav highlight on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const id = entry.target.id;
+        const link = document.querySelector('a[data-section="'+id+'"]');
+        if (entry.isIntersecting) {
+          navLinks.forEach(l => l.removeAttribute('aria-current'));
+          if (link) link.setAttribute('aria-current','page');
+        }
+      });
+    }, { rootMargin: '-40% 0px -50% 0px', threshold: 0.01 });
+
+    sections.forEach(sec => observer.observe(sec));
+
+    // Scroll to contact / projects quick
+    document.getElementById('scrollToContact').addEventListener('click', () => {
+      document.getElementById('contact').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    document.getElementById('downloadResume').addEventListener('click', downloadResume);
+    document.getElementById('quickViewProjects').addEventListener('click', () => {
+      document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Resume download (inline blob as txt for simplicity)
+    function downloadResume() {
+      const resume = [
+        "Kautilya Utkarsh",
+        "AI Engineer • 2 years of experience",
+        "",
+        "Profile",
+        " pragmatic AI engineer focused on measurable impact, robust deployment, and cross-functional collaboration.",
+        "",
+        "Experience",
+        "AI Engineer, Innovative AI Labs (2023 - Present)",
+        " - Led NLP feature stores, deployed ML models with CI/CD.",
+        " - Built data pipelines and monitoring tooling for production ML.",
+        "",
+        "Junior AI Engineer, TechNova Solutions (2022 - 2023)",
+        " - Contributed to vision systems, data pipelines, and tooling.",
+        "",
+        "Skills",
+        "Python, PyTorch, TensorFlow, NLP, ML Ops, Docker, Kubernetes, SQL, React",
+        "",
+        "Education",
+        "B.Sc. in Computer Science, ABC University (2018 - 2022)",
+        "",
+        "Certifications",
+        "Deep Learning Specialization (Coursera)"
+      ].join("\\n");
+      const blob = new Blob([resume], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Kautilya_Utkarsh_Resume.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Project modal
+    const modal = document.getElementById('projectModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    function openProjectModal(info) {
+      modalTitle.textContent = info.title;
+      modalBody.innerHTML = `
+        <p style="margin:0 0 8px; color:var(--muted);">${info.title} details</p>
+        <p style="margin:0 0 8px;">${info.details}</p>
+        <p style="margin:0 0 8px; color:var(--muted);">Tech stack: ${info.tech ?? 'N/A'}</p>
+        ${info.links && info.links.length ? '<p style="margin:0;">Links:</p><ul>' + info.links.map(l => `<li><a href="${l}" target="_blank" rel="noreferrer">${l}</a></li>`).join('') + '</ul>' : ''}
+      `;
+      modal.style.display = 'flex';
+      // trap focus could be added for accessibility
+    }
+    function closeProjectModal() {
+      modal.style.display = 'none';
+      modalBody.innerHTML = '';
+    }
+    // Bind close on outside click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeProjectModal();
+    });
+
+    // Keyboard close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.style.display === 'flex') closeProjectModal();
+    });
+
+    // Contact form handling (simple client-side)
+    const form = document.getElementById('contactForm');
+    const formStatus = document.getElementById('formStatus');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      // Basic validation
+      if(!name || !email || !message){
+        formStatus.innerHTML = '<div class="alert" role="alert">Please fill in all fields.</div>';
+        return;
+      }
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if(!emailOk){
+        formStatus.innerHTML = '<div class="alert" role="alert">Please provide a valid email address.</div>';
+        return;
+      }
+      // Simulate sending
+      formStatus.innerHTML = '<div class="alert" role="status">Thanks, your message has been captured. I will respond shortly.</div>';
+      form.reset();
+    });
+
+    // Quick link highlighting on load
+    window.addEventListener('load', () => {
+      // Set initial active section
+      const hash = location.hash || '#hero';
+      document.querySelector(`a[href="${hash}"]`)?.setAttribute('aria-current','page');
+    });
+  </script>
+</body>
+</html>
