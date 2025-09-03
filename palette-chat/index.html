@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Palette Chat SPA</title>
+  <style>
+    /* Design tokens based on the required color palette */
+    :root{
+      --bg: #BDE0FE;
+      --sidebar: #A2D2FF;
+      --surface-me: #FFAFCC;
+      --surface-other: #FFC8DD;
+      --surface-subtle: #CDB4DB;
+      --text: #0b1220;
+      --muted: #4b4b4b;
+      --shadow: 0 6px 18px rgba(0,0,0,.08);
+      --radius: 14px;
+      --gap: 10px;
+      --pad: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: 100vh;
+      gap: 0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: #ffffffcc;
+      backdrop-filter: saturate(1.2) blur(2px);
+      border-right: 1px solid rgba(0,0,0,.08);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 16px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      background: linear-gradient(135deg, var(--sidebar), #7ec7ff);
+      color: #0a1a34;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+    }
+    .search {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      display: flex;
+      gap: 8px;
+    }
+    .search input {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      outline: none;
+    }
+    .conversations {
+      overflow-y: auto;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background .2s, border-color .2s;
+    }
+    .item:hover { background: #f6fbff; border-color: #d5e6f9; }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 600;
+      color: #0a1a34;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+    }
+    .name { font-weight: 600; font-size: 14px; }
+    .snippet { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+    .presence {
+      margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--muted);
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #999;
+      display: inline-block;
+    }
+    .online { background: #32d67b; }
+
+    /* Chat window */
+    .chat {
+      display: flex; flex-direction: column; height: 100%;
+      background: #ffffffcc;
+    }
+    .chat-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-bottom: 1px solid rgba(0,0,0,.08);
+      background: linear-gradient(135deg, var(--surface-subtle), #ffffff);
+    }
+    .chat-title { display:flex; align-items: center; gap: 10px; }
+    .chat-title h2 { margin:0; font-size: 16px; }
+    .chat-sub { font-size: 12px; color: var(--muted); }
+
+    .chat-area {
+      display: flex; flex-direction: column; height: 100%;
+    }
+
+    .messages {
+      padding: 14px; overflow-y: auto; flex: 1;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+
+    .message {
+      max-width: 70%; padding: 8px 10px; border-radius: 12px;
+      position: relative; line-height: 1.3;
+      word-break: break-word;
+      box-shadow: var(--shadow);
+    }
+    .me {
+      align-self: flex-end;
+      background: var(--surface-me);
+      color: #1b1b1b;
+      border-top-right-radius: 4px;
+    }
+    .other {
+      align-self: flex-start;
+      background: var(--surface-other);
+      color: #1b1b1b;
+      border-top-left-radius: 4px;
+    }
+    .meta {
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 6px; font-size: 11px; color: var(--muted);
+    }
+    .status {
+      font-size: 11px; padding-left: 2px;
+    }
+    .actions {
+      display: none; position: absolute; top: -6px; right: -6px;
+      background: #fff; border: 1px solid #ddd; border-radius: 6px;
+      padding: 4px; gap: 6px; z-index: 5;
+    }
+    .message:hover .actions { display: inline-flex; }
+    .btn-icon {
+      width: 26px; height: 26px; border-radius: 6px; border: none;
+      background: #fff; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 12px;
+    }
+    .btn-icon:hover { background: #f0f0f0; }
+
+    .inputs {
+      padding: 8px 12px 12px;
+      display: grid; grid-template-columns: auto 1fr auto auto; gap: 8px;
+      align-items: center;
+      border-top: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+    }
+
+    #messageInput {
+      width: 100%; padding: 12px 12px;
+      border-radius: 8px; border: 1px solid #d5dbe3; outline: none;
+      font-size: 14px;
+    }
+
+    .send-btn {
+      padding: 10px 14px; border-radius: 8px; border: none;
+      background: #7ec7ff; color: #0a1a34; font-weight: 600;
+      cursor: pointer;
+    }
+    .send-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .icon-btn {
+      background: #fff; border: 1px solid #d8e2f0; width: 38px; height: 38px; border-radius: 8px;
+      display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+
+    .emoji-panel {
+      position: absolute; bottom: 76px; left: 16px;
+      background: #fff; border: 1px solid #ddd; padding: 6px; border-radius: 8px;
+      display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px;
+      box-shadow: var(--shadow);
+      z-index: 20;
+    }
+    .emoji-panel .emoji {
+      border: none; background: #f7f7f7; border-radius: 6px; padding: 6px;
+      cursor: pointer; font-size: 16px;
+    }
+
+    .attachments-preview {
+      display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 6px;
+    }
+    .attachment {
+      padding: 6px 8px; border-radius: 6px; background: #fff; border: 1px solid #ddd; font-size: 12px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 980px){
+      .app { grid-template-columns: 1fr; height: auto; }
+      .sidebar { height: auto; order: 2; }
+      .chat { order: 1; height: auto; }
+      .messages { max-height: 40vh; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Conversation Selector / Inbox -->
+    <aside class="sidebar" aria-label="Conversations">
+      <div class="sidebar-header">Palette Chat</div>
+      <div class="search" aria-label="Search conversations">
+        <input id="searchBox" placeholder="Search conversations" />
+      </div>
+      <div id="conversations" class="conversations" role="navigation" aria-label="Conversations list">
+        <!-- Dynamically populated -->
+      </div>
+    </aside>
+
+    <!-- Chat Window -->
+    <section class="chat" aria-label="Chat window">
+      <div class="chat-header">
+        <div class="chat-title" style="gap:8px;">
+          <div class="avatar" aria-label="Conversation avatar" style="width:38px;height:38px;font-size:14px;">
+            💬
+          </div>
+          <div>
+            <h2 id="chat-name" style="margin:0; font-size:14px;">Select a conversation</h2>
+            <div id="chat-subtitle" class="chat-sub" aria-live="polite">No conversation selected</div>
+          </div>
+        </div>
+        <div class="presence" aria-label="Overall presence">
+          <!-- Placeholder for presence / status in header -->
+        </div>
+      </div>
+
+      <div class="chat-area">
+        <div id="messages" class="messages" role="log" aria-live="polite" aria-label="Message history">
+          <!-- Messages render here -->
+        </div>
+
+        <div id="typing" class="typing" style="padding:0 16px 6px; height: 18px;">
+          <!-- Typing indicator appears here -->
+        </div>
+
+        <div id="attachmentsPreview" class="attachments-preview" aria-live="off"></div>
+
+        <div class="inputs" aria-label="Message input area">
+          <button id="emojiBtn" class="icon-btn" aria-label="Toggle emoji picker" title="Emoji">😊</button>
+          <div style="position:relative; display:flex; align-items:center; width:100%;">
+            <input id="messageInput" type="text" placeholder="Type a message" autocomplete="off" />
+          </div>
+          <button id="attachBtn" class="icon-btn" aria-label="Attach" title="Attach">📎</button>
+          <button id="sendBtn" class="send-btn" aria-label="Send message" title="Send">Send</button>
+        </div>
+
+        <div id="emojiPanel" class="emoji-panel" hidden aria-label="Emoji picker">
+          <!-- A small emoji set -->
+          <button class="emoji" data-emoji="😀">😀</button>
+          <button class="emoji" data-emoji="😄">😄</button>
+          <button class="emoji" data-emoji="😁">😁</button>
+          <button class="emoji" data-emoji="😂">😂</button>
+          <button class="emoji" data-emoji="😊">😊</button>
+          <button class="emoji" data-emoji="😍">😍</button>
+          <button class="emoji" data-emoji="😎">😎</button>
+          <button class="emoji" data-emoji="🤝">🤝</button>
+          <button class="emoji" data-emoji="🎉">🎉</button>
+          <button class="emoji" data-emoji="👍">👍</button>
+          <button class="emoji" data-emoji="💡">💡</button>
+          <button class="emoji" data-emoji="🔥">🔥</button>
+          <button class="emoji" data-emoji="❤️">❤️</button>
+          <button class="emoji" data-emoji="👏">👏</button>
+          <button class="emoji" data-emoji="🤖">🤖</button>
+          <button class="emoji" data-emoji="✨">✨</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Minimal SPA chat UI with mock real-time experience
+    // Core assumptions:
+    // - currentUserId is defined here (in real app, provided by auth)
+    // - Conversations and messages are mocked locally for demonstration
+    // - A mock real-time layer simulates message arrival, typing, and presence
+
+    // --------- Mock Data & Real-time Layer -----------
+    const currentUserId = 'u_me';
+    const others = ['u_amy','u_bob','u_cara'];
+    const users = {
+      'u_me': { name: 'You' },
+      'u_amy': { name: 'Amy' },
+      'u_bob': { name: 'Bob' },
+      'u_cara': { name: 'Cara' },
+    };
+
+    // Conversations with simple metadata
+    const conversationsData = [
+      { id: 'c_alpha', name: 'Project Alpha', participants: ['u_me','u_amy','u_bob'] },
+      { id: 'c_design', name: 'Design Crew', participants: ['u_me','u_cara'] },
+      { id: 'c_friends', name: 'Friends Chat', participants: ['u_me','u_amy','u_cara'] },
+    ];
+
+    // Messages keyed by conversation id
+    const messagesStore = {
+      'c_alpha': [
+        { id:'a1', conversationId:'c_alpha', senderId:'u_amy', text:'Hey team, elicit feedback on the new mockups 😊', timestamp: Date.now()-1000*60*60*3, status:'read', edited:false },
+        { id:'a2', conversationId:'c_alpha', senderId:'u_me', text:'Looks good! I like the color palette. Let’s iterate on the header.', timestamp: Date.now()-1000*60*60*2.5, status:'read', edited:false },
+        { id:'a3', conversationId:'c_alpha', senderId:'u_bob', text:'I can implement the chat UI with the provided tokens.', timestamp: Date.now()-1000*60*60*2, status:'delivered', edited:false }
+      ],
+      'c_design': [
+        { id:'d1', conversationId:'c_design', senderId:'u_cara', text:'Shipping editable messages would be nice. thoughts?', timestamp: Date.now()-1000*60*60*5, status:'read', edited:false },
+        { id:'d2', conversationId:'c_design', senderId:'u_me', text:'Yes, inline editing is on the roadmap.', timestamp: Date.now()-1000*60*60*4.7, status:'read', edited:false }
+      ],
+      'c_friends': [
+        { id:'f1', conversationId:'c_friends', senderId:'u_amy', text:'Movie night Friday 🎬?', timestamp: Date.now()-1000*60*60*12, status:'read', edited:false },
+        { id:'f2', conversationId:'c_friends', senderId:'u_me', text:'Count me in!', timestamp: Date.now()-1000*60*60*11, status:'read', edited:false }
+      ]
+    };
+
+    // Simple mock presence: online if in participants and not offline
+    const presence = {
+      'u_me': true,
+      'u_amy': true,
+      'u_bob': false,
+      'u_cara': true
+    };
+
+    // Typing state per conversation
+    const typingState = {};
+
+    // Simple ID generator for new messages
+    let msgCounter = 100;
+
+    // Mock real-time channel
+    const realtime = {
+      // subscribers
+      subs: {},
+      subscribe(event, handler){
+        if(!this.subs[event]) this.subs[event] = [];
+        this.subs[event].push(handler);
+      },
+      emit(event, payload){
+        (this.subs[event] || []).forEach(h => h(payload));
+      },
+      // simulate incoming messages randomly
+      startAdaptive(convoId){
+        const interval = setInterval(() => {
+          // pick a random other user
+          const user = others[Math.floor(Math.random() * others.length)];
+          // sometimes skip
+          if(Math.random() < 0.6) {
+            // simulate typing start
+            this.emit('typingStart', { conversationId: convoId, userId: user });
+            // after a moment, send a message
+            setTimeout(() => {
+              const textPool = [
+                'Nice idea!',
+                'I’ll push a quick update.',
+                'Can we adjust the timeline?',
+                'Love this palette. Good job team!',
+                'Let’s iterate on the header again.'
+              ];
+              const text = textPool[Math.floor(Math.random() * textPool.length)];
+              const m = {
+                id: `r_${++msgCounter}`,
+                conversationId: convoId,
+                senderId: user,
+                text,
+                timestamp: Date.now(),
+                status: 'delivered',
+              };
+              // push into store
+              messagesStore[convoId] = messagesStore[convoId] || [];
+              messagesStore[convoId].push(m);
+              // stop typing
+              this.emit('typingStop', { conversationId: convoId, userId: user });
+              // notify new message
+              this.emit('messageNew', m);
+            }, 800 + Math.random()*800);
+          }
+        }, 6000 + Math.random()*9000);
+        // store to clear when needed
+        this._interval = interval;
+      },
+      stop(){
+        clearInterval(this._interval);
+      }
+    };
+
+    // --------- UI Rendering & Interaction -------------
+    const appEl = document.getElementById('app');
+    const conversationsEl = document.getElementById('conversations');
+    const chatNameEl = document.getElementById('chat-name');
+    const chatSubtitleEl = document.getElementById('chat-subtitle');
+    const messagesEl = document.getElementById('messages');
+    const typingEl = document.getElementById('typing');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const emojiBtn = document.getElementById('emojiBtn');
+    const emojiPanel = document.getElementById('emojiPanel');
+    const attachBtn = document.getElementById('attachBtn');
+    const fileInput = document.getElementById('fileInput');
+    const attachmentsPreview = document.getElementById('attachmentsPreview');
+    const searchBox = document.getElementById('searchBox');
+
+    let currentConvoId = null;
+
+    // Initialize conversations list
+    function renderConversations(filter = '') {
+      conversationsEl.innerHTML = '';
+      const q = filter.toLowerCase();
+      const list = conversationsData.filter(c => c.name.toLowerCase().includes(q));
+      list.forEach(conv => {
+        // presence status aggregated from participants
+        const onlineCount = conv.participants.filter(p => presence[p]).length;
+        const onlineText = (onlineCount > 0) ? `${onlineCount} online` : 'offline';
+        const item = document.createElement('div');
+        item.className = 'item';
+        item.tabIndex = 0;
+        item.setAttribute('role','button');
+        item.setAttribute('aria-label', `Open conversation ${conv.name}`);
+        item.innerHTML = `
+          <div class="avatar" aria-label="Avatar">${conv.name.charAt(0)}</div>
+          <div style="display:flex; flex-direction:column;">
+            <span class="name">${conv.name}</span>
+            <span class="snippet" aria-label="Last message preview">
+              ${(messagesStore[conv.id] && messagesStore[conv.id].slice(-1)[0]?.text) || 'No messages yet'}
+            </span>
+          </div>
+          <span class="presence" title="Presence">
+            <span class="dot ${onlineCount>0?'online':''}"></span>
+            <span style="font-size:11px; color:var(--muted); margin-left:6px;">${onlineText}</span>
+          </span>
+        `;
+        item.addEventListener('click', () => selectConversation(conv.id));
+        item.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter') selectConversation(conv.id);
+        });
+        conversationsEl.appendChild(item);
+      });
+    }
+
+    // Load messages for a conversation
+    function renderMessages(convoId) {
+      messagesEl.innerHTML = '';
+      const msgs = messagesStore[convoId] || [];
+      msgs.forEach(m => {
+        appendMessageBubble(m);
+      });
+      // Scroll to bottom
+      setTimeout(() => messagesEl.scrollTop = messagesEl.scrollHeight, 0);
+    }
+
+    function appendMessageBubble(msg) {
+      const isMe = msg.senderId === currentUserId;
+      const bubble = document.createElement('div');
+      bubble.className = `message ${isMe ? 'me' : 'other'}`;
+      bubble.setAttribute('data-id', msg.id);
+      bubble.setAttribute('role', 'group');
+      bubble.innerHTML = `
+        <div class="text" style="white-space: pre-wrap;">${escapeHtml(msg.text)}</div>
+        ${msg.attachments?.length ? `<div class="attachments" style="margin-top:6px;">${msg.attachments.map(att => `<span class="attachment" aria-label="Attachment">${escapeHtml(att.name)}</span>`).join('')}</div>` : ''}
+        <div class="meta" aria-label="Message metadata">
+          <span class="timestamp" style="font-variant-numeric: tabular-nums;">
+            ${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+          </span>
+          <span class="status" aria-label="Delivery status">
+            ${renderStatusIcon(msg)}
+          </span>
+        </div>
+        <div class="actions" aria-label="Message actions">
+          <button class="btn-icon" title="Copy" aria-label="Copy message">🗒️</button>
+          ${isMe ? `<button class="btn-icon" title="Edit" aria-label="Edit message">✏️</button>` : ''}
+          ${isMe ? `<button class="btn-icon" title="Delete" aria-label="Delete message">🗑️</button>` : ''}
+        </div>
+      `;
+      // Event delegation for actions
+      const actions = bubble.querySelector('.actions');
+      bubble.addEventListener('mouseenter', () => {}); // reserved for hover behavior
+      // Copy
+      const copyBtn = actions?.querySelector('[title="Copy"]');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(msg.text).catch(()=>{});
+        });
+      }
+      // Edit
+      const editBtn = actions?.querySelector('[title="Edit"]');
+      if (editBtn) {
+        editBtn.addEventListener('click', () => {
+          const newText = prompt('Edit message', msg.text);
+          if (newText !== null) {
+            msg.text = newText;
+            msg.edited = true;
+            // re-render
+            renderAll();
+          }
+        });
+      }
+      // Delete
+      const delBtn = actions?.querySelector('[title="Delete"]');
+      if (delBtn) {
+        delBtn.addEventListener('click', () => {
+          const arr = messagesStore[currentConvoId] || [];
+          const idx = arr.findIndex(m => m.id === msg.id);
+          if (idx >= 0) {
+            arr.splice(idx, 1);
+            renderAll();
+          }
+        });
+      }
+
+      messagesEl.appendChild(bubble);
+    }
+
+    function renderStatusIcon(msg) {
+      // Simple status rendering
+      if (msg.senderId !== currentUserId) return '';
+      if (msg.status === 'sent') return '•';
+      if (msg.status === 'delivered') return '✓✓';
+      if (msg.status === 'read') return '✓✓ (read)';
+      return '•';
+    }
+
+    function renderAll(){
+      if (!currentConvoId) return;
+      // refresh header
+      const conv = conversationsData.find(c => c.id === currentConvoId);
+      chatNameEl.textContent = conv.name;
+      const onlineCount = conv.participants.filter(p => presence[p]).length;
+      chatSubtitleEl.textContent = `${onlineCount} online`;
+      renderMessages(currentConvoId);
+    }
+
+    // Escape helper
+    function escapeHtml(str){
+      const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' };
+      return str.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // Select a conversation
+    function selectConversation(convoId){
+      currentConvoId = convoId;
+      // refresh typing indicator / presence
+      renderAll();
+      // start mock real-time events for this convo
+      realtime.startAdaptive(convoId);
+      // show typing indicator update on random times
+      startTypingSimulation(convoId);
+    }
+
+    // Send message
+    function sendMessage(){
+      const text = messageInput.value.trim();
+      if (!text && attachmentsPreview.childElementCount === 0) return;
+      const msg = {
+        id: `m_${Date.now()}`,
+        conversationId: currentConvoId,
+        senderId: currentUserId,
+        text: text || '',
+        timestamp: Date.now(),
+        status: 'sent',
+        edited: false,
+        attachments: [] // attachments preview array to be carried if any
+      };
+      // record attachments if any
+      if (attachmentBuffer.length > 0) {
+        msg.attachments = attachmentBuffer.map(att => ({ name: att.name, size: att.size }));
+      }
+      // push into store
+      messagesStore[currentConvoId] = messagesStore[currentConvoId] || [];
+      messagesStore[currentConvoId].push(msg);
+      // clear input and attachments
+      messageInput.value = '';
+      clearAttachments();
+      renderAll();
+      // simulate delivery & read receipts
+      setTimeout(() => { msg.status = 'delivered'; renderAll(); }, 240);
+      setTimeout(() => { msg.status = 'read'; renderAll(); }, 900);
+    }
+
+    // Attachments buffer
+    let attachmentBuffer = [];
+
+    function handleAttachInput(files){
+      const list = Array.from(files||[]);
+      list.forEach(f => {
+        attachmentBuffer.push({ name: f.name, size: f.size });
+      });
+      renderAttachmentsPreview();
+    }
+
+    function renderAttachmentsPreview(){
+      attachmentsPreview.innerHTML = '';
+      attachmentBuffer.forEach((att, idx) => {
+        const span = document.createElement('span');
+        span.className = 'attachment';
+        span.textContent = att.name;
+        attachmentsPreview.appendChild(span);
+      });
+    }
+
+    function clearAttachments(){
+      attachmentBuffer = [];
+      renderAttachmentsPreview();
+    }
+
+    // Emoji panel toggling
+    function toggleEmojiPanel(show){
+      emojiPanel.hidden = !show;
+      if (show) {
+        // position relative to input
+        const btnRect = emojiBtn.getBoundingClientRect();
+        // simple positioning handled by CSS; we keep as-is
+      }
+    }
+
+    // Typing simulation per conversation
+    let typingTimer = null;
+    function startTypingSimulation(convoId){
+      if (typingTimer) window.clearInterval(typingTimer);
+      // randomly trigger typing indicator by other users
+      typingTimer = setInterval(() => {
+        // pick a random user other than me
+        const user = others[Math.floor(Math.random() * others.length)];
+        if (Math.random() < 0.6) {
+          typingState[convoId] = new Date().getTime() + 2000;
+          renderTypingIndicator(convoId, true, user);
+          setTimeout(() => {
+            typingState[convoId] = null;
+            renderTypingIndicator(convoId, false, user);
+          }, 1200 + Math.random()*1200);
+        }
+      }, 6000);
+    }
+
+    function renderTypingIndicator(convoId, active, userId){
+      if (!active) {
+        typingEl.textContent = '';
+        typingEl.innerHTML = '';
+        return;
+      }
+      // show a small indicator
+      const name = users[userId]?.name || userId;
+      typingEl.textContent = `${name} is typing...`;
+    }
+
+    // Emoji button behavior
+    emojiBtn.addEventListener('click', () => {
+      const isHidden = emojiPanel.hidden;
+      toggleEmojiPanel(isHidden ? true : false);
+    });
+
+    // Emoji click inserts into input
+    emojiPanel.addEventListener('click', (e) => {
+      if (e.target.closest('.emoji')) {
+        const el = e.target.closest('.emoji');
+        const emoji = el.getAttribute('data-emoji');
+        if (emoji) {
+          messageInput.value += emoji;
+          messageInput.focus();
+        }
+      }
+    });
+
+    // Attach button behavior
+    attachBtn.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      handleAttachInput(e.target.files);
+      // reset input to allow selecting same file again if needed
+      fileInput.value = '';
+    });
+
+    // Send button
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Search conversations
+    searchBox.addEventListener('input', (e) => {
+      renderConversations(e.target.value);
+    });
+
+    // Initial render
+    renderConversations();
+    // Lazy: no conversation selected yet
+
+    // Accessibility helpers for closing emoji panel when clicking away
+    document.addEventListener('click', (e) => {
+      if (!emojiPanel.contains(e.target) && e.target !== emojiBtn) {
+        emojiPanel.hidden = true;
+      }
+    });
+
+    // Preload: simulate initial messages if any
+    // If there is at least one convo, auto-select the first to demonstrate
+    if (conversationsData.length > 0) {
+      // Optional: auto-select first after a short delay
+      setTimeout(() => {
+        selectConversation(conversationsData[0].id);
+      }, 300);
+    }
+
+  </script>
+</body>
+</html>
