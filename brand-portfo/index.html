@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Brandfolio - Modern SPA Scaffold</title>
+  <meta name="description" content="A modern, responsive single-page website scaffold using a precise color palette with accessible UI and a lightweight design system." />
+  <style>
+    /* Design Tokens (CSS Variables) - Palette driven by the given hex values */
+    :root {
+      --color-brand: #264653;      /* deep teal / primary tone */
+      --color-teal:  #2A9D8F;       /* secondary accent */
+      --color-accent:#E9C46A;        /* mustard */
+      --color-warm:  #F4A261;        /* warm orange */
+      --color-cta:   #E76F51;        /* vivid CTA accent */
+
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --text: #1f1f1f;
+      --muted: #6b7280;
+      --outline: #d1d5db;
+
+      --radius: 14px;
+      --shadow: 0 6px 20px rgba(0,0,0,.08);
+      --focus: 2px solid currentColor;
+    }
+
+    /* Base resets for consistency */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      min-height: 100%;
+    }
+
+    /* Layout scaffolding */
+    header.site-header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: saturate(1.1) blur(2px);
+      background: rgba(255, 255, 255, 0.88);
+      border-bottom: 1px solid var(--outline);
+    }
+    .container {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
+
+    /* NAVBAR */
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0;
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--text);
+    }
+    .brand-logo {
+      width: 28px; height: 28px;
+      display: inline-block;
+    }
+    .brand-name { font-weight: 700; letter-spacing: .2px; font-size: 1.05rem; }
+    nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 14px; }
+    nav a {
+      text-decoration: none; color: var(--text);
+      padding: 8px 12px; border-radius: 999px;
+    }
+    nav a:hover, nav a:focus { outline: none; background: rgba(42,157,143,.1); }
+    nav a.active {
+      background: linear-gradient(135deg, var(--color-teal), var(--color-brand));
+      color: white; font-weight: 600;
+    }
+
+    /* Skip link for accessibility */
+    .skip-link {
+      position: absolute; left: -999px; top: auto; width: 1px; height: 1px; overflow: hidden;
+    }
+    .skip-link:focus { left: 12px; top: 12px; width: auto; height: auto; padding: 8px 12px; z-index: 9999; background: #111; color: #fff; border-radius: 4px; }
+
+    /* HERO */
+    .hero {
+      display: grid; grid-template-columns: 1.1fr 0.9fr;
+      align-items: center; gap: 3rem;
+      padding: 64px 0 40px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 2.4rem + 1vw, 3.6rem);
+      margin: 0 0 12px;
+      line-height: 1.08;
+      letter-spacing: .2px;
+    }
+    .hero p { color: var(--muted); font-size: 1.05rem; margin-bottom: 22px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 12px 20px; border-radius: 999px; border: 0;
+      cursor: pointer; text-decoration: none; font-weight: 600;
+      transition: transform .15s ease;
+      background: linear-gradient(135deg, var(--color-teal), var(--color-brand));
+      color: white;
+    }
+    .btn.secondary {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--outline);
+    }
+    .hero-visual {
+      width: 100%; height: auto; aspect-ratio: 1.1/1; display: grid; place-items: center;
+    }
+    .card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 20px;
+    }
+
+    /* SECTIONS */
+    section { padding: 72px 0; }
+    h2 { font-size: 1.75rem; margin: 0 0 16px; }
+    .section-sub { color: var(--muted); margin-bottom: 20px; }
+
+    /* FEATURES GRID */
+    .features {
+      display: grid; gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    .feature {
+      display: grid; align-items: start; gap: 12px;
+      padding: 18px; border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--outline);
+    }
+    .feature-icon {
+      width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 10px; background: rgba(38,70,101,.08);
+    }
+    .feature h3 { margin: 0; font-size: 1.05rem; }
+    .feature p { margin: 0; color: var(--muted); font-size: .95rem; }
+
+    /* GALLERY / PORTFOLIO */
+    .gallery {
+      display: grid; gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+    .gallery-item {
+      position: relative; overflow: hidden; border-radius: 12px;
+      border: 1px solid var(--outline);
+      cursor: pointer;
+    }
+    .gallery-thumb {
+      width: 100%; height: 180px; display: block;
+      background: #eee;
+    }
+    .gallery-item:hover .overlay { opacity: 1; transform: translateY(0); }
+    .overlay {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: 12px; background: linear-gradient(to top, rgba(0,0,0,.6), rgba(0,0,0,0));
+      color: #fff; display: flex; justify-content: space-between; align-items: end;
+      opacity: 0; transform: translateY(20px);
+      transition: all .25s ease;
+    }
+
+    /* MODAL LIGHTBOX */
+    .lightbox {
+      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,.6); padding: 20px; z-index: 100;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-content {
+      width: min(900px, 96%); max-height: 80vh; overflow: hidden;
+      background: #111; border-radius: 12px; outline: none;
+      display: grid; grid-template-rows: auto 1fr auto;
+    }
+    .lightbox-media { display: grid; place-items: center; background: #000; padding: 8px; }
+    .lightbox-media img, .lightbox-media svg { max-width: 100%; max-height: 60vh; }
+    .lightbox-actions { display: flex; justify-content: space-between; align-items: center;
+      padding: 10px; background: #111; color: #fff;
+    }
+    .lightbox-close { background: transparent; color: #fff; border: 1px solid #555; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* TESTIMONIALS */
+    .testimonials { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .testimonial { padding: 16px; border-radius: 14px; background: #fff; border: 1px solid var(--outline); }
+
+    /* ABOUT + CTA */
+    .about { display: grid; gap: 12px; grid-template-columns: 1fr; }
+    .cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+
+    .cta {
+      display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center;
+      padding: 20px; border-radius: 14px; background: linear-gradient(135deg, var(--color-brand), var(--color-teal));
+      color: white;
+    }
+
+    /* FORMS */
+    form { display: grid; gap: 12px; }
+    label { font-size: .9rem; color: var(--text); }
+    input, textarea {
+      padding: 12px; border-radius: 8px; border: 1px solid var(--outline);
+      font: inherit; width: 100%;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+
+    /* STYLE GUIDE / DESIGN TOKENS (inline section) */
+    details { border: 1px solid var(--outline); border-radius: 8px; padding: 8px 10px; background: #fff; }
+    summary { font-weight: 600; cursor: pointer; }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding: 48px 0 20px; }
+      .hero-visual { height: auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Accessibility: Skip to content -->
+  <a href="#content" class="skip-link">Skip to content</a>
+
+  <header class="site-header" aria-label="Site header">
+    <div class="container nav">
+      <a class="brand" href="#home" aria-label="Brand home">
+        <span class="brand-logo" aria-hidden="true">
+          <!-- Simple inline logo SVG -->
+          <svg width="28" height="28" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Brand mark">
+            <circle cx="32" cy="32" r="26" fill="url(#grad)"/>
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                <stop stop-color="#2A9D8F"/>
+                <stop offset="1" stop-color="#264653"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <span class="brand-name">Brandfolio</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <ul role="menubar" aria-label="Primary">
+          <li role="none"><a href="#home" role="menuitem" class="nav-link active">Home</a></li>
+          <li role="none"><a href="#features" role="menuitem" class="nav-link">Features</a></li>
+          <li role="none"><a href="#portfolio" role="menuitem" class="nav-link">Portfolio</a></li>
+          <li role="none"><a href="#testimonials" role="menuitem" class="nav-link">Testimonials</a></li>
+          <li role="none"><a href="#about" role="menuitem" class="nav-link">About</a></li>
+          <li role="none"><a href="#contact" role="menuitem" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <!-- HERO -->
+    <section id="home" class="hero container" aria-label="Intro section">
+      <div>
+        <h1>Design that speaks your brand—clean, modern, and accessible</h1>
+        <p>A production-ready front-end scaffold built with a cohesive design system and a precise color palette. Tailor it for a business or portfolio site with a responsive, accessible UI.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;">
+          <a href="#cta" class="btn" aria-label="Get started with Brandfolio">Get started</a>
+          <a href="#portfolio" class="btn secondary" aria-label="View portfolio gallery">View gallery</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="Hero illustration">
+        <!-- Inline SVG illustration using the brand palette -->
+        <svg width="100%" height="100%" viewBox="0 0 640 420" role="img" aria-label="Abstract hero illustration" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#E9C46A"/>
+              <stop offset="1" stop-color="#F4A261"/>
+            </linearGradient>
+          </defs>
+          <rect width="640" height="420" fill="url(#bg)" opacity="0.25"/>
+          <circle cx="110" cy="180" r="80" fill="#2A9D8F" opacity="0.6"/>
+          <circle cx="240" cy="110" r="60" fill="#264653" opacity="0.6"/>
+          <rect x="320" y="60" width="260" height="120" rx="20" fill="#E76F51" opacity="0.8"/>
+          <path d="M420 260c60-8 120-8 160 12" stroke="#2A9D8F" stroke-width="8" fill="none" opacity="0.8"/>
+          <text x="50%" y="360" text-anchor="middle" fill="#333" font-family="Arial" font-size="28" opacity="0.9">Brand-centric visuals</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" aria-label="Features and services" class="container">
+      <h2>Core capabilities</h2>
+      <p class="section-sub">A compact set of design primitives and interaction patterns designed for handoff and scalability.</p>
+      <div class="features" role="region" aria-label="Features cards">
+        <article class="feature" aria-label="Clean UI and accessible components">
+          <div class="feature-icon" aria-hidden="true">
+            <!-- simple icon -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-teal)" stroke-width="2">
+              <path d="M3 12h18" />
+              <path d="M12 3l6 6-6 6-6-6 6-6z" />
+            </svg>
+          </div>
+          <div>
+            <h3>Accessible UI</h3>
+            <p>WCAG AA color contrast, keyboard focus, and ARIA roles baked in by default.</p>
+          </div>
+        </article>
+        <article class="feature" aria-label="Responsive grid and performance">
+          <div class="feature-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2">
+              <path d="M3 6h18M3 12h18M3 18h18" />
+            </svg>
+          </div>
+          <div>
+            <h3>Responsive Grid</h3>
+            <p>Fluid 12-column layout with sensible breakpoints and optimized assets.</p>
+          </div>
+        </article>
+        <article class="feature" aria-label="Design tokens and theming">
+          <div class="feature-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-warm)" stroke-width="2">
+              <path d="M12 2l3 6 6 1-4 4 1 6-6-3-6 3 1-6-4-4 6-1 3-6z" />
+            </svg>
+          </div>
+          <div>
+            <h3>Design Tokens</h3>
+            <p>Color, typography, spacing, and radii defined for cohesive UI.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO / GALLERY -->
+    <section id="portfolio" aria-label="Portfolio gallery" class="container">
+      <h2>Portfolio gallery</h2>
+      <p class="section-sub">Tap any item to preview in a lightweight lightbox.</p>
+      <div class="gallery" role="region" aria-label="Portfolio items">
+        <!-- 6 sample items -->
+        <button class="gallery-item" aria-label="Open project sample one" data-index="0">
+          <img class="gallery-thumb" src="" alt="Project placeholder 1" style="background: linear-gradient(135deg, #264653, #2A9D8F); height: 180px;">
+          <div class="overlay">
+            <span>Brand Identity</span>
+            <span>View</span>
+          </div>
+        </button>
+        <button class="gallery-item" aria-label="Open project sample two" data-index="1">
+          <img class="gallery-thumb" src="" alt="Project placeholder 2" style="background: linear-gradient(135deg, #E9C46A, #F4A261); height: 180px;">
+          <div class="overlay">
+            <span>Web UI Concept</span>
+            <span>View</span>
+          </div>
+        </button>
+        <button class="gallery-item" aria-label="Open project sample three" data-index="2">
+          <img class="gallery-thumb" src="" alt="Project placeholder 3" style="background: linear-gradient(135deg, #2A9D8F, #E76F51); height: 180px;">
+          <div class="overlay">
+            <span>Marketing Landing</span>
+            <span>View</span>
+          </div>
+        </button>
+        <button class="gallery-item" aria-label="Open project sample four" data-index="3">
+          <img class="gallery-thumb" src="" alt="Project placeholder 4" style="background: linear-gradient(135deg, #264653, #E76F51); height: 180px;">
+          <div class="overlay">
+            <span>Case Study</span>
+            <span>View</span>
+          </div>
+        </button>
+        <button class="gallery-item" aria-label="Open project sample five" data-index="4">
+          <img class="gallery-thumb" src="" alt="Project placeholder 5" style="background: linear-gradient(135deg, #2A9D8F, #E9C46A); height: 180px;">
+          <div class="overlay">
+            <span>Product Mockup</span>
+            <span>View</span>
+          </div>
+        </button>
+        <button class="gallery-item" aria-label="Open project sample six" data-index="5">
+          <img class="gallery-thumb" src="" alt="Project placeholder 6" style="background: linear-gradient(135deg, #F4A261, #E76F51); height: 180px;">
+          <div class="overlay">
+            <span>Brand System</span>
+            <span>View</span>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightbox" class="lightbox" role="dialog" aria-label="Gallery item preview" aria-modal="true" aria-hidden="true">
+      <div class="lightbox-content" tabindex="-1">
+        <div class="lightbox-media" id="lightbox-media" aria-live="off"></div>
+        <div class="lightbox-actions" aria-label="Preview controls">
+          <button class="lightbox-close" id="lightbox-close" aria-label="Close preview">Close</button>
+          <div>
+            <button class="btn secondary" id="prev-item" aria-label="Previous item" style="margin-right:8px;">Prev</button>
+            <button class="btn" id="next-item" aria-label="Next item">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" aria-label="Client testimonials" class="container">
+      <h2>What clients say</h2>
+      <p class="section-sub">Concise, results-driven feedback from partners and teams.</p>
+      <div class="testimonials" role="region" aria-label="Testimonials">
+        <blockquote class="testimonial" aria-label="Testimonial one">
+          <p>"A crisp, accessible UI scaffold that shipped on time. The design tokens kept our designers aligned."</p>
+          <footer>— Alex T., Product Lead</footer>
+        </blockquote>
+        <blockquote class="testimonial" aria-label="Testimonial two">
+          <p>"Responsive, fast to iterate, and easy to hand off to our developers."</p>
+          <footer>— Priya R., Designer</footer>
+        </blockquote>
+        <blockquote class="testimonial" aria-label="Testimonial three">
+          <p>"The lightbox gallery was a hit for our portfolio patients—clear, accessible, and delightful."</p>
+          <footer>— Mateo L., Marketing</footer>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" aria-label="About the team" class="container about">
+      <h2>About the approach</h2>
+      <p class="section-sub">We blend modern UI patterns with practical handoff guidance for teams delivering production-ready sites.</p>
+      <div class="cards" role="region" aria-label="About content cards">
+        <div class="card" aria-label="Our process">
+          <strong>Process</strong>
+          <p>Discover, define, design, and deliver with accessible, scalable components.</p>
+        </div>
+        <div class="card" aria-label="Design system">
+          <strong>Design system</strong>
+          <p>Tokens-first approach ensures visual consistency and rapid iteration.</p>
+        </div>
+        <div class="card" aria-label="Performance">
+          <strong>Performance</strong>
+          <p>Lean JS, lazy loading, and clean CSS to reduce CLS and FID.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALL TO ACTION -->
+    <section id="cta" aria-label="Call to action" class="container" style="margin-bottom: 0;">
+      <div class="cta" role="region" aria-label="Primary call to action">
+        <div>
+          <strong>Ready to ship a scalable front-end?</strong>
+          <p style="margin: 6px 0 0; color: #e9f6f5;">This scaffold is ready for your content, with accessibility baked in.</p>
+        </div>
+        <button class="btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})" aria-label="Go to contact form">Talk to us</button>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" aria-label="Contact" class="container">
+      <h2>Contact</h2>
+      <p class="section-sub">Have questions or want a tailored build? Send a message and we’ll respond promptly.</p>
+      <form id="contact-form" aria-label="Contact form" novalidate>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div>
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" required placeholder="Your name" autocomplete="name" />
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email" />
+          </div>
+        </div>
+        <div>
+          <label for="message">Message</label>
+          <textarea id="message" name="message" required placeholder="Tell us about your project..." ></textarea>
+        </div>
+        <button class="btn" type="submit" aria-label="Send message">Send message</button>
+        <p id="form-status" aria-live="polite" style="margin:6px 0 0; color: var(--muted);"></p>
+      </form>
+    </section>
+
+    <!-- DESIGN TOKENS / STYLE GUIDE (inline, collapsible) -->
+    <section id="style-guide" aria-label="Design tokens and style guide" class="container" style="margin-top:20px;">
+      <h2>Style Guide & Design Tokens</h2>
+      <p class="section-sub">Color tokens, typography, spacing, radii, and usability notes for handoff and theming.</p>
+      <details open>
+        <summary>Color palette</summary>
+        <ul>
+          <li>Primary: #264653</li>
+          <li>Secondary: #2A9D8F</li>
+          <li>Accent: #E9C46A</li>
+          <li>Warm: #F4A261</li>
+          <li>CTA: #E76F51</li>
+        </ul>
+      </details>
+      <details>
+        <summary>Typography & spacing</summary>
+        <ul>
+          <li>Base font-size: 16px; line-height: 1.6</li>
+          <li>Scale: 1rem, 1.25rem, 1.5rem, 2rem</li>
+          <li>Spacing: 8px baseline, 12px, 16px, 24px, 32px</li>
+        </ul>
+      </details>
+      <details>
+        <summary>Components</summary>
+        <ul>
+          <li>Buttons: rounded full with gradient for primary</li>
+          <li>Cards: subtle shadow, rounded corners</li>
+          <li>Modal: accessible dialog with focus trap (basic)</li>
+        </ul>
+      </details>
+    </section>
+  </main>
+
+  <footer class="container" style="padding: 40px 0; text-align: center; color: var(--muted);">
+    © <span id="year"></span> Brandfolio — Production-ready front-end scaffold
+  </footer>
+
+  <script>
+    // Tiny helper to get elements
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    // Update year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // NAV: highlight active section on scroll
+    const sections = [
+      { id: 'home', anchor: null },
+      { id: 'features', anchor: null },
+      { id: 'portfolio', anchor: null },
+      { id: 'testimonials', anchor: null },
+      { id: 'about', anchor: null },
+      { id: 'contact', anchor: null }
+    ];
+    const navLinks = $$('a.nav-link');
+    function setActiveNav() {
+      const fromTop = window.scrollY + 120;
+      let current = sections[0].id;
+      for (const s of sections) {
+        const el = document.getElementById(s.id);
+        if (el && el.offsetTop <= fromTop) {
+          current = s.id;
+        }
+      }
+      navLinks.forEach(a => {
+        const href = a.getAttribute('href').replace('#','');
+        a.classList.toggle('active', href === current);
+      });
+    }
+    window.addEventListener('scroll', setActiveNav, { passive: true });
+    window.addEventListener('resize', setActiveNav);
+    document.addEventListener('DOMContentLoaded', setActiveNav);
+
+    // Smooth scrolling for in-page anchors
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Lightbox gallery logic
+    const items = Array.from(document.querySelectorAll('.gallery-item'));
+    const lightbox = document.getElementById('lightbox');
+    const lightboxMedia = document.getElementById('lightbox-media');
+    const closeBtn = document.getElementById('lightbox-close');
+    const prevBtn = document.getElementById('prev-item');
+    const nextBtn = document.getElementById('next-item');
+    let currentIndex = 0;
+
+    // Prepare lightbox content for each item
+    // Since we use placeholder tiles, render SVG previews per index
+    function renderLightboxContent(index) {
+      // Simple inline SVG content as a preview
+      const svg = `
+        <svg width="100%" height="100%" viewBox="0 0 800 480" role="img" xmlns="http://www.w3.org/2000/svg" aria-label="Preview ${index+1}">
+          <defs>
+            <linearGradient id="g${index}" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#264653" />
+              <stop offset="1" stop-color="#2A9D8F" />
+            </linearGradient>
+          </defs>
+          <rect width="800" height="480" fill="url(#g${index})" />
+          <circle cx="140" cy="120" r="60" fill="#E9C46A" opacity="0.9"/>
+          <rect x="260" y="180" width="320" height="120" rx="20" fill="#F4A261" opacity="0.9"/>
+          <text x="50%" y="50%" text-anchor="middle" fill="#fff" font-family="Arial" font-size="42" dy=".3em">Preview ${index+1}</text>
+        </svg>
+      `;
+      lightboxMedia.innerHTML = svg;
+    }
+
+    function openLightbox(index) {
+      currentIndex = index;
+      renderLightboxContent(index);
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      // Focus the dialog for accessibility
+      lightbox.querySelector('.lightbox-content').focus();
+      // Trap focus could be enhanced with a full trap, keeping it simple here
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      // Return focus to the triggering item
+      items[currentIndex].focus();
+    }
+
+    items.forEach((it, idx) => {
+      it.addEventListener('click', () => openLightbox(idx));
+      it.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openLightbox(idx);
+        }
+      });
+    });
+
+    closeBtn.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    prevBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + items.length) % items.length;
+      renderLightboxContent(currentIndex);
+    });
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % items.length;
+      renderLightboxContent(currentIndex);
+    });
+
+    // Keyboard navigation inside lightbox
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') {
+        currentIndex = (currentIndex - 1 + items.length) % items.length;
+        renderLightboxContent(currentIndex);
+      }
+      if (e.key === 'ArrowRight') {
+        currentIndex = (currentIndex + 1) % items.length;
+        renderLightboxContent(currentIndex);
+      }
+    });
+
+    // CONTACT FORM: simple validation & mock submit
+    const form = document.getElementById('contact-form');
+    const status = document.getElementById('form-status');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // basic validation
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const message = form.message.value.trim();
+      if (!name || !email || !message) {
+        status.textContent = 'Please fill in all fields.';
+        status.style.color = '#b91c1c';
+        return;
+      }
+      // pretend submit
+      status.textContent = 'Thank you! Your message has been sent (demo).';
+      status.style.color = '#16a34a';
+      form.reset();
+    });
+
+    // EXPANDERS: Quick inline comments for extension points
+    // DESIGN-NOTE: you can attach real assets (logo, icons) here and map to tokens
+  </script>
+</body>
+</html>
