@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gödel’s Scaffolded Frontend - Minimal SPA</title>
+  <meta name="description" content="A production-ready single-page frontend scaffold with design tokens, responsive layout, accessible UI and smooth animations using the specified color palette." />
+  <style>
+    /* Design Tokens (palette-driven) */
+    :root {
+      --color-0: #264653;
+      --color-1: #2A9D8F;
+      --color-2: #E9C46A;
+      --color-3: #F4A261;
+      --color-4: #E76F51;
+
+      --bg: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow-1: 0 6px 20px rgba(0,0,0,.08);
+      --shadow-2: 0 2px 8px rgba(0,0,0,.06);
+
+      --gap: 20px;
+      --gap-lg: 40px;
+      --container: 1100px;
+    }
+
+    /* Global resets and base typography */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    /* Accessibility: respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+
+    /* Layout helpers */
+    .container {
+      width: 100%;
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header / Navigation */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    .skip-link:focus {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      width: auto;
+      height: auto;
+      padding: 12px;
+      background: #111;
+      color: #fff;
+      z-index: 9999;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .logo-title {
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      border: 0;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .main-nav ul {
+      display: flex;
+      list-style: none;
+      padding: 0; margin: 0;
+      gap: 8px;
+    }
+    .main-nav a {
+      text-decoration: none;
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+    .main-nav a:hover,
+    .main-nav a:focus {
+      background: #f3f4f6;
+      outline: 2px solid transparent;
+    }
+
+    /* Hero */
+    #hero {
+      padding: 72px 0 40px;
+      background: linear-gradient(135deg, #f8fbfc 0%, #fff 60%);
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .hero h1 {
+      font-size: 2.6rem;
+      line-height: 1.1;
+      letter-spacing: .2px;
+      margin: 0 0 12px;
+      color: var(--color-0);
+    }
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .cta-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 0;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform .2s ease;
+    }
+    .btn-primary {
+      background: var(--color-1);
+      color: white;
+    }
+    .btn-primary:hover { transform: translateY(-1px); background: #23938a; }
+    .btn-secondary {
+      background: #f0f2f5;
+      color: var(--color-0);
+    }
+    .btn-secondary:hover { transform: translateY(-1px); }
+
+    .hero-visual {
+      height: 320px;
+      border-radius: var(--radius);
+      background: conic-gradient(from 180deg at 50% 50%, var(--color-2), var(--color-3), var(--color-4), var(--color-2));
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-1);
+    }
+
+    /* Sections */
+    section { padding: 64px 0; }
+    section h2 {
+      font-size: 1.9rem;
+      margin-bottom: 16px;
+      color: var(--color-0);
+    }
+
+    /* Feature grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .feature {
+      background: #fff;
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      box-shadow: var(--shadow-2);
+      border: 1px solid #f0f0f0;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .feature:hover { transform: translateY(-4px); box-shadow: 0 8px 22px rgba(0,0,0,.08); }
+    .feature-icon {
+      width: 40px; height: 40px; display: inline-block;
+      border-radius: 9px;
+      background: var(--color-0);
+      color: #fff;
+      display: grid; place-items: center;
+      margin-bottom: 12px;
+    }
+    .feature h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    .feature p { margin: 0; color: var(--muted); }
+
+    /* Gallery / Portfolio */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .card {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      border: 1px solid #eee;
+      box-shadow: var(--shadow-2);
+    }
+    .card-thumb {
+      height: 180px;
+      display: grid; place-items: center;
+      background: #ddd;
+    }
+    .card-thumb svg { width: 100%; height: 100%; display: block; }
+    .card-title {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: 10px 12px;
+      color: white;
+      font-weight: 600;
+      background: linear-gradient(to top, rgba(0,0,0,.65), rgba(0,0,0,.0));
+    }
+
+    /* Testimonials / carousel-like */
+    .carousel {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .quote {
+      padding: 16px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #eee;
+      box-shadow: var(--shadow-2);
+    }
+    .quote p { margin: 0 0 8px; color: var(--muted); }
+    .quote cite { font-style: normal; font-weight: 600; color: var(--color-0); }
+
+    /* About / CTA areas */
+    .about, .cta {
+      background: #fff;
+    }
+    .about p { max-width: 72ch; color: var(--muted); }
+
+    /* Contact form */
+    form { display: grid; gap: 14px; max-width: 720px; }
+    .form-row { display: grid; gap: 6px; }
+    label { display: block; font-weight: 600; }
+    input, textarea {
+      width: 100%; border: 1px solid #ddd;
+      padding: 12px 12px; border-radius: 8px;
+      font: inherit;
+      background: #fff;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .form-status { margin-top: 6px; color: var(--muted); }
+
+    /* Footer */
+    .site-footer {
+      padding: 20px 0; border-top: 1px solid #eee; color: var(--muted);
+    }
+
+    /* Responsive behavior */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: left; }
+      .hero-visual { height: 260px; }
+    }
+    @media (max-width: 900px) {
+      .features-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .main-nav { display: none; }
+      .menu-toggle {
+        display: inline-flex;
+      }
+      .hero { padding: 48px 0 20px; text-align: left; }
+      .hero-inner { grid-template-columns: 1fr; gap: 0; padding: 0 0 6px; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-grid .card-thumb { height: 140px; }
+    }
+    @media (min-width: 641px) and (max-width: 900px) {
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 901px) {
+      .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+      .features-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    /* Reveal on scroll (simple animation) */
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .6s ease-out, transform .6s ease-out;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+  </style>
+</head>
+<body>
+  <a href="#content" class="skip-link">Skip to content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner" aria-label="Site header">
+      <div class="logo" aria-label="Site logo">
+        <!-- Inline simple logo (SVG) -->
+        <svg width="40" height="40" viewBox="0 0 48 48" aria-label="Logo">
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
+              <stop stop-color="#2A9D8F" offset="0"/>
+              <stop stop-color="#264653" offset="1"/>
+            </linearGradient>
+          </defs>
+          <circle cx="24" cy="24" r="20" fill="url(#grad)"></circle>
+          <path d="M14 28 L24 16 L34 28" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span class="logo-title" aria-label="Site name">Gödel Scaffold</span>
+      </div>
+
+      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="main-nav">☰</button>
+
+      <nav id="main-nav" class="main-nav" aria-label="Main navigation">
+        <ul>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#portfolio">Gallery</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content" role="main" aria-label="Main content">
+    <!-- Hero -->
+    <section id="hero" class="reveal" aria-label="Hero section">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <h1>Modern, responsive frontend scaffold</h1>
+          <p>Deliver a clean, accessible SPA using vanilla HTML, CSS and JavaScript. Color palette-driven tokens ensure consistent design across sections while animations provide polish without compromising performance.</p>
+          <div class="cta-row" aria-label="Primary actions">
+            <a href="#contact" class="btn btn-primary">Start a project</a>
+            <a href="#portfolio" class="btn btn-secondary">View portfolio</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Decorative hero visual">
+          <!-- Decorative SVG: abstract shape using the palette -->
+          <svg width="100%" height="100%" viewBox="0 0 400 320" role="img" aria-label="Decorative gradient shape">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+                <stop stop-color="#2A9D8F" offset="0" />
+                <stop stop-color="#E76F51" offset="1" />
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="400" height="320" fill="url(#g1)" opacity="0.25"/>
+            <circle cx="120" cy="180" r="60" fill="#E9C46A" opacity="0.65"/>
+            <circle cx="240" cy="120" r="80" fill="#F4A261" opacity="0.5"/>
+            <circle cx="320" cy="220" r="50" fill="#264653" opacity="0.65"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="reveal" aria-label="Features section">
+      <div class="container" style="text-align:left;">
+        <h2>Core capabilities</h2>
+        <p style="color:var(--muted); margin-top:-6px; margin-bottom:12px;">
+          Design tokens, accessible UI, responsive layout, and smooth motion. Optional micro-interactions are CSS-driven with a small JS orchestrator.
+        </p>
+      </div>
+      <div class="container" style="padding-top:0;">
+        <div class="features-grid" aria-label="Feature list">
+          <article class="feature" aria-label="Design tokens">
+            <span class="feature-icon" aria-label="Token icon">
+              <!-- inline simple SVG icon -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M3 12l7-9 7 9-7 9-7-9z"/></svg>
+            </span>
+            <h3>Design tokens</h3>
+            <p>Colors, typography, spacing and radii centralized for scalable UI.</p>
+          </article>
+          <article class="feature" aria-label="Accessibility">
+            <span class="feature-icon" aria-label="Accessibility icon" style="background:#E76F51;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M12 3l8 4-8 4-8-4 8-4zm0 6l8 4-8 4-8-4 8-4zm0 6l8 4-8 4-8-4 8-4z"/></svg>
+            </span>
+            <h3>Accessible by default</h3>
+            <p>WCAG-friendly contrast, keyboard navigation, and ARIA labeling.</p>
+          </article>
+          <article class="feature" aria-label="Performance">
+            <span class="feature-icon" aria-label="Performance icon" style="background:#264653;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M3 12h4v7h10v-7h4L12 3 3 12z"/></svg>
+            </span>
+            <h3>Performance-focused</h3>
+            <p>Lightweight assets, lazy loading, and CSS-driven animations.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery / Portfolio -->
+    <section id="portfolio" class="reveal" aria-label="Portfolio section">
+      <div class="container" style="margin-bottom:6px;">
+        <h2>Gallery</h2>
+        <p style="color:var(--muted); margin-top: -6px;">A concise collection of responsive cards with scalable SVG thumbnails.</p>
+      </div>
+      <div class="container gallery-grid" aria-label="Gallery items">
+        <!-- Card 1 -->
+        <article class="card" aria-label="Gallery item 1">
+          <div class="card-thumb" role="img" aria-label="Placeholder artwork 1">
+            <svg viewBox="0 0 400 240" width="100%" height="100%">
+              <defs>
+                <linearGradient id="grad1" x1="0" x2="1" y1="0" y2="1">
+                  <stop stop-color="#2A9D8F" offset="0"/>
+                  <stop stop-color="#264653" offset="1"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="240" fill="url(#grad1)"/>
+              <circle cx="100" cy="140" r="60" fill="rgba(255,255,255,.6)"/>
+              <circle cx="260" cy="80" r="40" fill="rgba(255,255,255,.25)"/>
+            </svg>
+          </div>
+          <div class="card-title" style="background: linear-gradient(to top, rgba(0,0,0,.6), rgba(0,0,0,0));">Component Library</div>
+        </article>
+        <!-- Card 2 -->
+        <article class="card" aria-label="Gallery item 2">
+          <div class="card-thumb" role="img" aria-label="Placeholder artwork 2">
+            <svg viewBox="0 0 400 240" width="100%" height="100%">
+              <defs>
+                <linearGradient id="grad2" x1="0" x2="1" y1="0" y2="1">
+                  <stop stop-color="#E9C46A" offset="0"/>
+                  <stop stop-color="#F4A261" offset="1"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="240" fill="url(#grad2)"/>
+              <rect x="60" y="60" width="280" height="120" rx="16" fill="rgba(0,0,0,.15)"/>
+            </svg>
+          </div>
+          <div class="card-title" style="background: linear-gradient(to top, rgba(0,0,0,.6), rgba(0,0,0,0));">Responsive Grid</div>
+        </article>
+        <!-- Card 3 -->
+        <article class="card" aria-label="Gallery item 3">
+          <div class="card-thumb" role="img" aria-label="Placeholder artwork 3">
+            <svg viewBox="0 0 400 240" width="100%" height="100%">
+              <defs>
+                <linearGradient id="grad3" x1="0" x2="1" y1="0" y2="1">
+                  <stop stop-color="#264653" offset="0"/>
+                  <stop stop-color="#2A9D8F" offset="1"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="240" fill="url(#grad3)"/>
+              <g fill="white" opacity=".85">
+                <circle cx="120" cy="120" r="26"/>
+                <circle cx="200" cy="100" r="18"/>
+                <circle cx="280" cy="140" r="22"/>
+              </g>
+            </svg>
+          </div>
+          <div class="card-title" style="background: linear-gradient(to top, rgba(0,0,0,.6), rgba(0,0,0,0));">UI Patterns</div>
+        </article>
+        <!-- Card 4 -->
+        <article class="card" aria-label="Gallery item 4">
+          <div class="card-thumb" role="img" aria-label="Placeholder artwork 4">
+            <svg viewBox="0 0 400 240" width="100%" height="100%">
+              <defs>
+                <linearGradient id="grad4" x1="0" x2="1" y1="0" y2="1">
+                  <stop stop-color="#F4A261" offset="0"/>
+                  <stop stop-color="#E76F51" offset="1"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="240" fill="url(#grad4)"/>
+              <rect x="110" y="60" width="180" height="120" rx="14" fill="rgba(0,0,0,.2)"/>
+            </svg>
+          </div>
+          <div class="card-title" style="background: linear-gradient(to top, rgba(0,0,0,.6), rgba(0,0,0,0));">Accessibility</div>
+        </article>
+        <!-- Card 5 -->
+        <article class="card" aria-label="Gallery item 5">
+          <div class="card-thumb" role="img" aria-label="Placeholder artwork 5">
+            <svg viewBox="0 0 400 240" width="100%" height="100%">
+              <defs>
+                <linearGradient id="grad5" x1="0" x2="1" y1="0" y2="1">
+                  <stop stop-color="#2A9D8F" offset="0"/>
+                  <stop stop-color="#E9C46A" offset="1"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="240" fill="url(#grad5)"/>
+              <circle cx="200" cy="120" r="60" fill="rgba(255,255,255,.6)"/>
+            </svg>
+          </div>
+          <div class="card-title" style="background: linear-gradient(to top, rgba(0,0,0,.6), rgba(0,0,0,0));">Tokens</div>
+        </article>
+        <!-- Card 6 -->
+        <article class="card" aria-label="Gallery item 6">
+          <div class="card-thumb" role="img" aria-label="Placeholder artwork 6">
+            <svg viewBox="0 0 400 240" width="100%" height="100%">
+              <defs>
+                <linearGradient id="grad6" x1="0" x2="1" y1="0" y2="1">
+                  <stop stop-color="#264653" offset="0"/>
+                  <stop stop-color="#E76F51" offset="1"/>
+                </linearGradient>
+              </defs>
+              <rect width="400" height="240" fill="url(#grad6)"/>
+              <path d="M60 180 Q200 60 340 180" fill="none" stroke="white" stroke-width="6" />
+            </svg>
+          </div>
+          <div class="card-title" style="background: linear-gradient(to top, rgba(0,0,0,.6), rgba(0,0,0,0));">Motion polish</div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="reveal" aria-label="Testimonials section">
+      <div class="container" style="margin-bottom:6px;">
+        <h2>What clients say</h2>
+        <p style="color:var(--muted);">Concise feedback on the scaffold's clarity and usability.</p>
+      </div>
+      <div class="container" aria-roledescription="group" aria-label="Client testimonials">
+        <div class="carousel" id="testimonialsCarousel">
+          <article class="quote" aria-label="Testimonial 1">
+            <p>"A thoughtfully structured frontend scaffold that is easy to extend and ship."</p>
+            <cite>— Alex Carter, Design Lead</cite>
+          </article>
+          <article class="quote" aria-label="Testimonial 2" style="display:none;">
+            <p>"Tokens and components map cleanly to a production-ready codebase."</p>
+            <cite>— Sam Lee, Frontend Developer</cite>
+          </article>
+          <article class="quote" aria-label="Testimonial 3" style="display:none;">
+            <p>"Accessible by default with smooth, performant interactions."</p>
+            <cite>— Priya Kapoor, Product Engineer</cite>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="reveal" aria-label="About section">
+      <div class="container" style="max-width: 900px;">
+        <h2>About this scaffold</h2>
+        <p class="about-copy" style="color:var(--muted);">
+          This SPA demonstrates a production-ready frontend scaffold aligned with the provided color palette.
+          It emphasizes accessibility, performance budgets, and a scalable design system using CSS variables
+          and semantic HTML. Content placeholders are templated for quick replacement during handoff.
+        </p>
+      </div>
+    </section>
+
+    <!-- Call to action -->
+    <section id="cta" class="reveal" aria-label="Call to action section" style="background:#fff;">
+      <div class="container" style="text-align:left;">
+        <h2>Ready to begin?</h2>
+        <p style="color:var(--muted);">Share your content and goals, and we’ll tailor the scaffold to your project.</p>
+        <a href="#contact" class="btn btn-primary">Contact us</a>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="reveal" aria-label="Contact section">
+      <div class="container" style="max-width: 860px;">
+        <h2>Contact</h2>
+        <p style="color:var(--muted);">Send a message to start a project or request a design review.</p>
+        <form id="contactForm" novalidate>
+          <div class="form-row">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" required placeholder="Your name" />
+          </div>
+          <div class="form-row">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required placeholder="you@example.com" />
+          </div>
+          <div class="form-row">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required placeholder="Tell us about your project, goals, and timeline..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="justify-content:center;">Send Message</button>
+          <p id="formStatus" class="form-status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container" style="display:flex; flex-wrap:wrap; justify-content: space-between; align-items:center;">
+      <span>© <span id="year"></span> Gödel Studio — All rights reserved.</span>
+      <nav aria-label="Footer navigation" style="margin-left:auto;">
+        <a href="#hero" style="margin-left:12px; text-decoration:none; color:var(--color-0);">Back to top</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile nav toggle
+    (function(){
+      const btn = document.querySelector('.menu-toggle');
+      const nav = document.getElementById('main-nav');
+      if (!btn || !nav) return;
+      btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!expanded));
+        nav.style.display = (nav.style.display === 'flex' ? 'none' : 'flex');
+        nav.style.flexDirection = 'column';
+      });
+      // Initialize for small screens
+      const mq = window.matchMedia('(max-width: 700px)');
+      const handleMQ = () => {
+        if (mq.matches) {
+          nav.style.display = 'none';
+        } else {
+          nav.style.display = 'flex';
+          nav.style.flexDirection = 'row';
+        }
+      };
+      mq.addEventListener('change', handleMQ);
+      handleMQ();
+    })();
+
+    // Reveal on scroll
+    (function(){
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) e.target.classList.add('active');
+        });
+      }, { threshold: 0.12 });
+      reveals.forEach(r => observer.observe(r));
+    })();
+
+    // Testimonials carousel (simple rotation)
+    (function(){
+      const slides = Array.from(document.querySelectorAll('#testimonialsCarousel .quote'));
+      let idx = 0;
+      function show(i) {
+        slides.forEach((s, j) => s.style.display = (j === i ? 'block' : 'none'));
+      }
+      if (slides.length) {
+        show(0);
+        setInterval(() => {
+          idx = (idx + 1) % slides.length;
+          show(idx);
+        }, 5000);
+      }
+    })();
+
+    // Contact form (basic validation with fake submission)
+    (function(){
+      const form = document.getElementById('contactForm');
+      const status = document.getElementById('formStatus');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        status.textContent = '';
+        // Simple client-side validation
+        const name = document.getElementById('name');
+        const email = document.getElementById('email');
+        const message = document.getElementById('message');
+        if (!name.value.trim() || !email.value.trim() || !message.value.trim()) {
+          status.style.color = 'var(--color-4)';
+          status.textContent = 'Please complete all fields.';
+          return;
+        }
+        // Simulate async submission
+        status.style.color = 'var(--muted)';
+        status.textContent = 'Sending...';
+        setTimeout(() => {
+          status.style.color = 'var(--color-1)';
+          status.textContent = 'Thank you! Your message has been simulated as sent. We will contact you soon.';
+          form.reset();
+        }, 800);
+      });
+    })();
+
+  </script>
+</body>
+</html>
