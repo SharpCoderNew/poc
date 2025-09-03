@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kautilya Utkarsh – AI Engineer Portfolio</title>
+  <meta name="description" content="Polished single-page portfolio for Kautilya Utkarsh, AI Engineer with 2 years of experience. Accessible, responsive, and optimized for recruiters and clients." />
+  <style>
+    /* Design tokens and palette (credit given colors) */
+    :root{
+      --brand-0: #264653; /* deep teal/blue */
+      --brand-1: #2A9D8F; /* teal */
+      --brand-2: #E9C46A; /* saffron yellow */
+      --brand-3: #F4A261; /* sand orange */
+      --brand-4: #E76F51; /* coral red-orange */
+      --bg: #f7f9fb;
+      --card: #ffffff;
+      --text: #102a43;
+      --muted: #5f6b7a;
+      --shadow: 0 6px 18px rgba(0,0,0,.08);
+      --radius: 14px;
+    }
+
+    /* Base reset-ish */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.5;
+    }
+
+    /* Accessibility: respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+
+    /* Layout helpers */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    .section { padding: 72px 0; }
+    .section-alt { padding: 72px 0; background: #fff; border-radius: 0; }
+
+    /* Header / Nav */
+    header {
+      position: sticky; top: 0; z-index: 40;
+      background: rgba(255,255,255,0.95);
+      border-bottom: 1px solid #e6e6e6;
+      backdrop-filter: saturate(1.2) blur(6px);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0;
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 12px;
+      text-decoration: none; color: inherit;
+    }
+    .brand-logo {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--brand-1), var(--brand-0));
+      color: white; font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+    nav ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 12px; }
+    nav a {
+      text-decoration: none; color: var(--text);
+      padding: 8px 12px; border-radius: 999px;
+    }
+    nav a[aria-current="page"] { background: rgba(42,157,143,.15); color: var(--brand-0); font-weight: 600; }
+    .skip-links { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    .skip-links:focus { left: 12px; top: 12px; width: auto; height: auto; padding: 8px; background: #fff; border: 1px solid #ddd; z-index: 1000; }
+
+    /* Hero */
+    .hero {
+      display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 32px;
+      align-items: center;
+    }
+    .hero-copy h1 {
+      font-size: 2.6rem; line-height: 1.08; margin: 0 0 12px;
+      letter-spacing: -0.5px;
+    }
+    .hero-copy p { font-size: 1.05rem; color: var(--muted); max-width: 58ch; }
+    .cta-row { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 12px 18px; border-radius: 999px; text-decoration: none;
+      border: 0; cursor: pointer;
+      font-weight: 600;
+      transition: transform .2s ease;
+    }
+    .btn:focus-visible { outline: 3px solid #7cc4ff; outline-offset: 2px; }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--brand-1), var(--brand-0));
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(42,157,143,.4);
+    }
+    .btn.secondary {
+      background: #fff; color: var(--brand-0);
+      border: 1px solid #dfe6e6;
+    }
+    .hero-visual {
+      display: grid; place-items: center;
+    }
+    .headshot {
+      width: 260px; height: 260px; border-radius: 50%;
+      background: conic-gradient(from 180deg at 50% 50%, #8bd3e8, #a1e3c0, #f7d38a, #f8a6a6, #8bd3e8);
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow);
+    }
+    .headshot svg { width: 66%; height: 66%; display: block; }
+
+    /* Cards / sections */
+    .grid { display: grid; gap: 16px; }
+    .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+    .card {
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 18px;
+      border: 1px solid #eef1f4;
+    }
+    .section h2 {
+      font-size: 1.75rem; margin: 0 0 8px;
+    }
+    .section .sub { color: var(--muted); margin-bottom: 8px; }
+
+    /* Skills with progress bars */
+    .skill { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; padding: 6px 0; }
+    .skill-name { font-weight: 600; color: #1b2a3a; }
+    .progress { height: 8px; background: #eef2f5; border-radius: 6px; overflow: hidden; }
+    .progress > span { display: block; height: 100%; background: linear-gradient(90deg, var(--brand-1), var(--brand-3)); width: 0%; }
+
+    /* Projects cards with image placeholder */
+    .project-card { display: flex; flex-direction: column; gap: 10px; }
+    .project-media {
+      height: 150px; border-radius: 10px; overflow: hidden; position: relative;
+      background: #eef2f5;
+    }
+    .project-media svg { width: 100%; height: 100%; display: block; }
+
+    .project-title { font-weight: 700; }
+    .project-desc { color: var(--muted); font-size: .95rem; }
+
+    /* Experience / Education lists */
+    .timeline { position: relative; padding-left: 12px; }
+    .timeline-item { margin-bottom: 14px; }
+    .timeline-item h4 { margin: 0; font-size: 1.05rem; }
+    .timeline-item .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; background: var(--brand-1); }
+
+    /* Contact form */
+    form { display: grid; gap: 12px; }
+    label { font-weight: 600; font-size: .9rem; }
+    input, textarea {
+      width: 100%; padding: 12px 12px; border-radius: 8px;
+      border: 1px solid #d7dde1; font: inherit; background: #fff;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 800px){
+      .hero { grid-template-columns: 1fr; padding: 0 0; }
+      .grid.cols-2 { grid-template-columns: 1fr; }
+      .grid.cols-3 { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    /* Footer */
+    footer { padding: 40px 0; text-align: center; color: var(--muted); font-size: .9rem; }
+
+    /* Helpers */
+    .sr-only { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    a.alt-link { color: var(--brand-0); text-decoration: none; border-bottom: 1px dashed currentColor; }
+  </style>
+</head>
+<body>
+  <!-- Skip to content for accessibility -->
+  <a class="skip-links" href="#content">Skip to content</a>
+
+  <header aria-label="Site header">
+    <div class="container nav" id="topnav">
+      <a class="brand" href="#home" aria-label="Kautilya Utkarsh Home">
+        <span class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" role="img" width="22" height="22" aria-label="Brand mark">
+            <circle cx="12" cy="12" r="4" fill="#fff" opacity="0.9"></circle>
+            <path d="M6 14c0-3.314 2.686-6 6-6s6 2.686 6 6" fill="none" stroke="#fff" stroke-width="2"/>
+          </svg>
+        </span>
+        <span style="font-weight:700;">Kautilya Utkarsh</span>
+      </a>
+      <nav aria-label="Main">
+        <ul id="nav-items">
+          <li><a href="#home" aria-label="Go to Home" data-section="home">Home</a></li>
+          <li><a href="#about" aria-label="Go to About" data-section="about">About</a></li>
+          <li><a href="#skills" aria-label="Go to Skills" data-section="skills">Skills</a></li>
+          <li><a href="#projects" aria-label="Go to Projects" data-section="projects">Projects</a></li>
+          <li><a href="#experience" aria-label="Go to Experience" data-section="experience">Experience</a></li>
+          <li><a href="#education" aria-label="Go to Education" data-section="education">Education</a></li>
+          <li><a href="#certifications" aria-label="Go to Certifications" data-section="certifications">Certifications</a></li>
+          <li><a href="#contact" aria-label="Go to Contact" data-section="contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <!-- HERO -->
+    <section id="home" class="section" aria-label="Intro">
+      <div class="container hero">
+        <div class="hero-copy" role="region" aria-label="Intro copy">
+          <h1>Kautilya Utkarsh — AI Engineer</h1>
+          <p>I design and productionize practical AI systems with focus on reliability, performance, and measurable impact. Adept at translating complex requirements into scalable ML solutions and collaborating across product teams.</p>
+          <div class="cta-row" aria-label="Primary actions">
+            <button class="btn primary" id="downloadResume" title="Download resume as text file">Download Resume</button>
+            <a class="btn secondary" href="#contact" aria-label="Contact me">Contact Me</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Headshot placeholder">
+          <figure class="headshot" aria-label="Headshot placeholder">
+            <!-- Inline SVG headshot placeholder -->
+            <svg viewBox="0 0 200 200" role="img" aria-label="Headshot illustration">
+              <defs>
+                <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+                  <stop stop-color="#2A9D8F" offset="0"/>
+                  <stop stop-color="#264653" offset="1"/>
+                </linearGradient>
+              </defs>
+              <circle cx="100" cy="100" r="90" fill="url(#g)" opacity="0.25"/>
+              <circle cx="70" cy="90" r="12" fill="#264653"/>
+              <circle cx="130" cy="90" r="12" fill="#264653"/>
+              <path d="M60 130 C70 150, 130 150, 140 130" stroke="#264653" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="section section-alt" aria-label="About me">
+      <div class="container">
+        <h2>About</h2>
+        <p class="sub">2 years of hands-on experience building AI-powered features and scalable ML workflows. Passionate about delivering practical AI that ships fast and safely.</p>
+        <div class="grid cols-2" style="align-items: start;">
+          <div class="card" aria-label="Summary">
+            <h3 style="margin:0 0 8px;">Profile</h3>
+            <p style="margin:0; color:var(--muted);">
+              AI Engineer focused on end-to-end ML lifecycle: data engineering, model development, evaluation, deployment, and monitoring. I collaborate with product and frontend teams to turn ideas into robust systems.
+            </p>
+          </div>
+          <div class="card" aria-label="Value propositions">
+            <h3 style="margin:0 0 8px;">What I bring</h3>
+            <ul style="margin:0; padding-left: 1.1em;">
+              <li>Production-grade ML pipelines with CI/CD and monitoring</li>
+              <li>Efficient inference with latency optimization</li>
+              <li>Data-centric problem solving and experimentation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="section" aria-label="Skills" >
+      <div class="container">
+        <h2>Skills</h2>
+        <p class="sub">Proficiencies across Python ecosystems, ML frameworks, and cloud tooling.</p>
+
+        <div class="grid cols-2" style="gap:18px;">
+          <div class="card" aria-label="Programming skills">
+            <div class="skill">
+              <span class="skill-name">Python</span><span>95%</span>
+            </div>
+            <div class="progress" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"><span style="width:95%"></span></div>
+
+            <div class="skill" style="margin-top:6px;">
+              <span class="skill-name">PyTorch</span><span>85%</span>
+            </div>
+            <div class="progress" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"><span style="width:85%"></span></div>
+
+            <div class="skill" style="margin-top:6px;">
+              <span class="skill-name">TensorFlow / Keras</span><span>75%</span>
+            </div>
+            <div class="progress" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"><span style="width:75%"></span></div>
+          </div>
+
+          <div class="card" aria-label="ML & data tools">
+            <div class="skill" style="margin-top:0;">
+              <span class="skill-name">NLP & Computer Vision</span><span>80%</span>
+            </div>
+            <div class="progress" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"><span style="width:80%"></span></div>
+
+            <div class="skill" style="margin-top:6px;">
+              <span class="skill-name">ML Ops & MLOps</span><span>70%</span>
+            </div>
+            <div class="progress" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"><span style="width:70%"></span></div>
+
+            <div class="skill" style="margin-top:6px;">
+              <span class="skill-name">Cloud (AWS / GCP)</span><span>65%</span>
+            </div>
+            <div class="progress" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"><span style="width:65%"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section section-alt" aria-label="Projects" >
+      <div class="container">
+        <h2>Projects</h2>
+        <p class="sub">Selected AI-driven initiatives. Placeholders available for extension.</p>
+
+        <div class="grid cols-3" style="gap:18px;">
+          <!-- Project 1 -->
+          <article class="card project-card" aria-label="Project 1: Smart Inventory Forecasting">
+            <div class="project-media" aria-label="Project image placeholder">
+              <svg viewBox="0 0 600 400" role="img" aria-label="Inventory forecast image" preserveAspectRatio="xMidYMid meet">
+                <defs><linearGradient id="p1" x1="0" x2="1" y1="0" y2="1">
+                  <stop stop-color="#2A9D8F" offset="0"/>
+                  <stop stop-color="#264653" offset="1"/>
+                </linearGradient></defs>
+                <rect width="600" height="400" fill="url(#p1)" opacity="0.15"/>
+                <rect x="60" y="60" width="480" height="260" rx="14" fill="#fff" opacity="0.8"/>
+                <path d="M80,260 L520,260" stroke="#2A9D8F" stroke-width="6" opacity="0.8"/>
+                <circle cx="140" cy="150" r="10" fill="#2A9D8F"/>
+                <circle cx="200" cy="170" r="10" fill="#2A9D8F"/>
+              </svg>
+            </div>
+            <div class="project-content">
+              <div class="project-title">Smart Inventory Forecasting</div>
+              <div class="project-desc">Forecasted demand using time-series models; deployed via a lightweight API for frontend dashboards; reduced stockouts by 18%.</div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <span class="badge" aria-label="Tech stack tag">Python</span><span class="badge" aria-label="Tech stack tag">Prophet</span><span class="badge" aria-label="Tech stack tag">Pandas</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 2 -->
+          <article class="card project-card" aria-label="Project 2: Personalized News Recommender">
+            <div class="project-media" aria-label="Project image placeholder 2">
+              <svg viewBox="0 0 600 400" role="img" aria-label="News recommender image" preserveAspectRatio="xMidYMid meet">
+                <rect width="600" height="400" fill="#F4A261" opacity="0.15"/>
+                <circle cx="100" cy="120" r="28" fill="#E76F51"/>
+                <rect x="150" y="80" width="360" height="60" rx="8" fill="#E76F51" opacity="0.25"/>
+                <rect x="150" y="160" width="360" height="190" rx="12" fill="#2A9D8F" opacity="0.25"/>
+              </svg>
+            </div>
+            <div class="project-content">
+              <div class="project-title">Personalized News Recommender</div>
+              <div class="project-desc">User-centric ranking model with live A/B testing; improved CTR by 12% while maintaining fairness constraints.</div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <span class="badge" aria-label="Tech stack tag">Python</span><span class="badge" aria-label="Tech stack tag">RecsYS</span><span class="badge" aria-label="Tech stack tag">Ftrl</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 3 -->
+          <article class="card project-card" aria-label="Project 3: Efficient Vision Transformer">
+            <div class="project-media" aria-label="Project image placeholder 3">
+              <svg viewBox="0 0 600 400" role="img" aria-label="Vision transformer image" preserveAspectRatio="xMidYMid meet">
+                <rect width="600" height="400" fill="#264653" opacity="0.15"/>
+                <rect x="60" y="60" width="480" height="120" rx="14" fill="#2A9D8F" opacity="0.25"/>
+                <rect x="80" y="210" width="440" height="140" rx="14" fill="#E9C46A" opacity="0.25"/>
+              </svg>
+            </div>
+            <div class="project-content">
+              <div class="project-title">Efficient Vision Transformer</div>
+              <div class="project-desc">Prototype for lightweight CV models suitable for edge devices; achieved 2.3× inference speedups with comparable accuracy.</div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <span class="badge" aria-label="Tech stack tag">PyTorch</span><span class="badge" aria-label="Tech stack tag">CV</span><span class="badge" aria-label="Tech stack tag">ONNX</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="section" aria-label="Experience" >
+      <div class="container">
+        <h2>Experience</h2>
+        <p class="sub">Roles held and impact achieved in AI projects and production environments.</p>
+
+        <div class="timeline" aria-label="Experience timeline">
+          <div class="timeline-item">
+            <h4><span class="dot" aria-hidden="true"></span>AI Engineer, TechNova Labs (Remote)</h4>
+            <div style="color:var(--muted); font-size:.9rem;">Mar 2023 — Present</div>
+            <ul style="margin-top:6px;">
+              <li>Implemented end-to-end ML workflows, including data ingestion, feature engineering, model training, and deployment to production.</li>
+              <li>Reduced model latency by 30% through model quantization and caching strategies; established monitoring dashboards.</li>
+            </ul>
+          </div>
+
+          <div class="timeline-item">
+            <h4><span class="dot" aria-hidden="true"></span>Junior ML Engineer, NovaTech Solutions</h4>
+            <div style="color:var(--muted); font-size:.9rem;">2022 — 2023</div>
+            <ul style="margin-top:6px;">
+              <li>Contributed to NLP and CV model improvements; collaborated with frontend teams to integrate AI features into products.</li>
+              <li>Built reproducible experiments and maintained accessible documentation for model governance.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education" class="section section-alt" aria-label="Education">
+      <div class="container">
+        <h2>Education & Certifications</h2>
+
+        <div class="grid cols-2" style="gap:18px;">
+          <div class="card" aria-label="Education details">
+            <h3 style="margin:0 0 6px;">B.Tech in Computer Science</h3>
+            <div style="color:var(--muted); font-size:.95rem;">Institute of Technology & Management | 2018 - 2022</div>
+            <p class="project-desc" style="margin:8px 0 0; color:var(--muted);">Specialization: AI, ML, and data systems. Coursework included algorithms, distributed computing, and ML pipelines.</p>
+          </div>
+
+          <div class="card" aria-label="Certifications">
+            <h3 style="margin:0 0 6px;">Certifications</h3>
+            <ul style="margin:0; padding-left: 1em; color:var(--muted);">
+              <li>AWS Certified Machine Learning – Specialty (2023)</li>
+              <li>Coursera: Machine Learning by Stanford (Andrew Ng) – 2022</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CERTIFICATIONS (Alternate anchor name kept; kept for completeness) -->
+    <section id="certifications" class="section" aria-label="Certifications">
+      <div class="container">
+        <h2>Certifications</h2>
+        <div class="grid cols-2" style="gap:16px;">
+          <div class="card" aria-label="Certification 1">
+            <strong>AWS Certified Machine Learning – Specialty</strong>
+            <div style="color:var(--muted); font-size:.9rem;">2023</div>
+          </div>
+          <div class="card" aria-label="Certification 2">
+            <strong>Coursera: Machine Learning</strong>
+            <div style="color:var(--muted); font-size:.9rem;">2019 – 2020</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section section-alt" aria-label="Contact">
+      <div class="container">
+        <h2>Contact</h2>
+        <p class="sub">Have a project in mind or want to discuss opportunities? Send a message and I’ll get back to you promptly.</p>
+
+        <form id="contactForm" novalidate aria-label="Contact form">
+          <div class="form-row">
+            <div>
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" placeholder="Your name" required />
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="you@example.com" required aria-describedby="emailHelp"/>
+            </div>
+          </div>
+          <div>
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell me about your project, goals, timelines..." required></textarea>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <button class="btn primary" type="submit" aria-label="Send message">Send Message</button>
+            <span id="formStatus" role="status" aria-live="polite" style="color:var(--muted);"></span>
+          </div>
+          <p style="font-size:.85rem; color:var(--muted); margin-top:4px;">
+            This form does not submit data to any external service. Data is handled locally in this demo for accessibility.
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer aria-label="Site footer">
+      <div class="container">
+        <p>© <span id="year"></span> Kautilya Utkarsh. All rights reserved.</p>
+        <p style="margin-top:6px;">
+          Connect: <a class="alt-link" href="#" aria-label="LinkedIn profile" onclick="return false;">LinkedIn</a> •
+          <a class="alt-link" href="#" aria-label="GitHub profile" onclick="return false;">GitHub</a>
+        </p>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // Simple data-driven skeleton, ready for extension
+    (function(){
+      // Update year
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Smooth scroll for nav highlighting
+      const sections = ["home","about","skills","projects","experience","education","certifications","contact"];
+      const navLinks = Array.from(document.querySelectorAll('#nav-items a'));
+
+      function setActiveSection() {
+        let current = sections[0];
+        const scrollY = window.scrollY + 120; // a bit offset for early highlight
+        for (let sec of sections) {
+          const el = document.getElementById(sec);
+          if (el && el.offsetTop <= scrollY) {
+            current = sec;
+          }
+        }
+        navLinks.forEach(a => {
+          if (a.getAttribute('data-section') === current || a.getAttribute('href') === '#' + current) {
+            a.setAttribute('aria-current','page');
+          } else {
+            a.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      window.addEventListener('scroll', setActiveSection, { passive: true });
+      window.addEventListener('load', setActiveSection);
+
+      // Download resume: generate a simple text resume blob
+      function generateResumeText() {
+        return [
+          "Kautilya Utkarsh — AI Engineer",
+          "",
+          "Summary",
+          "2 years of hands-on experience building AI-powered features and scalable ML workflows.",
+          "",
+          "Experience",
+          "TechNova Labs | AI Engineer | Mar 2023 – Present",
+          "- Implemented end-to-end ML workflows and reduced latency by 30%.",
+          "",
+          "NovaTech Solutions | Junior ML Engineer | 2022 – 2023",
+          "- Contributed to NLP and CV model improvements; created reproducible experiments.",
+          "",
+          "Education",
+          "B.Tech in Computer Science, Institute of Technology & Management, 2018–2022",
+          "",
+          "Certifications",
+          "- AWS Certified ML – Specialty (2023)",
+          "- Coursera: Machine Learning (2019–2020)",
+          "",
+          "Skills",
+          "- Python, PyTorch, TensorFlow",
+          "- NLP, CV, ML Ops",
+          "- Cloud (AWS/GCP)"
+        ].join("\n");
+      }
+
+      document.getElementById('downloadResume').addEventListener('click', function(){
+        const content = generateResumeText();
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Kautilya-Utkarsh-Resume.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
+      // Contact form validation (basic)
+      const form = document.getElementById('contactForm');
+      const status = document.getElementById('formStatus');
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const message = document.getElementById('message').value.trim();
+
+        if (!name || !email || !message) {
+          status.textContent = 'Please fill in all required fields.';
+          status.style.color = '#b45309';
+          return;
+        }
+        // Simple email format check
+        const at = email.indexOf('@');
+        if (at < 1 || email.indexOf('.', at) === -1) {
+          status.textContent = 'Please provide a valid email address.';
+          status.style.color = '#b45309';
+          return;
+        }
+
+        // Simulated send
+        status.textContent = 'Thanks! Your message has been received (this is a demo only).';
+        status.style.color = '#1f8a3b';
+        form.reset();
+      });
+
+      // Accessibility: ensure high contrast in tokens
+      // No external assets; all content accessible with semantic HTML.
+
+      // Skip link focus
+      document.querySelector('.skip-links')?.addEventListener('focus', () => {
+        // no-op, just to ensure focusable
+      });
+    })();
+  </script>
+</body>
+</html>
