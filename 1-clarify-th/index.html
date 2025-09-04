@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vanilla SPA Design System • Palette Guided</title>
+  <meta name="description" content="A modern, responsive single-page website scaffold built with vanilla HTML/CSS/JS, featuring a design system with tokens and smooth interactions." />
+  <style>
+    /* Design Tokens (color, spacing, typography) */
+    :root{
+      --color-bg: #ffffff;
+      --color-foreground: #111;
+      --color-surface: #ffffff;
+      --color-muted: #5a5a5a;
+
+      /* Palette tokens from requirement */
+      --tok-primary: #264653;  /* deep teal */
+      --tok-secondary: #2A9D8F; /* teal-green */
+      --tok-accent: #E9C46A;     /* warm gold */
+      --tok-gold: #F4A261;       /* orange-gold */
+      --tok-warm: #E76F51;       /* coral/red */
+
+      --radius: 14px;
+      --shadow: 0 8px 28px rgba(0,0,0,.08);
+      --focus: 0 0 0 3px rgba(38,70,99,.25);
+
+      --maxw: 1100px;
+      --gap: 1.5rem;
+    }
+
+    /* Global resets and typography */
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Helvetica Neue", sans-serif;
+      color: var(--color-foreground);
+      background: var(--color-bg);
+      line-height: 1.6;
+    }
+
+    /* Skip link for accessibility */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: -999px;
+      background: #111;
+      color: #fff;
+      padding: 8px 12px;
+      z-index: 1000;
+      border-radius: 4px;
+    }
+    .skip-link:focus { left: 12px; top: 12px; }
+
+    /* Layout helpers */
+    .container {
+      width: 92%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,.95);
+      backdrop-filter: saturate(1.2) blur(6px);
+      border-bottom: 1px solid rgba(0,0,0,.05);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: inherit;
+    }
+    .brand .logo {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: conic-gradient(from 180deg at 50% 50%, var(--tok-primary), var(--tok-secondary), var(--tok-accent));
+    }
+    nav ul {
+      display: flex; list-style: none; gap: 14px; padding: 0; margin: 0;
+    }
+    nav a {
+      text-decoration: none; color: var(--color-foreground);
+      padding: 8px 12px; border-radius: 8px;
+    }
+    nav a:hover, nav a[aria-current="page"] {
+      background: rgba(38,70,99,.08);
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      padding: 72px 0 60px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f7fbfe 0%, #fff 60%);
+    }
+    .hero-inner {
+      display: grid; gap: 28px;
+      align-items: center;
+      grid-template-columns: 1.05fr 0.95fr;
+    }
+    @media (max-width: 900px){
+      .hero-inner { grid-template-columns: 1fr; padding-top: 8px; }
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 2.4rem + 1vw, 3.25rem);
+      margin: 0 0 8px;
+      color: var(--tok-primary);
+    }
+    .hero p {
+      font-size: 1.125rem; color: var(--color-muted);
+      margin: 0 0 18px;
+    }
+    .cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 12px 18px; border-radius: 999px; border: 0;
+      cursor: pointer; font-weight: 600;
+      transition: transform .2s ease, background-color .2s ease;
+    }
+    .btn.primary {
+      background: var(--tok-secondary);
+      color: white;
+      box-shadow: 0 6px 16px rgba(42,157,143,.35);
+    }
+    .btn.primary:hover { transform: translateY(-1px); background: #1f8a73; }
+    .btn.secondary {
+      background: transparent; color: var(--tok-secondary);
+      border: 2px solid var(--tok-secondary);
+    }
+    .hero-art {
+      position: relative;
+      min-height: 280px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #e8f2f1 0%, #ffffff 60%);
+      display: grid; place-items: center;
+      border: 1px solid rgba(0,0,0,.05);
+      box-shadow: var(--shadow);
+    }
+    /* decorative shapes */
+    .shape {
+      position: absolute;
+      width: 180px; height: 180px; border-radius: 50%;
+      filter: blur(0.5px);
+      opacity: .9;
+      mix-blend-mode: multiply;
+      animation: float 8s ease-in-out infinite;
+    }
+    .shape.shape-a { background: rgba(38, 70, 99, .25); top: -40px; left: -40px; }
+    .shape.shape-b { background: rgba(42,157,143,.25); bottom: -60px; right: -60px; animation-delay: 2s; }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0) translateX(0) scale(1); }
+      50% { transform: translateY(-10px) translateX(6px) scale(1.02); }
+    }
+
+    /* Sections */
+    section { padding: 72px 0; }
+    .section-header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+    .section-header h2 { margin: 0; font-size: 1.75rem; color: var(--tok-primary); }
+    .section-header p { margin: 0; color: var(--color-muted); }
+
+    .grid {
+      display: grid; gap: var(--gap);
+    }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 1024px){
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-3 { grid-template-columns: repeat(1, 1fr); }
+    }
+    @media (max-width: 700px){
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--color-surface);
+      border-radius: 14px;
+      padding: 18px;
+      border: 1px solid rgba(0,0,0,.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,.04);
+      display: flex; flex-direction: column; gap: 10px;
+      min-height: 140px;
+    }
+    .card h3 { margin: 0; font-size: 1.1rem; color: var(--tok-primary); }
+    .card p { margin: 0; color: var(--color-muted); font-size: .95rem; }
+
+    /* Feature icons (inline SVG) */
+    .icon {
+      width: 38px; height: 38px; display: inline-block;
+      border-radius: 9px;
+      background: rgba(38,70,99,.08);
+      display: grid; place-items: center;
+      color: var(--tok-primary);
+    }
+
+    /* Portfolio items */
+    .portfolio-item {
+      overflow: hidden; border-radius: 12px; border: 1px solid rgba(0,0,0,.05);
+      background: #fff;
+    }
+    .portfolio-thumb {
+      width: 100%; height: 180px; display: block;
+      background: linear-gradient(135deg, #eaf3f4 0%, #fff 60%);
+    }
+    .portfolio-info { padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+
+    /* Testimonials carousel */
+    .testimonials { position: relative; overflow: hidden; }
+    .testi-track { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; width: 300%; transition: transform .5s ease; }
+    .testi { padding: 16px; background: #fff; border-radius: 12px; border: 1px solid rgba(0,0,0,.05); height: 180px; display: flex; flex-direction: column; justify-content: center; }
+    .testi p { margin: 0 0 6px; }
+    .testi .name { font-weight: 700; color: var(--tok-primary); }
+    .testi-controls { display: flex; justify-content: center; gap: 8px; margin-top: 12px; }
+
+    /* About */
+    .about-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--gap); align-items: center; }
+    @media (max-width: 900px){
+      .about-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Contact form */
+    form { display: grid; gap: 12px; }
+    .field { display: grid; gap: 6px; }
+    label { font-size: .9rem; color: var(--color-muted); }
+    input[type="text"], input[type="email"], textarea {
+      padding: 12px; border-radius: 8px; border: 1px solid #ddd;
+      font: inherit;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px){
+      .form-row { grid-template-columns: 1fr; }
+    }
+    .note { font-size: .85rem; color: var(--color-muted); }
+
+    .alert { padding: 12px; border-radius: 8px; border: 1px solid rgba(0,0,0,.08); background: #f0fff7; color: #0b4a2a; }
+    .hidden { display: none; }
+
+    /* Utility */
+    .section-divider { height: 1px; background: #eee; margin: 12px 0 0; }
+
+    /* Reduced motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main" aria-label="Skip to content">Skip to content</a>
+
+  <header aria-label="Site header">
+    <div class="container nav" style="align-items:center;">
+      <a class="brand" href="#home" aria-label="Home">
+        <span class="logo" aria-hidden="true"></span>
+        <span style="font-weight:700; letter-spacing:.2px;">Vanilla SPA</span>
+        <span style="font-size:.85rem; color:var(--color-muted); display:none;" class="brand-sub">Palette-Driven UI</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <ul>
+          <li><a href="#portfolio" aria-label="Go to portfolio">Portfolio</a></li>
+          <li><a href="#features" aria-label="Go to features">Features</a></li>
+          <li><a href="#testimonials" aria-label="Go to testimonials">Testimonials</a></li>
+          <li><a href="#about" aria-label="Go to about">About</a></li>
+          <li><a href="#contact" aria-label="Go to contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- HERO -->
+    <section id="home" class="hero" aria-label="Intro">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <span style="display:inline-block; padding:6px 12px; border-radius:999px; background: rgba(38,70,99,.08); color:var(--tok-primary); font-weight:700; font-size:.8rem; letter-spacing:.5px;">
+            Modern UI • Accessible by Design
+          </span>
+          <h1>Designing modern, accessible web experiences with a clean, cohesive UI</h1>
+          <p>A lightweight, production-ready single-page scaffold using vanilla HTML, CSS, and JavaScript. All UI tokens are color-accurate and motion-aware.</p>
+          <div class="cta-row" aria-label="Primary actions">
+            <button class="btn primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Start a Project</button>
+            <button class="btn secondary" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'})" aria-label="View portfolio">
+              View Portfolio
+            </button>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="Decorative artwork">
+          <div class="shape shape-a" aria-hidden="true"></div>
+          <div class="shape shape-b" aria-hidden="true"></div>
+          <!-- Simple inline SVG illustration to avoid external assets -->
+          <svg width="68%" height="68%" viewBox="0 0 240 180" role="img" aria-label="Abstract art">
+            <defs>
+              <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+                <stop stop-color="#2A9D8F" offset="0"/>
+                <stop stop-color="#264653" offset="1"/>
+              </linearGradient>
+            </defs>
+            <rect x="10" y="40" width="208" height="110" rx="12" fill="url(#g1)" opacity="0.18"/>
+            <circle cx="60" cy="90" r="28" fill="#E76F51" opacity=".6"/>
+            <circle cx="140" cy="70" r="18" fill="#F4A261" opacity=".7"/>
+            <rect x="90" y="60" width="60" height="40" rx="8" fill="#E9C46A" opacity=".9"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATUREs -->
+    <section id="features" aria-label="Features" class="section">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <h2>Design system and components</h2>
+            <p>Consistent tokens, accessible UI, and smooth motion across the page.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-3" role="list">
+          <article class="card reveal" role="listitem" aria-label="Responsive layout">
+            <span class="icon" aria-label="Responsive layout icon">
+              <!-- inline SVG icon -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M3 6h18M3 12h12M3 18h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <h3>Responsive grid</h3>
+            <p>Fluid layouts that adapt from mobile to desktop without layout shifts.</p>
+          </article>
+          <article class="card reveal" role="listitem" aria-label="Accessible tokens">
+            <span class="icon" aria-label="Accessibility icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 3l3 6 6 1-4.5 4.5L17 21l-5-3-5 3 1.5-6.5L2 10l6-1 4-6z" stroke="currentColor" stroke-width="2" fill="none"/>
+              </svg>
+            </span>
+            <h3>WCAG-conscious</h3>
+            <p>Color contrast, keyboard navigation, and ARIA roles baked in from start.</p>
+          </article>
+          <article class="card reveal" role="listitem" aria-label="Performance-first">
+            <span class="icon" aria-label="Performance icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M3 12h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6 12V6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <h3>Performance-first</h3>
+            <p>Lean assets, lazy-loading, and minimal JS for snappy experiences.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO -->
+    <section id="portfolio" aria-label="Portfolio" class="section" style="background:#fafafa;">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <h2>Portfolio gallery</h2>
+            <p>Templated blocks you can swap with real projects.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-3" role="list">
+          <!-- Portfolio item (placeholder artwork) -->
+          <article class="portfolio-item reveal" role="listitem" aria-label="Project Alpha">
+            <div class="portfolio-thumb" aria-label="Project preview">
+              <svg width="100%" height="180" viewBox="0 0 400 240" role="img" aria-label="Project mockup">
+                <defs>
+                  <linearGradient id="p1" x1="0" x2="1" y1="0" y2="1">
+                    <stop stop-color="#2A9D8F" offset="0"/>
+                    <stop stop-color="#264653" offset="1"/>
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="240" rx="14" fill="url(#p1)"/>
+                <circle cx="320" cy="60" r="40" fill="#E9C46A" opacity=".9"/>
+                <rect x="40" y="140" width="250" height="40" rx="8" fill="#fff" opacity=".9"/>
+              </svg>
+            </div>
+            <div class="portfolio-info">
+              <span>Project Alpha</span>
+              <span style="font-size:.9em; color:var(--color-muted)">Brand & UI</span>
+            </div>
+          </article>
+
+          <article class="portfolio-item reveal" role="listitem" aria-label="Project Beta">
+            <div class="portfolio-thumb" aria-label="Project preview">
+              <svg width="100%" height="180" viewBox="0 0 400 240" role="img" aria-label="Project mockup">
+                <defs>
+                  <linearGradient id="p2" x1="0" x2="1" y1="0" y2="1">
+                    <stop stop-color="#264653" offset="0"/>
+                    <stop stop-color="#2A9D8F" offset="1"/>
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="240" rx="14" fill="url(#p2)"/>
+                <circle cx="60" cy="60" r="28" fill="#F4A261" opacity=".8"/>
+              </svg>
+            </div>
+            <div class="portfolio-info">
+              <span>Project Beta</span>
+              <span style="font-size:.9em; color:var(--color-muted)">UI Kit</span>
+            </div>
+          </article>
+
+          <article class="portfolio-item reveal" role="listitem" aria-label="Project Gamma">
+            <div class="portfolio-thumb" aria-label="Project preview">
+              <svg width="100%" height="180" viewBox="0 0 400 240" role="img" aria-label="Project mockup">
+                <rect width="400" height="240" rx="14" fill="#E76F51"/>
+                <polygon points="180,70 260,170 100,170" fill="#fff" opacity=".9"/>
+              </svg>
+            </div>
+            <div class="portfolio-info">
+              <span>Project Gamma</span>
+              <span style="font-size:.9em; color:var(--color-muted)">Prototype</span>
+            </div>
+          </article>
+
+          <article class="portfolio-item reveal" role="listitem" aria-label="Project Delta">
+            <div class="portfolio-thumb" aria-label="Project preview">
+              <svg width="100%" height="180" viewBox="0 0 400 240" role="img" aria-label="Project mockup">
+                <rect width="400" height="240" rx="14" fill="#2A9D8F"/>
+                <circle cx="320" cy="60" r="28" fill="#E9C46A"/>
+              </svg>
+            </div>
+            <div class="portfolio-info">
+              <span>Project Delta</span>
+              <span style="font-size:.9em; color:var(--color-muted)">Landing</span>
+            </div>
+          </article>
+
+          <article class="portfolio-item reveal" role="listitem" aria-label="Project Epsilon">
+            <div class="portfolio-thumb" aria-label="Project preview">
+              <svg width="100%" height="180" viewBox="0 0 400 240" role="img" aria-label="Project mockup">
+                <rect width="400" height="240" rx="14" fill="#264653" />
+                <rect x="40" y="60" width="320" height="120" rx="8" fill="#fff" opacity=".9"/>
+              </svg>
+            </div>
+            <div class="portfolio-info">
+              <span>Project Epsilon</span>
+              <span style="font-size:.9em; color:var(--color-muted)">Case Study</span>
+            </div>
+          </article>
+
+          <article class="portfolio-item reveal" role="listitem" aria-label="Project Zeta">
+            <div class="portfolio-thumb" aria-label="Project preview">
+              <svg width="100%" height="180" viewBox="0 0 400 240" role="img" aria-label="Project mockup">
+                <defs>
+                  <linearGradient id="p3" x1="0" x2="1" y1="0" y2="1">
+                    <stop stop-color="#F4A261" offset="0"/>
+                    <stop stop-color="#E76F51" offset="1"/>
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="240" rx="14" fill="url(#p3)"/>
+                <circle cx="320" cy="60" r="22" fill="#2A9D8F" opacity=".9"/>
+              </svg>
+            </div>
+            <div class="portfolio-info">
+              <span>Project Zeta</span>
+              <span style="font-size:.9em; color:var(--color-muted)">App Mock</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" aria-label="Testimonials" class="section" style="background:#fff;">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <h2>What clients say</h2>
+            <p>Clear communication, measurable outcomes, and delightful UX.</p>
+          </div>
+        </div>
+
+        <div class="testimonials reveal" role="region" aria-label="Client testimonials">
+          <div class="testi-track" id="testiTrack" style="transform: translateX(0%);">
+            <div class="testi" aria-label="Testimonial 1">
+              <p>“A clean, thoughtful design system that our team could trust.”</p>
+              <span class="name">Alex Rivera</span>
+              <span style="font-size:.85em; color:var(--color-muted)">CTO, Acme Co</span>
+            </div>
+            <div class="testi" aria-label="Testimonial 2">
+              <p>“Performance improved by 40% with accessible, responsive components.”</p>
+              <span class="name">Priya Nair</span>
+              <span style="font-size:.85em; color:var(--color-muted)">Product Lead, Odyssey</span>
+            </div>
+            <div class="testi" aria-label="Testimonial 3">
+              <p>“Communication was superb. The SPA scaffold is easy to extend.”</p>
+              <span class="name">Jon Kim</span>
+              <span style="font-size:.85em; color:var(--color-muted)">Design Director, Northwind</span>
+            </div>
+          </div>
+          <div class="testi-controls" aria-label="Testimonial controls">
+            <button class="btn" onclick="prevTesti()" aria-label="Previous testimonial" style="background:var(--tok-gold); color:#fff;">Prev</button>
+            <button class="btn" onclick="nextTesti()" aria-label="Next testimonial" style="background:var(--tok-gold); color:#fff;">Next</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" aria-label="About" class="section" style="background:#f8f9fa;">
+      <div class="container about-grid">
+        <div class="reveal">
+          <h2>Who we are</h2>
+          <p class="note" style="margin-bottom:12px;">
+            We are a compact studio focused on practical, scalable front-end solutions. By combining a cohesive design system with performant interfaces, we help teams move faster.
+          </p>
+          <ul style="margin:0; padding-left: 20px;">
+            <li>Clear design tokens and naming conventions</li>
+            <li>Accessible, responsive UI patterns</li>
+            <li>Iterative, feedback-driven workflow</li>
+          </ul>
+        </div>
+        <div class="card reveal" aria-label="Timeline">
+          <h3 style="margin:0 0 6px">Studio timeline</h3>
+          <p style="margin:0 0 8px; color:var(--color-muted);">From ideation to polished release</p>
+          <ul style="margin:0; padding-left:20px;">
+            <li>Discovery & design system setup</li>
+            <li>Component library prototyping</li>
+            <li>Implementation in vanilla stack</li>
+            <li>Accessibility review & polish</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALL TO ACTION -->
+    <section id="cta" aria-label="Call to action" class="section" style="background: linear-gradient(135deg, #f7fbfe 0%, #fff 60%);">
+      <div class="container" style="text-align:center;">
+        <h2 style="margin:0 0 8px; color:var(--tok-primary);">Ready to ship a cohesive UI?</h2>
+        <p class="note" style="max-width:700px; margin:0 auto 20px;">
+          Use this scaffold as a starting point for your next project. Swap content, adjust tokens, and extend components to fit your brand.
+        </p>
+        <button class="btn primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contact us</button>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" aria-label="Contact" class="section" style="background:#fff;">
+      <div class="container" style="display:grid; grid-template-columns: 1.1fr 0.9fr; gap:var(--gap); align-items: start;">
+        <form id="contactForm" class="reveal" novalidate aria-label="Contact form" autocomplete="on">
+          <div class="section-header" style="grid-column:1 / -1;">
+            <div><h2>Get in touch</h2><p>Tell us about your project. We respond within 1–2 days.</p></div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" placeholder="Your name" required />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="you@example.com" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="message">Project details</label>
+            <textarea id="message" name="message" placeholder="Tell us about goals, scope, and timeline..." required></textarea>
+          </div>
+
+          <div class="field" style="display:flex; gap:8px; align-items:center;">
+            <input type="checkbox" id="consent" required />
+            <label for="consent" style="margin:0;">I agree to be contacted about this inquiry.</label>
+          </div>
+
+          <button class="btn primary" type="submit" aria-label="Submit contact form">Send message</button>
+
+          <div id="formStatus" class="hidden" role="status" aria-live="polite" style="margin-top:8px;"></div>
+        </form>
+
+        <aside aria-label="Contact details" class="card reveal" style="padding:18px;">
+          <h3 style="margin:0 0 6px;">Contact details</h3>
+          <p style="margin:0 0 6px; color:var(--color-muted);">We can also reply via email.</p>
+          <p style="margin:0;"><strong>Email:</strong> hello@example.dev</p>
+          <p style="margin:0;"><strong>Phone:</strong> +1 (555) 123-4567</p>
+          <div class="section-divider" style="margin:12px 0 8px;"></div>
+          <p class="note" style="margin:0;">
+            Mon–Fri, 9am–6pm. We value accessibility, performance, and thoughtful UX.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="section" style="background:#111; color:#fff;">
+    <div class="container" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+      <span style="opacity:.9;">© <span id="year"></span> Vanilla SPA. All rights reserved.</span>
+      <nav aria-label="Footer">
+        <ul style="display:flex; gap:10px; list-style:none; padding:0; margin:0;">
+          <li><a href="#home" style="color:#fff; text-decoration: none; opacity:.8;">Home</a></li>
+          <li><a href="#portfolio" style="color:#fff; text-decoration: none; opacity:.8;">Portfolio</a></li>
+          <li><a href="#contact" style="color:#fff; text-decoration: none; opacity:.8;">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Small inline script to power interactions and tokens managed locally -->
+  <script>
+    // Basic design token exposure (optional for devs)
+    const tokens = {
+      color: {
+        primary: "#264653",
+        secondary: "#2A9D8F",
+        accent: "#E9C46A",
+        gold: "#F4A261",
+        warm: "#E76F51",
+      },
+      radius: 14,
+    };
+    // Update year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // IntersectionObserver for simple reveal on scroll
+    (function(){
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const observers = [];
+      const revealEls = document.querySelectorAll('.reveal');
+      const obsOptions = { threshold: 0.15 };
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if(e.isIntersecting){
+            e.target.classList.add('visible');
+            observer.unobserve(e.target);
+          }
+        });
+      }, obsOptions);
+
+      revealEls.forEach(el => {
+        if(!el.classList.contains('visible')){
+          observer.observe(el);
+        }
+      });
+      if(prefersReducedMotion){
+        // If reduced motion, skip animations
+        document.querySelectorAll('.shape, .icon, .card, .testi').forEach(el => {
+          el.style.transition = 'none';
+        });
+      }
+    })();
+
+    // Testimonials carousel logic
+    let testiIndex = 0;
+    const testiTrack = document.getElementById('testiTrack');
+    const testiCount = 3; // as defined
+    function showTesti(index){
+      const clamped = ((index % testiCount) + testiCount) % testiCount;
+      testiIndex = clamped;
+      const offset = -(clamped * 100);
+      testiTrack.style.transform = `translateX(${offset}%)`;
+    }
+    function nextTesti(){ showTesti(testiIndex + 1); }
+    function prevTesti(){ showTesti(testiIndex - 1); }
+
+    // Auto-rotate testimonials
+    let testiInterval = setInterval(() => {
+      nextTesti();
+    }, 4200);
+
+    // Pause on hover
+    document.getElementById('testimonials')?.addEventListener('mouseenter', ()=> clearInterval(testiInterval));
+    document.getElementById('testimonials')?.addEventListener('mouseleave', ()=> {
+      testiInterval = setInterval(() => nextTesti(), 4200);
+    });
+
+    // Contact form handling (demo)
+    const form = document.getElementById('contactForm');
+    const status = document.getElementById('formStatus');
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      // Basic validation
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const msg = document.getElementById('message').value.trim();
+      const consent = document.getElementById('consent').checked;
+      if(!name || !email || !msg || !consent){
+        status.textContent = 'Please complete all fields and consent to be contacted.';
+        status.className = 'alert';
+        status.classList.remove('hidden');
+        return;
+      }
+      // Simulate submission
+      status.textContent = 'Thank you! Your message has been received. We will respond shortly.';
+      status.className = 'alert';
+      status.style.background = '#e6fff3';
+      status.style.color = '#0a5a32';
+      status.classList.remove('hidden');
+      form.reset();
+      // Hide after a moment
+      setTimeout(() => {
+        status.classList.add('hidden');
+      }, 4000);
+    });
+  </script>
+
+  <!-- Style guide / design tokens reference (inline comments for extension) -->
+  <!--
+    DESIGN TOKENS (example map):
+    --color-primary: #264653
+    --color-secondary: #2A9D8F
+    --color-accent: #E9C46A
+    --color-gold: #F4A261
+    --color-warm: #E76F51
+    Spacing scale: 8, 12, 16, 20, 24, 32, 40, 48
+    Radius: 12-14px
+  -->
+
+</body>
+</html>
