@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Palette Shop — Minimal SPA E‑Commerce</title>
+  <style>
+    :root{
+      /* Color tokens derived from the required palette */
+      --brand-900: #264653;
+      --brand-700: #2A9D8F;
+      --brand-500: #E9C46A;
+      --brand-400: #F4A261;
+      --brand-600: #E76F51;
+
+      --bg: #f5f7f9;
+      --surface: #ffffff;
+      --text: #1f2a37;
+      --muted: #5c6b78;
+
+      --radius: 12px;
+      --gap: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color: var(--text);
+      background: linear-gradient(180deg, #f7fbfe 0%, #eef5f9 100%);
+    }
+
+    /* Layout */
+    .app {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
+    }
+
+    .app__header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: linear-gradient(90deg, var(--brand-900), var(--brand-700));
+      color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,.08);
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px;
+      font-weight: 700; letter-spacing: .2px;
+    }
+    .brand__logo {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: conic-gradient(from 180deg at 50% 50%, var(--brand-500), var(--brand-700), var(--brand-600));
+      display: inline-block;
+    }
+    .brand__name { font-size: 1.05rem; }
+
+    .header__right { display: flex; align-items: center; gap: 12px; }
+
+    .search {
+      display: flex; align-items: center;
+      background: white; border-radius: 999px; padding: 6px 12px;
+      width: min(420px, 60vw);
+      box-shadow: 0 2px 6px rgba(0,0,0,.08);
+    }
+    .search input {
+      border: none; outline: none; width: 100%; font-size: 14px;
+    }
+    .iconbtn {
+      border: none; background: white; cursor: pointer;
+      padding: 10px 12px; border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-weight: 600;
+      color: var(--brand-900);
+    }
+    .iconbtn--primary {
+      background: var(--brand-700); color: white;
+    }
+
+    /* Main area: two-column responsive layout */
+    .container {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .filters {
+      background: white; border-radius: var(--radius);
+      padding: 16px; border: 1px solid #e6e6e6;
+      position: sticky; top: 76px; align-self: start;
+    }
+    .filters h3 { margin: 6px 0 12px; font-size: 0.95rem; color: var(--brand-900); }
+    .section { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #f0f0f0; }
+    .section:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .filters label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+    .filters select, .filters input[type="range"] { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #ddd; background: #fff; }
+
+    .grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    @media (max-width: 1024px){
+      .container { grid-template-columns: 1fr; padding: 12px; }
+      .filters { position: static; order: -1; }
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px){
+      .grid { grid-template-columns: 1fr; }
+      .brand__name { display: none; }
+      .search { width: 100%; }
+    }
+
+    .card {
+      background: var(--surface); border-radius: 14px; padding: 12px;
+      border: 1px solid #eee; display: flex; flex-direction: column; gap: 8px;
+      transition: transform .2s;
+      outline: none;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,.05); }
+    .card__image {
+      height: 140px; border-radius: 10px; background: #f7f7f7;
+      display: grid; place-items: center; overflow: hidden;
+    }
+    .card__image img { width: 100%; height: 100%; object-fit: cover; }
+
+    .card__title { font-size: 14px; font-weight: 600; }
+    .card__meta { display: flex; justify-content: space-between; gap: 6px; align-items: center; color: var(--muted); font-size: 13px; }
+    .badge { padding: 4px 8px; border-radius: 999px; font-size: 12px; background: #f1f1f1; }
+
+    .card__price { font-weight: 700; color: var(--brand-900); }
+
+    .btn {
+      border: none; padding: 9px 12px; border-radius: 8px;
+      cursor: pointer; font-weight: 600;
+      background: var(--brand-700); color: white;
+    }
+    .btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+    /* Product detail modal */
+    .modal {
+      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,.5); z-index: 20;
+    }
+    .modal.open { display: flex; }
+    .modal__content {
+      width: min(720px, 90vw); background: white; border-radius: 14px; padding: 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      max-height: 80vh; overflow: auto;
+    }
+    @media (max-width: 700px){ .modal__content { grid-template-columns: 1fr; } }
+
+    .modal__image { width: 100%; height: 320px; border-radius: 12px; overflow: hidden; display: grid; place-items: center; background: #f7f7f7; }
+    .modal__details { display: flex; flex-direction: column; gap: 8px; }
+
+    .close {
+      position: absolute; top: 12px; right: 12px; background: white; border-radius: 999px;
+      border: 1px solid #ddd; width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer;
+    }
+
+    /* Cart drawer (right-side) */
+    .cart {
+      position: fixed; top: 0; right: 0; width: 360px; height: 100vh;
+      background: white; border-left: 1px solid #eee; box-shadow: -6px 0 16px rgba(0,0,0,.05);
+      transform: translateX(100%); transition: transform .25s ease-in-out; z-index: 15;
+      display: flex; flex-direction: column;
+    }
+    .cart.open { transform: translateX(0); }
+
+    .cart__header { padding: 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
+    .cart__body { padding: 12px; overflow: auto; flex: 1; display: grid; gap: 12px; }
+    .cart__item { display: grid; grid-template-columns: 56px 1fr auto; gap: 10px; align-items: center; }
+    .cart__thumb { width: 56px; height: 56px; border-radius: 8px; overflow: hidden; background: #f0f0f0; display: grid; place-items: center; }
+    .cart__name { font-size: 13px; }
+    .qty { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #ddd; border-radius: 6px; padding: 4px; }
+    .qty button { width: 26px; height: 26px; border-radius: 4px; border: none; background: #f0f0f0; cursor: pointer; }
+    .cart__total { padding: 12px; border-top: 1px solid #eee; }
+
+    .checkout-bar { padding: 12px; border-top: 1px solid #eee; display: grid; gap: 8px; }
+    .checkout-btn { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer;
+      background: var(--brand-600); color: white;
+    }
+
+    /* Checkout modal (simulated) */
+    .checkout-modal {
+      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,.5); z-index: 25;
+    }
+    .checkout-modal.open { display: flex; }
+    .checkout-modal__card {
+      width: min(520px, 92vw); background: white; border-radius: 12px; padding: 16px;
+      display: grid; gap: 10px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 600px){ .form-row { grid-template-columns: 1fr; } }
+    .input { padding: 10px; border-radius: 6px; border: 1px solid #ddd; width: 100%; }
+    .label { font-size: 12px; color: var(--muted); }
+    .hidden { display: none; }
+
+    /* Tiny toast/notification */
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: #111; color: white; padding: 10px 14px; border-radius: 999px; font-size: 13px;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .toast.show { opacity: 1; pointer-events: all; }
+
+  </style>
+</head>
+<body>
+  <div class="app" aria-label="Palette Shop App">
+    <!-- Header / NAV -->
+    <header class="app__header" aria-label="Site header">
+      <div class="brand" aria-label="Brand">
+        <span class="brand__logo" aria-hidden="true"></span>
+        <span class="brand__name" style="color:white">Palette Shop</span>
+      </div>
+
+      <div class="search" role="search" aria-label="Product search">
+        <span style="font-size:14px; color:#555; margin-right:6px;">🔎</span>
+        <input id="searchInput" type="search" placeholder="Search products..." aria-label="Search products" />
+      </div>
+
+      <div class="header__right" aria-label="Header actions">
+        <button id="openCartBtn" class="iconbtn" aria-label="Open cart" title="Cart">
+          🧺 Cart <span id="cartCount" style="margin-left:6px; font-weight:700;"></span>
+        </button>
+        <button id="openCheckoutBtn" class="iconbtn iconbtn--primary" aria-label="Checkout (simulated)" title="Checkout">
+          Checkout
+        </button>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="container" id="main" aria-label="Product catalog and filters">
+      <!-- Filters -->
+      <aside class="filters" aria-label="Filters">
+        <h3>Filters</h3>
+
+        <div class="section" aria-label="Categories filter">
+          <label for="categorySelect">Category</label>
+          <select id="categorySelect" aria-label="Category filter">
+            <option value="All">All</option>
+          </select>
+        </div>
+
+        <div class="section" aria-label="Price filter">
+          <label for="maxPrice">Max price: <span id="maxPriceLabel"></span></label>
+          <input id="maxPrice" type="range" min="0" step="1" value="100" />
+        </div>
+
+        <div class="section" aria-label="Rating filter">
+          <label for="minRating">Minimum rating</label>
+          <select id="minRating" aria-label="Minimum rating filter">
+            <option value="0">All</option>
+            <option value="3">3★ and up</option>
+            <option value="4">4★ and up</option>
+            <option value="4.5">4.5★ and up</option>
+          </select>
+        </div>
+
+        <div class="section" aria-label="Sort filter">
+          <label for="sortSelect">Sort by</label>
+          <select id="sortSelect" aria-label="Sort options">
+            <option value="popularity">Popularity</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="rating-desc">Rating</option>
+            <option value="name-asc">Name A-Z</option>
+          </select>
+        </div>
+
+        <div class="section" aria-label="Reset">
+          <button id="clearFilters" class="btn" style="width:100%; background:#eee; color:#333;">Reset filters</button>
+        </div>
+      </aside>
+
+      <!-- Catalog -->
+      <section aria-label="Product catalog" class="catalog">
+        <div class="grid" id="productGrid">
+          <!-- Product cards will be injected here -->
+        </div>
+        <div id="emptyState" class="hidden" aria-live="polite" style="text-align:center; padding:40px 0; color:var(--muted);">
+          No products match your filters.
+        </div>
+      </section>
+    </main>
+
+    <!-- Product Detail Modal -->
+    <div id="productModal" class="modal" role="dialog" aria-label="Product details">
+      <button class="close" aria-label="Close" id="closeModalBtn">✕</button>
+      <div class="modal__content" id="modalContent">
+        <div class="modal__image" id="modalImage" aria-label="Product image"></div>
+        <div class="modal__details">
+          <h2 id="modalTitle" style="margin:0 0 6px 0;"></h2>
+          <div id="modalRating" aria-label="Product rating" style="color:#f5c518; font-size:14px;"></div>
+          <div id="modalPrice" style="font-size:18px; font-weight:700; color:var(--brand-900);"></div>
+          <p id="modalDesc" style="color:#555; line-height:1.5;"></p>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="badge" id="modalStock"></span>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <div class="qty" aria-label="Quantity selector in product detail">
+              <button id="modalMinQty" aria-label="Decrease quantity">-</button>
+              <span id="modalQty" style="min-width:20px; text-align:center;">1</span>
+              <button id="modalAddQty" aria-label="Increase quantity">+</button>
+            </div>
+            <button id="modalAddToCart" class="btn" aria-label="Add to cart from product detail" style="margin-left:auto;">
+              Add to cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Drawer -->
+    <aside id="cartDrawer" class="cart" aria-label="Shopping cart" role="region" aria-modal="true" tabindex="-1">
+      <div class="cart__header">
+        <strong>Your Cart</strong>
+        <button id="closeCartBtn" class="iconbtn" aria-label="Close cart">✕</button>
+      </div>
+      <div class="cart__body" id="cartBody">
+        <!-- Cart items injected here -->
+      </div>
+      <div class="cart__total" aria-label="Cart total">
+        <div style="display:flex; justify-content:space-between;">
+          <span>Subtotal</span><span id="cartSubtotal">$0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span>Shipping</span><span>Free</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-weight:700;">
+          <span>Total</span><span id="cartTotal">$0.00</span>
+        </div>
+      </div>
+      <div class="checkout-bar">
+        <button id="checkoutBtn" class="checkout-btn" aria-label="Proceed to checkout" disabled>Checkout</button>
+        <button id="clearCartBtn" class="iconbtn" style="background:#f7f7f7; border:1px solid #ddd;" aria-label="Clear cart">Clear cart</button>
+      </div>
+    </aside>
+
+    <!-- Checkout Modal (simulated) -->
+    <div id="checkoutModal" class="checkout-modal" aria-label="Checkout" role="dialog">
+      <div class="checkout-modal__card">
+        <div style="display:flex; justify-content:space-between; align-items: center;">
+          <strong>Checkout</strong>
+          <button id="closeCheckoutBtn" class="iconbtn" aria-label="Close checkout">✕</button>
+        </div>
+        <div class="form-row">
+          <div>
+            <label class="label" for="nameInput">Full name</label>
+            <input id="nameInput" class="input" placeholder="John Doe" />
+          </div>
+          <div>
+            <label class="label" for="emailInput">Email</label>
+            <input id="emailInput" class="input" placeholder="you@example.com" type="email" />
+          </div>
+        </div>
+        <div>
+          <label class="label" for="addressInput">Address</label>
+          <input id="addressInput" class="input" placeholder="123 Main St, City" />
+        </div>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+          <button id="confirmCheckoutBtn" class="btn" aria-label="Confirm checkout" style="background:var(--brand-400); color:white;">Confirm order</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tiny toast -->
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+  </div>
+
+  <script>
+    // Data: mock product catalog
+    const products = [
+      {
+        id: 'p-espresso',
+        name: 'Espresso Beans 250g',
+        description: 'Rich, full-bodied espresso beans with chocolatey notes and a smooth finish.',
+        price: 9.99,
+        category: 'Beverages',
+        rating: 4.6,
+        stock: 25
+      },
+      {
+        id: 'p-citrus-tea',
+        name: 'Citrus Green Tea 20 bags',
+        description: 'A refreshing green tea blend with bright citrus zest.',
+        price: 7.5,
+        category: 'Beverages',
+        rating: 4.4,
+        stock: 40
+      },
+      {
+        id: 'p-walnut-cookies',
+        name: 'Walnut Cookies 6-pack',
+        description: 'Crispy-on-the-edge, chewy-center cookies with roasted walnuts.',
+        price: 4.25,
+        category: 'Snacks',
+        rating: 4.2,
+        stock: 0
+      },
+      {
+        id: 'p-olive-oil',
+        name: 'Extra Virgin Olive Oil 500ml',
+        description: 'Cold-pressed olive oil with a fruity aroma and peppery finish.',
+        price: 12.99,
+        category: 'Kitchen',
+        rating: 4.7,
+        stock: 12
+      },
+      {
+        id: 'p-honey',
+        name: 'Raw Clover Honey 340g',
+        description: 'Pure honey with delicate floral notes and a smooth texture.',
+        price: 8.99,
+        category: 'Pantry',
+        rating: 4.5,
+        stock: 8
+      },
+      {
+        id: 'p-chili-sauce',
+        name: 'Smoked Chili Sauce 250ml',
+        description: 'A bold sauce with a hint of smoke and a medium kick.',
+        price: 5.49,
+        category: 'Condiments',
+        rating: 4.3,
+        stock: 15
+      },
+      {
+        id: 'p-salt-200',
+        name: 'Sea Salt Grinder 200g',
+        description: 'Coarse sea salt crystals for finishing and cooking.',
+        price: 3.49,
+        category: 'Pantry',
+        rating: 4.1,
+        stock: 48
+      },
+      {
+        id: 'p-ceramic-mug',
+        name: 'Ceramic Mug – 350ml',
+        description: 'Dishwasher-safe mug with a sturdy handle and a glossy finish.',
+        price: 6.25,
+        category: 'Home',
+        rating: 4.0,
+        stock: 22
+      }
+    ];
+
+    // UI helpers
+    const state = {
+      cart: [], // { productId, quantity }
+      filters: {
+        category: 'All',
+        maxPrice: Math.max(...products.map(p => p.price)),
+        minRating: 0,
+        sort: 'popularity',
+        query: ''
+      }
+    };
+
+    // Elements
+    const productGrid = document.getElementById('productGrid');
+    const categorySelect = document.getElementById('categorySelect');
+    const maxPriceInput = document.getElementById('maxPrice');
+    const maxPriceLabel = document.getElementById('maxPriceLabel');
+    const minRatingSelect = document.getElementById('minRating');
+    const sortSelect = document.getElementById('sortSelect');
+    const searchInput = document.getElementById('searchInput');
+    const emptyState = document.getElementById('emptyState');
+
+    const productModal = document.getElementById('productModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalRating = document.getElementById('modalRating');
+    const modalPrice = document.getElementById('modalPrice');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalStock = document.getElementById('modalStock');
+    const modalQty = document.getElementById('modalQty');
+    const modalMinQty = document.getElementById('modalMinQty');
+    const modalAddQty = document.getElementById('modalAddQty');
+    const modalAddToCart = document.getElementById('modalAddToCart');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    const cartDrawer = document.getElementById('cartDrawer');
+    const openCartBtn = document.getElementById('openCartBtn');
+    const closeCartBtn = document.getElementById('closeCartBtn');
+    const cartBody = document.getElementById('cartBody');
+    const cartSubtotal = document.getElementById('cartSubtotal');
+    const cartTotal = document.getElementById('cartTotal');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const clearCartBtn = document.getElementById('clearCartBtn');
+    const cartCount = document.getElementById('cartCount');
+    const openCheckoutBtn = document.getElementById('openCheckoutBtn');
+    const checkoutModal = document.getElementById('checkoutModal');
+    const closeCheckoutBtn = document.getElementById('closeCheckoutBtn');
+    const nameInput = document.getElementById('nameInput');
+    const emailInput = document.getElementById('emailInput');
+    const addressInput = document.getElementById('addressInput');
+    const confirmCheckoutBtn = document.getElementById('confirmCheckoutBtn');
+    const toast = document.getElementById('toast');
+    const searchAndFilters = [categorySelect, maxPriceInput, minRatingSelect, sortSelect, searchInput];
+
+    // Helpers
+    function formatMoney(n){
+      return '$' + Number(n).toFixed(2);
+    }
+
+    function showToast(message){
+      toast.textContent = message;
+      toast.classList.add('show');
+      toast.hidden = false;
+      setTimeout(() => {
+        toast.classList.remove('show');
+        toast.hidden = true;
+      }, 1800);
+    }
+
+    function saveCart(){
+      localStorage.setItem('spa_cart', JSON.stringify(state.cart));
+    }
+
+    function loadCart(){
+      const data = localStorage.getItem('spa_cart');
+      if(data){
+        try {
+          state.cart = JSON.parse(data);
+        } catch(e){
+          state.cart = [];
+        }
+      }
+    }
+
+    function productById(id){
+      return products.find(p => p.id === id);
+    }
+
+    // Image generator (SVG data URL)
+    function makeImageFor(label, seedColor){
+      const w = 600, h = 400;
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="${seedColor}" offset="0"/>
+              <stop stop-color="#ffffff" offset="1"/>
+            </linearGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#g)"/>
+          <text x="50%" y="54%" font-family="Arial" font-size="40" text-anchor="middle" fill="#333" opacity="0.9">${label}</text>
+        </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    // Build category options from data
+    function initCategories(){
+      const cats = Array.from(new Set(products.map(p => p.category)));
+      cats.sort();
+      cats.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        categorySelect.appendChild(opt);
+      });
+    }
+
+    // Rendering catalog
+    function renderCatalog(){
+      const query = (state.filters.query || '').toLowerCase().trim();
+      const category = state.filters.category;
+      const maxPrice = state.filters.maxPrice;
+      const minRating = state.filters.minRating;
+
+      let list = products.filter(p => {
+        const inCat = category === 'All' || p.category === category;
+        const inQuery = !query || p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query);
+        const inPrice = p.price <= maxPrice;
+        const inRating = p.rating >= minRating;
+        return inCat && inQuery && inPrice && inRating;
+      });
+
+      // Sorting
+      switch(state.filters.sort){
+        case 'price-asc': list.sort((a,b) => a.price - b.price); break;
+        case 'price-desc': list.sort((a,b) => b.price - a.price); break;
+        case 'rating-desc': list.sort((a,b) => b.rating - a.rating); break;
+        case 'name-asc': list.sort((a,b) => a.name.localeCompare(b.name)); break;
+        default: list.sort((a,b) => b.stock - a.stock); // simplistic popularity proxy
+      }
+
+      // Clear and render
+      productGrid.innerHTML = '';
+      if(list.length === 0){
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      list.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.setAttribute('aria-label', p.name);
+        // image
+        const img = document.createElement('div');
+        img.className = 'card__image';
+        const imgEl = document.createElement('img');
+        // generate a unique-ish color per product
+        imgEl.src = makeImageFor(p.name, '#'.concat((p.category.charCodeAt(0)*9973 % 0xffffff).toString(16).padStart(6,'0')));
+        img.innerHTML = '';
+        img.appendChild(imgEl);
+
+        // title
+        const t = document.createElement('div');
+        t.className = 'card__title';
+        t.textContent = p.name;
+
+        // meta line
+        const meta = document.createElement('div');
+        meta.className = 'card__meta';
+        const category = document.createElement('span');
+        category.textContent = p.category;
+        category.className = 'badge';
+        const price = document.createElement('span');
+        price.className = 'card__price';
+        price.textContent = formatMoney(p.price);
+
+        // rating
+        const rating = document.createElement('span');
+        rating.style.fontSize = '12px';
+        rating.style.color = '#f5c518';
+        rating.textContent = '★'.repeat(Math.floor(p.rating)) + (p.rating % 1 >= 0.5 ? '½' : '');
+
+        meta.appendChild(category);
+        meta.appendChild(rating);
+        // stock indicator
+        const stock = document.createElement('span');
+        stock.style.marginLeft = 'auto';
+        stock.textContent = p.stock > 0 ? 'In stock' : 'Out of stock';
+        stock.style.fontSize = '12px';
+        stock.style.color = p.stock > 0 ? '#1d7a1d' : '#a00';
+        meta.appendChild(stock);
+
+        // action
+        const actions = document.createElement('div');
+        actions.style.display = 'flex'; actions.style.justifyContent = 'space-between'; actions.style.alignItems = 'center';
+        const addBtn = document.createElement('button');
+        addBtn.className = 'btn';
+        addBtn.textContent = p.stock > 0 ? 'Add to cart' : 'Out of stock';
+        addBtn.disabled = p.stock <= 0;
+        addBtn.addEventListener('click', () => {
+          addToCart(p.id, 1);
+        });
+
+        // click to open detail
+        card.addEventListener('click', (e) => {
+          if (e.target === addBtn) return; // handled
+          openProductModal(p.id);
+        });
+
+        addBtn.setAttribute('aria-label', `Add ${p.name} to cart`);
+        actions.appendChild(addBtn);
+
+        // Assemble card
+        card.appendChild(img);
+        card.appendChild(t);
+        card.appendChild(meta);
+        card.appendChild(actions);
+
+        productGrid.appendChild(card);
+      });
+
+      // Update category select default "All" plus dynamic
+      // Ensure max price slider bound to data
+      maxPriceInput.max = Math.ceil(Math.max(...products.map(p => p.price)));
+      maxPriceInput.value = Math.ceil(state.filters.maxPrice) || maxPriceInput.max;
+      maxPriceLabel.textContent = formatMoney(state.filters.maxPrice);
+    }
+
+    // Cart logic
+    function addToCart(productId, qty){
+      const prod = productById(productId);
+      if(!prod) return;
+      const existing = state.cart.find(item => item.productId === productId);
+      const available = prod.stock;
+      const newQty = existing ? existing.quantity + qty : qty;
+      if(newQty > available) {
+        state.cart = state.cart.map(i => i.productId === productId ? { ...i, quantity: available } : i);
+        showToast('Adjusted to available stock');
+      } else {
+        if(existing){
+          existing.quantity = newQty;
+        } else {
+          state.cart.push({ productId, quantity: qty });
+        }
+      }
+      saveCart();
+      updateCartUI();
+      openCartIfNeeded();
+    }
+
+    function updateCartUI(){
+      cartBody.innerHTML = '';
+      if(state.cart.length === 0){
+        const empty = document.createElement('div');
+        empty.style.textAlign = 'center';
+        empty.style.color = 'var(--muted)';
+        empty.style.padding = '20px';
+        empty.textContent = 'Your cart is empty. Add items to begin.';
+        cartBody.appendChild(empty);
+        checkoutBtn.disabled = true;
+        cartTotal.textContent = '$0.00';
+        cartSubtotal.textContent = '$0.00';
+        return;
+      }
+
+      let subtotal = 0;
+      state.cart.forEach(item => {
+        const prod = productById(item.productId);
+        const row = document.createElement('div');
+        row.className = 'cart__item';
+        row.setAttribute('data-id', item.productId);
+
+        const thumb = document.createElement('div');
+        thumb.className = 'cart__thumb';
+        const img = document.createElement('img');
+        img.src = makeImageFor(prod.name, '#'+(prod.category.charCodeAt(0)*9931%0xffffff).toString(16).padStart(6,'0'));
+        img.style.width = '100%'; img.style.height='100%'; img.style.objectFit='cover';
+        thumb.appendChild(img);
+
+        const info = document.createElement('div');
+        const name = document.createElement('div');
+        name.className = 'cart__name';
+        name.textContent = prod.name;
+        const price = document.createElement('div');
+        price.style.fontWeight = '700';
+        price.textContent = formatMoney(prod.price * item.quantity);
+
+        info.appendChild(name); info.appendChild(price);
+
+        // quantity controls
+        const qtyBox = document.createElement('div');
+        qtyBox.className = 'qty';
+        const dec = document.createElement('button');
+        dec.textContent = '-';
+        dec.addEventListener('click', () => {
+          if(item.quantity <= 1) {
+            // remove
+            state.cart = state.cart.filter(i => i.productId !== item.productId);
+          } else {
+            item.quantity -= 1;
+          }
+          saveCart(); updateCartUI();
+        });
+        const q = document.createElement('span');
+        q.style.minWidth = '20px'; q.style.textAlign = 'center';
+        q.textContent = item.quantity;
+        const inc = document.createElement('button');
+        inc.textContent = '+';
+        inc.addEventListener('click', () => {
+          if(item.quantity < prod.stock){
+            item.quantity += 1;
+            saveCart(); updateCartUI();
+          } else {
+            showToast('Reached stock limit');
+          }
+        });
+        dec.setAttribute('aria-label', 'Decrease quantity');
+        inc.setAttribute('aria-label', 'Increase quantity');
+        qtyBox.appendChild(dec); qtyBox.appendChild(q); qtyBox.appendChild(inc);
+
+        // remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.style.border = 'none';
+        removeBtn.style.background = 'transparent';
+        removeBtn.style.color = '#d33';
+        removeBtn.style.cursor = 'pointer';
+        removeBtn.addEventListener('click', () => {
+          state.cart = state.cart.filter(i => i.productId !== item.productId);
+          saveCart(); updateCartUI();
+        });
+
+        row.appendChild(thumb);
+        row.appendChild(info);
+        row.appendChild(qtyBox);
+        // trailing remove
+        const trailing = document.createElement('div');
+        trailing.style.display = 'flex'; trailing.style.flexDirection = 'column'; trailing.style.alignItems = 'flex-end'; trailing.appendChild(removeBtn);
+        row.appendChild(trailing);
+
+        cartBody.appendChild(row);
+
+        subtotal += prod.price * item.quantity;
+      });
+
+      cartSubtotal.textContent = formatMoney(subtotal);
+      cartTotal.textContent = formatMoney(subtotal); // shipping is free in this scaffold
+      if(state.cart.length > 0){
+        checkoutBtn.disabled = false;
+      }
+    }
+
+    function clearCart(){
+      state.cart = [];
+      saveCart();
+      updateCartUI();
+      showToast('Cart cleared');
+    }
+
+    function openCartIfNeeded(){
+      // If user previously opened cart, we could keep it closed by default.
+      // We'll open it only when user explicitly clicks.
+    }
+
+    // Product detail modal
+    let currentDetailId = null;
+    function openProductModal(id){
+      const p = productById(id);
+      if(!p) return;
+      currentDetailId = id;
+      modalImage.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = makeImageFor(p.name, '#'+(p.category.charCodeAt(0)*9973 % 0xffffff).toString(16).padStart(6,'0'));
+      img.style.maxWidth = '100%'; img.style.maxHeight = '100%';
+      modalImage.appendChild(img);
+
+      modalTitle.textContent = p.name;
+      modalRating.textContent = 'Rating: ' + p.rating.toFixed(1) + ' / 5';
+      modalPrice.textContent = formatMoney(p.price);
+      modalDesc.textContent = p.description;
+      modalStock.textContent = p.stock > 0 ? 'In stock' : 'Out of stock';
+      modalQty.textContent = '1';
+      document.body.style.overflow = 'hidden';
+      productModal.classList.add('open');
+      // store quantity for modal
+      currentDetailQty = 1;
+    }
+
+    let currentDetailQty = 1;
+    modalMinQty.addEventListener('click', () => {
+      if(currentDetailQty > 1){
+        currentDetailQty--;
+        modalQty.textContent = currentDetailQty;
+      }
+    });
+    modalAddQty.addEventListener('click', () => {
+      const p = productById(currentDetailId);
+      if(!p) return;
+      if(currentDetailQty < p.stock){
+        currentDetailQty++;
+        modalQty.textContent = currentDetailQty;
+      } else {
+        showToast('Reached stock limit');
+      }
+    });
+
+    modalAddToCart.addEventListener('click', () => {
+      if(!currentDetailId) return;
+      const p = productById(currentDetailId);
+      if(!p) return;
+      if(p.stock <= 0){
+        showToast('Out of stock');
+        return;
+      }
+      addToCart(p.id, currentDetailQty);
+      closeProductModal();
+    });
+
+    closeModalBtn.addEventListener('click', closeProductModal);
+    function closeProductModal(){
+      productModal.classList.remove('open');
+      currentDetailId = null;
+      document.body.style.overflow = '';
+    }
+
+    // Cart drawer controls
+    openCartBtn.addEventListener('click', () => {
+      cartDrawer.classList.add('open');
+    });
+    closeCartBtn.addEventListener('click', () => {
+      cartDrawer.classList.remove('open');
+    });
+
+    // Checkout flow
+    openCheckoutBtn.addEventListener('click', () => {
+      // Pre-fill with sample values if empty
+      if(state.cart.length === 0){
+        showToast('Cart is empty');
+        return;
+      }
+      checkoutModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+    closeCheckoutBtn.addEventListener('click', closeCheckoutModal);
+    function closeCheckoutModal(){
+      checkoutModal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    confirmCheckoutBtn.addEventListener('click', () => {
+      // simple validation
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const address = addressInput.value.trim();
+      if(!name || !email || !address){
+        showToast('Please fill in all fields');
+        return;
+      }
+      // simulate order creation
+      const orderId = 'ORD-' + Math.random().toString(36).slice(2,8).toUpperCase();
+      showToast('Order placed: ' + orderId);
+      // reset cart
+      clearCart();
+      closeCheckoutModal();
+      // close cart if open
+      cartDrawer.classList.remove('open');
+      // reset form
+      nameInput.value = ''; emailInput.value = ''; addressInput.value = '';
+    });
+
+    // Filters handlers
+    function applyFilters(){
+      state.filters.category = categorySelect.value;
+      state.filters.maxPrice = Number(maxPriceInput.value);
+      state.filters.minRating = Number(minRatingSelect.value);
+      state.filters.sort = sortSelect.value;
+      state.filters.query = searchInput.value;
+      // sync UI
+      maxPriceLabel.textContent = formatMoney(state.filters.maxPrice);
+      renderCatalog();
+    }
+
+    // Reset filters
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      categorySelect.value = 'All';
+      maxPriceInput.value = maxPriceInput.max;
+      minRatingSelect.value = '0';
+      sortSelect.value = 'popularity';
+      searchInput.value = '';
+      applyFilters();
+    });
+
+    // Debounce-ish for search (very light)
+    searchInput.addEventListener('input', () => {
+      applyFilters();
+    });
+
+    categorySelect.addEventListener('change', () => applyFilters());
+    maxPriceInput.addEventListener('input', () => applyFilters());
+    minRatingSelect.addEventListener('change', () => applyFilters());
+    sortSelect.addEventListener('change', () => applyFilters());
+
+    // Initialize app
+    function init(){
+      // load cart
+      loadCart();
+      // set max price display
+      const maxP = Math.ceil(Math.max(...products.map(p => p.price)));
+      maxPriceInput.max = maxP;
+      maxPriceInput.value = maxP;
+      state.filters.maxPrice = maxP;
+      maxPriceLabel.textContent = formatMoney(maxP);
+
+      initCategories();
+      // Populate category select default "All" already present
+      renderCatalog();
+      updateCartUI();
+    }
+
+    // Initial call
+    init();
+  </script>
+</body>
+</html>
