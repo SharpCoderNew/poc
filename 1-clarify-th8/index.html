@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PaletteShop - Single Page E-Commerce</title>
+  <style>
+    /* Color tokens derived from the provided palette */
+    :root{
+      --brand-900: #264653;
+      --brand-700: #2A9D8F;
+      --brand-500: #E9C46A;
+      --brand-400: #F4A261;
+      --brand-300: #E76F51;
+
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --text: #0f1115;
+      --muted: #555;
+      --card-border: #cbd5e1;
+    }
+
+    /* Basic resets */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; background: var(--bg); color: var(--text);}
+    img { max-width: 100%; display: block; }
+
+    /* Layout */
+    .container { width: min(1100px, 90%); margin: 0 auto; padding: 16px 0; }
+
+    /* Header / Navbar */
+    header.topbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; background: var(--brand-900); color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,.08);
+    }
+    .brand { font-weight: 700; letter-spacing: .3px; font-size: 1.1rem; color: white; display: flex; align-items: center; gap: 8px; }
+    .brand .logo { width: 28px; height: 28px; border-radius: 6px;
+      background: linear-gradient(135deg, var(--brand-700), var(--brand-500));
+      display: inline-block;
+    }
+
+    .search-area { flex: 1; display: flex; justify-content: center; }
+    .search-area input {
+      width: 60%; min-width: 240px; max-width: 520px;
+      padding: 10px 12px; border-radius: 999px; border: none;
+      outline: 2px solid transparent; background: white;
+      color: var(--text);
+      font-size: 14px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.08);
+    }
+    .search-area input:focus { outline-color: var(--brand-700); }
+
+    .cart-btn {
+      background: white; color: var(--brand-900);
+      border: 2px solid var(--brand-700);
+      padding: 8px 12px; border-radius: 999px;
+      font-weight: 600; cursor: pointer;
+    }
+    .cart-btn:focus { outline: 3px solid var(--brand-700); }
+    .badge { background: var(--brand-700); color: white; border-radius: 999px; padding: 2px 8px; margin-left: 6px; font-size: 12px; }
+
+    /* Filters row */
+    .filters {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 10px;
+      padding: 12px 20px; align-items: center; background: #fff;
+    }
+    .filters select, .filters input {
+      width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--card-border);
+      font-size: 14px; background: #fff;
+    }
+    .filters label { font-size: 12px; color: var(--muted); }
+
+    /* Catalog grid */
+    main#catalog { padding: 6px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .card {
+      border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; background: var(--surface);
+      display: grid; grid-template-rows: auto 1fr auto; gap: 8px;
+      transition: transform .2s;
+    }
+    .card:hover { transform: translateY(-2px); }
+    .card-img { height: 140px; width: 100%; object-fit: cover; border-radius: 8px; display: block; }
+    .card h3 { font-size: 16px; margin: 0; }
+    .card .price { font-weight: 700; font-size: 15px; margin-top: 4px; }
+    .rating { color: #f5c518; font-size: 14px; }
+    .stock { font-size: 12px; padding: 4px 8px; border-radius: 999px; display: inline-block; margin-left: 6px; }
+    .stock.in { background: #d4edda; color: #1e4620; }
+    .stock.out { background: #f8d7da; color: #6b1a1a; }
+    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; }
+    .btn {
+      padding: 10px 12px; border-radius: 8px; border: none; cursor: pointer;
+      font-weight: 600;
+    }
+    .btn.view { background: #fff; border: 1px solid var(--brand-700); color: var(--brand-900); }
+    .btn.view:focus { outline: 3px solid var(--brand-700); }
+    .btn.add {
+      background: var(--brand-500); color: #fff; border: none;
+    }
+    .btn.add[disabled] { background: #ccc; cursor: not-allowed; }
+
+    /* Modals / Panels */
+    .modal, .cart-panel {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none;
+      align-items: center; justify-content: center; background: rgba(0,0,0,.4);
+      z-index: 200;
+    }
+    .modal[aria-hidden="false"], .cart-panel[aria-hidden="false"] { display: flex; }
+    .modal-content, .panel-content {
+      background: #fff; border-radius: 12px; padding: 16px; width: min(760px, 90%); max-height: 80vh; overflow: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,.15);
+    }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); }
+    .close { background: transparent; border: none; font-size: 20px; cursor: pointer; }
+
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+    .detail-img { width: 100%; height: 260px; object-fit: cover; border-radius: 8px; }
+    .detail h2 { margin: 0 0 6px 0; }
+    .detail p { margin: 6px 0 12px; color: #333; }
+    .qty { display: inline-flex; align-items: center; gap: 6px; }
+    .qty button { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--brand-700); background: white; cursor: pointer; }
+    .qty input { width: 48px; text-align: center; border: 1px solid var(--brand-700); border-radius: 6px; padding: 6px; }
+
+    .panel-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); margin-bottom: 8px; }
+    .cart-panel { justify-content: flex-end; padding: 0; }
+    .panel { width: min(420px, 92%); height: 100%; background: #fff; border-left: 1px solid var(--card-border); padding: 12px; display: flex; flex-direction: column; }
+
+    .cart-item { display: grid; grid-template-columns: 54px 1fr auto; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--card-border); }
+    .cart-item img { width: 54px; height: 54px; object-fit: cover; border-radius: 6px; }
+    .cart-item .name { font-size: 13px; margin: 0; }
+    .cart-item .line { font-size: 12px; color: var(--muted); }
+    .cart-total { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--card-border); }
+    .checkout-btn { width: 100%; padding: 12px; border-radius: 8px; border: none; cursor: pointer; background: var(--brand-500); color: white; font-weight: 700; margin-top: 8px; }
+
+    /* Checkout modal */
+    #checkoutModal .modal-content { min-width: 320px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    label { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: block; }
+    input[type="text"], input[type="email"] { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--card-border); }
+
+    .order-confirm { text-align: center; padding: 20px; }
+    .hidden { display: none; }
+
+    /* Accessibility helpers */
+    @media (prefers-reduced-motion: reduce) {
+      .card { transition: none; }
+      .modal, .cart-panel { transition: none; }
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 860px){
+      .filters { grid-template-columns: 1fr 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .panel { width: 100%; height: 60%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Nav -->
+  <header class="topbar" aria-label="Site header">
+    <div class="brand" aria-label="PaletteShop brand">
+      <span class="logo" aria-hidden="true"></span>
+      <span>PaletteShop</span>
+    </div>
+    <div class="search-area" aria-label="Site search area">
+      <input id="search" type="search" placeholder="Search products..." aria-label="Search products" />
+    </div>
+    <button id="cartBtn" class="cart-btn" aria-label="Open cart">
+      Cart <span id="cartCount" class="badge" aria-live="polite">0</span>
+    </button>
+  </header>
+
+  <!-- Filters -->
+  <section class="filters" aria-label="Product filters">
+    <div>
+      <label for="categoryFilter">Category</label>
+      <select id="categoryFilter" aria-label="Filter by category">
+        <!-- options populated by script -->
+      </select>
+    </div>
+    <div>
+      <label for="minPrice">Min price</label>
+      <input id="minPrice" type="number" min="0" placeholder="0" aria-label="Minimum price" />
+    </div>
+    <div>
+      <label for="maxPrice">Max price</label>
+      <input id="maxPrice" type="number" min="0" placeholder="any" aria-label="Maximum price" />
+    </div>
+    <div>
+      <label for="ratingFilter">Minimum rating</label>
+      <select id="ratingFilter" aria-label="Minimum rating">
+        <option value="0">All ratings</option>
+        <option value="4">4.0+</option>
+        <option value="4.5">4.5+</option>
+      </select>
+    </div>
+    <div>
+      <label for="sort">Sort</label>
+      <select id="sort" aria-label="Sort products">
+        <option value="popularity">Popular</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating-desc">Rating: High to Low</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Catalog -->
+  <main id="catalog" class="container" aria-label="Product catalog">
+    <!-- Product cards render here -->
+  </main>
+
+  <!-- Product Detail Modal -->
+  <div id="detailModal" class="modal" aria-hidden="true" role="dialog" aria-label="Product detail">
+    <div class="modal-content" role="document">
+      <div class="modal-header">
+        <strong id="detailTitle">Product Detail</strong>
+        <button class="close" aria-label="Close details" onclick="closeDetail()">×</button>
+      </div>
+      <div id="detailBody" class="detail-grid detail"></div>
+    </div>
+  </div>
+
+  <!-- Cart Panel (side drawer) -->
+  <div id="cartPanel" class="cart-panel" aria-hidden="true" role="dialog" aria-label="Shopping cart">
+    <div class="panel-content panel" role="document">
+      <div class="panel-header">
+        <strong>Your Cart</strong>
+        <button class="close" aria-label="Close cart" onclick="toggleCart(false)">×</button>
+      </div>
+      <div id="cartItems" class="cart-items" style="overflow:auto; padding-right:6px; min-height: 100px;">
+        <!-- items render here -->
+      </div>
+      <div class="cart-total" aria-live="polite">
+        <div style="display:flex; justify-content:space-between; padding:6px 0;">
+          <span>Subtotal</span><span id="cartSubtotal">$0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0;">
+          <span>Tax</span><span>$0.00</span>
+        </div>
+        <hr>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; font-weight:700;">
+          <span>Total</span><span id="cartTotal">$0.00</span>
+        </div>
+      </div>
+      <button class="checkout-btn" onclick="openCheckout()" aria-label="Proceed to checkout" id="checkoutBtn">Checkout</button>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div id="checkoutModal" class="modal" aria-hidden="true" role="dialog" aria-label="Checkout">
+    <div class="modal-content" role="document">
+      <div class="modal-header">
+        <strong>Checkout</strong>
+        <button class="close" aria-label="Close checkout" onclick="closeCheckout()">×</button>
+      </div>
+      <div class="order-form" id="checkoutForm">
+        <p style="margin:6px 0 12px 0;">Review your order and provide contact details. This is a simulated checkout for demonstration purposes.</p>
+        <div class="form-row">
+          <div>
+            <label for="customerName">Name</label>
+            <input id="customerName" type="text" placeholder="Jane Doe" aria-label="Full name"/>
+          </div>
+          <div>
+            <label for="customerEmail">Email</label>
+            <input id="customerEmail" type="email" placeholder="jane@example.com" aria-label="Email address"/>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div>
+            <label for="customerAddress">Address</label>
+            <input id="customerAddress" type="text" placeholder="123 Main St" aria-label="Shipping address"/>
+          </div>
+        </div>
+        <button class="checkout-btn" onclick="placeOrder()" aria-label="Place order">Place Order</button>
+      </div>
+      <div id="orderConfirm" class="order-confirm hidden" aria-live="polite">
+        <h3>Thank you! Your order is confirmed</h3>
+        <p>Your order number is <strong id="orderNumber"></strong>.</p>
+        <p>We’ve sent a confirmation to your email.</p>
+        <button class="checkout-btn" onclick="closeCheckout()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Minimal inline script: data, state, UI rendering -->
+  <script>
+    // Data: simple product catalog (mock)
+    const PRODUCTS = [
+      { id: 'p1', name: 'Alder Ceramic Mug', description: 'Hand-glazed ceramic mug. Elegant and durable for daily use.', price: 18.00, category: 'Kitchen', rating: 4.6, stock: 12 },
+      { id: 'p2', name: 'Oak Cutting Board', description: 'End-grain cutting board with smooth edges for kitchen prep.', price: 29.99, category: 'Kitchen', rating: 4.8, stock: 8 },
+      { id: 'p3', name: 'Cedar Scented Candle', description: 'Earthy aroma to enrich any room. 40h burn time.', price: 12.50, category: 'Home', rating: 4.2, stock: 0 },
+      { id: 'p4', name: 'Wool Throw Blanket', description: 'Cozy, breathable throw for chilly evenings.', price: 45.00, category: 'Home', rating: 4.7, stock: 5 },
+      { id: 'p5', name: 'Ceramic Planter', description: 'Minimalist planter for desk or shelf spaces.', price: 22.00, category: 'Decor', rating: 4.3, stock: 20 },
+      { id: 'p6', name: 'Espresso Coffee Syrup', description: 'Rich, velvety flavor to elevate your drinks.', price: 9.00, category: 'Beverages', rating: 4.1, stock: 15 }
+    ];
+
+    // Image generator: simple SVG data URLs per product
+    function makeImg(label, color) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="420">
+        <rect width="100%" height="100%" fill="${color}"/>
+        <text x="50%" y="50%" fill="#ffffff" font-family="Arial" font-size="28" text-anchor="middle" alignment-baseline="middle">${label}</text>
+      </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    // Attach images to products (deterministic color mapping)
+    const COLOR_MAP = {
+      p1: '#2A9D8F',
+      p2: '#264653',
+      p3: '#E9C46A',
+      p4: '#F4A261',
+      p5: '#E76F51',
+      p6: '#2A9D8F'
+    };
+    PRODUCTS.forEach(p => p.image = makeImg(p.name, COLOR_MAP[p.id] || '#2A9D8F'));
+
+    // State
+    let cart = [];
+    const CART_KEY = 'spa_cart_v1';
+    let detailProduct = null;
+
+    // Elements
+    const catalogEl = document.getElementById('catalog');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const searchInput = document.getElementById('search');
+    const minPriceInput = document.getElementById('minPrice');
+    const maxPriceInput = document.getElementById('maxPrice');
+    const ratingFilter = document.getElementById('ratingFilter');
+    const sortSelect = document.getElementById('sort');
+    const cartBtn = document.getElementById('cartBtn');
+    const cartCount = document.getElementById('cartCount');
+    const detailModal = document.getElementById('detailModal');
+    const detailBody = document.getElementById('detailBody');
+    const detailTitle = document.getElementById('detailTitle');
+    const cartPanel = document.getElementById('cartPanel');
+    const cartItemsEl = document.getElementById('cartItems');
+    const cartSubtotal = document.getElementById('cartSubtotal');
+    const cartTotal = document.getElementById('cartTotal');
+    const checkoutModal = document.getElementById('checkoutModal');
+    const orderNumberEl = document.getElementById('orderNumber');
+    const checkoutForm = document.getElementById('checkoutForm');
+    const orderConfirmPanel = document.getElementById('orderConfirm');
+    const customerName = document.getElementById('customerName');
+    const customerEmail = document.getElementById('customerEmail');
+    const customerAddress = document.getElementById('customerAddress');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const searchContainer = document.querySelector('.search-area');
+
+    // Init: populate categories, load cart, render catalog
+    function init(){
+      loadCart();
+      populateCategories();
+      renderCatalog();
+      updateCartUI();
+
+      // Event listeners
+      searchInput.addEventListener('input', renderCatalog);
+      categoryFilter.addEventListener('change', renderCatalog);
+      minPriceInput.addEventListener('input', renderCatalog);
+      maxPriceInput.addEventListener('input', renderCatalog);
+      ratingFilter.addEventListener('change', renderCatalog);
+      sortSelect.addEventListener('change', renderCatalog);
+      cartBtn.addEventListener('click', () => toggleCart(true));
+
+      // Keyboard accessibility: close modals with Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeDetail();
+          toggleCart(false);
+          closeCheckout();
+        }
+      });
+    }
+
+    // Populate category filter options
+    function populateCategories(){
+      const categories = Array.from(new Set(PRODUCTS.map(p => p.category)));
+      categoryFilter.innerHTML = '<option value="all">All</option>' +
+        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    // Render catalog with filters
+    function renderCatalog(){
+      const query = (searchInput.value || '').toLowerCase();
+      const category = categoryFilter.value;
+      const min = parseFloat(minPriceInput.value) || 0;
+      const max = parseFloat(maxPriceInput.value);
+      const ratingMin = parseFloat(ratingFilter.value) || 0;
+      const sortOpt = sortSelect.value;
+
+      let items = PRODUCTS.filter(p => {
+        if (category !== 'all' && p.category !== category) return false;
+        const text = (p.name + ' ' + p.description).toLowerCase();
+        if (query && !text.includes(query)) return false;
+        if (p.price < min) return false;
+        if (!isNaN(max) && p.price > max) return false;
+        if (p.rating < ratingMin) return false;
+        return true;
+      });
+
+      switch(sortOpt){
+        case 'price-asc': items.sort((a,b)=>a.price-b.price); break;
+        case 'price-desc': items.sort((a,b)=>b.price-a.price); break;
+        case 'rating-desc': items.sort((a,b)=>b.rating-a.rating); break;
+        default: items.sort((a,b)=> b.stock - a.stock); // simple popularity proxy
+      }
+
+      catalogEl.innerHTML = items.map(renderCard).join('');
+      // re-attach listeners for new cards
+      attachCardListeners();
+    }
+
+    function renderCard(p){
+      const inStock = p.stock > 0;
+      return `
+      <article class="card" data-id="${p.id}" aria-label="${p.name}">
+        <img src="${p.image}" alt="${p.name}" class="card-img" />
+        <div class="card-content">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <h3>${p.name}</h3>
+            <span class="rating" aria-label="Rating ${p.rating}">${'★'.repeat(Math.floor(p.rating))}${p.rating % 1 >= 0.5 ? '½' : ''}</span>
+          </div>
+          <div class="price" aria-label="Price">${'$' + p.price.toFixed(2)}</div>
+          <div>
+            <span class="stock ${inStock ? 'in' : 'out'}" aria-live="polite">${inStock ? 'In stock' : 'Out of stock'}</span>
+          </div>
+        </div>
+        <div class="card-actions" aria-label="Card actions">
+          <button class="btn view" data-action="view" aria-label="View details of ${p.name}">View</button>
+          <button class="btn add" data-action="add" aria-label="Add ${p.name} to cart" ${inStock ? '' : 'disabled'}>Add to cart</button>
+        </div>
+      </article>
+      `;
+    }
+
+    // Attach actions for dynamic cards
+    function attachCardListeners(){
+      const cards = catalogEl.querySelectorAll('.card');
+      cards.forEach(card => {
+        const id = card.getAttribute('data-id');
+        const btnView = card.querySelector('[data-action="view"]');
+        const btnAdd = card.querySelector('[data-action="add"]');
+        if (btnView) btnView.addEventListener('click', () => openDetailFromId(id));
+        if (btnAdd) btnAdd.addEventListener('click', () => addToCart(id, 1));
+      });
+    }
+
+    // Detail modal helpers
+    function openDetailFromId(id){
+      const product = PRODUCTS.find(p => p.id === id);
+      if (!product) return;
+      detailProduct = product;
+      detailTitle.textContent = product.name;
+      detailBody.innerHTML = `
+        <div class="detail-grid">
+          <img src="${product.image}" alt="${product.name}" class="detail-img"/>
+          <div class="detail" style="padding:6px 0;">
+            <p style="margin:0 0 6px 0; color:#333;">${product.description}</p>
+            <p style="margin:6px 0;"><strong>Price:</strong> $${product.price.toFixed(2)}</p>
+            <p style="margin:6px 0;"><strong>Category:</strong> ${product.category}</p>
+            <p style="margin:6px 0;"><strong>Rating:</strong> ${product.rating.toFixed(1)} / 5</p>
+            <p style="margin:6px 0;"><strong>Stock:</strong> ${product.stock}</p>
+            <div style="margin-top:8px;">
+              <div class="qty" aria-label="Quantity">
+                <button onclick="updateDetailQty(-1)">-</button>
+                <input id="detailQty" type="number" value="1" min="1" max="${product.stock}" style="width:60px; text-align:center;" aria-label="Quantity"/>
+                <button onclick="updateDetailQty(1)">+</button>
+              </div>
+              <button class="btn add" style="margin-top:8px;" onclick="addToCart('${product.id}', getDetailQty())" ${product.stock>0 ? '' : 'disabled'} aria-label="Add to cart from detail">Add to cart</button>
+            </div>
+          </div>
+        </div>
+      `;
+      // Expose qty getter
+      window.updateDetailQty = function(delta){
+        const el = document.getElementById('detailQty');
+        let v = parseInt(el.value || '1', 10);
+        v = Math.max(1, Math.min(v + delta, product.stock));
+        el.value = v;
+      };
+      window.getDetailQty = function(){
+        const el = document.getElementById('detailQty');
+        let v = parseInt(el.value || '1', 10);
+        return Math.max(1, Math.min(v, product.stock));
+      };
+      // Show modal
+      detailModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeDetail(){
+      detailModal.setAttribute('aria-hidden', 'true');
+      detailBody.innerHTML = '';
+      detailProduct = null;
+      // Remove qty helper if exists
+      delete window.updateDetailQty;
+      delete window.getDetailQty;
+    }
+
+    // Cart operations
+    function addToCart(productId, qty){
+      const p = PRODUCTS.find(x => x.id === productId);
+      if (!p || p.stock <= 0) return;
+      const existing = cart.find(item => item.productId === productId);
+      const maxQty = p.stock;
+      if (existing){
+        existing.quantity = Math.min(existing.quantity + qty, maxQty);
+      } else {
+        cart.push({ productId, quantity: Math.min(qty, maxQty) });
+      }
+      saveCart();
+      updateCartUI();
+      renderCatalog(); // reflect stock changes in UI (if you want)
+    }
+
+    function updateCartItem(productId, quantity){
+      const p = PRODUCTS.find(x => x.id === productId);
+      if (!p) return;
+      const item = cart.find(it => it.productId === productId);
+      if (!item) return;
+      item.quantity = Math.max(0, Math.min(quantity, p.stock));
+      if (item.quantity === 0){
+        cart = cart.filter(it => it.productId !== productId);
+      }
+      saveCart();
+      updateCartUI();
+    }
+
+    function removeFromCart(productId){
+      cart = cart.filter(it => it.productId !== productId);
+      saveCart();
+      updateCartUI();
+    }
+
+    function saveCart(){
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    function loadCart(){
+      try {
+        const raw = localStorage.getItem(CART_KEY);
+        if (raw) cart = JSON.parse(raw);
+      } catch {
+        cart = [];
+      }
+    }
+
+    function updateCartUI(){
+      // cart count badge
+      const totalItems = cart.reduce((a,i)=>a+i.quantity,0);
+      cartCount.textContent = totalItems;
+      // cart panel items
+      renderCartPanel();
+    }
+
+    function renderCartPanel(){
+      if (cart.length === 0) {
+        cartItemsEl.innerHTML = '<p style="color:var(--muted); padding:8px;">Your cart is empty.</p>';
+        cartSubtotal.textContent = '$0.00';
+        cartTotal.textContent = '$0.00';
+        return;
+      }
+      cartItemsEl.innerHTML = cart.map(item => {
+        const p = PRODUCTS.find(x => x.id === item.productId);
+        const lineTotal = (p.price * item.quantity).toFixed(2);
+        return `
+          <div class="cart-item" data-id="${item.productId}">
+            <img src="${p.image}" alt="${p.name}"/>
+            <div>
+              <p class="name" style="margin:0 0 4px 0;">${p.name}</p>
+              <div class="line" aria-label="Line total for item">${'$' + lineTotal} • ${p.stock > 0 ? 'In stock' : 'Out of stock'}</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="qty" aria-label="Quantity">
+                <button onclick="updateCartItem('${p.id}', ${Math.max(1, item.quantity - 1)})">-</button>
+                <input type="text" value="${item.quantity}" style="width:40px; text-align:center;" readonly aria-label="Quantity"/>
+                <button onclick="updateCartItem('${p.id}', ${Math.min(p.stock, item.quantity + 1)})">+</button>
+              </div>
+              <button onclick="removeFromCart('${p.id}')" aria-label="Remove ${p.name}" style="margin-top:6px; padding:6px 8px; border-radius:6px; border:1px solid var(--brand-700); background:#fff; cursor:pointer;">Remove</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      // totals
+      const subtotal = cart.reduce((sum, item) => {
+        const p = PRODUCTS.find(x => x.id === item.productId);
+        return sum + p.price * item.quantity;
+      }, 0);
+      cartSubtotal.textContent = '$' + subtotal.toFixed(2);
+      cartTotal.textContent = '$' + subtotal.toFixed(2);
+    }
+
+    // Cart visibility
+    function toggleCart(show){
+      if (typeof show === 'boolean'){
+        cartPanel.setAttribute('aria-hidden', show ? 'false' : 'true');
+      } else {
+        const hidden = cartPanel.getAttribute('aria-hidden') === 'true';
+        cartPanel.setAttribute('aria-hidden', hidden ? 'false' : 'true');
+      }
+    }
+
+    // Checkout flow
+    function openCheckout(){
+      if (cart.length === 0) return;
+      checkoutModal.setAttribute('aria-hidden', 'false');
+      // reset/ensure form visible
+      checkoutForm.style.display = 'block';
+      orderConfirmPanel.classList.add('hidden');
+    }
+    function closeCheckout(){
+      checkoutModal.setAttribute('aria-hidden', 'true');
+      checkoutForm.style.display = 'block';
+      orderConfirmPanel.classList.add('hidden');
+      // Clear form
+      customerName.value = '';
+      customerEmail.value = '';
+      customerAddress.value = '';
+    }
+
+    function placeOrder(){
+      // Basic validation
+      const name = customerName.value.trim();
+      const email = customerEmail.value.trim();
+      const address = customerAddress.value.trim();
+      if (!name || !email || !address){
+        alert('Please fill in<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PaletteShop - Single Page E-Commerce</title>
+  <style>
+    /* Color tokens derived from the provided palette */
+    :root{
+      --brand-900: #264653;
+      --brand-700: #2A9D8F;
+      --brand-500: #E9C46A;
+      --brand-400: #F4A261;
+      --brand-300: #E76F51;
+
+      --bg: #FFFFFF;
+      --surface: #FFFFFF;
+      --text: #0f1115;
+      --muted: #555;
+      --card-border: #cbd5e1;
+    }
+
+    /* Basic resets */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; background: var(--bg); color: var(--text);}
+    img { max-width: 100%; display: block; }
+
+    /* Layout */
+    .container { width: min(1100px, 90%); margin: 0 auto; padding: 16px 0; }
+
+    /* Header / Navbar */
+    header.topbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; background: var(--brand-900); color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,.08);
+    }
+    .brand { font-weight: 700; letter-spacing: .3px; font-size: 1.1rem; color: white; display: flex; align-items: center; gap: 8px; }
+    .brand .logo { width: 28px; height: 28px; border-radius: 6px;
+      background: linear-gradient(135deg, var(--brand-700), var(--brand-500));
+      display: inline-block;
+    }
+
+    .search-area { flex: 1; display: flex; justify-content: center; }
+    .search-area input {
+      width: 60%; min-width: 240px; max-width: 520px;
+      padding: 10px 12px; border-radius: 999px; border: none;
+      outline: 2px solid transparent; background: white;
+      color: var(--text);
+      font-size: 14px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.08);
+    }
+    .search-area input:focus { outline-color: var(--brand-700); }
+
+    .cart-btn {
+      background: white; color: var(--brand-900);
+      border: 2px solid var(--brand-700);
+      padding: 8px 12px; border-radius: 999px;
+      font-weight: 600; cursor: pointer;
+    }
+    .cart-btn:focus { outline: 3px solid var(--brand-700); }
+    .badge { background: var(--brand-700); color: white; border-radius: 999px; padding: 2px 8px; margin-left: 6px; font-size: 12px; }
+
+    /* Filters row */
+    .filters {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 10px;
+      padding: 12px 20px; align-items: center; background: #fff;
+    }
+    .filters select, .filters input {
+      width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--card-border);
+      font-size: 14px; background: #fff;
+    }
+    .filters label { font-size: 12px; color: var(--muted); }
+
+    /* Catalog grid */
+    main#catalog { padding: 6px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .card {
+      border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; background: var(--surface);
+      display: grid; grid-template-rows: auto 1fr auto; gap: 8px;
+      transition: transform .2s;
+    }
+    .card:hover { transform: translateY(-2px); }
+    .card-img { height: 140px; width: 100%; object-fit: cover; border-radius: 8px; display: block; }
+    .card h3 { font-size: 16px; margin: 0; }
+    .card .price { font-weight: 700; font-size: 15px; margin-top: 4px; }
+    .rating { color: #f5c518; font-size: 14px; }
+    .stock { font-size: 12px; padding: 4px 8px; border-radius: 999px; display: inline-block; margin-left: 6px; }
+    .stock.in { background: #d4edda; color: #1e4620; }
+    .stock.out { background: #f8d7da; color: #6b1a1a; }
+    .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; }
+    .btn {
+      padding: 10px 12px; border-radius: 8px; border: none; cursor: pointer;
+      font-weight: 600;
+    }
+    .btn.view { background: #fff; border: 1px solid var(--brand-700); color: var(--brand-900); }
+    .btn.view:focus { outline: 3px solid var(--brand-700); }
+    .btn.add {
+      background: var(--brand-500); color: #fff; border: none;
+    }
+    .btn.add[disabled] { background: #ccc; cursor: not-allowed; }
+
+    /* Modals / Panels */
+    .modal, .cart-panel {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none;
+      align-items: center; justify-content: center; background: rgba(0,0,0,.4);
+      z-index: 200;
+    }
+    .modal[aria-hidden="false"], .cart-panel[aria-hidden="false"] { display: flex; }
+    .modal-content, .panel-content {
+      background: #fff; border-radius: 12px; padding: 16px; width: min(760px, 90%); max-height: 80vh; overflow: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,.15);
+    }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); }
+    .close { background: transparent; border: none; font-size: 20px; cursor: pointer; }
+
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+    .detail-img { width: 100%; height: 260px; object-fit: cover; border-radius: 8px; }
+    .detail h2 { margin: 0 0 6px 0; }
+    .detail p { margin: 6px 0 12px; color: #333; }
+    .qty { display: inline-flex; align-items: center; gap: 6px; }
+    .qty button { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--brand-700); background: white; cursor: pointer; }
+    .qty input { width: 48px; text-align: center; border: 1px solid var(--brand-700); border-radius: 6px; padding: 6px; }
+
+    .panel-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); margin-bottom: 8px; }
+    .cart-panel { justify-content: flex-end; padding: 0; }
+    .panel { width: min(420px, 92%); height: 100%; background: #fff; border-left: 1px solid var(--card-border); padding: 12px; display: flex; flex-direction: column; }
+
+    .cart-item { display: grid; grid-template-columns: 54px 1fr auto; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--card-border); }
+    .cart-item img { width: 54px; height: 54px; object-fit: cover; border-radius: 6px; }
+    .cart-item .name { font-size: 13px; margin: 0; }
+    .cart-item .line { font-size: 12px; color: var(--muted); }
+    .cart-total { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--card-border); }
+    .checkout-btn { width: 100%; padding: 12px; border-radius: 8px; border: none; cursor: pointer; background: var(--brand-500); color: white; font-weight: 700; margin-top: 8px; }
+
+    /* Checkout modal */
+    #checkoutModal .modal-content { min-width: 320px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    label { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: block; }
+    input[type="text"], input[type="email"] { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--card-border); }
+
+    .order-confirm { text-align: center; padding: 20px; }
+    .hidden { display: none; }
+
+    /* Accessibility helpers */
+    @media (prefers-reduced-motion: reduce) {
+      .card { transition: none; }
+      .modal, .cart-panel { transition: none; }
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 860px){
+      .filters { grid-template-columns: 1fr 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .panel { width: 100%; height: 60%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Nav -->
+  <header class="topbar" aria-label="Site header">
+    <div class="brand" aria-label="PaletteShop brand">
+      <span class="logo" aria-hidden="true"></span>
+      <span>PaletteShop</span>
+    </div>
+    <div class="search-area" aria-label="Site search area">
+      <input id="search" type="search" placeholder="Search products..." aria-label="Search products" />
+    </div>
+    <button id="cartBtn" class="cart-btn" aria-label="Open cart">
+      Cart <span id="cartCount" class="badge" aria-live="polite">0</span>
+    </button>
+  </header>
+
+  <!-- Filters -->
+  <section class="filters" aria-label="Product filters">
+    <div>
+      <label for="categoryFilter">Category</label>
+      <select id="categoryFilter" aria-label="Filter by category">
+        <!-- options populated by script -->
+      </select>
+    </div>
+    <div>
+      <label for="minPrice">Min price</label>
+      <input id="minPrice" type="number" min="0" placeholder="0" aria-label="Minimum price" />
+    </div>
+    <div>
+      <label for="maxPrice">Max price</label>
+      <input id="maxPrice" type="number" min="0" placeholder="any" aria-label="Maximum price" />
+    </div>
+    <div>
+      <label for="ratingFilter">Minimum rating</label>
+      <select id="ratingFilter" aria-label="Minimum rating">
+        <option value="0">All ratings</option>
+        <option value="4">4.0+</option>
+        <option value="4.5">4.5+</option>
+      </select>
+    </div>
+    <div>
+      <label for="sort">Sort</label>
+      <select id="sort" aria-label="Sort products">
+        <option value="popularity">Popular</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating-desc">Rating: High to Low</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Catalog -->
+  <main id="catalog" class="container" aria-label="Product catalog">
+    <!-- Product cards render here -->
+  </main>
+
+  <!-- Product Detail Modal -->
+  <div id="detailModal" class="modal" aria-hidden="true" role="dialog" aria-label="Product detail">
+    <div class="modal-content" role="document">
+      <div class="modal-header">
+        <strong id="detailTitle">Product Detail</strong>
+        <button class="close" aria-label="Close details" onclick="closeDetail()">×</button>
+      </div>
+      <div id="detailBody" class="detail-grid detail"></div>
+    </div>
+  </div>
+
+  <!-- Cart Panel (side drawer) -->
+  <div id="cartPanel" class="cart-panel" aria-hidden="true" role="dialog" aria-label="Shopping cart">
+    <div class="panel-content panel" role="document">
+      <div class="panel-header">
+        <strong>Your Cart</strong>
+        <button class="close" aria-label="Close cart" onclick="toggleCart(false)">×</button>
+      </div>
+      <div id="cartItems" class="cart-items" style="overflow:auto; padding-right:6px; min-height: 100px;">
+        <!-- items render here -->
+      </div>
+      <div class="cart-total" aria-live="polite">
+        <div style="display:flex; justify-content:space-between; padding:6px 0;">
+          <span>Subtotal</span><span id="cartSubtotal">$0.00</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0;">
+          <span>Tax</span><span>$0.00</span>
+        </div>
+        <hr>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; font-weight:700;">
+          <span>Total</span><span id="cartTotal">$0.00</span>
+        </div>
+      </div>
+      <button class="checkout-btn" onclick="openCheckout()" aria-label="Proceed to checkout" id="checkoutBtn">Checkout</button>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div id="checkoutModal" class="modal" aria-hidden="true" role="dialog" aria-label="Checkout">
+    <div class="modal-content" role="document">
+      <div class="modal-header">
+        <strong>Checkout</strong>
+        <button class="close" aria-label="Close checkout" onclick="closeCheckout()">×</button>
+      </div>
+      <div class="order-form" id="checkoutForm">
+        <p style="margin:6px 0 12px 0;">Review your order and provide contact details. This is a simulated checkout for demonstration purposes.</p>
+        <div class="form-row">
+          <div>
+            <label for="customerName">Name</label>
+            <input id="customerName" type="text" placeholder="Jane Doe" aria-label="Full name"/>
+          </div>
+          <div>
+            <label for="customerEmail">Email</label>
+            <input id="customerEmail" type="email" placeholder="jane@example.com" aria-label="Email address"/>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div>
+            <label for="customerAddress">Address</label>
+            <input id="customerAddress" type="text" placeholder="123 Main St" aria-label="Shipping address"/>
+          </div>
+        </div>
+        <button class="checkout-btn" onclick="placeOrder()" aria-label="Place order">Place Order</button>
+      </div>
+      <div id="orderConfirm" class="order-confirm hidden" aria-live="polite">
+        <h3>Thank you! Your order is confirmed</h3>
+        <p>Your order number is <strong id="orderNumber"></strong>.</p>
+        <p>We’ve sent a confirmation to your email.</p>
+        <button class="checkout-btn" onclick="closeCheckout()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Minimal inline script: data, state, UI rendering -->
+  <script>
+    // Data: simple product catalog (mock)
+    const PRODUCTS = [
+      { id: 'p1', name: 'Alder Ceramic Mug', description: 'Hand-glazed ceramic mug. Elegant and durable for daily use.', price: 18.00, category: 'Kitchen', rating: 4.6, stock: 12 },
+      { id: 'p2', name: 'Oak Cutting Board', description: 'End-grain cutting board with smooth edges for kitchen prep.', price: 29.99, category: 'Kitchen', rating: 4.8, stock: 8 },
+      { id: 'p3', name: 'Cedar Scented Candle', description: 'Earthy aroma to enrich any room. 40h burn time.', price: 12.50, category: 'Home', rating: 4.2, stock: 0 },
+      { id: 'p4', name: 'Wool Throw Blanket', description: 'Cozy, breathable throw for chilly evenings.', price: 45.00, category: 'Home', rating: 4.7, stock: 5 },
+      { id: 'p5', name: 'Ceramic Planter', description: 'Minimalist planter for desk or shelf spaces.', price: 22.00, category: 'Decor', rating: 4.3, stock: 20 },
+      { id: 'p6', name: 'Espresso Coffee Syrup', description: 'Rich, velvety flavor to elevate your drinks.', price: 9.00, category: 'Beverages', rating: 4.1, stock: 15 }
+    ];
+
+    // Image generator: simple SVG data URLs per product
+    function makeImg(label, color) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="420">
+        <rect width="100%" height="100%" fill="${color}"/>
+        <text x="50%" y="50%" fill="#ffffff" font-family="Arial" font-size="28" text-anchor="middle" alignment-baseline="middle">${label}</text>
+      </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    // Attach images to products (deterministic color mapping)
+    const COLOR_MAP = {
+      p1: '#2A9D8F',
+      p2: '#264653',
+      p3: '#E9C46A',
+      p4: '#F4A261',
+      p5: '#E76F51',
+      p6: '#2A9D8F'
+    };
+    PRODUCTS.forEach(p => p.image = makeImg(p.name, COLOR_MAP[p.id] || '#2A9D8F'));
+
+    // State
+    let cart = [];
+    const CART_KEY = 'spa_cart_v1';
+    let detailProduct = null;
+
+    // Elements
+    const catalogEl = document.getElementById('catalog');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const searchInput = document.getElementById('search');
+    const minPriceInput = document.getElementById('minPrice');
+    const maxPriceInput = document.getElementById('maxPrice');
+    const ratingFilter = document.getElementById('ratingFilter');
+    const sortSelect = document.getElementById('sort');
+    const cartBtn = document.getElementById('cartBtn');
+    const cartCount = document.getElementById('cartCount');
+    const detailModal = document.getElementById('detailModal');
+    const detailBody = document.getElementById('detailBody');
+    const detailTitle = document.getElementById('detailTitle');
+    const cartPanel = document.getElementById('cartPanel');
+    const cartItemsEl = document.getElementById('cartItems');
+    const cartSubtotal = document.getElementById('cartSubtotal');
+    const cartTotal = document.getElementById('cartTotal');
+    const checkoutModal = document.getElementById('checkoutModal');
+    const orderNumberEl = document.getElementById('orderNumber');
+    const checkoutForm = document.getElementById('checkoutForm');
+    const orderConfirmPanel = document.getElementById('orderConfirm');
+    const customerName = document.getElementById('customerName');
+    const customerEmail = document.getElementById('customerEmail');
+    const customerAddress = document.getElementById('customerAddress');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const searchContainer = document.querySelector('.search-area');
+
+    // Init: populate categories, load cart, render catalog
+    function init(){
+      loadCart();
+      populateCategories();
+      renderCatalog();
+      updateCartUI();
+
+      // Event listeners
+      searchInput.addEventListener('input', renderCatalog);
+      categoryFilter.addEventListener('change', renderCatalog);
+      minPriceInput.addEventListener('input', renderCatalog);
+      maxPriceInput.addEventListener('input', renderCatalog);
+      ratingFilter.addEventListener('change', renderCatalog);
+      sortSelect.addEventListener('change', renderCatalog);
+      cartBtn.addEventListener('click', () => toggleCart(true));
+
+      // Keyboard accessibility: close modals with Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeDetail();
+          toggleCart(false);
+          closeCheckout();
+        }
+      });
+    }
+
+    // Populate category filter options
+    function populateCategories(){
+      const categories = Array.from(new Set(PRODUCTS.map(p => p.category)));
+      categoryFilter.innerHTML = '<option value="all">All</option>' +
+        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    // Render catalog with filters
+    function renderCatalog(){
+      const query = (searchInput.value || '').toLowerCase();
+      const category = categoryFilter.value;
+      const min = parseFloat(minPriceInput.value) || 0;
+      const max = parseFloat(maxPriceInput.value);
+      const ratingMin = parseFloat(ratingFilter.value) || 0;
+      const sortOpt = sortSelect.value;
+
+      let items = PRODUCTS.filter(p => {
+        if (category !== 'all' && p.category !== category) return false;
+        const text = (p.name + ' ' + p.description).toLowerCase();
+        if (query && !text.includes(query)) return false;
+        if (p.price < min) return false;
+        if (!isNaN(max) && p.price > max) return false;
+        if (p.rating < ratingMin) return false;
+        return true;
+      });
+
+      switch(sortOpt){
+        case 'price-asc': items.sort((a,b)=>a.price-b.price); break;
+        case 'price-desc': items.sort((a,b)=>b.price-a.price); break;
+        case 'rating-desc': items.sort((a,b)=>b.rating-a.rating); break;
+        default: items.sort((a,b)=> b.stock - a.stock); // simple popularity proxy
+      }
+
+      catalogEl.innerHTML = items.map(renderCard).join('');
+      // re-attach listeners for new cards
+      attachCardListeners();
+    }
+
+    function renderCard(p){
+      const inStock = p.stock > 0;
+      return `
+      <article class="card" data-id="${p.id}" aria-label="${p.name}">
+        <img src="${p.image}" alt="${p.name}" class="card-img" />
+        <div class="card-content">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <h3>${p.name}</h3>
+            <span class="rating" aria-label="Rating ${p.rating}">${'★'.repeat(Math.floor(p.rating))}${p.rating % 1 >= 0.5 ? '½' : ''}</span>
+          </div>
+          <div class="price" aria-label="Price">${'$' + p.price.toFixed(2)}</div>
+          <div>
+            <span class="stock ${inStock ? 'in' : 'out'}" aria-live="polite">${inStock ? 'In stock' : 'Out of stock'}</span>
+          </div>
+        </div>
+        <div class="card-actions" aria-label="Card actions">
+          <button class="btn view" data-action="view" aria-label="View details of ${p.name}">View</button>
+          <button class="btn add" data-action="add" aria-label="Add ${p.name} to cart" ${inStock ? '' : 'disabled'}>Add to cart</button>
+        </div>
+      </article>
+      `;
+    }
+
+    // Attach actions for dynamic cards
+    function attachCardListeners(){
+      const cards = catalogEl.querySelectorAll('.card');
+      cards.forEach(card => {
+        const id = card.getAttribute('data-id');
+        const btnView = card.querySelector('[data-action="view"]');
+        const btnAdd = card.querySelector('[data-action="add"]');
+        if (btnView) btnView.addEventListener('click', () => openDetailFromId(id));
+        if (btnAdd) btnAdd.addEventListener('click', () => addToCart(id, 1));
+      });
+    }
+
+    // Detail modal helpers
+    function openDetailFromId(id){
+      const product = PRODUCTS.find(p => p.id === id);
+      if (!product) return;
+      detailProduct = product;
+      detailTitle.textContent = product.name;
+      detailBody.innerHTML = `
+        <div class="detail-grid">
+          <img src="${product.image}" alt="${product.name}" class="detail-img"/>
+          <div class="detail" style="padding:6px 0;">
+            <p style="margin:0 0 6px 0; color:#333;">${product.description}</p>
+            <p style="margin:6px 0;"><strong>Price:</strong> $${product.price.toFixed(2)}</p>
+            <p style="margin:6px 0;"><strong>Category:</strong> ${product.category}</p>
+            <p style="margin:6px 0;"><strong>Rating:</strong> ${product.rating.toFixed(1)} / 5</p>
+            <p style="margin:6px 0;"><strong>Stock:</strong> ${product.stock}</p>
+            <div style="margin-top:8px;">
+              <div class="qty" aria-label="Quantity">
+                <button onclick="updateDetailQty(-1)">-</button>
+                <input id="detailQty" type="number" value="1" min="1" max="${product.stock}" style="width:60px; text-align:center;" aria-label="Quantity"/>
+                <button onclick="updateDetailQty(1)">+</button>
+              </div>
+              <button class="btn add" style="margin-top:8px;" onclick="addToCart('${product.id}', getDetailQty())" ${product.stock>0 ? '' : 'disabled'} aria-label="Add to cart from detail">Add to cart</button>
+            </div>
+          </div>
+        </div>
+      `;
+      // Expose qty getter
+      window.updateDetailQty = function(delta){
+        const el = document.getElementById('detailQty');
+        let v = parseInt(el.value || '1', 10);
+        v = Math.max(1, Math.min(v + delta, product.stock));
+        el.value = v;
+      };
+      window.getDetailQty = function(){
+        const el = document.getElementById('detailQty');
+        let v = parseInt(el.value || '1', 10);
+        return Math.max(1, Math.min(v, product.stock));
+      };
+      // Show modal
+      detailModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeDetail(){
+      detailModal.setAttribute('aria-hidden', 'true');
+      detailBody.innerHTML = '';
+      detailProduct = null;
+      // Remove qty helper if exists
+      delete window.updateDetailQty;
+      delete window.getDetailQty;
+    }
+
+    // Cart operations
+    function addToCart(productId, qty){
+      const p = PRODUCTS.find(x => x.id === productId);
+      if (!p || p.stock <= 0) return;
+      const existing = cart.find(item => item.productId === productId);
+      const maxQty = p.stock;
+      if (existing){
+        existing.quantity = Math.min(existing.quantity + qty, maxQty);
+      } else {
+        cart.push({ productId, quantity: Math.min(qty, maxQty) });
+      }
+      saveCart();
+      updateCartUI();
+      renderCatalog(); // reflect stock changes in UI (if you want)
+    }
+
+    function updateCartItem(productId, quantity){
+      const p = PRODUCTS.find(x => x.id === productId);
+      if (!p) return;
+      const item = cart.find(it => it.productId === productId);
+      if (!item) return;
+      item.quantity = Math.max(0, Math.min(quantity, p.stock));
+      if (item.quantity === 0){
+        cart = cart.filter(it => it.productId !== productId);
+      }
+      saveCart();
+      updateCartUI();
+    }
+
+    function removeFromCart(productId){
+      cart = cart.filter(it => it.productId !== productId);
+      saveCart();
+      updateCartUI();
+    }
+
+    function saveCart(){
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    function loadCart(){
+      try {
+        const raw = localStorage.getItem(CART_KEY);
+        if (raw) cart = JSON.parse(raw);
+      } catch {
+        cart = [];
+      }
+    }
+
+    function updateCartUI(){
+      // cart count badge
+      const totalItems = cart.reduce((a,i)=>a+i.quantity,0);
+      cartCount.textContent = totalItems;
+      // cart panel items
+      renderCartPanel();
+    }
+
+    function renderCartPanel(){
+      if (cart.length === 0) {
+        cartItemsEl.innerHTML = '<p style="color:var(--muted); padding:8px;">Your cart is empty.</p>';
+        cartSubtotal.textContent = '$0.00';
+        cartTotal.textContent = '$0.00';
+        return;
+      }
+      cartItemsEl.innerHTML = cart.map(item => {
+        const p = PRODUCTS.find(x => x.id === item.productId);
+        const lineTotal = (p.price * item.quantity).toFixed(2);
+        return `
+          <div class="cart-item" data-id="${item.productId}">
+            <img src="${p.image}" alt="${p.name}"/>
+            <div>
+              <p class="name" style="margin:0 0 4px 0;">${p.name}</p>
+              <div class="line" aria-label="Line total for item">${'$' + lineTotal} • ${p.stock > 0 ? 'In stock' : 'Out of stock'}</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="qty" aria-label="Quantity">
+                <button onclick="updateCartItem('${p.id}', ${Math.max(1, item.quantity - 1)})">-</button>
+                <input type="text" value="${item.quantity}" style="width:40px; text-align:center;" readonly aria-label="Quantity"/>
+                <button onclick="updateCartItem('${p.id}', ${Math.min(p.stock, item.quantity + 1)})">+</button>
+              </div>
+              <button onclick="removeFromCart('${p.id}')" aria-label="Remove ${p.name}" style="margin-top:6px; padding:6px 8px; border-radius:6px; border:1px solid var(--brand-700); background:#fff; cursor:pointer;">Remove</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      // totals
+      const subtotal = cart.reduce((sum, item) => {
+        const p = PRODUCTS.find(x => x.id === item.productId);
+        return sum + p.price * item.quantity;
+      }, 0);
+      cartSubtotal.textContent = '$' + subtotal.toFixed(2);
+      cartTotal.textContent = '$' + subtotal.toFixed(2);
+    }
+
+    // Cart visibility
+    function toggleCart(show){
+      if (typeof show === 'boolean'){
+        cartPanel.setAttribute('aria-hidden', show ? 'false' : 'true');
+      } else {
+        const hidden = cartPanel.getAttribute('aria-hidden') === 'true';
+        cartPanel.setAttribute('aria-hidden', hidden ? 'false' : 'true');
+      }
+    }
+
+    // Checkout flow
+    function openCheckout(){
+      if (cart.length === 0) return;
+      checkoutModal.setAttribute('aria-hidden', 'false');
+      // reset/ensure form visible
+      checkoutForm.style.display = 'block';
+      orderConfirmPanel.classList.add('hidden');
+    }
+    function closeCheckout(){
+      checkoutModal.setAttribute('aria-hidden', 'true');
+      checkoutForm.style.display = 'block';
+      orderConfirmPanel.classList.add('hidden');
+      // Clear form
+      customerName.value = '';
+      customerEmail.value = '';
+      customerAddress.value = '';
+    }
+
+    function placeOrder(){
+      // Basic validation
+      const name = customerName.value.trim();
+      const email = customerEmail.value.trim();
+      const address = customerAddress.value.trim();
+      if (!name || !email || !address){
+        alert('Please fill in all required fields.');
+        return;
+      }
+      // simple mock: generate order number
+      const orderNo = 'ORD-' + (Math.floor(Math.random() * 900000) + 100000);
+      orderNumberEl.textContent = orderNo;
+      // show confirmation, hide form
+      checkoutForm.style.display = 'none';
+      if (orderConfirmPanel){
+        orderConfirmPanel.classList.remove('hidden');
+      } else {
+        const orderConfirmEl = document.getElementById('orderConfirm');
+        if (orderConfirmEl) orderConfirmEl.classList.remove('hidden');
+      }
+      // clear cart
+      cart = [];
+      saveCart();
+      updateCartUI();
+    }
+
+    // Initialize
+    init();
+    // Expose window-friendly helpers for inline handlers (already available in scope)
+  </script>
+</body>
+</html>
