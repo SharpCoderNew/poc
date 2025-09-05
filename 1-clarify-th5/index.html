@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Real-Time Chat UI Mock SPA</title>
+  <style>
+    :root{
+      --bg: #BDE0FE;          /* light blue background */
+      --panel: #FFFFFF;        /* chat surfaces */
+      --primary: #A2D2FF;      /* header/accent */
+      --soft: #FFC8DD;         /* soft pink bubble accent */
+      --accent: #FFAFCC;       /* extra pink for highlights */
+      --muted: #CDB4DB;         /* lavender/purple tint */
+      --text: #1b1b1f;
+      --border: #e3e6f0;
+      --shadow: 0 6px 20px rgba(0,0,0,.08);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: var(--text); background: var(--bg); }
+    a { color: inherit; text-decoration: none; }
+
+    /* Layout */
+    .app {
+      display: grid;
+      grid-template-columns: 330px 1fr;
+      height: 100vh;
+      min-height: 520px;
+    }
+
+    /* Sidebar: Conversations */
+    .sidebar {
+      border-right: 1px solid var(--border);
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .sidebar-header {
+      padding: 14px 14px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), #BDE0FE);
+      color: #0b1a2b;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-header .badge {
+      background: var(--muted);
+      color: #fff;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+    }
+    .sidebar-search {
+      padding: 8px 12px;
+    }
+    .sidebar-search input {
+      width: 100%; padding: 10px 12px; border-radius: 999px; border: 1px solid var(--border);
+      outline: none; font-size: 14px; background: #fff;
+    }
+    .conversation-list {
+      list-style: none; padding: 6px; margin: 0; overflow-y: auto;
+    }
+    .conversation-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px; border-radius: 10px; cursor: pointer;
+      border: 1px solid transparent;
+      transition: background .2s, border-color .2s;
+    }
+    .conversation-item:hover { background: #f7fbff; border-color: var(--border); }
+    .conversation-item.active {
+      background: #f0f7ff; border-color: var(--primary);
+    }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%; display: inline-block; 
+      background: #eee; position: relative;
+    }
+    .avatar.pres-online::after {
+      content: "";
+      position: absolute;
+      right: -2px; bottom: -2px;
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--primary);
+      border: 2px solid #fff;
+    }
+    .conversation-name { font-weight: 600; font-size: 14px; }
+    .conversation-preview { font-size: 12px; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+    .presence-dot {
+      width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px;
+      background: #CDB4DB; /* offline by default, overridden by presence state */
+    }
+
+    /* Chat area */
+    .chat {
+      display: flex; flex-direction: column; height: 100%; background: linear-gradient(180deg, #fff, #f6fbff);
+    }
+    .chat-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--primary), #BDE0FE);
+      color: #0b1a2b;
+    }
+    .chat-title { display: flex; flex-direction: column; }
+    .chat-title .name { font-weight: 700; font-size: 16px; }
+    .chat-title .subtitle { font-size: 12px; opacity: .9; }
+
+    .chat-actions button {
+      border: none; background: transparent; font-size: 16px; cursor: pointer;
+      padding: 6px 10px; border-radius: 6px;
+    }
+    .chat-actions button:hover { background: rgba(0,0,0,.05); }
+
+    .message-area {
+      flex: 1; padding: 12px 14px; overflow-y: auto; display: flex; flex-direction: column;
+      gap: 6px;
+    }
+
+    .message {
+      display: flex; max-width: 78%; padding: 6px 8px; border-radius: 14px; position: relative;
+      line-height: 1.25;
+    }
+    .message--own {
+      margin-left: auto; background: var(--soft); color: #1a1a2a;
+      border: 1px solid rgba(255, 140, 180, 0.4);
+      border-right: 6px solid transparent;
+    }
+    .message--other {
+      margin-right: auto; background: #fff; border: 1px solid var(--border);
+    }
+
+    .message .text { padding: 6px 4px; font-size: 14px; white-space: pre-wrap; word-wrap: break-word; }
+    .message .meta {
+      font-size: 11px; color: #555; padding: 0 6px 4px 6px; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .message--own .text { color: #1b1b1f; }
+    .message--edited { font-size: 11px; color: #888; margin-left: 6px; }
+
+    .message-actions {
+      position: absolute; right: -6px; top: -6px; display: none;
+      background: #fff; border: 1px solid var(--border); border-radius: 6px; box-shadow: var(--shadow);
+      padding: 6px; gap: 6px;
+    }
+    .message:hover .message-actions { display: inline-flex; }
+    .action-btn {
+      border: none; background: #f4f6f8; padding: 6px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;
+    }
+    .action-btn:hover { background: #e8eef5; }
+
+    .read-receipt {
+      display: inline-block; margin-left: 6px; font-size: 11px; opacity: .8;
+    }
+
+    .timestamp { color: #666; font-size: 11px; margin-left: 6px; }
+
+    .typing-indicator {
+      height: 20px; padding: 6px 16px; font-size: 12px; color: #555;
+      display: flex; align-items: center;
+    }
+
+    .input-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px; border-top: 1px solid var(--border);
+      background: #fff;
+    }
+    .input-bar input[type="text"] {
+      flex: 1; padding: 12px 14px; border-radius: 999px; border: 1px solid var(--border);
+      font-size: 14px; outline: none; background: #fff;
+    }
+    .send-btn {
+      background: var(--primary); color: #0b1a2b; border: none; border-radius: 999px;
+      padding: 12px 14px; cursor: pointer; font-weight: 700;
+    }
+    .attach-btn, .emoji-btn {
+      border: none; background: #fff; border-radius: 999px; padding: 10px; cursor: pointer;
+    }
+    .emoji-picker {
+      position: absolute; bottom: 72px; right: 20px; background: #fff; border: 1px solid var(--border);
+      border-radius: 8px; padding: 6px; display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px;
+      box-shadow: var(--shadow);
+    }
+    .emoji-picker .emoji {
+      font-size: 18px; padding: 6px; cursor: pointer; border-radius: 6px;
+      text-align: center;
+    }
+    .emoji-picker .emoji:hover { background: #f0f0f0; }
+
+    /* Responsive tweaks */
+    @media (max-width: 1080px) {
+      .app { grid-template-columns: 1fr; height: auto; }
+      .sidebar { display: none; }
+      .chat { height: 100%; }
+      .chat-header { position: sticky; top: 0; z-index: 2; }
+      .message-area { padding-bottom: 80px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" aria-label="Real-time chat SPA">
+    <!-- Conversation List Sidebar -->
+    <aside class="sidebar" aria-label="Conversations">
+      <div class="sidebar-header">
+        Conversations
+        <span class="badge" id="unreadBadge" aria-label="Unread count">0</span>
+      </div>
+      <div class="sidebar-search">
+        <input id="searchBox" type="text" placeholder="Search chats" aria-label="Search conversations"/>
+      </div>
+      <ul id="conversationList" class="conversation-list" role="navigation" aria-label="Chat conversations"></ul>
+    </aside>
+
+    <!-- Chat Window -->
+    <section class="chat" aria-label="Chat window">
+      <header class="chat-header" id="chatHeader">
+        <div class="chat-title" aria-label="Chat title">
+          <span class="name" id="chatName">General</span>
+          <span class="subtitle" id="chatSubtitle">Online</span>
+        </div>
+        <div class="chat-actions">
+          <button id="togglePresence" aria-label="Toggle your online status">●</button>
+        </div>
+      </header>
+
+      <div id="messageArea" class="message-area" aria-live="polite"></div>
+
+      <div id="typingIndicator" class="typing-indicator" aria-live="polite"></div>
+
+      <div class="input-bar" role="group" aria-label="Message input area">
+        <button class="attach-btn" title="Attach" aria-label="Attach a file (mock)">📎</button>
+        <button class="emoji-btn" id="emojiBtn" title="Emoji" aria-label="Toggle emoji picker">😊</button>
+        <input id="messageInput" type="text" placeholder="Type a message" autocomplete="off" />
+        <button id="sendBtn" class="send-btn" title="Send" aria-label="Send message">➤</button>
+      </div>
+
+      <div id="emojiPicker" class="emoji-picker" hidden aria-label="Emoji picker" role="dialog">
+        <span class="emoji" data-char="😀">😀</span>
+        <span class="emoji" data-char="😂">😂</span>
+        <span class="emoji" data-char="😍">😍</span>
+        <span class="emoji" data-char="🤔">🤔</span>
+        <span class="emoji" data-char="👍">👍</span>
+        <span class="emoji" data-char="🎉">🎉</span>
+        <span class="emoji" data-char="👏">👏</span>
+        <span class="emoji" data-char="💡">💡</span>
+        <span class="emoji" data-char="🔥">🔥</span>
+        <span class="emoji" data-char="❤️">❤️</span>
+        <span class="emoji" data-char="😅">😅</span>
+        <span class="emoji" data-char="🤖">🤖</span>
+        <span class="emoji" data-char="☕">☕</span>
+        <span class="emoji" data-char="🚀">🚀</span>
+        <span class="emoji" data-char="🎯">🎯</span>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Minimal, framework-agnostic SPA chat mock
+    // 1) Define data models and initial state
+    const currentUser = { id: 'u_me', name: 'You' };
+
+    const conversations = [
+      { id: 'c_general', name: 'General', participants: ['u_me','u_alice','u_bob'], online: { 'u_alice': true, 'u_bob': false } },
+      { id: 'c_alpha', name: 'Project Alpha', participants: ['u_me','u_alice'], online: { 'u_alice': true } },
+      { id: 'c_design', name: 'Design Feedback', participants: ['u_me','u_bob'], online: { 'u_bob': false } }
+    ];
+
+    // Initial messages for demonstration
+    let messages = [
+      { id: 'm1', conversationId: 'c_general', senderId: 'u_alice', text: 'Hi there! Ready for the standup?', timestamp: Date.now() - 600000, status: 'read', edited: false },
+      { id: 'm2', conversationId: 'c_general', senderId: 'u_me', text: 'Yes, almost done with the notes.', timestamp: Date.now() - 590000, status: 'read', edited: false },
+      { id: 'm3', conversationId: 'c_general', senderId: 'u_bob', text: 'I pushed the latest design changes.', timestamp: Date.now() - 580000, status: 'read', edited: false }
+    ];
+
+    // Typing state
+    let typingUsers = new Set();
+
+    // Current chat context
+    let currentConversationId = 'c_general';
+
+    // UI elements
+    const chatNameEl = document.getElementById('chatName');
+    const chatSubtitleEl = document.getElementById('chatSubtitle');
+    const conversationListEl = document.getElementById('conversationList');
+    const searchBoxEl = document.getElementById('searchBox');
+    const messageAreaEl = document.getElementById('messageArea');
+    const typingIndicatorEl = document.getElementById('typingIndicator');
+    const inputEl = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const emojiBtn = document.getElementById('emojiBtn');
+    const emojiPickerEl = document.getElementById('emojiPicker');
+    const emojiPickerContainerBtnRegion = document.createDocumentFragment();
+
+    const unreadBadgeEl = document.getElementById('unreadBadge');
+    const chatHeaderEl = document.getElementById('chatHeader');
+    const togglePresenceBtn = document.getElementById('togglePresence');
+
+    // Build conversation list
+    function renderConversationList(filter = '') {
+      conversationListEl.innerHTML = '';
+      const f = filter.toLowerCase();
+      for (const conv of conversations) {
+        if (f && !conv.name.toLowerCase().includes(f)) continue;
+        const li = document.createElement('li');
+        li.className = 'conversation-item';
+        if (conv.id === currentConversationId) li.classList.add('active');
+
+        // Simple avatars with presence dot
+        const avatar = document.createElement('span');
+        avatar.className = 'avatar';
+        // Presence for last participant (simplified)
+        const lastPeer = conv.participants.find(pid => pid !== currentUser.id);
+        const isOnline = conv.online?.[lastPeer] ?? false;
+        if (isOnline) avatar.classList.add('pres-online');
+
+        const name = document.createElement('div');
+        name.className = 'conversation-name';
+        name.textContent = conv.name;
+
+        const preview = document.createElement('div');
+        preview.className = 'conversation-preview';
+        const lastMsg = getLastMessage(conv.id);
+        preview.textContent = lastMsg ? (lastMsg.senderId === currentUser.id ? 'You: ' + lastMsg.text : lastMsg.text) : 'No messages yet';
+
+        const presence = document.createElement('span');
+        presence.className = 'presence-dot';
+        presence.style.background = isOnline ? '#A2D2FF' : '#CDB4DB';
+
+        const meta = document.createElement('div');
+        meta.style.display = 'flex'; meta.style.alignItems = 'center'; meta.style.gap = '6px';
+        meta.appendChild(presence);
+        meta.appendChild(avatar);
+
+        // structure
+        const left = document.createElement('div');
+        left.style.display = 'flex'; left.style.alignItems = 'center'; left.style.gap = '8px';
+        left.appendChild(avatar);
+        left.appendChild(name);
+
+        li.appendChild(left);
+        li.appendChild(preview);
+
+        li.addEventListener('click', () => switchConversation(conv.id));
+
+        conversationListEl.appendChild(li);
+      }
+      updateUnreadCounts();
+    }
+
+    function getLastMessage(convId) {
+      const convMessages = messages.filter(m => m.conversationId === convId);
+      if (convMessages.length === 0) return null;
+      return convMessages.sort((a,b) => a.timestamp - b.timestamp)[convMessages.length - 1];
+    }
+
+    function switchConversation(convId) {
+      currentConversationId = convId;
+      // Update UI
+      renderConversationList();
+      renderChatHeader();
+      renderMessages();
+      // Hide emoji picker if open
+      emojiPickerEl.hidden = true;
+    }
+
+    // Render chat header (title + presence)
+    function renderChatHeader() {
+      const conv = conversations.find(c => c.id === currentConversationId);
+      chatNameEl.textContent = conv?.name ?? 'Chat';
+      // Simple presence summary: online if any other participant is online
+      let onlineCount = 0;
+      conv?.participants.forEach(pid => {
+        if (pid !== currentUser.id) {
+          // naive: access presence from conv.online map
+          if (conv?.online?.[pid]) onlineCount++;
+        }
+      });
+      chatSubtitleEl.textContent = onlineCount > 0 ? 'Online' : 'Offline';
+    }
+
+    // Render messages for current conversation
+    function renderMessages() {
+      const convId = currentConversationId;
+      messageAreaEl.innerHTML = '';
+      const msgs = messages
+        .filter(m => m.conversationId === convId)
+        .sort((a,b) => a.timestamp - b.timestamp);
+
+      for (const m of msgs) {
+        const bubble = document.createElement('div');
+        bubble.className = 'message ' + (m.senderId === currentUser.id ? 'message--own' : 'message--other');
+        bubble.setAttribute('data-id', m.id);
+
+        const text = document.createElement('div');
+        text.className = 'text';
+        text.textContent = m.text;
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const time = new Date(m.timestamp);
+        meta.innerHTML = `<span class="timestamp">${time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
+
+        if (m.senderId === currentUser.id && m.edited) {
+          const edited = document.createElement('span');
+          edited.className = 'edited';
+          edited.textContent = '(edited)';
+          meta.appendChild(edited);
+        }
+
+        // Read receipts for own messages
+        const status = document.createElement('span');
+        status.className = 'read-receipt';
+        if (m.senderId === currentUser.id) {
+          status.textContent = m.status === 'sending' ? 'sending...' 
+                          : m.status === 'sent' ? 'sent'
+                          : m.status === 'delivered' ? 'delivered'
+                          : m.status === 'read' ? 'read'
+                          : '';
+        }
+
+        bubble.appendChild(text);
+        bubble.appendChild(meta);
+        if (m.senderId === currentUser.id) bubble.appendChild(status);
+
+        // Actions on own messages
+        const actions = document.createElement('div');
+        actions.className = 'message-actions';
+        actions.innerHTML = `
+          <button class="action-btn" data-action="copy">Copy</button>
+          <button class="action-btn" data-action="edit" ${m.senderId === currentUser.id ? '' : 'disabled'}>Edit</button>
+          <button class="action-btn" data-action="delete" ${m.senderId === currentUser.id ? '' : 'disabled'}>Delete</button>
+        `;
+        bubble.appendChild(actions);
+
+        // Action handlers
+        actions.querySelectorAll('button').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const action = btn.getAttribute('data-action');
+            handleMessageAction(action, m);
+            e.stopPropagation();
+          });
+        });
+
+        // Simple click to focus on message (no multi-select here)
+        bubble.addEventListener('click', () => {
+          // No-op: reserved for future selection/focus
+        });
+
+        messageAreaEl.appendChild(bubble);
+      }
+
+      // Scroll to bottom
+      messageAreaEl.scrollTop = messageAreaEl.scrollHeight;
+    }
+
+    function handleMessageAction(action, msg) {
+      if (action === 'copy') {
+        navigator.clipboard.writeText(msg.text).catch(() => {});
+      } else if (action === 'delete') {
+        messages = messages.filter(m => m.id !== msg.id);
+        renderMessages();
+      } else if (action === 'edit') {
+        const newText = prompt('Edit your message:', msg.text);
+        if (newText !== null) {
+          msg.text = newText;
+          msg.edited = true;
+          renderMessages();
+        }
+      }
+    }
+
+    // Typing indicator display
+    function updateTypingIndicator() {
+      if (typingUsers.size === 0) {
+        typingIndicatorEl.textContent = '';
+        return;
+      }
+      const who = Array.from(typingUsers).join(', ');
+      typingIndicatorEl.textContent = who + (typingUsers.size > 1 ? ' are typing...' : ' is typing...');
+    }
+
+    // Send a message (mock)
+    function sendMessage() {
+      const text = inputEl.value.trim();
+      if (!text) return;
+      const msg = {
+        id: 'm_' + Date.now(),
+        conversationId: currentConversationId,
+        senderId: currentUser.id,
+        text: text,
+        timestamp: Date.now(),
+        status: 'sending',
+        edited: false
+      };
+      messages.push(msg);
+      inputEl.value = '';
+      renderMessages();
+
+      // Simulate status progress
+      setTimeout(() => { msg.status = 'sent'; renderMessages(); }, 250);
+      setTimeout(() => { msg.status = 'delivered'; renderMessages(); }, 700);
+      setTimeout(() => { msg.status = 'read'; renderMessages(); }, 1200);
+
+      // Simulate a reply after a short delay with typing indicator
+      simulateIncomingReply(currentConversationId);
+    }
+
+    // Simulate a typing + message from another user
+    function simulateIncomingReply(convId) {
+      // Choose a random peer
+      const conv = conversations.find(c => c.id === convId);
+      if (!conv) return;
+      const peers = conv.participants.filter(p => p !== currentUser.id);
+      if (peers.length === 0) return;
+      const sender = peers[Math.floor(Math.random() * peers.length)];
+      const typingDuration = Math.random() * 1200 + 600; // 0.6s - 2s
+
+      // show typing
+      typingUsers.add(sender);
+      updateTypingIndicator();
+
+      // reply after a delay
+      setTimeout(() => {
+        typingUsers.delete(sender);
+        updateTypingIndicator();
+
+        const replies = {
+          'u_alice': [
+            "Nice, looks great!",
+            "I'll review the doc and share feedback.",
+            "Do we have a design handoff today?"
+          ],
+          'u_bob': [
+            "Love the quick draft.",
+            "Let's merge after QA.",
+            "I'll update the task tracker."
+          ]
+        };
+        const list = replies[sender] || ["Okay!", "Sounds good."];
+        const text = list[Math.floor(Math.random() * list.length)];
+
+        const msg = {
+          id: 'm_' + Date.now(),
+          conversationId: convId,
+          senderId: sender,
+          text: text,
+          timestamp: Date.now(),
+          status: 'delivered',
+          edited: false
+        };
+        messages.push(msg);
+        renderMessages();
+
+        // incoming message may be read after a bit
+        setTimeout(() => {
+          msg.status = 'read';
+          renderMessages();
+        }, 600);
+      }, typingDuration);
+    }
+
+    // Toggle current user's online status (mock)
+    function togglePresence() {
+      // flip presence of first other participant for current chat, purely cosmetic
+      const conv = conversations.find(c => c.id === currentConversationId);
+      if (!conv) return;
+      const others = conv.participants.filter(p => p !== currentUser.id);
+      for (const pid of others) {
+        conv.online[pid] = !conv.online[pid];
+      }
+      renderChatHeader();
+      renderConversationList();
+    }
+
+    // Unread count helper (mock)
+    function updateUnreadCounts() {
+      // Simple heuristic: count messages not from currentUser in current conversation
+      const convMsgs = messages.filter(m => m.conversationId === currentConversationId && m.senderId !== currentUser.id);
+      const unread = convMsgs.length;
+      unreadBadgeEl.textContent = unread > 99 ? '99+' : unread;
+    }
+
+    // Initialize emoji picker interactions
+    function initEmojiPicker() {
+      const toggle = () => {
+        emojiPickerEl.hidden = !emojiPickerEl.hidden;
+      };
+      emojiBtn.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
+      // click on emoji
+      emojiPickerEl.addEventListener('click', (e) => {
+        const target = e.target;
+        if (target.classList.contains('emoji')) {
+          const ch = target.getAttribute('data-char');
+          inputEl.value += ch;
+          inputEl.focus();
+        }
+      });
+      // Click outside to close
+      document.addEventListener('click', (e) => {
+        if (!emojiPickerEl.contains(e.target) && e.target !== emojiBtn) {
+          emojiPickerEl.hidden = true;
+        }
+      });
+    }
+
+    // Keyboard support: Enter to send
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    sendBtn.addEventListener('click', sendMessage);
+
+    // Attach presence toggle
+    togglePresenceBtn.addEventListener('click', togglePresence);
+
+    // Search filter
+    searchBoxEl.addEventListener('input', (e) => {
+      renderConversationList(e.target.value);
+    });
+
+    // Initial render
+    function bootstrap() {
+      // initial header, messages
+      renderConversationList();
+      renderChatHeader();
+      renderMessages();
+      updateUnreadCounts();
+      initEmojiPicker();
+    }
+
+    bootstrap();
+
+  </script>
+</body>
+</html>
