@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nova Studio — Modern SPA Showcase</title>
+  <meta name="description" content="A modern, responsive single-page site built with a cohesive design system and vibrant palette. Includes hero, features, portfolio, testimonials, about, CTA, and contact." />
+  <style>
+    /* Design Tokens (CSS Variables)
+       Palette derived from the specified hex values
+    */
+    :root {
+      --color-background: #f7f9fb;
+      --color-surface: #ffffff;
+      --color-text: #0f1b1e;
+      --color-muted: #5a6b72;
+
+      --color-primary: #2A9D8F;   /* teal/emerald core */
+      --color-dark: #264653;      /* deep teal/blue-green */
+      --color-accent: #E9C46A;     /* warm yellow */
+      --color-warn: #F4A261;       /* orange */
+      --color-danger: #E76F51;     /* coral red/orange */
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+
+      --space-1: 6px;
+      --space-2: 12px;
+      --space-3: 16px;
+      --space-4: 24px;
+      --space-5: 32px;
+      --space-6: 40px;
+
+      --font-stack: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --font-weight-regular: 400;
+      --font-weight-medium: 500;
+      --font-weight-bold: 700;
+
+      --shadow-sm: 0 2px 6px rgba(0,0,0,0.08);
+      --shadow-md: 0 8px 20px rgba(0,0,0,0.08);
+      --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
+    }
+
+    /* Accessibility: respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { transition: none; animation: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font-stack);
+      color: var(--color-text);
+      background: var(--color-background);
+      line-height: 1.6;
+    }
+
+    /* Layout helpers */
+    .container {
+      width: 92%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Skip link for accessibility */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: -999px;
+      background: var(--color-primary);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      z-index: 999;
+    }
+    .skip-link:focus {
+      left: 12px;
+      top: 12px;
+      outline: 2px solid #fff;
+      text-decoration: none;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(250, 250, 250, 0.95);
+      backdrop-filter: saturate(1.2) blur(6px);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700;
+      letter-spacing: .4px;
+    }
+    .logo-mark {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: conic-gradient(from 180deg at 50% 50%, var(--color-primary), var(--color-accent), var(--color-warn), var(--color-primary));
+      box-shadow: inset 0 0 6px rgba(255,255,255,.6);
+    }
+    nav ul {
+      display: flex; gap: 14px; list-style: none; padding: 0; margin: 0;
+    }
+    nav a {
+      padding: 8px 12px; border-radius: 6px; color: var(--color-dark);
+      text-decoration: none; font-weight: 500;
+    }
+    nav a[aria-current="page"]{
+      background: var(--color-primary);
+      color: white;
+    }
+    .cta-mini {
+      background: var(--color-accent); color: #1a1a1a;
+      padding: 8px 14px; border-radius: 8px;
+      text-decoration: none; font-weight: 600;
+      border: 0; transition: transform .2s ease;
+    }
+    .cta-mini:hover { transform: translateY(-1px); }
+
+    /* Sections styling */
+    section { padding: 72px 0; }
+    .section-title {
+      font-size: 2rem; margin: 0 0 8px;
+      color: var(--color-dark);
+    }
+    .section-sub {
+      color: var(--color-muted);
+      margin-bottom: 28px;
+    }
+
+    /* Hero */
+    #hero {
+      display: grid; grid-template-columns: 1.05fr 0.95fr;
+      gap: clamp(16px, 5vw, 48px);
+      align-items: center;
+      padding-top: 96px;
+      padding-bottom: 96px;
+      position: relative;
+    }
+    .hero-copy {
+      padding: 8px;
+    }
+    .kicker {
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      background: rgba(42,157,143,.08);
+      color: var(--color-primary);
+      font-weight: 600;
+      font-size: .85rem;
+      border: 1px solid rgba(42,157,143,.25);
+      margin-bottom: 12px;
+    }
+    .hero-title {
+      font-size: clamp(2rem, 4vw + 1rem, 3.5rem);
+      line-height: 1.04;
+      margin: 12px 0 12px;
+      letter-spacing: .2px;
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--color-muted);
+      margin-bottom: 20px;
+    }
+    .hero-actions { display:flex; gap:12px; flex-wrap: wrap; align-items: center; }
+    .btn {
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: 0;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .2s ease, background-color .2s ease;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn.primary {
+      background: var(--color-dark);
+      color: #fff;
+    }
+    .btn.secondary {
+      background: #fff; color: var(--color-dark);
+      border: 1px solid rgba(0,0,0,.08);
+    }
+    .hero-art {
+      position: relative;
+      min-height: 260px;
+      border-radius: var(--radius-lg);
+      background: radial-gradient( circle at 30% 20%, rgba(42,157,143,.15), transparent 40% ),
+                  radial-gradient( circle at 80% 0%, rgba(233,196,106,.15), transparent 40% ),
+                  linear-gradient(135deg, #ffffff 0%, #f0f4f7 60%);
+      border: 1px solid rgba(0,0,0,.05);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    .hero-card {
+      position: absolute; width: 60%; height: 40%; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(42,157,143,.9), rgba(39,68,128,.9));
+      bottom: 12px; right: 12px;
+      transform: rotate(-3deg);
+      display:flex; align-items:center; justify-content:center;
+      color:#fff; font-weight:700;
+      text-align:center;
+      padding:16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.15);
+    }
+    /* portfolio/gallery grid card */
+    .card {
+      background: var(--color-surface);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex; flex-direction: column; gap: 12px;
+      height: 100%;
+    }
+    .card-media {
+      height: 150px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #cbd5e1 0%, #e2e8f0 60%, #f8fafc 100%);
+      display: grid; place-items: center;
+      overflow: hidden;
+    }
+    .gallery-icon {
+      width: 48px; height: 48px; opacity:.9;
+    }
+    .card-title { font-weight: 700; font-size: 1.05rem; }
+    .card-desc { color: var(--color-muted); font-size: .92rem; }
+
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .grid-1 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+
+    /* Responsive tweaks */
+    @media (max-width: 980px) {
+      #hero { grid-template-columns: 1fr; padding-top: 60px; padding-bottom: 60px; }
+      .hero-art { order: -1; height: 280px; }
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .nav ul { display:none; }
+      #hero { padding-top: 40px; padding-bottom: 40px; }
+      .grid-3 { grid-template-columns: 1fr; }
+      .hero-title { font-size: 2.2rem; }
+      .hero-card { width: auto; height: 120px; bottom: 8px; right: 8px; transform: none; }
+    }
+
+    /* Testimonials carousel */
+    .testimonials { position: relative; overflow: hidden; }
+    .testi-track {
+      display: grid; grid-auto-flow: column; grid-auto-columns: 100%; gap: 16px;
+      transition: transform .5s ease;
+    }
+    .testi-card {
+      padding: 16px; border-radius: 12px; background: #fff; border: 1px solid #eee;
+      min-height: 120px;
+    }
+    .testi-nav { display:flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+    .indicator { width: 8px; height: 8px; border-radius: 50%; background: #ddd; display:inline-block; }
+    .indicator.active { background: var(--color-primary); }
+
+    /* Section separators */
+    .section + section { padding-top: 60px; }
+
+    /* Footer */
+    footer {
+      padding: 28px 0; text-align: center; color: var(--color-muted);
+      border-top: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+    }
+
+    /* Focus visibility for keyboard users */
+    :focus { outline: 2px solid var(--color-primary); outline-offset: 2px; border-radius: 4px; }
+
+  </style>
+</head>
+<body>
+  <a href="#content" class="skip-link" id="skip-to-content">Skip to content</a>
+
+  <header aria-label="Site header" id="top">
+    <div class="container nav" role="navigation">
+      <div class="logo" aria-label="Nova Studio logo">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span>NOVA STUDIO</span>
+      </div>
+      <nav aria-label="Primary">
+        <ul id="nav-list">
+          <li><a href="#hero" data-nav>Hero</a></li>
+          <li><a href="#features" data-nav>Features</a></li>
+          <li><a href="#portfolio" data-nav>Portfolio</a></li>
+          <li><a href="#testimonials" data-nav>Testimonials</a></li>
+          <li><a href="#about" data-nav>About</a></li>
+          <li><a href="#contact" data-nav>Contact</a></li>
+        </ul>
+      </nav>
+      <a href="#portfolio" class="btn primary" style="text-decoration:none;">View Work</a>
+    </div>
+  </header>
+
+  <main id="content">
+    <!-- HERO -->
+    <section id="hero" aria-label="Intro and hero" class="section" >
+      <div class="container" style="display:grid; grid-template-columns:1.1fr 0.9fr; gap:32px; align-items:center;">
+        <div class="hero-copy reveal">
+          <span class="kicker">Design System • Accessible UI • Performance</span>
+          <h1 class="hero-title" style="margin:6px 0 8px;">
+            Modern, cohesive interfaces with a polished, responsive flow
+          </h1>
+          <p class="hero-sub">
+            A production-ready single-page scaffold featuring a clean UI, smooth motion, and accessible components.
+          </p>
+          <div class="hero-actions" aria-label="Hero actions">
+            <a href="#portfolio" class="btn primary" aria-label="See portfolio">See Work</a>
+            <a href="#contact" class="btn secondary" aria-label="Contact us">Get in Touch</a>
+          </div>
+        </div>
+
+        <div class="hero-art reveal" aria-label="Hero illustration">
+          <div class="hero-card">Design System in Action</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" aria-label="Features" class="section" >
+      <div class="container" >
+        <h2 class="section-title" style="text-align:center;">What we deliver</h2>
+        <p class="section-sub" style="text-align:center;">A scalable design system with accessible components and polished motion.</p>
+
+        <div class="grid-3" style="margin-top:12px;">
+          <article class="card reveal" aria-label="Feature: Design System">
+            <div style="display:flex; align-items: center; gap:10px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-label="grid icon">
+                <rect x="3" y="3" width="7" height="7" rx="2" fill="#2A9D8F"/>
+                <rect x="14" y="3" width="7" height="7" rx="2" fill="#E9C46A"/>
+                <rect x="3" y="14" width="7" height="7" rx="2" fill="#E76F51"/>
+                <rect x="14" y="14" width="7" height="7" rx="2" fill="#264653"/>
+              </svg>
+              <h3 style="margin:0; font-size:1.05rem;">Design System</h3>
+            </div>
+            <p class="card-desc" style="margin:0;">
+              Tokens, typography, spacing, and components crafted for consistency across pages.
+            </p>
+          </article>
+
+          <article class="card reveal" aria-label="Feature: Accessibility">
+            <div style="display:flex; align-items: center; gap:10px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-label="accessibility icon">
+                <path d="M12 3v6" stroke="#264653" stroke-width="2" stroke-linecap="round"/>
+                <path d="M7 11a5 5 0 0 1 10 0M12 17a5 5 0 0 0-5-5" stroke="#2A9D8F" stroke-width="2" fill="none" stroke-linecap="round"/>
+              </svg>
+              <h3 style="margin:0; font-size:1.05rem;">Accessible</h3>
+            </div>
+            <p class="card-desc" style="margin:0;">
+              Keyboard navigable, WCAG-conscious color contrast, semantic markup.
+            </p>
+          </article>
+
+          <article class="card reveal" aria-label="Feature: Performance">
+            <div style="display:flex; align-items: center; gap:10px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-label="speed icon">
+                <path d="M3 12h6l3-9 9 18H9l-6-9z" stroke="#2A9D8F" stroke-width="2" fill="none"/>
+              </svg>
+              <h3 style="margin:0; font-size:1.05rem;">Performance</h3>
+            </div>
+            <p class="card-desc" style="margin:0;">
+              Lightweight assets, CSS-driven animations, and lazy loading for snappy UX.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO / GALLERY -->
+    <section id="portfolio" aria-label="Portfolio" class="section" >
+      <div class="container">
+        <h2 class="section-title" style="text-align:center;">Portfolio</h2>
+        <p class="section-sub" style="text-align:center;">A selection of templated projects and case-study feel.</p>
+
+        <div class="grid-3" style="margin-top:12px;">
+          <!-- Portfolio item 1 -->
+          <figure class="card reveal" aria-label="Portfolio item 1">
+            <div class="card-media" role="img" aria-label="Abstract placeholder image">
+              <!-- Inline SVG decorative placeholder -->
+              <svg class="gallery-icon" viewBox="0 0 64 64" width="64" height="64" aria-labelledby="title1" role="img" focusable="false">
+                <title id="title1">Artwork placeholder</title>
+                <defs>
+                  <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+                    <stop stop-color="#2A9D8F" offset="0"/>
+                    <stop stop-color="#264653" offset="1"/>
+                  </linearGradient>
+                </defs>
+                <rect width="64" height="64" rx="8" fill="url(#g1)"/>
+                <circle cx="32" cy="32" r="14" fill="rgba(255,255,255,.9)"/>
+              </svg>
+            </div>
+            <figcaption class="card-title" style="margin:0;">Project Atlas</figcaption>
+            <p class="card-desc" style="margin:0;">Responsive branding site with accessible UI kit.</p>
+          </figure>
+
+          <!-- Portfolio item 2 -->
+          <figure class="card reveal" aria-label="Portfolio item 2">
+            <div class="card-media" role="img" aria-label="Abstract placeholder image">
+              <svg class="gallery-icon" viewBox="0 0 64 64" width="64" height="64" aria-labelledby="title2" role="img" focusable="false">
+                <title id="title2">Gallery placeholder</title>
+                <defs><linearGradient id="g2" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#E9C46A" offset="0"/><stop stop-color="#F4A261" offset="1"/></linearGradient></defs>
+                <rect width="64" height="64" rx="8" fill="url(#g2)"/>
+                <polygon points="20,40 32,20 44,40" fill="white" opacity="0.9"/>
+              </svg>
+            </div>
+            <figcaption class="card-title" style="margin:0;">Studio Grid</figcaption>
+            <p class="card-desc" style="margin:0;">Gallery-style presentation with grid layouts.</p>
+          </figure>
+
+          <!-- Portfolio item 3 -->
+          <figure class="card reveal" aria-label="Portfolio item 3">
+            <div class="card-media" role="img" aria-label="Abstract placeholder image">
+              <svg class="gallery-icon" viewBox="0 0 64 64" width="64" height="64" aria-labelledby="title3" role="img" focusable="false">
+                <title id="title3">Abstract placeholder</title>
+                <defs><linearGradient id="g3" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#264653" offset="0"/><stop stop-color="#2A9D8F" offset="1"/></linearGradient></defs>
+                <circle cx="32" cy="32" r="20" fill="url(#g3)"/>
+                <rect x="14" y="14" width="36" height="36" rx="6" fill="white" opacity=".25"/>
+              </svg>
+            </div>
+            <figcaption class="card-title" style="margin:0;">Pulse Landing</figcaption>
+            <p class="card-desc" style="margin:0;">Conversion-focused marketing page design.</p>
+          </figure>
+
+        </div>
+
+        <div class="grid-3" style="margin-top:16px;">
+          <!-- Portfolio item 4 -->
+          <figure class="card reveal" aria-label="Portfolio item 4">
+            <div class="card-media" role="img" aria-label="Abstract placeholder image">
+              <svg class="gallery-icon" viewBox="0 0 64 64" width="64" height="64" aria-labelledby="title4" role="img" focusable="false">
+                <title id="title4">Pattern placeholder</title>
+                <path d="M8 32h48" stroke="#E76F51" stroke-width="4" stroke-linecap="round"/>
+                <path d="M32 8v48" stroke="#E9C46A" stroke-width="4" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <figcaption class="card-title" style="margin:0;">Nebula UI</figcaption>
+            <p class="card-desc" style="margin:0;">Component library for dashboards and apps.</p>
+          </figure>
+
+          <!-- Portfolio item 5 -->
+          <figure class="card reveal" aria-label="Portfolio item 5">
+            <div class="card-media" role="img" aria-label="Abstract placeholder image">
+              <svg class="gallery-icon" viewBox="0 0 64 64" width="64" height="64" aria-labelledby="title5" role="img" focusable="false">
+                <title id="title5">Gradient square</title>
+                <defs><linearGradient id="g5" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#2A9D8F" offset="0"/><stop stop-color="#E76F51" offset="1"/></linearGradient></defs>
+                <rect width="64" height="64" rx="12" fill="url(#g5)"/>
+              </svg>
+            </div>
+            <figcaption class="card-title" style="margin:0;">Flux Commerce</figcaption>
+            <p class="card-desc" style="margin:0;">E-commerce storefront design system.</p>
+          </figure>
+
+          <!-- Portfolio item 6 -->
+          <figure class="card reveal" aria-label="Portfolio item 6">
+            <div class="card-media" role="img" aria-label="Abstract placeholder image">
+              <svg class="gallery-icon" viewBox="0 0 64 64" width="64" height="64" aria-labelledby="title6" role="img" focusable="false">
+                <title id="title6">Abstract blob</title>
+                <defs><linearGradient id="g6" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#264653" offset="0"/><stop stop-color="#2A9D8F" offset="1"/></linearGradient></defs>
+                <circle cx="32" cy="32" r="22" fill="url(#g6)"/>
+              </svg>
+            </div>
+            <figcaption class="card-title" style="margin:0;">Aurora Docs</figcaption>
+            <p class="card-desc" style="margin:0;">Documentation site with accessible components.</p>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" aria-label="Testimonials" class="section testimonials" >
+      <div class="container">
+        <h2 class="section-title" style="text-align:center;">What clients say</h2>
+        <p class="section-sub" style="text-align:center;">Short quotes from partners and collaborators.</p>
+
+        <div class="testi-track reveal" id="testi-track" aria-label="Testimonials carousel" style="will-change: transform;">
+          <div class="testi-card" role="group" aria-label="Testimonial 1">
+            <p style="margin:0;">“Nova Studio elevated our product page with a cohesive design system and accessible UI. Performance is top-notch.”</p>
+            <strong style="display:block; margin-top:8px;">— Alex M., Product Lead</strong>
+          </div>
+          <div class="testi-card" role="group" aria-label="Testimonial 2">
+            <p style="margin:0;">“The motions are tasteful and never distracting. Our team adopted their components with ease.”</p>
+            <strong style="display:block; margin-top:8px;">— Priya R., Marketing Director</strong>
+          </div>
+          <div class="testi-card" role="group" aria-label="Testimonial 3">
+            <p style="margin:0;">“A scalable design system that grows with our needs. Clear documentation and solid UI.”</p>
+            <strong style="display:block; margin-top:8px;">— Miguel S., VP of Design</strong>
+          </div>
+        </div>
+
+        <div class="testi-nav" aria-label="Testimonials navigation" style="justify-content:center;">
+          <span class="indicator active" aria-label="Active dot"></span>
+          <span class="indicator" aria-label="Next dot"></span>
+          <span class="indicator" aria-label="Next dot"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" aria-label="About" class="section" >
+      <div class="container" >
+        <h2 class="section-title" style="text-align:center;">About Nova Studio</h2>
+        <p class="section-sub" style="text-align:center; max-width: 700px; margin: 0 auto;">
+          We craft accessible, performant interfaces with a focus on clarity, consistency, and delightful motion.
+          Our approach blends design systems with pragmatic front-end engineering to deliver scalable experiences.
+        </p>
+
+        <div class="grid-2" style="margin-top:28px;">
+          <div class="card reveal" aria-label="About statement">
+            <h3 style="margin:0 0 6px;">Our Approach</h3>
+            <p class="card-desc" style="margin:0;">
+              Start with tokens, then assemble components into cohesive flows. We prioritize accessibility,
+              performance, and a clean aesthetic that adapts to your brand.
+            </p>
+          </div>
+          <div class="card reveal" aria-label="About process">
+            <h3 style="margin:0 0 6px;">Process & Deliverables</h3>
+            <p class="card-desc" style="margin:0;">
+              Design tokens, component library, style guide, and a ready-to-deploy front-end scaffold.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALL TO ACTION -->
+    <section id="cta" aria-label="Call to action" class="section" >
+      <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; padding: 0 0;">
+        <div>
+          <h2 class="section-title" style="margin:0 0 6px;">Ready to start your project?</h2>
+          <p class="section-sub" style="margin:0;">Let's talk about goals, timelines, and success metrics.</p>
+        </div>
+        <a href="#contact" class="btn primary" aria-label="Start project">Start a Project</a>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" aria-label="Contact" class="section" >
+      <div class="container" >
+        <h2 class="section-title" style="text-align:center;">Get in touch</h2>
+        <p class="section-sub" style="text-align:center; margin-bottom: 24px;">
+          Tell us about your needs and we’ll tailor a design-system-backed frontend plan.
+        </p>
+
+        <form id="contact-form" class="grid-2" aria-label="Contact form" style="gap:16px;">
+          <div class="card reveal" style="padding:16px;">
+            <label for="name" style="display:block; font-weight:600; margin-bottom:6px;">Name</label>
+            <input id="name" name="name" type="text" required placeholder="Your name"
+                   style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd;" />
+          </div>
+          <div class="card reveal" style="padding:16px;">
+            <label for="email" style="display:block; font-weight:600; margin-bottom:6px;">Email</label>
+            <input id="email" name="email" type="email" required placeholder="you@example.com"
+                   style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd;" />
+          </div>
+          <div class="card reveal" style="grid-column: 1 / -1; padding:16px;">
+            <label for="message" style="display:block; font-weight:600; margin-bottom:6px;">Message</label>
+            <textarea id="message" name="message" rows="5" required placeholder="Tell us about your project..."
+                      style="width:100%; padding:10px; border-radius:6px; border:1px solid #ddd; resize: vertical;"></textarea>
+          </div>
+          <div style="grid-column: 1 / -1; display:flex; gap:12px; align-items:center;">
+            <button type="submit" class="btn primary" aria-label="Submit contact form">Send Message</button>
+            <span id="form-status" aria-live="polite" style="color:var(--color-muted);"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer aria-label="Site footer">
+    <div class="container" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+      <span>&copy; <span id="year"></span> Nova Studio. All rights reserved.</span>
+      <span style="color:var(--color-muted); font-size:.9rem;">Built with vanilla HTML/CSS/JS</span>
+    </div>
+  </footer>
+
+  <script>
+    // Basic interactivity: smooth in-page nav, reveal on scroll, testimonials carousel, and form handling
+
+    // Set current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Active nav highlight on scroll
+    const sections = Array.from(document.querySelectorAll('section[id]'));
+    const navLinks = Array.from(document.querySelectorAll('[data-nav]'));
+
+    function activateNav() {
+      let current = '';
+      sections.forEach(sec => {
+        const rect = sec.getBoundingClientRect();
+        if (rect.top <= 120 && rect.bottom >= 120) {
+          current = sec.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        if (link.getAttribute('href') === '#' + current) {
+          link.setAttribute('aria-current', 'page');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
+    }
+    window.addEventListener('scroll', activateNav, { passive: true });
+    window.addEventListener('load', activateNav);
+
+    // Reveal on scroll
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          e.target.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+          e.target.style.opacity = 1;
+          e.target.style.transform = 'translateY(0)';
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    revealEls.forEach(el => {
+      el.style.opacity = 0;
+      el.style.transform = 'translateY(6px)';
+      observer.observe(el);
+    });
+
+    // Simple testimonials "carousel"
+    const track = document.getElementById('testi-track');
+    const indicators = Array.from(document.querySelectorAll('.indicator'));
+    let currentIndex = 0;
+    const totalSlides = track.children.length;
+
+    function updateCarousel() {
+      const offset = -(currentIndex * 100);
+      track.style.transform = 'translateX(' + offset + '%)';
+      indicators.forEach((ind, idx) => ind.classList.toggle('active', idx === currentIndex));
+    }
+
+    // Init
+    updateCarousel();
+
+    // Auto-rotate every 7 seconds
+    let autoTimer = setInterval(() => {
+      currentIndex = (currentIndex + 1) % totalSlides;
+      updateCarousel();
+    }, 7000);
+
+    // Pause on hover of the testimonials section
+    const testiSection = document.getElementById('testimonials');
+    testiSection.addEventListener('mouseenter', () => clearInterval(autoTimer));
+    testiSection.addEventListener('mouseleave', () => {
+      autoTimer = setInterval(() => {
+        currentIndex = (currentIndex + 1) % totalSlides;
+        updateCarousel();
+      }, 7000);
+    });
+
+    // Keyboard navigation for carousel
+    testiSection.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        currentIndex = (currentIndex + 1) % totalSlides;
+        updateCarousel();
+      } else if (e.key === 'ArrowLeft') {
+        currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+        updateCarousel();
+      }
+    });
+
+    // Contact form handling (client-side only)
+    const form = document.getElementById('contact-form');
+    const status = document.getElementById('form-status');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Basic validation
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (!name || !email || !message) {
+        status.textContent = 'Please complete all fields to proceed.';
+        status.style.color = '#c0392b';
+        return;
+      }
+      // Simple email format check
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!emailOk) {
+        status.textContent = 'Please enter a valid email address.';
+        status.style.color = '#c0392b';
+        return;
+      }
+
+      // Simulated successful submission
+      status.textContent = 'Thank you! Your message has been captured. We will respond shortly.';
+      status.style.color = 'var(--color-dark)';
+      form.reset();
+      // Optionally disable the button briefly or show a success panel
+    });
+
+    // Skip to content focus management (optional enhancement)
+    document.getElementById('skip-to-content').addEventListener('click', () => {
+      const firstFocusable = document.querySelector('main [tabindex], a, button, input, textarea, select');
+      if (firstFocusable) firstFocusable.focus();
+    });
+  </script>
+</body>
+
+</html>
