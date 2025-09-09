@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Palette Studio - Modern Single-Page Website</title>
+  <meta name="description" content="A modern, responsive single-page website scaffold using a precise color palette with clean UI, smooth animations, and accessible design tokens." />
+  <style>
+    /* Design System Tokens (CSS Variables)
+       Color roles are mapped to the specified hex palette:
+       - Primary: #2A9D8F
+       - Secondary: #264653
+       - Accent: #E9C46A
+       - Highlight: #F4A261
+       - Danger/CTA: #E76F51
+    */
+    :root{
+      --color-primary: #2A9D8F;       /* teal-green */
+      --color-secondary: #264653;     /* deep teal */
+      --color-accent: #E9C46A;          /* mustard */
+      --color-highlight: #F4A261;       /* warm orange */
+      --color-danger: #E76F51;          /* coral */
+      --color-bg: #f7f5f0;
+      --color-surface: #ffffff;
+      --text: #1f2937;
+      --text-soft: #374151;
+      --muted: #6b7280;
+      --radius: 14px;
+      --shadow: 0 6px 20px rgba(0,0,0,.08);
+      --shadow-lift: 0 8px 28px rgba(0,0,0,.12);
+      --maxw: 1100px;
+    }
+
+    /* Global reset & basics */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, "Noto Sans", sans-serif;
+      color: var(--text);
+      background: var(--color-bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Accessibility: respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+
+    /* Layout helpers */
+    .container {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: saturate(1.2) blur(2px);
+      background: rgba(255,255,255,.92);
+      border-bottom: 1px solid rgba(0,0,0,.05);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Inline SVG logo placeholder */
+    .brand svg {
+      width: 34px;
+      height: 34px;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      gap: 14px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--text-soft);
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: color .2s ease, background .2s ease;
+    }
+
+    nav a:hover, nav a:focus {
+      color: #fff;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-highlight));
+      outline: none;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: 0;
+      font-size: 1.2rem;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    /* Hero section */
+    .hero {
+      background: radial-gradient( circle at 20% -10%, rgba(42, 157, 143, .15), rgba(38,70,102,.0) 40% ),
+                  linear-gradient(135deg, #eaf6f4 0%, #f6f0e6 60%, #fff 100%);
+      padding: 72px 0 40px;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 2.5vw + 1rem, 3.5rem);
+      line-height: 1.05;
+      margin: 0 0 14px;
+      letter-spacing: -0.5px;
+      color: var(--color-secondary);
+    }
+
+    .tagline {
+      font-size: 1.05rem;
+      color: var(--text-soft);
+      margin-bottom: 20px;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform .15s ease, background .2s ease, color .2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-highlight));
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(42,157,143,.38);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 320px;
+      display: grid;
+      place-items: center;
+    }
+
+    .card {
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Decorative blob shapes */
+    .blob {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      filter: blur(6px);
+      z-index: -1;
+      opacity: .6;
+    }
+    .blob.a { background: rgba(42,157,143,.6); top: -40px; left: -40px; }
+    .blob.b { background: rgba(233,196,106,.6); bottom: -60px; right: -60px; }
+
+    /* Section styles */
+    section { padding: 72px 0; }
+    h2.section-title {
+      font-size: clamp(1.6rem, 1.2vw + 1.2rem, 2.4rem);
+      margin: 0 0 8px;
+      color: var(--color-secondary);
+    }
+    .section-sub {
+      margin-bottom: 28px;
+      color: var(--muted);
+    }
+
+    /* Grid utilities */
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 28px; }
+      .hero { padding: 48px 0 24px; }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 700px) {
+      nav ul { display: none; }
+      .menu-toggle { display: inline-flex; color: var(--text); }
+      .hero { padding: 40px 0 24px; }
+      .grid-3 { grid-template-columns: 1fr; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .section { padding: 48px 0; }
+    }
+
+    /* Feature cards styling */
+    .feature {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 14px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid rgba(38,70,102,.08);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .feature:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+
+    .feature-icon {
+      width: 38px; height: 38px; display: grid; place-items: center;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .feature h3 { margin: 0 0 6px; font-size: 1.05rem; }
+    .feature p { margin: 0; color: var(--muted); font-size: .95rem; }
+
+    /* Portfolio items (gallery) */
+    .portfolio-item {
+      border-radius: 12px; overflow: hidden; background: #fff; border: 1px solid rgba(0,0,0,.05);
+      display: grid; grid-template-rows: 120px 1fr;
+      transition: transform .25s ease;
+    }
+    .portfolio-item:hover { transform: translateY(-4px); }
+    .portfolio-thumb {
+      width: 100%; height: 120px; display: grid; place-items: center;
+      background: #fff;
+    }
+    .portfolio-thumb svg { width: 100%; height: 100%; display: block; }
+    .portfolio-caption { padding: 12px; font-size: .95rem; color: var(--text-soft); }
+
+    /* Testimonials */
+    .testimonials { position: relative; }
+    .slide {
+      display: none;
+      padding: 20px;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+    .slide.active { display: block; }
+
+    .dots { display: flex; gap: 6px; justify-content: center; padding-top: 12px; }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #ccc; display: inline-block;
+    }
+    .dot.active { background: var(--color-primary); }
+
+    /* About & CTA */
+    .about p { color: var(--text-soft); }
+    .cta-strip {
+      display: flex; gap: 12px; align-items: center; justify-content: space-between;
+      padding: 20px; border-radius: 12px; background: linear-gradient(135deg, #fff, #fdf7f0);
+      border: 1px solid rgba(0,0,0,.05);
+    }
+
+    /* Contact form */
+    form { display: grid; gap: 12px; }
+    label { font-size: .92rem; color: var(--text-soft); }
+    input, textarea {
+      width: 100%; padding: 12px 14px; border-radius: 8px;
+      border: 1px solid #d1d5db; background: #fff; font: inherit;
+    }
+    input:focus, textarea:focus { outline: 3px solid rgba(42,157,143,.25); border-color: var(--color-primary); }
+    .field { display: grid; gap: 6px; }
+    .form-row { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 700px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+    .error { color: var(--color-danger); font-size: .9rem; }
+    .form-status { font-size: .95rem; color: var(--muted); }
+
+    /* Footer */
+    footer {
+      text-align: center; padding: 28px 0; color: var(--muted);
+      border-top: 1px solid rgba(0,0,0,.05); background: #fff;
+    }
+
+    /* Simple keyboard focus indication for nav links when not using mouse */
+    :focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; border-radius: 6px; }
+
+    /* Small visual helpers for in-page sections on load */
+    .reveal { opacity: 0; transform: translateY(8px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+  <!-- Skip to content for accessibility -->
+  <a href="#main" class="skip-link" style="position:absolute;left:0;top:0;background:#111;color:#fff;padding:8px 12px;border-radius:0 0 6px 6px;text-decoration:none;z-index:9999;">Skip to content</a>
+
+  <header>
+    <div class="container nav" aria-label="Global">
+      <a class="brand" href="#home" aria-label="Palette Studio home">
+        <!-- Inline simple logo (SVG) -->
+        <svg viewBox="0 0 64 64" role="img" aria-label="Logo">
+          <defs>
+            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+              <stop stop-color="#2A9D8F"/>
+              <stop offset="1" stop-color="#264653"/>
+            </linearGradient>
+          </defs>
+          <circle cx="32" cy="32" r="26" fill="url(#g)"/>
+          <path d="M20 34c6-4 18-4 26 0" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-title" aria-label="Brand name">Palette Studio</span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+        ☰
+      </button>
+
+      <nav aria-label="Main navigation">
+        <ul id="navLinks">
+          <li><a href="#home" class="nav-link">Home</a></li>
+          <li><a href="#features" class="nav-link">Features</a></li>
+          <li><a href="#portfolio" class="nav-link">Portfolio</a></li>
+          <li><a href="#testimonials" class="nav-link">Testimonials</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" id="home" aria-label="Hero section">
+      <div class="container hero-inner">
+        <div class="hero-copy reveal">
+          <span style="color:var(--color-accent); font-weight:700;">Design with intention</span>
+          <h1>Modern, accessible UI built with a precise color palette</h1>
+          <p class="tagline">A lightweight, production-ready single page scaffold. Clean components, smooth motion, and a cohesive design system using the palette: #264653, #2A9D8F, #E9C46A, #F4A261, #E76F51.</p>
+          <div class="cta-row" aria-label="Call to action">
+            <button class="btn btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Start a project</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'})">View portfolio</button>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal" aria-label="Decorative hero illustration">
+          <div class="card" style="width:100%; max-width:420px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="width:10px;height:10px;background:var(--color-primary);border-radius:50%;"></span>
+              <strong>UI Design System</strong>
+            </div>
+            <p style="margin:8px 0 0;color:var(--muted);">Tokens, typography, spacing, components</p>
+            <div style="height:8px;"></div>
+            <div style="background:linear-gradient(135deg,var(--color-primary),var(--color-accent)); height:120px;border-radius:8px; display:grid; place-items:center;">
+              <svg viewBox="0 0 200 80" width="90%" height="90%" aria-label="Abstract palette">
+                <rect x="0" y="20" width="60" height="40" rx="6" fill="#2A9D8F"></rect>
+                <rect x="70" y="10" width="60" height="50" rx="8" fill="#E9C46A"></rect>
+                <rect x="140" y="20" width="60" height="40" rx="6" fill="#F4A261"></rect>
+              </svg>
+            </div>
+          </div>
+          <div class="blob a" aria-hidden="true"></div>
+          <div class="blob b" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" aria-label="Features" class="reveal">
+      <div class="container">
+        <h2 class="section-title">Design system & components</h2>
+        <p class="section-sub">A cohesive set of primitives designed for clarity, accessibility, and performance. Tokens are applied consistently across sections.</p>
+
+        <div class="grid grid-3" role="list">
+          <article class="feature" role="listitem">
+            <div class="feature-icon" aria-label="Icon: responsive">
+              <!-- inline SVG icon -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M3 6h6v12H3z" stroke="white" stroke-width="2" />
+                <path d="M15 4h6v16h-6z" stroke="white" stroke-width="2" />
+              </svg>
+            </div>
+            <div>
+              <h3>Responsive Grid</h3>
+              <p>Fluid breakpoints with predictable spacing and scalable typography for all devices.</p>
+            </div>
+          </article>
+
+          <article class="feature" role="listitem">
+            <div class="feature-icon" aria-label="Icon: accessibility">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 3l8 4v6c0 5-4 9-8 9s-8-4-8-9V7l8-4z" stroke="white" stroke-width="2"/>
+                <path d="M12 11v6" stroke="white" stroke-width="2" />
+                <path d="M9 9h6" stroke="white" stroke-width="2" />
+              </svg>
+            </div>
+            <div>
+              <h3>WCAG-aligned</h3>
+              <p>Color contrast, focus states, and semantic structure for accessible experiences.</p>
+            </div>
+          </article>
+
+          <article class="feature" role="listitem">
+            <div class="feature-icon" aria-label="Icon: performance">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 12h7l3-7 6 14H4z" stroke="white" stroke-width="2"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Performance-first</h3>
+              <p>CSS-driven animations with reduced motion support and lazy-friendly assets.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO / GALLERY -->
+    <section id="portfolio" aria-label="Portfolio" class="reveal">
+      <div class="container">
+        <h2 class="section-title">Portfolio Gallery</h2>
+        <p class="section-sub">A tasteful collection of mock projects to demonstrate layout and visual balance.</p>
+
+        <div class="grid grid-3" style="gap:14px;">
+          <!-- Item 1 -->
+          <div class="portfolio-item" role="group" aria-label="Project 1">
+            <div class="portfolio-thumb" aria-label="Project thumbnail">
+              <svg viewBox="0 0 320 120" width="100%" height="100%" role="img" aria-label="Gallery placeholder 1">
+                <defs>
+                  <linearGradient id="grad1" x1="0" x2="1" y1="0" y2="1">
+                    <stop stop-color="#264653" offset="0"/>
+                    <stop stop-color="#2A9D8F" offset="1"/>
+                  </linearGradient>
+                </defs>
+                <rect width="320" height="120" fill="url(#grad1)"/>
+                <circle cx="60" cy="60" r="20" fill="#fff" opacity=".6"/>
+                <circle cx="100" cy="70" r="12" fill="#fff" opacity=".4"/>
+                <rect x="180" y="28" width="110" height="60" rx="6" fill="white" opacity=".25"/>
+              </svg>
+            </div>
+            <div class="portfolio-caption">Project Alpha</div>
+          </div>
+          <!-- Item 2 -->
+          <div class="portfolio-item" role="group" aria-label="Project 2">
+            <div class="portfolio-thumb" aria-label="Project thumbnail 2">
+              <svg viewBox="0 0 320 120" width="100%" height="100%" role="img" aria-label="Gallery placeholder 2">
+                <defs>
+                  <linearGradient id="grad2" x1="0" x2="1" y1="0" y2="1">
+                    <stop stop-color="#2A9D8F" offset="0"/>
+                    <stop stop-color="#E9C46A" offset="1"/>
+                  </linearGradient>
+                </defs>
+                <rect width="320" height="120" fill="url(#grad2)"/>
+                <rect x="40" y="24" width="240" height="72" rx="8" fill="white" opacity=".25"/>
+              </svg>
+            </div>
+            <div class="portfolio-caption">Project Beta</div>
+          </div>
+          <!-- Item 3 -->
+          <div class="portfolio-item" role="group" aria-label="Project 3">
+            <div class="portfolio-thumb" aria-label="Project thumbnail 3">
+              <svg viewBox="0 0 320 120" width="100%" height="100%" role="img" aria-label="Gallery placeholder 3">
+                <defs>
+                  <linearGradient id="grad3" x1="0" x2="1" y1="0" y2="1">
+                    <stop stop-color="#264653" offset="0"/>
+                    <stop stop-color="#E76F51" offset="1"/>
+                  </linearGradient>
+                </defs>
+                <rect width="320" height="120" fill="url(#grad3)"/>
+                <circle cx="260" cy="40" r="18" fill="#fff" opacity=".8"/>
+              </svg>
+            </div>
+            <div class="portfolio-caption">Project Gamma</div>
+          </div>
+          <!-- Item 4 -->
+          <div class="portfolio-item" role="group" aria-label="Project 4">
+            <div class="portfolio-thumb" aria-label="Project thumbnail 4">
+              <svg viewBox="0 0 320 120" width="100%" height="100%" role="img" aria-label="Gallery placeholder 4">
+                <rect width="320" height="120" fill="#F4A261"/>
+                <rect x="28" y="28" width="260" height="60" rx="8" fill="white" opacity=".5"/>
+              </svg>
+            </div>
+            <div class="portfolio-caption">Project Delta</div>
+          </div>
+          <!-- Item 5 -->
+          <div class="portfolio-item" role="group" aria-label="Project 5">
+            <div class="portfolio-thumb" aria-label="Project thumbnail 5">
+              <svg viewBox="0 0 320 120" width="100%" height="100%" role="img" aria-label="Gallery placeholder 5">
+                <rect width="320" height="120" fill="#E9C46A"/>
+                <circle cx="160" cy="60" r="28" fill="white" opacity=".8"/>
+              </svg>
+            </div>
+            <div class="portfolio-caption">Project Epsilon</div>
+          </div>
+          <!-- Item 6 -->
+          <div class="portfolio-item" role="group" aria-label="Project 6">
+            <div class="portfolio-thumb" aria-label="Project thumbnail 6">
+              <svg viewBox="0 0 320 120" width="100%" height="100%" role="img" aria-label="Gallery placeholder 6">
+                <rect width="320" height="120" fill="#264653"/>
+                <rect x="60" y="30" width="200" height="60" rx="8" fill="#fff" opacity=".6"/>
+              </svg>
+            </div>
+            <div class="portfolio-caption">Project Zeta</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" aria-label="Testimonials" class="reveal">
+      <div class="container testimonials">
+        <h2 class="section-title">What clients say</h2>
+        <p class="section-sub">Brief quotes from collaborators that highlight clarity, pace, and outcomes.</p>
+
+        <div class="slide active" role="group" aria-label="Testimonial 1">
+          <blockquote style="margin:0 0 8px; font-style: italic;">
+            Palette Studio delivered a clean design system with delightful motion. The team respected accessibility and performance from day one.
+          </blockquote>
+          <cite style="font-size:.9rem; color:var(--muted); display:block;">— Alex R., Product Lead</cite>
+        </div>
+        <div class="slide" role="group" aria-label="Testimonial 2">
+          <blockquote style="margin:0 0 8px; font-style: italic;">
+            The responsive grid and visual balance across sections made our portfolio feel cohesive and compelling.
+          </blockquote>
+          <cite style="font-size:.9rem; color:var(--muted); display:block;">— Jamie L., Creative Director</cite>
+        </div>
+        <div class="slide" role="group" aria-label="Testimonial 3">
+          <blockquote style="margin:0 0 8px; font-style: italic;">
+            Quick iteration cycles, accessible color choices, and a production-ready CSS structure. Highly recommended.
+          </blockquote>
+          <cite style="font-size:.9rem; color:var(--muted); display:block;">— Priya S., Engineer</cite>
+        </div>
+
+        <div class="dots" aria-label="Carousel indicators">
+          <span class="dot active" data-index="0"></span>
+          <span class="dot" data-index="1"></span>
+          <span class="dot" data-index="2"></span>
+        </div>
+
+        <div style="display:flex; justify-content:center; gap:10px; margin-top:12px;">
+          <button class="btn" id="prev" aria-label="Previous testimonial" style="background:#fff; border:1px solid #ddd;">Prev</button>
+          <button class="btn" id="next" aria-label="Next testimonial" style="background:var(--color-primary); color:#fff;">Next</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" aria-label="About" class="reveal">
+      <div class="container" style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:center;">
+        <div>
+          <h2 class="section-title" style="color:var(--color-secondary);">About this design scaffold</h2>
+          <p class="section-sub" style="margin-top:0;">
+            A minimal, self-contained single-page site that demonstrates a cohesive design system and production-ready structure.
+            It uses a strict color palette for UI tokens, accessible typography, and motion that respects user preferences.
+          </p>
+          <ul style="margin:0; padding-left:20px; color:var(--muted);">
+            <li>Semantic markup with clear section landmarks</li>
+            <li>In-page navigation and keyboard accessibility</li>
+            <li>Responsive grid and scalable components</li>
+          </ul>
+        </div>
+        <div class="card" aria-label="Design tokens quick view" style="padding:20px;">
+          <strong>Tokens at a glance</strong>
+          <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:8px; margin-top:8px;">
+            <span style="background:#fff;border:1px solid #eee;border-radius:6px;padding:8px;text-align:center;">Primary #2A9D8F</span>
+            <span style="background:#fff;border:1px solid #eee;border-radius:6px;padding:8px;text-align:center;">Secondary #264653</span>
+            <span style="background:#fff;border:1px solid #eee;border-radius:6px;padding:8px;text-align:center;">Accent #E9C46A</span>
+            <span style="background:#fff;border:1px solid #eee;border-radius:6px;padding:8px;text-align:center;">Highlight #F4A261</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT / CTA -->
+    <section id="contact" aria-label="Contact" class="reveal">
+      <div class="container" style="display:grid; gap:20px; grid-template-columns: 1.1fr 0.9fr;">
+        <div class="card" aria-label="Contact form panel" style="padding:20px;">
+          <h2 class="section-title" style="margin-top:0;">Let’s collaborate</h2>
+          <p class="section-sub" style="margin-top:0;">Tell us about your project, goals, and timeline. We’ll respond within 1-2 business days.</p>
+          <form id="contactForm" novalidate>
+            <div class="form-row">
+              <div class="field">
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" required placeholder="Your name" />
+                <span class="error" id="nameError" aria-live="polite"></span>
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" required placeholder="you@example.com" />
+                <span class="error" id="emailError" aria-live="polite"></span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="4" required placeholder="Tell us about your project, goals, and timelines"></textarea>
+              <span class="error" id="messageError" aria-live="polite"></span>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top:6px;">Send message</button>
+            <div class="form-status" id="formStatus" aria-live="polite" style="margin-top:6px;"></div>
+          </form>
+        </div>
+
+        <div class="card" style="padding:18px;">
+          <h3 style="margin:0 0 6px;">Quick contact</h3>
+          <p style="margin:0 0 12px; color:var(--muted);">Email: hello@example.com</p>
+          <p style="margin:0 0 6px; color:var(--muted);">Phone: +1 (555) 012-3456</p>
+          <div style="height:8px;"></div>
+          <div class="cta-strip" aria-label="Secondary call to action">
+            <div>
+              <strong>Ready to deploy your front-end?</strong><br/>
+              <span style="font-size: .92rem; color:var(--muted);">We provide scalable code, ready for handoff.</span>
+            </div>
+            <button class="btn" style="background:var(--color-primary); color:#fff;" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Start here</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer aria-label="Site footer">
+    <div class="container" style="display:flex;flex-direction:column;gap:8px; align-items:center;">
+      <div style="display:flex;gap:12px;flex-wrap:wrap; justify-content:center;">
+        <a href="#home" style="text-decoration:none;color:var(--text-soft);">Home</a>
+        <a href="#features" style="text-decoration:none;color:var(--text-soft);">Features</a>
+        <a href="#portfolio" style="text-decoration:none;color:var(--text-soft);">Portfolio</a>
+        <a href="#contact" style="text-decoration:none;color:var(--text-soft);">Contact</a>
+      </div>
+      <small style="color:var(--muted);">&copy; 2025 Palette Studio. All rights reserved.</small>
+    </div>
+  </footer>
+
+  <script>
+    // Simple mobile menu toggle
+    const menuBtn = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    if (menuBtn) {
+      menuBtn.addEventListener('click', () => {
+        const isOpen = menuBtn.getAttribute('aria-expanded') === 'true';
+        menuBtn.setAttribute('aria-expanded', String(!isOpen));
+        navLinks.style.display = isOpen ? 'none' : 'flex';
+      });
+      // Ensure initial state on small screens
+      if (window.innerWidth < 700) navLinks.style.display = 'none';
+    }
+
+    // Simple reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // Testimonials carousel logic
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dots = Array.from(document.querySelectorAll('.dot'));
+    let current = 0;
+
+    function showSlide(index) {
+      slides.forEach((s, i) => s.classList.toggle('active', i === index));
+      dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      current = index;
+    }
+
+    document.getElementById('prev').addEventListener('click', () => {
+      showSlide((current - 1 + slides.length) % slides.length);
+    });
+    document.getElementById('next').addEventListener('click', () => {
+      showSlide((current + 1) % slides.length);
+    });
+    dots.forEach((d) => {
+      d.addEventListener('click', () => {
+        const idx = Number(d.dataset.index);
+        showSlide(idx);
+      });
+    });
+
+    // Auto-rotate testimonials every 6 seconds (optional)
+    let autoRotate = true;
+    let timer = null;
+    if (autoRotate) {
+      timer = setInterval(() => showSlide((current + 1) % slides.length), 6000);
+      // Pause on hover
+      const container = document.querySelector('#testimonials');
+      container.addEventListener('mouseenter', () => clearInterval(timer));
+      container.addEventListener('mouseleave', () => {
+        timer = setInterval(() => showSlide((current + 1) % slides.length), 6000);
+      });
+    }
+
+    // Contact form validation (client-side only)
+    const form = document.getElementById('contactForm');
+    const nameEl = document.getElementById('name');
+    const emailEl = document.getElementById('email');
+    const messageEl = document.getElementById('message');
+    const statusEl = document.getElementById('formStatus');
+
+    function setError(el, msg) {
+      const errEl = document.getElementById(el.id + 'Error');
+      if (errEl) errEl.textContent = msg;
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      let valid = true;
+
+      if (!nameEl.value.trim()) {
+        setError(nameEl, 'Please enter your name.');
+        valid = false;
+      } else setError(nameEl, '');
+
+      if (!emailEl.value.trim()) {
+        setError(emailEl, 'Please enter your email.');
+        valid = false;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value)) {
+        setError(emailEl, 'Please enter a valid email.');
+        valid = false;
+      } else setError(emailEl, '');
+
+      if (!messageEl.value.trim()) {
+        setError(messageEl, 'Please enter a message.');
+        valid = false;
+      } else setError(messageEl, '');
+
+      if (valid) {
+        // Simulate success without backend
+        form.reset();
+        statusEl.textContent = 'Thank you! Your message has been staged for delivery.';
+        statusEl.style.color = 'var(--color-primary)';
+      } else {
+        statusEl.textContent = 'Please fix the errors above and try again.';
+        statusEl.style.color = 'var(--color-danger)';
+      }
+    });
+  </script>
+</body>
+</html>
