@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AutoFlow Dealer Showroom — Mini SPA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg: #0b0b15;
+      --card: #141423;
+      --muted: #a3a3b8;
+      --text: #e9e4f7;
+      --primary: #7c4dff;
+      --accent: #9b5cff;
+      --shadow: 0 8px 24px rgba(0,0,0,.25);
+      --chip: rgba(124,77,255,.15);
+      --chipText: #d8d0ff;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Inter", Arial, sans-serif; background: linear-gradient(135deg, #0b0b15 0%, #1a1030 60%, #0b0b15 100%); color: var(--text); }
+    img[alt="decorative"] { display: block; max-width: 100%; height: auto; }
+
+    /* Top navigation / Hero */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      background: linear-gradient(135deg, #1a0b2a 0%, #2a1440 60%, #1a0b2a 100%);
+      padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      box-shadow: inset 0 -1px 0 rgba(255,255,255,.04);
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .brand .logo {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: conic-gradient(from 180deg at 50% 50%, #7c4dff, #9b5cff, #7c4dff);
+      display: inline-block;
+      position: relative;
+    }
+    .brand h1 { font-size: 1.05rem; margin: 0; font-family: Georgia, 'Times New Roman', serif; font-weight: 600; }
+    .brand .tag { color: var(--muted); font-size: .9rem; }
+
+    .toolbar { display: flex; gap: 8px; align-items: center; }
+
+    .btn {
+      background: #2a214c; color: #fff; border: 1px solid rgba(124,77,255,.4);
+      padding: 8px 12px; border-radius: 8px; cursor: pointer;
+      transition: transform .15s ease, background .2s ease;
+    }
+    .btn.primary { background: linear-gradient(135deg, #6f3bd1, #8e59ff); border: none; box-shadow: 0 4px 14px rgba(124,77,255,.4);}
+    .btn.ghost { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); }
+    .btn:focus { outline: 2px solid #fff; outline-offset: 2px; }
+    .btn:active { transform: translateY(1px); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 16px;
+      padding: 16px;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(20,20,35,.95), rgba(20,20,35,.8));
+      border: 1px solid rgba(124,77,255,.25);
+      border-radius: 14px; padding: 14px;
+      box-shadow: var(--shadow);
+      min-height: 420px;
+    }
+
+    .panel h2 { margin: 0 0 8px; font-family: Georgia, serif; font-size: 1.05rem; }
+
+    .section { margin-bottom: 14px; }
+
+    label { font-size: .85rem; color: #ddd; display: block; margin: 6px 0 4px; }
+
+    .field { display: flex; gap: 6px; align-items: center; }
+
+    input[type="text"], input[type="number"], input[type="email"], select, textarea {
+      width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,.2);
+      background: rgba(0,0,0,.25); color: #fff;
+    }
+    textarea { resize: vertical; min-height: 72px; }
+
+    .filters { display: flex; flex-direction: column; gap: 10px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      padding: 6px 10px; border-radius: 999px; font-size: .85rem; border: 1px solid rgba(255,255,255,.25);
+      background: var(--chip); color: var(--chipText); cursor: pointer;
+    }
+    .chip.active { background: #7c4dff; color: #fff; border-color: #ffdfff; }
+
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+      align-items: stretch;
+      min-height: 420px;
+    }
+
+    .card {
+      background: #141423; border-radius: 12px; overflow: hidden;
+      display: flex; flex-direction: column; box-shadow: 0 6px 14px rgba(0,0,0,.25);
+      border: 1px solid rgba(124,77,255,.25);
+      transition: transform .2s ease;
+    }
+    .card:hover { transform: translateY(-2px); }
+
+    .card-media {
+      height: 140px; background: #111; position: relative; display: grid; place-items: center;
+    }
+    .card-media .emoji {
+      font-size: 42px; filter: drop-shadow(0 2px 2px rgba(0,0,0,.4));
+      transition: opacity .4s ease;
+    }
+    .card-media img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .skeleton { background: #222; height: 100%; width: 100%; animation: pulse 1.2s ease-in-out infinite; }
+    @keyframes pulse { 0%{opacity:.6} 50%{opacity:1} 100%{opacity:.6} }
+
+    .card-body { padding: 12px; display: grid; gap: 6px; }
+    .card-title { font-weight: 600; font-family: Georgia, serif; font-size: 1rem; }
+    .card-sub { color: var(--muted); font-size: .85rem; }
+
+    .card-actions { display: flex; justify-content: space-between; padding: 0 12px 12px; gap: 8px; }
+
+    .inline { display: inline-flex; gap: 6px; align-items: center; }
+
+    /* Detail modal */
+    .modal {
+      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,.6); padding: 20px;
+    }
+    .modal[aria-hidden="false"] { display: flex; }
+    .modal-content {
+      width: min(860px, 92vw); max-height: 86vh; overflow: auto;
+      background: #0e0b1a; border-radius: 12px; padding: 16px;
+      border: 1px solid rgba(124,77,255,.4);
+      box-shadow: 0 12px 40px rgba(0,0,0,.6);
+    }
+    .modal-header { display:flex; justify-content: space-between; align-items: center; gap: 8px; padding-bottom: 6px; border-bottom:1px solid rgba(255,255,255,.08); }
+    .modal-body { padding: 8px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-close { background: transparent; border: none; color: #fff; font-size: 1.1rem; cursor: pointer; }
+
+    /* Admin tabs */
+    .admin { margin-top: 18px; }
+    .tabs { display: flex; gap: 8px; border-bottom: 1px solid rgba(255,255,255,.1); padding: 0 2px; }
+    .tab { padding: 8px 12px; cursor: pointer; border-radius: 8px 8px 0 0; border: 1px solid transparent; }
+    .tab.active { background: rgba(124,77,255,.25); border-color: rgba(124,77,255,.5); }
+    .admin-panel { padding: 12px; border: 1px solid rgba(124,77,255,.5); border-top: none; border-radius: 0 8px 8px 8px; background: rgba(9,6,20,.6); }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+    .col { display: grid; gap: 8px; }
+
+    .help { color: var(--muted); font-size: .85rem; }
+
+    .footer { text-align: center; padding: 18px; color: #aaa; font-size: .86rem; }
+
+    @media (max-width: 980px){
+      .layout { grid-template-columns: 1fr; padding: 8px; }
+      .panel { order: 2; }
+      .admin { order: 3; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar" aria-label="Main navigation">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <div>
+        <h1>AutoFlow Dealer Showroom</h1>
+        <span class="tag" aria-live="polite">Emoji-first catalog • Unsplash-like visuals (inline)</span>
+      </div>
+    </div>
+    <div class="toolbar" role="navigation" aria-label="Quick actions">
+      <button class="btn ghost" id="exportBtn" title="Export database to db.json">Export DB</button>
+      <button class="btn ghost" id="importBtn" title="Import database from db.json">Import DB</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none" />
+      <button class="btn primary" id="openAdmin" title="Open admin panel">Admin Panel</button>
+    </div>
+  </header>
+
+  <main class="layout" aria-label="Showroom and filters">
+    <!-- Left: Filters -->
+    <section class="panel filters" aria-label="Filters" id="filtersPanel">
+      <h2>Filters</h2>
+
+      <div class="section" aria-label="Search cars">
+        <label for="search">Search by make, model, or VIN</label>
+        <div class="field">
+          <input type="text" id="search" placeholder="e.g., Civic, Camry, 1A2B..." />
+        </div>
+      </div>
+
+      <div class="section" aria-label="Make filter">
+        <label>Make</label>
+        <div class="chips" id="makeChips"></div>
+      </div>
+
+      <div class="section" aria-label="Body type filter">
+        <label>Body type</label>
+        <div class="chips" id="bodyChips"></div>
+      </div>
+
+      <div class="section" aria-label="Fuel filter">
+        <label>Fuel</label>
+        <div class="chips" id="fuelChips"></div>
+      </div>
+
+      <div class="section" aria-label="Transmission filter">
+        <label>Transmission</label>
+        <div class="chips" id="transChips"></div>
+      </div>
+
+      <div class="section" aria-label="Color filter">
+        <label>Color</label>
+        <div class="chips" id="colorChips"></div>
+      </div>
+
+      <div class="section help" aria-live="polite">
+        Tip: Use filters to narrow the catalog. All changes persist to the in-page JSON datastore.
+      </div>
+    </section>
+
+    <!-- Right: Showroom grid -->
+    <section class="panel showroom" aria-label="Car showroom">
+      <div class="row" style="align-items: center; margin-bottom: 6px;">
+        <div class="inline" aria-label="Showroom status">
+          <span id="resultCount" style="font-weight:600">0</span> cars
+        </div>
+        <div class="inline" style="justify-content:flex-end;">
+          <span class="help" style="margin-right:6px;">Search</span>
+          <select id="sort" aria-label="Sort results" class="btn ghost" style="padding:6px 10px;">
+            <option value="year-asc">Year: oldest</option>
+            <option value="year-desc" selected>Year: newest</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid" id="carGrid" aria-label="Car grid">
+        <!-- Cards injected here -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Admin Panel (hidden initially) -->
+  <section class="panel admin" id="adminPanel" aria-label="Admin panel" style="display:none;">
+    <div class="tabs" role="tablist" aria-label="Admin tabs">
+      <button class="tab active" data-tab="cars" role="tab" aria-selected="true">Cars</button>
+      <button class="tab" data-tab="sellers" role="tab" aria-selected="false">Sellers</button>
+    </div>
+    <div class="admin-panel" id="adminCars" aria-labelledby="carsTab" role="region">
+      <h3 style="margin:0 0 8px 0;">Cars (CRUD)</h3>
+
+      <form id="carForm" class="row" aria-label="Add car">
+        <div class="col">
+          <label for="carMake">Make</label>
+          <input type="text" id="carMake" required />
+        </div>
+        <div class="col">
+          <label for="carModel">Model</label>
+          <input type="text" id="carModel" required />
+        </div>
+        <div class="col">
+          <label for="carYear">Year</label>
+          <input type="number" id="carYear" min="1980" max="2100" required />
+        </div>
+        <div class="col">
+          <label for="carPrice">Price</label>
+          <input type="number" id="carPrice" required />
+        </div>
+        <div class="col">
+          <label for="carSeller">Seller</label>
+          <select id="carSeller" required></select>
+        </div>
+        <div class="col">
+          <label for="carVin">VIN (optional, unique)</label>
+          <input type="text" id="carVin" />
+        </div>
+      </form>
+
+      <div class="row" style="margin-top:8px;">
+        <div class="col">
+          <label for="carBody">Body</label>
+          <input type="text" id="carBody" />
+        </div>
+        <div class="col">
+          <label for="carFuel">Fuel</label>
+          <input type="text" id="carFuel" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:8px;">
+        <div class="col">
+          <label for="carTrans">Transmission</label>
+          <input type="text" id="carTrans" />
+        </div>
+        <div class="col">
+          <label for="carColor">Color</label>
+          <input type="text" id="carColor" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:8px;">
+        <div class="col">
+          <label for="carEmoji">Emoji</label>
+          <input type="text" id="carEmoji" value="🚗" />
+        </div>
+        <div class="col">
+          <label for="carQuery">Unsplash-like Query</label>
+          <input type="text" id="carQuery" value="car" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:8px;">
+        <div class="col">
+          <label for="carDesc">Description</label>
+          <textarea id="carDesc" placeholder="Optional description"></textarea>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:8px; align-items:end;">
+        <div class="col">
+          <button class="btn primary" id="addCarBtn" type="button">Add Car</button>
+        </div>
+        <div class="col" style="align-self:center;">
+          <span class="help" id="carFormHelp"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-panel" id="adminSellers" aria-labelledby="sellersTab" role="region" style="display:none;">
+      <h3 style="margin:0 0 8px 0;">Sellers (CRUD)</h3>
+
+      <form id="sellerForm" class="row" aria-label="Add seller">
+        <div class="col">
+          <label for="sellerName">Name</label>
+          <input type="text" id="sellerName" required />
+        </div>
+        <div class="col">
+          <label for="sellerEmail">Email</label>
+          <input type="email" id="sellerEmail" required />
+        </div>
+        <div class="col">
+          <label for="sellerPhone">Phone</label>
+          <input type="text" id="sellerPhone" />
+        </div>
+        <div class="col">
+          <label for="sellerAddress">Address</label>
+          <input type="text" id="sellerAddress" />
+        </div>
+      </form>
+
+      <div class="row" style="margin-top:8px;">
+        <div class="col">
+          <button class="btn primary" id="addSellerBtn" type="button">Add Seller</button>
+        </div>
+        <div class="col" style="align-self:center;">
+          <span class="help" id="sellerFormHelp"></span>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <strong>Current Sellers</strong>
+        <ul id="sellerList" style="padding-left:20px; margin:6px 0 0 0; color:#ddd;"></ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" aria-label="Footer">
+    <span>AutoFlow Demo • Local-only persistence (db.json downloadable) • Accessible, responsive UI</span>
+  </footer>
+
+  <!-- Detail modal -->
+  <div id="detailModal" class="modal" aria-hidden="true" role="dialog" aria-label="Car details">
+    <div class="modal-content" tabindex="-1">
+      <div class="modal-header">
+        <strong id="modalTitle">Car Details</strong>
+        <button class="modal-close" aria-label="Close" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- dynamic details -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Skeleton loader and helpers -->
+  <div id="toast" role="status" aria-live="polite" style="position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); background: rgba(0,0,0,.7); color:#fff; padding:8px 12px; border-radius: 8px; display:none;"></div>
+
+  <script>
+/*
+  AutoFlow Dealer Showroom — Minimal SPA with in-page JSON datastore (mock API)
+  - In-memory CRUD for Cars and Sellers
+  - Persist to localStorage (simulated db.json)
+  - Import/Export JSON (db.json) to/from the in-page datastore
+  - Emoji-first visuals, swapped to inline generated "Unsplash-like" images (data URLs)
+  - Responsive layout, modal detail view, admin panel with CRUD, debounced search, filters
+  - All operations async and AJAX-like via a small Api facade
+*/
+
+// Utility
+(() => {
+  const now = () => new Date().toISOString();
+  const id = () => (window.crypto?.randomUUID ? crypto.randomUUID() : 'id-' + Math.random().toString(36).slice(2, 9));
+
+  // Simple data URL image generator to simulate Unsplash-like imagery (inline, no external assets)
+  function placeholderImage(query) {
+    // Hash hue from query
+    let h = 0;
+    for (let i = 0; i < query.length; i++) h = (h * 31 + query.charCodeAt(i)) % 360;
+    const hue = h;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800">
+      <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="hsl(${hue},70%,60%)" offset="0"/><stop stop-color="hsl(${(hue+60)%360},70%,45%)" offset="1"/>
+      </linearGradient></defs>
+      <rect width="100%" height="100%" fill="url(#g)"/>
+      <text x="50%" y="52%" font-family="Arial, sans-serif" font-size="60" text-anchor="middle" fill="white" opacity=".92">AutoFlow • ${query}</text>
+    </svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+
+  // Simple toast
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.style.display = 'none', 1800);
+  }
+
+  // Debounce
+  function debounce(fn, ms) {
+    let t;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(null, args), ms); };
+  }
+
+  // Local JSON datastore persistence (simulated db.json)
+  const STORAGE_KEY = 'autoflow_db_v1';
+  const seedSellers = [
+    { id: id(), name: 'Nova Motors', email: 'contact@novamotors.local', phone: '555-0101', address: '123 Elm Street', createdAt: now(), updatedAt: now() },
+    { id: id(), name: 'Aurora Autohaus', email: 'sales@aurora.local', phone: '555-0202', address: '42 Ocean Ave', createdAt: now(), updatedAt: now() },
+  ];
+  const seedCars = [
+    { id: id(), sellerId: seedSellers[0].id, make: 'Toyota', model: 'Camry', year: 2020, price: 23999, mileage: 42000, bodyType: 'Sedan', fuel: 'Gasoline', transmission: 'Automatic', color: 'Midnight Blue', emoji: '🚗', unsplashQuery: 'blue car', imageUrl: '', popularity: 64, vin: '1A1B2C3D4E5F6G7H8', description: 'Reliable mid-size sedan with excellent fuel economy.', createdAt: now(), updatedAt: now() },
+    { id: id(), sellerId: seedSellers[1].id, make: 'Honda', model: 'Civic', year: 2021, price: 21999, mileage: 22000, bodyType: 'Coupe', fuel: 'Gasoline', transmission: 'Automatic', color: 'Red', emoji: '🚘', unsplashQuery: 'red sports car', imageUrl: '', popularity: 77, vin: '2B2C3D4E5F6G7H8I9', description: 'Sporty hatch with impressive handling.', createdAt: now(), updatedAt: now() },
+    { id: id(), sellerId: seedSellers[0].id, make: 'Subaru', model: 'Outback', year: 2019, price: 28999, mileage: 54000, bodyType: 'Wagon', fuel: 'Gasoline', transmission: 'Automatic', color: 'Forest Green', emoji: '🚙', unsplashQuery: 'green suv', imageUrl: '', popularity: 60, vin: '3C3D4E5F6G7H8I9J0', description: 'All-wheel drive with ample cargo space.', createdAt: now(), updatedAt: now() },
+    { id: id(), sellerId: seedSellers[1].id, make: 'Ford', model: 'Escape', year: 2022, price: 31999, mileage: 8000, bodyType: 'SUV', fuel: 'Gasoline', transmission: 'Automatic', color: 'Pearl', emoji: '🛻', unsplashQuery: 'white SUV', imageUrl: '', popularity: 90, vin: '4D4E5F6G7H8I9J0K1', description: 'Compact SUV with modern tech.', createdAt: now(), updatedAt: now() },
+    { id: id(), sellerId: seedSellers[0].id, make: 'Mazda', model: '3', year: 2018, price: 14999, mileage: 76000, bodyType: 'Sedan', fuel: 'Gasoline', transmission: 'Automatic', color: 'Silver', emoji: '🚗', unsplashQuery: 'silver sedan', imageUrl: '', popularity: 42, vin: '5E5F6G7H8I9J0K2L', description: 'Compact sedan with refined design.', createdAt: now(), updatedAt: now() }
+  ];
+
+  // In-memory DB + utility
+  let db = { sellers: [], cars: [] };
+
+  // Load DB from localStorage or seed
+  function loadDb() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // basic sanity
+        if (Array.isArray(parsed.sellers) && Array.isArray(parsed.cars)) {
+          db = parsed;
+          return;
+        }
+      }
+    } catch(e) { /* ignore */ }
+    // seed
+    db.sellers = seedSellers.map(s => ({...s}));
+    db.cars = seedCars.map(c => ({...c}));
+    persist();
+  }
+
+  function persist() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); } catch(e) { /* ignore */ }
+  }
+
+  // Generate "blueprint" for initial UI options
+  function unique(attribute) {
+    const s = new Set();
+    (db.cars || []).forEach(c => s.add((c[attribute] ?? '').toString()));
+    return Array.from(s).filter(x => x !== '');
+  }
+
+  // Mock API with serialized writes
+  class Api {
+    constructor(dbRef) {
+      this.db = dbRef;
+      this.writeQueue = Promise.resolve();
+    }
+    _enqueue(fn) {
+      // ensure writes are serialized
+      this.writeQueue = this.writeQueue.then(() => {
+        return new Promise((resolve, reject) => {
+          try {
+            const res = fn();
+            resolve(res);
+          } catch (e) { reject(e); }
+        });
+      });
+      return this.writeQueue;
+    }
+
+    // Sellers
+    getSellers() { return Promise.resolve(this.db.sellers.map(s => ({...s}))); }
+
+    getSeller(sellerId) {
+      const s = this.db.sellers.find(x => x.id === sellerId);
+      return Promise.resolve(s ? {...s} : null);
+    }
+
+    createSeller(data) {
+      return this._enqueue(() => {
+        // basic validation
+        if (!data.name || !data.email) throw new Error('Name and email are required.');
+        const exists = this.db.sellers.some(s => s.email.toLowerCase() === data.email.toLowerCase());
+        if (exists) return Promise.reject({ status: 409, error: 'Seller with this email already exists.' });
+        const nowt = now();
+        const seller = {
+          id: id(),
+          name: String(data.name).trim(),
+          email: String(data.email).trim(),
+          phone: data.phone ? String(data.phone).trim() : '',
+          address: data.address ? String(data.address).trim() : '',
+          createdAt: nowt,
+          updatedAt: nowt
+        };
+        this.db.sellers.push(seller);
+        persist();
+        return seller;
+      });
+    }
+
+    updateSeller(idVal, data) {
+      return this._enqueue(() => {
+        const idx = this.db.sellers.findIndex(s => s.id === idVal);
+        if (idx < 0) return Promise.reject({ status: 404, error: 'Seller not found.' });
+        const seller = this.db.sellers[idx];
+        if (data.email && data.email !== seller.email) {
+          const exists = this.db.sellers.some(s => s.email.toLowerCase() === String(data.email).toLowerCase());
+          if (exists) return Promise.reject({ status: 409, error: 'Another seller exists with this email.' });
+          seller.email = String(data.email).trim();
+        }
+        if (data.name) seller.name = String(data.name).trim();
+        if (data.phone) seller.phone = String(data.phone).trim();
+        if (data.address) seller.address = String(data.address).trim();
+        seller.updatedAt = now();
+        persist();
+        return {...seller};
+      });
+    }
+
+    deleteSeller(sellerId) {
+      return this._enqueue(() => {
+        // guard: if any car references this seller => 409
+        const hasCars = this.db.cars.some(c => c.sellerId === sellerId);
+        if (hasCars) return Promise.reject({ status: 409, error: 'Cannot delete seller with associated cars.' });
+        const idx = this.db.sellers.findIndex(s => s.id === sellerId);
+        if (idx < 0) return Promise.reject({ status: 404, error: 'Seller not found.' });
+        this.db.sellers.splice(idx, 1);
+        persist();
+        return true;
+      });
+    }
+
+    // Cars
+    getCars(params = {}) {
+      // support filtering, search, sort, paging
+      let items = this.db.cars.map(c => ({...c}));
+      const q = (params.search || '').toLowerCase().trim();
+      if (q) {
+        items = items.filter(c =>
+          [c.make, c.model, c.bodyType, c.fuel, c.transmission, c.color, c.vin]
+            .filter(Boolean).join(' ').toLowerCase().includes(q)
+        );
+      }
+      // filter by seller
+      if (params.sellerId) items = items.filter(c => c.sellerId === params.sellerId);
+      // simple sorts
+      if (params.sort) {
+        const s = params.sort;
+        if (s === 'year-asc') items.sort((a,b) => a.year - b.year);
+        if (s === 'year-desc') items.sort((a,b) => b.year - a.year);
+        if (s === 'price-asc') items.sort((a,b) => a.price - b.price);
+        if (s === 'price-desc') items.sort((a,b) => b.price - a.price);
+      }
+      const total = items.length;
+      const pageSize = Math.max(6, Math.min(24, Number(params.pageSize) || 12));
+      const page = Math.max(1, Number(params.page) || 1);
+      const start = (page - 1) * pageSize;
+      const paged = items.slice(start, start + pageSize);
+      // map to simple DTOs
+      return Promise.resolve({ items: paged.map(c => ({...c})), total, page, pageSize });
+    }
+
+    getCar(idVal) {
+      const c = this.db.cars.find(c => c.id === idVal);
+      return c ? Promise.resolve({ ...c }) : Promise.resolve(null);
+    }
+
+    createCar(data) {
+      return this._enqueue(() => {
+        // validations
+        const { sellerId, make, model, year, price } = data;
+        if (!sellerId || !make || !model || year == null || price == null) {
+          return Promise.reject({ status: 400, error: 'Missing required car fields.' });
+        }
+        const seller = this.db.sellers.find(s => s.id === sellerId);
+        if (!seller) return Promise.reject({ status: 400, error: 'Invalid seller.' });
+        // year constraints
+        const currentYear = new Date().getFullYear();
+        if (Number(year) < 1980 || Number(year) > currentYear + 1) {
+          return Promise.reject({ status: 400, error: 'Year out of allowed range.' });
+        }
+        // VIN unique if provided
+        if (data.vin) {
+          const exists = this.db.cars.some(c => c.vin && c.vin.toLowerCase() === String(data.vin).toLowerCase());
+          if (exists) return Promise.reject({ status: 409, error: 'VIN already exists.' });
+        }
+        const nowt = now();
+        const car = {
+          id: id(),
+          sellerId,
+          make: String(make).trim(),
+          model: String(model).trim(),
+          year: Number(year),
+          price: Number(price),
+          mileage: Number(data.mileage || 0),
+          bodyType: data.bodyType ? String(data.bodyType).trim() : '',
+          fuel: data.fuel ? String(data.fuel).trim() : '',
+          transmission: data.transmission ? String(data.transmission).trim() : '',
+          color: data.color ? String(data.color).trim() : '',
+          emoji: data.emoji || '🚗',
+          unsplashQuery: data.unsplashQuery || 'car',
+          imageUrl: '', // will generate inline
+          popularity: Number(data.popularity || 0),
+          vin: data.vin ? String(data.vin).trim() : '',
+          description: data.description ? String(data.description).trim() : '',
+          createdAt: nowt,
+          updatedAt: nowt
+        };
+        // initial image URL
+        car.imageUrl = placeholderImage(car.unsplashQuery);
+        this.db.cars.push(car);
+        persist();
+        return {...car};
+      });
+    }
+
+    updateCar(idVal, data) {
+      return this._enqueue(() => {
+        const c = this.db.cars.find(x => x.id === idVal);
+        if (!c) return Promise.reject({ status: 404, error: 'Car not found.' });
+        // sellerId check
+        if (data.sellerId) {
+          const seller = this.db.sellers.find(s => s.id === data.sellerId);
+          if (!seller) return Promise.reject({ status: 400, error: 'Invalid seller.' });
+          c.sellerId = data.sellerId;
+        }
+        if (data.make) c.make = String(data.make).trim();
+        if (data.model) c.model = String(data.model).trim();
+        if (data.year != null) {
+          const y = Number(data.year);
+          const currentYear = new Date().getFullYear();
+          if (y < 1980 || y > currentYear + 1) return Promise.reject({ status: 400, error: 'Year out of range.' });
+          c.year = y;
+        }
+        if (data.price != null) c.price = Number(data.price);
+        if (data.mileage != null) c.mileage = Number(data.mileage);
+        if (data.bodyType != null) c.bodyType = String(data.bodyType).trim();
+        if (data.fuel != null) c.fuel = String(data.fuel).trim();
+        if (data.transmission != null) c.transmission = String(data.transmission).trim();
+        if (data.color != null) c.color = String(data.color).trim();
+        if (data.emoji != null) c.emoji = String(data.emoji);
+        if (data.unsplashQuery != null) {
+          c.unsplashQuery = String(data.unsplashQuery);
+          // refresh image
+          c.imageUrl = placeholderImage(c.unsplashQuery);
+        }
+        if (data.vin != null) {
+          const vin = data.vin ? String(data.vin).trim() : '';
+          if (vin) {
+            const exists = this.db.cars.some(x => x.id !== c.id && x.vin === vin);
+            if (exists) return Promise.reject({ status: 409, error: 'VIN already exists.' });
+            c.vin = vin;
+          } else {
+            c.vin = '';
+          }
+        }
+        if (data.description != null) c.description = String(data.description).trim();
+        if (data.popularity != null) c.popularity = Number(data.popularity);
+        c.updatedAt = now();
+        persist();
+        return {...c};
+      });
+    }
+
+    deleteCar(carId) {
+      return this._enqueue(() => {
+        const idx = this.db.cars.findIndex(c => c.id === carId);
+        if (idx < 0) return Promise.reject({ status: 404, error: 'Car not found.' });
+        this.db.cars.splice(idx, 1);
+        persist();
+        return true;
+      });
+    }
+  }
+
+  // Initialize DB
+  loadDb();
+  const api = new Api(db);
+
+  // UI helpers
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+  // Elements
+  const carGrid = $('#carGrid');
+  const resultCount = $('#resultCount');
+  const searchInput = $('#search');
+  const sortSelect = $('#sort');
+  const exportBtn = $('#exportBtn');
+  const importBtn = $('#importBtn');
+  const importFile = $('#importFile');
+  const adminPanelBtn = $('#openAdmin');
+  const adminPanel = document.getElementById('adminPanel');
+  const adminTabs = $$('#adminPanel .tab');
+  const adminCarsPanel = $('#adminCars');
+  const adminSellersPanel = $('#adminSellers');
+  const sellerList = $('#sellerList');
+  const carFormHelp = $('#carFormHelp');
+  const sellerFormHelp = $('#sellerFormHelp');
+  const addCarBtn = $('#addCarBtn');
+  const addSellerBtn = $('#addSellerBtn');
+  const sellerNameInput = $('#sellerName');
+  const sellerEmailInput = $('#sellerEmail');
+  const sellerPhoneInput = $('#sellerPhone');
+  const sellerAddressInput = $('#sellerAddress');
+  const carMakeInput = $('#carMake');
+  const carModelInput = $('#carModel');
+  const carYearInput = $('#carYear');
+  const carPriceInput = $('#carPrice');
+  const carSellerSelect = $('#carSeller');
+  const carVinInput = $('#carVin');
+  const carBodyInput = $('#carBody');
+  const carFuelInput = $('#carFuel');
+  const carTransInput = $('#carTrans');
+  const carColorInput = $('#carColor');
+  const carEmojiInput = $('#carEmoji');
+  const carQueryInput = $('#carQuery');
+  const carDescInput = $('#carDesc');
+
+  // Build seller options
+  function refreshSellerOptions() {
+    const sellers = db.sellers;
+    carSellerSelect.innerHTML = '';
+    sellers.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = s.name;
+      carSellerSelect.appendChild(opt);
+    });
+  }
+
+  // Render sellers in admin
+  function renderSellerList() {
+    sellerList.innerHTML = '';
+    db.sellers.forEach(s => {
+      const li = document.createElement('li');
+      li.textContent = `${s.name} (${s.email})`;
+      const del = document.createElement('button');
+      del.textContent = 'Delete';
+      del.className = 'btn ghost';
+      del.style.marginLeft = '6px';
+      del.addEventListener('click', async () => {
+        if (confirm(`Delete seller ${s.name}?`)) {
+          try {
+            await api.deleteSeller(s.id);
+            renderAll();
+            toast('Seller deleted.');
+          } catch (e) {
+            toast((e?.error) || 'Delete failed.');
+          }
+        }
+      });
+      li.appendChild(del);
+      sellerList.appendChild(li);
+    });
+  }
+
+  // Render a car card
+  function renderCarCard(c) {
+    const seller = db.sellers.find(s => s.id === c.sellerId);
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.setAttribute('data-id', c.id);
+    // image area
+    const media = document.createElement('div');
+    media.className = 'card-media';
+    // skeleton while "loading"
+    const skeleton = document.createElement('div');
+    skeleton.className = 'skeleton';
+    skeleton.style.height = '100%';
+    skeleton.style.width = '100%';
+    media.appendChild(skeleton);
+
+    // emoji overlay (initial)
+    const emoji = document.createElement('div');
+    emoji.className = 'emoji';
+    emoji.textContent = c.emoji || '🚗';
+    media.appendChild(emoji);
+
+    // actual image (data URL)
+    const img = document.createElement('img');
+    img.alt = `${c.make} ${c.model} image`;
+    // Simulate "image load" after a short delay
+    const imgUrl = c.imageUrl || placeholderImage(c.unsplashQuery);
+    img.src = imgUrl;
+    img.addEventListener('load', () => {
+      // swap: hide emoji, show image
+      emoji.style.opacity = '0';
+      setTimeout(() => {
+        emoji.style.display = 'none';
+        img.style.display = 'block';
+        skeleton.style.display = 'none';
+      }, 120);
+    }, { once: true });
+    // Fallback if image fails
+    img.addEventListener('error', () => {
+      emoji.style.display = 'block';
+      img.style.display = 'none';
+      skeleton.style.display = 'none';
+    }, { once: true });
+    media.appendChild(img);
+
+    // body
+    const body = document.createElement('div');
+    body.className = 'card-body';
+    const title = document.createElement('div');
+    title.className = 'card-title';
+    title.textContent = `${c.year} ${c.make} ${c.model}`;
+    const sub = document.createElement('div');
+    sub.className = 'card-sub';
+    sub.textContent = `Price ${c.price.toLocaleString()} • ${c.mileage.toLocaleString()} mi • ${seller?.name ?? 'Unknown Seller'}`;
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+    const viewBtn = document.createElement('button');
+    viewBtn.className = 'btn';
+    viewBtn.textContent = 'View';
+    viewBtn.addEventListener('click', () => openModalForCar(c.id));
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn ghost';
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => openEditCar(c.id));
+
+    actions.appendChild(viewBtn);
+    actions.appendChild(editBtn);
+
+    body.appendChild(title);
+    body.appendChild(sub);
+    body.appendChild(actions);
+
+    card.appendChild(media);
+    card.appendChild(body);
+
+    return card;
+  }
+
+  function renderCarGrid(items) {
+    carGrid.innerHTML = '';
+    if (!items.length) {
+      const empty = document.createElement('div');
+      empty.style.gridColumn = '1 / -1';
+      empty.style.textAlign = 'center';
+      empty.style.padding = '40px';
+      empty.innerHTML = '<strong>No cars match your filters</strong><div class="help">Try clearing filters or adding new cars in Admin.</div>';
+      carGrid.appendChild(empty);
+      resultCount.textContent = '0';
+      return;
+    }
+    items.forEach(c => carGrid.appendChild(renderCarCard(c)));
+    resultCount.textContent = items.length;
+  }
+
+  // Open detail modal
+  function openModalForCar(carId) {
+    api.getCar(carId).then(car => {
+      if (!car) return;
+      const modal = $('#detailModal');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+      const seller = db.sellers.find(s => s.id === car.sellerId);
+
+      title.textContent = `${car.year} ${car.make} ${car.model} — Details`;
+      body.innerHTML = `
+        <div style="padding:6px 0;">
+          <div><strong>Seller:</strong> ${seller?.name ?? 'Unknown'}</div>
+          <div><strong>Price:</strong> $${car.price.toLocaleString()}</div>
+          <div><strong>Mileage:</strong> ${car.mileage.toLocaleString()} miles</div>
+          <div><strong>Body:</strong> ${car.bodyType}</div>
+          <div><strong>Fuel:</strong> ${car.fuel}</div>
+          <div><strong>Transmission:</strong> ${car.transmission}</div>
+          <div><strong>Color:</strong> ${car.color}</div>
+          <div><strong>VIN:</strong> ${car.vin || 'N/A'}</div>
+        </div>
+        <div style="padding:6px 0;">
+          <p>${car.description || ''}</p>
+        </div>
+      `;
+      modal.setAttribute('aria-hidden', 'false');
+      modal.style.display = 'flex';
+      // focus trap
+      const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusable.length) focusable[0].focus();
+    });
+  }
+
+  function closeModal() {
+    const modal = $('#detailModal');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.style.display = 'none';
+  }
+
+  document.addEventListener('keydown', (e) => {
+    const modal = $('#detailModal');
+    if (e.key === 'Escape' && modal.style.display === 'flex') {
+      closeModal();
+    }
+  });
+  $('#closeModal').addEventListener('click', closeModal);
+  $('#detailModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+
+  // Admin: switch tabs
+  adminTabs.forEach(t => t.addEventListener('click', () => {
+    adminTabs.forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const tab = t.getAttribute('data-tab');
+    if (tab === 'cars') {
+      adminCarsPanel.style.display = '';
+      adminSellersPanel.style.display = 'none';
+    } else {
+      adminCarsPanel.style.display = 'none';
+      adminSellersPanel.style.display = '';
+    }
+  }));
+
+  // Open admin panel
+  adminPanelBtn.addEventListener('click', () => {
+    adminPanel.style.display = '';
+    // show Cars by default
+    adminTabs[0].classList.add('active');
+    adminTabs[1].classList.remove('active');
+    adminCarsPanel.style.display = '';
+    adminSellersPanel.style.display = 'none';
+    // focus
+    document.querySelector('#adminPanel').focus({ preventScroll: true });
+  });
+
+  // Admin: Add Car
+  addCarBtn.addEventListener('click', async () => {
+    const data = {
+      sellerId: carSellerSelect.value,
+      make: carMakeInput.value,
+      model: carModelInput.value,
+      year: Number(carYearInput.value),
+      price: Number(carPriceInput.value),
+      mileage: Number(0),
+      bodyType: carBodyInput.value,
+      fuel: carFuelInput.value,
+      transmission: carTransInput.value,
+      color: carColorInput.value,
+      emoji: carEmojiInput.value || '🚗',
+      unsplashQuery: carQueryInput.value,
+      vin: carVinInput.value,
+      description: carDescInput.value,
+      popularity: 0
+    };
+    // simple required fields validation
+    if (!data.sellerId || !data.make || !data.model || !data.year || !data.price) {
+      carFormHelp.textContent = 'Please fill required fields: Seller, Make, Model, Year, Price';
+      return;
+    }
+    carFormHelp.textContent = '';
+    try {
+      const created = await api.createCar(data);
+      renderAll();
+      toast('Car added.');
+      // reset
+      document.getElementById('carForm').reset();
+    } catch (e) {
+      toast((e?.error) || 'Failed to add car.');
+    }
+  });
+
+  // Admin: Add Seller
+  addSellerBtn.addEventListener('click', async () => {
+    const data = {
+      name: sellerNameInput.value,
+      email: sellerEmailInput.value,
+      phone: sellerPhoneInput.value,
+      address: sellerAddressInput.value
+    };
+    if (!data.name || !data.email) {
+      sellerFormHelp.textContent = 'Name and Email required';
+      return;
+    }
+    try {
+      const res = await api.createSeller(data);
+      renderAll();
+      toast('Seller added.');
+      sellerNameInput.value = '';
+      sellerEmailInput.value = '';
+      sellerPhoneInput.value = '';
+      sellerAddressInput.value = '';
+    } catch (e) {
+      toast((e?.error) || 'Failed to add seller.');
+    }
+  });
+
+  // Import / Export DB (simulated)
+  exportBtn.addEventListener('click', () => {
+    // prepare a copy
+    const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'db.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    toast('DB exported as db.json');
+  });
+
+  importBtn.addEventListener('click', () => {
+    importFile.value = '';
+    importFile.click();
+  });
+
+  importFile.addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      if (!parsed.sellers || !Array.isArray(parsed.sellers) || !parsed.cars || !Array.isArray(parsed.cars)) {
+        throw new Error('Invalid db.json format');
+      }
+      db = { sellers: parsed.sellers, cars: parsed.cars };
+      persist();
+      refreshAllUI();
+      toast('DB imported successfully');
+    } catch (err) {
+      toast('Import failed: invalid db.json');
+    }
+  });
+
+  // Debounced search
+  const debouncedSearch = debounce(() => {
+    renderAll();
+  }, 250);
+  searchInput.addEventListener('input', (e) => {
+    debouncedSearch();
+  });
+
+  // Filtering helpers
+  function collectFilters() {
+    const result = {
+      search: searchInput.value || '',
+      sort: sortSelect.value,
+      page: 1,
+      pageSize: 12
+    };
+    return result;
+  }
+
+  // Build filter chips
+  function renderChips(container, options, activeSet, formatter) {
+    container.innerHTML = '';
+    options.forEach(opt => {
+      const c = document.createElement('button');
+      c.className = 'chip';
+      c.textContent = formatter ? formatter(opt) : opt;
+      c.addEventListener('click', () => {
+        if (activeSet.has(opt)) {
+          activeSet.delete(opt);
+          c.classList.remove('active');
+        } else {
+          activeSet.add(opt);
+          c.classList.add('active');
+        }
+        renderAll();
+      });
+      container.appendChild(c);
+    });
+  }
+
+  // Platform: left chips based on data
+  function renderFilters() {
+    renderChips($('#makeChips'), unique('make'), new Set(), x => x);
+    renderChips($('#bodyChips'), unique('bodyType'), new Set(), x => x);
+    renderChips($('#fuelChips'), unique('fuel'), new Set(), x => x);
+    renderChips($('#transChips'), unique('transmission'), new Set(), x => x);
+    renderChips($('#colorChips'), unique('color'), new Set(), x => x);
+  }
+
+  // Apply filters to showCars
+  function applyFiltersAndRender() {
+    // We'll fetch via API with filters
+    const search = searchInput.value || '';
+    const page = 1;
+    const pageSize = 12;
+    const params = { search, sort: sortSelect.value, page, pageSize };
+    // naive: use API getCars with only search/sort
+    const result = api.getCars(params);
+    // render after promise
+    result.then(({ items }) => {
+      // display
+      renderCarGrid(items);
+    }).catch(() => {
+      renderCarGrid([]);
+    });
+  }
+
+  // Render all (cars + sellers lists)
+  function renderAll() {
+    // Build extended filtered list
+    const search = searchInput.value || '';
+    const params = { search, sort: sortSelect.value, page: 1, pageSize: 9999 };
+    api.getCars(params).then(({ items }) => {
+      renderCarGrid(items);
+    });
+    renderSellerList();
+  }
+
+  function refreshAllUI() {
+    renderFilters();
+    renderAll();
+  }
+
+  // Open edit car (inline in modal-like form)
+  function openEditCar(carId) {
+    api.getCar(carId).then(car => {
+      if (!car) return;
+      // simple prompt-based editing (minimal UI)
+      const newMake = prompt('Edit Make:', car.make);
+      if (newMake == null) return;
+      const newModel = prompt('Edit Model:', car.model);
+      if (newModel == null) return;
+      const data = { make: newMake, model: newModel };
+      api.updateCar(car.id, data).then(() => {
+        renderAll();
+        toast('Car updated.');
+      }).catch(e => {
+        toast(e?.error || 'Update failed.');
+      });
+    });
+  }
+
+  // Initialize makes/filters
+  // Wire initial UI
+  function bootstrapUI() {
+    refreshAllUI();
+    renderFilters();
+  }
+
+  // Bind initial
+  bootstrapUI();
+
+  // Keyboard shortcut to open admin
+  document.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 'a' && (e.metaKey || e.ctrlKey)) {
+      adminPanelBtn.click();
+    }
+  });
+
+  // Public hooks for future extension
+  window.autoflowApi = api;
+
+  // Accessibility niceties: focus management for admin panel toggle
+  adminPanelBtn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') adminPanelBtn.click();
+  });
+
+})();
+  </script>
+
+   
+</body>
+</html>
