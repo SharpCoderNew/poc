@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FloraFlow - Home</title>
+  <meta name="description" content="FloraFlow: a Flora-inspired, Teleflora-inspired mock flower shop with Home, Shop, Product, Cart, Checkout and Account flows."/>
+  <style>
+    :root{
+      --bg: #fefaf7;
+      --card: #ffffff;
+      --text: #1b1b1b;
+      --muted: #5a5a5a;
+      --pink: #f7cbd8;
+      --pink-dark: #e6a9bd;
+      --green: #9bd6a5;
+      --green-dark: #6aa777;
+      --cream: #fff7ea;
+      --shadow: 0 6px 20px rgba(0,0,0,.07);
+      --radius: 14px;
+      --focus: 0 0 0 3px rgba(236, 160, 232, .5);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;}
+    body{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 12px 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.04);
+    }
+    .brand {
+      display:flex; align-items:center; gap:12px;
+      font-weight: 700; font-size: 1.05rem;
+    }
+    .brand .logo {
+      width: 34px; height: 34px; border-radius:8px;
+      background: linear-gradient(135deg, #fbd3e9 0%, #d5f1e0 60%);
+      display:grid; place-items:center; color:#c83b86;
+      box-shadow: inset 0 0 6px rgba(0,0,0,.08);
+    }
+    nav a{
+      color: var(--muted);
+      text-decoration: none; padding: 8px 12px;
+      border-radius: 8px;
+    }
+    nav a.active, nav a:hover{ color: var(--text); background: #fff; border:1px solid #eee; }
+    .header-actions { display:flex; align-items:center; gap:10px; }
+    .btn {
+      padding: 10px 14px; border-radius: 10px;
+      border: 1px solid #e6e6e6; background:#fff;
+      cursor: pointer; font-weight:600;
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, #f7b4c9, #f6a6d4);
+      border: none; color:white;
+    }
+    .btn.ghost { background: transparent; border:1px solid #ddd; }
+    .icon-btn{ position: relative; }
+    .badge {
+      position: absolute; top: -6px; right: -6px;
+      background: #e84393; color:white; border-radius: 999px;
+      padding: 2px 6px; font-size: 11px;
+    }
+
+    main { padding: 20px; max-width:1100px; margin: 0 auto; }
+
+    /* Sections / pages */
+    .page{ display:none; }
+    .page.active{ display:block; }
+
+    /* Hero */
+    .hero {
+      position: relative; overflow:hidden; border-radius: var(--radius);
+      background: linear-gradient(135deg, #ffe7f0 0%, #eaf5ea 60%);
+      padding: 28px; display:flex; gap:20px; align-items: center;
+      min-height: 240px;
+      box-shadow: var(--shadow);
+    }
+    .hero h1{ margin:0 0 6px 0; font-size: 2rem; }
+    .hero p{ margin:0 0 12px 0; color:var(--muted); }
+    .hero .cta{ margin-top:8px; }
+
+    .hero-art{
+      width: 100%; display:flex; justify-content:center; align-items:center;
+    }
+    .hero-art svg{ width: 260px; height: 180px; opacity:.95; }
+
+    /* Grid / Cards */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border-radius: 12px; padding: 12px; box-shadow: var(--shadow);
+      display:flex; flex-direction:column; gap:8px; min-height: 260px;
+    }
+    .card img { width:100%; height: 160px; object-fit: cover; border-radius: 8px; }
+    .card h3{ margin:0; font-size: 1.05rem; }
+    .price{ font-weight: 700; color:#d13b7d; }
+    .muted{ color: var(--muted); font-size: 0.92rem; }
+
+    /* Filters */
+    .filters { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin: 8px 0 12px; }
+    .filters select, .filters input[type="text"]{ padding:8px 10px; border-radius: 8px; border:1px solid #ddd; min-width: 140px; }
+
+    /* Sections: product detail */
+    #product-detail{ padding: 0; display: none; }
+    .detail{ display:grid; grid-template-columns: 1fr 1fr; gap:20px; align-items:start; }
+    .detail img{ width:100%; height:320px; object-fit: cover; border-radius:10px; }
+    .detail h2{ margin:8px 0 6px; }
+    .detail .row{ display:flex; gap:8px; align-items:center; margin:6px 0; }
+    .option{ display:flex; gap:8px; flex-wrap:wrap; }
+    .size{ padding:6px 10px; border-radius:6px; border:1px solid #ddd; cursor:pointer; }
+    .size.active{ background:#f9d9ea; border-color:#e4a4bd; }
+    .qty { display:flex; align-items:center; gap:6px; }
+    .qty button{ width:26px; height:26px; border-radius:6px; border:1px solid #ddd; background:#fff; cursor:pointer; }
+
+    /* Cart Drawer */
+    .cart-drawer {
+      position: fixed; top:0; right:0; height:100%; width: 360px;
+      background: #fff; box-shadow: -6px 0 20px rgba(0,0,0,.08);
+      transform: translateX(100%); transition: transform .25s ease;
+      z-index: 60; display:flex; flex-direction:column;
+    }
+    .cart-drawer.open{ transform: translateX(0); }
+    .cart-head{ padding:12px; border-bottom:1px solid #eee; display:flex; justify-content: space-between; align-items:center; }
+    .cart-items{ flex:1; overflow:auto; padding:12px; display:flex; flex-direction:column; gap:8px; }
+    .cart-item{ display:flex; gap:8px; align-items:center; border:1px solid #eee; padding:6px; border-radius:8px; }
+    .cart-item img{ width:54px; height:54px; object-fit:cover; border-radius:6px; }
+    .cart-total{ padding:12px; border-top:1px solid #eee; display:flex; justify-content: space-between; align-items:center; }
+    .cart-foot{ padding:12px; border-top:1px solid #eee; display:flex; gap:10px; }
+
+    /* Checkout / account sections */
+    form { display:flex; flex-direction:column; gap:12px; }
+    label { font-weight:600; font-size: .92rem; }
+    input, select { padding:10px; border-radius:8px; border:1px solid #ddd; }
+    .section{ padding:14px; border-radius:12px; background:#fff; border:1px solid #eee; }
+
+    /* Footer */
+    footer{ text-align:center; padding:40px 12px; color:var(--muted); }
+
+    /* Responsive tweaks */
+    @media (max-width: 900px){
+      .hero { flex-direction:column; text-align:left; }
+      .detail{ grid-template-columns:1fr; }
+      .cart-drawer{ width:100%; height:60%; bottom:0; top:auto; right:0; transform: translateY(100%); transition: transform .25s ease; }
+      .cart-drawer.open{ transform: translateY(0); }
+    }
+    /* Accessibility */
+    :focus-visible { outline: 3px solid #f4a6d8; outline-offset: 2px; border-radius:6px; }
+  </style>
+</head>
+<body>
+  <header role="navigation" aria-label="Main">
+    <div class="brand" aria-label="FloraFlow brand">
+      <div class="logo" aria-label="FloraFlow logo">FF</div>
+      <span>FloraFlow</span>
+    </div>
+    <nav aria-label="Main navigation">
+      <a href="#/home" class="nav-link" data-page="home">Home</a>
+      <a href="#/shop" class="nav-link" data-page="shop">Shop</a>
+      <a href="#/occasions" class="nav-link" data-page="occasions">Occasions</a>
+      <a href="#/deals" class="nav-link" data-page="deals">Deals</a>
+      <a href="#/account" class="nav-link" data-page="account">Account</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn ghost" id="openCartBtn" aria-label="Open cart">Cart</button>
+      <button class="btn primary" id="shopNowTop" aria-label="Shop now">Shop Now</button>
+    </div>
+  </header>
+
+  <main id="app" aria-label=" FloraFlow main content">
+    <!-- Home Page -->
+    <section id="home" class="page active" aria-label="Home">
+      <div class="hero" role="region" aria-label="Hero banner">
+        <div style="flex:1;">
+          <h1>Welcome to FloraFlow</h1>
+          <p>Elegant, pastel florals for every occasion. Fresh designs, fast delivery, and a love for gifting.</p>
+          <div class="cta">
+            <button class="btn primary" id="shopNowBtn" aria-label="Shop FloraFlow now">Shop the Collection</button>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="Hero art">
+          <!-- Inline floral SVG art placeholder -->
+          <svg viewBox="0 0 400 260" role="img" aria-label="Floral hero" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                <stop stop-color="#ffd7e2"/>
+                <stop offset="1" stop-color="#eaf5ea"/>
+              </linearGradient>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grad)"/>
+            <circle cx="60" cy="60" r="28" fill="#f6a4c6" opacity=".9"/>
+            <circle cx="120" cy="100" r="22" fill="#bde3d9" opacity=".8"/>
+            <text x="180" y="115" font-family="Verdana" font-size="22" fill="#a24e88">FloraFlow</text>
+          </svg>
+        </div>
+      </div>
+
+      <section class="section" aria-label="Deal of the Day" style="margin-top:14px;">
+        <h2 style="margin:0 0 8px 0;">Deal of the Day</h2>
+        <div class="grid" id="dealOfDay" aria-label="Deal of the Day grid" style="grid-template-columns:1fr;">
+          <!-- dynamically filled -->
+        </div>
+      </section>
+
+      <section class="section" aria-label="Shop by Occasion" style="margin-top:14px;">
+        <h2 style="margin:0 0 8px 0;">Shop by Occasion</h2>
+        <div class="grid" id="occasionGrid" aria-label="Shop by Occasion grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));">
+          <!-- 4 cards -->
+        </div>
+      </section>
+
+      <section class="section" aria-label="Featured collections" style="margin-top:14px;">
+        <h2 style="margin:0 0 8px 0;">Featured Collections</h2>
+        <div class="grid" id="collections" aria-label="Featured collections grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));">
+          <!-- placeholders -->
+        </div>
+      </section>
+    </section>
+
+    <!-- Shop Page -->
+    <section id="shop" class="page" aria-label="Shop page">
+      <h2 style="margin:0 0 12px 0;">Shop FloraFlow</h2>
+      <div class="filters" aria-label="Shop filters">
+        <select id="filterCategory" aria-label="Filter by category">
+          <option value="">All Categories</option>
+          <option value="Flowers">Flowers</option>
+          <option value="Plants">Plants</option>
+          <option value="Gifts">Gifts</option>
+          <option value="Add-ons">Add-ons</option>
+        </select>
+        <select id="filterOccasion" aria-label="Filter by occasion">
+          <option value="">All Occasions</option>
+        </select>
+        <select id="filterColor" aria-label="Filter by color">
+          <option value="">All Colors</option>
+          <option value="pink">Pink</option>
+          <option value="red">Red</option>
+          <option value="green">Green</option>
+          <option value="cream">Cream</option>
+        </select>
+        <span style="flex:1 1 auto;"></span>
+        <input id="searchInput" type="text" placeholder="Search flowers..." aria-label="Search products"/>
+      </div>
+
+      <div id="searchSuggestions" role="listbox" aria-label="Search suggestions" style="background:#fff;border:1px solid #ddd; border-radius:8px; max-height:180px; overflow:auto; display:none; position:relative; z-index:2;">
+        <!-- suggestions injected -->
+      </div>
+
+      <div class="grid" id="productGrid" aria-label="Product grid" style="margin-top:8px;">
+        <!-- products render here -->
+      </div>
+    </section>
+
+    <!-- Product Detail (dynamic) -->
+    <section id="product-detail" aria-label="Product details" class="section" hidden>
+      <div class="detail" id="productDetailBody">
+        <!-- filled with JS -->
+      </div>
+    </section>
+
+    <!-- Cart Drawer (toggleable) -->
+    <aside id="cartDrawer" class="cart-drawer" aria-label="Cart">
+      <div class="cart-head">
+        <strong>Your Cart</strong>
+        <button class="btn" id="closeCartBtn" aria-label="Close cart">Close</button>
+      </div>
+      <div class="cart-items" id="cartItems">
+        <!-- items -->
+      </div>
+      <div class="cart-total" aria-live="polite">
+        <span>Subtotal</span><span id="cartSubtotal">$0.00</span>
+      </div>
+      <div class="cart-foot">
+        <button class="btn" id="continueShop" aria-label="Continue shopping">Continue Shopping</button>
+        <button class="btn primary" id="checkoutBtn" aria-label="Checkout">Checkout</button>
+      </div>
+    </aside>
+
+    <!-- Checkout -->
+    <section id="checkout" class="page" aria-label="Checkout" hidden>
+      <h2>Checkout</h2>
+      <div class="section" aria-label="Checkout details" style="max-width:800px;">
+        <form id="checkoutForm">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label for="fullName">Full Name</label>
+              <input id="fullName" required placeholder="Jane Doe"/>
+            </div>
+            <div>
+              <label for="phone">Phone</label>
+              <input id="phone" placeholder="(555) 555-5555" />
+            </div>
+          </div>
+          <div>
+            <label for="address">Address</label>
+            <input id="address" required placeholder="123 Flower Ave" />
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label for="city">City</label>
+              <input id="city" required placeholder="Floraville"/>
+            </div>
+            <div>
+              <label for="zip">ZIP / Postal</label>
+              <input id="zip" required placeholder="12345"/>
+            </div>
+          </div>
+          <div>
+            <label for="deliveryDate">Delivery Date</label>
+            <input type="date" id="deliveryDate" required />
+          </div>
+          <div>
+            <label>Payment Method</label>
+            <div class="row" style="display:flex; gap:12px;">
+              <label><input type="radio" name="pay" value="card" checked/> Card</label>
+              <label><input type="radio" name="pay" value="paypal"/> PayPal</label>
+            </div>
+          </div>
+          <div id="cardInfo" style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label for="cc">Card Number</label>
+                <input id="cc" placeholder="4242 4242 4242 4242" />
+              </div>
+              <div>
+                <label for="exp">Exp</label>
+                <input id="exp" placeholder="12/34" />
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label for="cvv">CVV</label>
+                <input id="cvv" placeholder="123" />
+              </div>
+              <div>
+                <label for="nameOnCard">Name on Card</label>
+                <input id="nameOnCard" placeholder="Jane Doe" />
+              </div>
+            </div>
+          </div>
+          <button class="btn primary" type="submit" aria-label="Place order">Place Order</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Order Confirmation -->
+    <section id="order-confirm" class="page" aria-label="Order confirmation" hidden>
+      <h2>Thank you for your order!</h2>
+      <p>Your FloraFlow order has been received. A confirmation number will be emailed shortly.</p>
+      <div class="section" id="orderSummary" aria-label="Order summary" style="max-width:700px;">
+        <!-- summary injected -->
+      </div>
+      <button class="btn" id="backHome" aria-label="Back to home">Back to Home</button>
+    </section>
+
+    <!-- Account -->
+    <section id="account" class="page" aria-label="Account" hidden>
+      <h2>Your FloraFlow Account</h2>
+      <div id="accountContent" class="section" style="max-width:800px;">
+        <!-- dynamic: login or profile -->
+      </div>
+    </section>
+
+    <!-- Occasions / About / FAQ placeholders for routing completeness -->
+    <section id="occasions" class="page" aria-label="Occasions" hidden>
+      <h2>Occasions</h2>
+      <p class="muted">Explore our curated occasions and send the perfect bouquet.</p>
+    </section>
+    <section id="deals" class="page" aria-label="Deals" hidden>
+      <h2>Deals</h2>
+      <p class="muted">Limited-time promotions. Check back often.</p>
+    </section>
+  </main>
+
+  <footer aria-label="Footer">
+    <p>FloraFlow © <span id="year"></span>. All placeholders. Brand assets are mock.</p>
+  </footer>
+
+  <script>
+    // Data and state (mock catalog, promotions, occasions)
+    const catalog = [
+      {
+        id: 'rose-blush',
+        name: 'Blushing Rose Bouquet',
+        price: 59.99,
+        description: 'A romantic mix of blush roses with soft greenery.',
+        category: 'Flowers',
+        colors: ['pink','cream'],
+        occasion: ['Birthday','Love'],
+        stock: 12,
+        rating: 4.7,
+        reviews: 42,
+        sizes: ['Standard','Deluxe'],
+        image: null
+      },
+      {
+        id: 'sunlit-daisy',
+        name: 'Sunlit Daisy Garden',
+        price: 44.99,
+        description: 'Sunny daisies with fresh greens in a keepsake vase.',
+        category: 'Plants',
+        colors: ['cream','green'],
+        occasion: ['New Home','Get Well'],
+        stock: 8,
+        rating: 4.5,
+        reviews: 21,
+        image: null
+      },
+      {
+        id: 'loved-hello',
+        name: 'Loved & Laughter Floral Basket',
+        price: 69.99,
+        description: 'A cheerful basket with mixed blooms and soft hues.',
+        category: 'Gifts',
+        colors: ['pink','red'],
+        occasion: ['Love','Birthday'],
+        stock: 6,
+        rating: 4.6,
+        reviews: 30,
+        image: null
+      },
+      {
+        id: 'get-well-lift',
+        name: 'Get Well Wishes Arrangements',
+        price: 39.99,
+        description: 'Bright blooms to brighten anyone’s day.',
+        category: 'Gifts',
+        colors: ['green','cream'],
+        occasion: ['Get Well'],
+        stock: 20,
+        rating: 4.3,
+        reviews: 12,
+        image: null
+      },
+      {
+        id: 'midnight-pink',
+        name: 'Midnight Pink Elegance',
+        price: 89.99,
+        description: 'Elegant arrangement with deep pink tones.',
+        category: 'Flowers',
+        colors: ['pink'],
+        occasion: ['Celebration','Birthday'],
+        stock: 5,
+        rating: 4.9,
+        reviews: 68,
+        sizes: ['Standard','Deluxe','Premium'],
+        image: null
+      },
+      {
+        id: 'green-thumb',
+        name: 'Green Thumb Planting Tray',
+        price: 29.99,
+        description: 'Low-maintenance greenery for the home or office.',
+        category: 'Plants',
+        colors: ['green'],
+        occasion: ['New Home','Thank You'],
+        stock: 15,
+        rating: 4.2,
+        reviews: 9,
+        image: null
+      },
+      {
+        id: 'sweet-pal',
+        name: 'Sweet Pal Gift Box',
+        price: 34.99,
+        description: 'A curated box with chocolates and mini florals.',
+        category: 'Gifts',
+        colors: ['cream','pink'],
+        occasion: ['Birthday','Love'],
+        stock: 25,
+        rating: 4.4,
+        reviews: 17,
+        image: null
+      },
+      {
+        id: 'tiny-tulips',
+        name: 'Tulip Whisper Mix',
+        price: 24.99,
+        description: 'A pastel mix of tulips for a delicate gift.',
+        category: 'Flowers',
+        colors: ['pink','cream'],
+        occasion: ['Love','Anniversary'],
+        stock: 40,
+        rating: 4.1,
+        reviews: 8,
+        image: null
+      }
+    ];
+
+    const occasions = [
+      { id:'birthday', title:'Birthday' },
+      { id:'love', title:'Love' },
+      { id:'sympathy', title:'Sympathy' },
+      { id:'getwell', title:'Get Well' },
+      { id:'holidays', title:'Holidays' }
+    ];
+
+    const promotions = {
+      dealOfDay: null, // to fill after data init
+      banners: []
+    };
+
+    // Helpers: simple SVG placeholders for images
+    function svgPlaceholder(text, color1, color2){
+      const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="600" height="420">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="${color1}"/>
+            <stop offset="1" stop-color="${color2}"/>
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#g)"/>
+        <circle cx="70" cy="70" r="28" fill="white" opacity=".8"/>
+        <text x="120" y="70" font-family="Arial" font-size="22" fill="white" opacity=".95">${text}</text>
+      </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    // Initialize images for catalog
+    catalog.forEach(p => {
+      const t = p.name.split(' ').slice(0,3).join(' ');
+      const color1 = p.colors.includes('pink') ? '#f7cbd8' : '#f3e8d6';
+      const color2 = p.colors.includes('green') ? '#cdebd6' : '#ffd9e3';
+      p.image = svgPlaceholder(t, color1, color2);
+      // ensure sizes if missing
+      if(!p.sizes) p.sizes = ['Standard'];
+    });
+
+    // Local storage utilities
+    const storage = {
+      cartKey: 'ff_cart',
+      userKey: 'ff_user',
+      ordersKey: 'ff_orders'
+    };
+
+    let cart = [];
+    function loadCart(){
+      const raw = localStorage.getItem(storage.cartKey);
+      cart = raw ? JSON.parse(raw) : [];
+    }
+    function saveCart(){
+      localStorage.setItem(storage.cartKey, JSON.stringify(cart));
+    }
+
+    let currentUser = null;
+    function loadUser(){
+      const u = localStorage.getItem(storage.userKey);
+      currentUser = u ? JSON.parse(u) : null;
+    }
+    function saveUser() {
+      localStorage.setItem(storage.userKey, JSON.stringify(currentUser));
+    }
+
+    function loadOrders(){
+      const raw = localStorage.getItem(storage.ordersKey);
+      return raw ? JSON.parse(raw) : [];
+    }
+
+    // UI rendering
+    const app = document.getElementById('app');
+    const yearEl = document.getElementById('year');
+    yearEl.textContent = new Date().getFullYear();
+
+    // Router
+    function parseHash(){
+      const h = location.hash || '#/home';
+      const parts = h.replace('#/','').split('/');
+      const page = parts[0] || 'home';
+      const params = parts.slice(1);
+      return { page, params };
+    }
+
+    // Render helpers
+    function setActiveNav(page){
+      document.querySelectorAll('.nav-link').forEach(a=>{
+        const p = a.getAttribute('data-page');
+        if(p === page){
+          a.classList.add('active');
+        } else {
+          a.classList.remove('active');
+        }
+      });
+    }
+
+    // Home content injections
+    function renderHome(){
+      // Deal of the Day content
+      const deal = catalog[0];
+      promotions.dealOfDay = deal;
+      const dealEl = document.getElementById('dealOfDay');
+      dealEl.innerHTML = '';
+      dealEl.style.gridTemplateColumns = '1fr';
+      const dealCard = document.createElement('div');
+      dealCard.className = 'card';
+      dealCard.style.display = 'flex'; dealCard.style.flexDirection = 'row';
+      dealCard.style.alignItems = 'center';
+      dealCard.style.gap = '12px';
+
+      dealCard.innerHTML = `
+        <img src="${deal.image}" alt="${deal.name}" style="width:180px; height:120px; object-fit:cover; border-radius:8px;" />
+        <div style="flex:1;">
+          <strong>${deal.name}</strong>
+          <p class="muted" style="margin:6px 0 8px; max-width:320px;">${deal.description}</p>
+          <div class="row" style="display:flex; gap:8px; align-items:center;">
+            <span class="price" style="font-size:1.1rem;">$${deal.price.toFixed(2)}</span>
+            <button class="btn primary" aria-label="Add deal to cart" onclick="addToCart('${deal.id}');">Add to cart</button>
+          </div>
+        </div>
+      `;
+      dealEl.appendChild(dealCard);
+
+      // Occasion cards
+      const occEl = document.getElementById('occasionGrid');
+      occEl.innerHTML = '';
+      const occs = [
+        { id:'birthday', title:'Birthday' },
+        { id:'love', title:'Love' },
+        { id:'getwell', title:'Get Well' },
+        { id:'holidays', title:'Holidays' }
+      ];
+      occs.forEach(o=>{
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.cursor='pointer';
+        card.tabIndex = 0;
+        card.setAttribute('aria-label', o.title);
+        card.innerHTML = `
+          <div style="height:90px; border-radius:8px; background: linear-gradient(135deg, #fbd0e6, #eaf5ea); display:flex; align-items:center; justify-content:center;">
+            <strong>${o.title}</strong>
+          </div>
+          <div style="font-weight:600;">Shop ${o.title}</div>
+        `;
+        card.addEventListener('click', ()=> {
+          // filter shop by occasion
+          document.getElementById('filterOccasion').value = '';
+          // simulate navigation to shop with a preset filter
+          navigateHash('/shop');
+          // store the occasion filter in localStorage for cross-page filter
+          localStorage.setItem('ff_filter_occ', o.id);
+          // trigger a small delay to re-render
+          setTimeout(()=> renderShopFiltersAndProducts(),50);
+        });
+        occEl.appendChild(card);
+      });
+
+      // Collections placeholder
+      const colEl = document.getElementById('collections');
+      colEl.innerHTML = '';
+      const cols = [
+        { name:'Pastel Palettes', img: catalog[2].image },
+        { name:'Spring Bloom', img: catalog[0].image },
+        { name:'Green Fresh', img: catalog[5].image }
+      ];
+      cols.forEach(c => {
+        const cCard = document.createElement('div');
+        cCard.className = 'card';
+        cCard.innerHTML = `<img src="${c.img}" alt="${c.name}" style="width:100%; height:140px; object-fit:cover; border-radius:8px;">
+          <div style="font-weight:700;">${c.name}</div>`;
+        colEl.appendChild(cCard);
+      });
+    }
+
+    // Shop rendering
+    function renderShop(){
+      // Ensure correct page active
+      // Render products according to filters
+      renderShopFiltersAndProducts();
+    }
+
+    function renderShopFiltersAndProducts(){
+      // Read filters
+      const category = document.getElementById('filterCategory').value;
+      const occasion = document.getElementById('filterOccasion').value;
+      const color = document.getElementById('filterColor').value;
+      const search = searchValue();
+      // Build product list
+      let items = catalog.filter(p => {
+        if(category && p.category !== category) return false;
+        if(color && !p.colors.includes(color)) return false;
+        if(occasion && !p.occasion.includes(occasion)) return false;
+        if(search && !(p.name.toLowerCase().includes(search) || p.description.toLowerCase().includes(search))) return false;
+        return true;
+      });
+
+      // Apply any persisted occasion filter
+      const persistedOcc = localStorage.getItem('ff_filter_occ');
+      if(persistedOcc){
+        items = items.filter(p => p.occasion.join(',').toLowerCase().includes(persistedOcc) || p.occasion.includes(persistedOcc));
+        localStorage.removeItem('ff_filter_occ');
+      }
+
+      // Products grid
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = '';
+      if(items.length === 0){
+        grid.innerHTML = '<div class="muted" style="grid-column: 1 / -1;">No products found. Try adjusting filters.</div>';
+        return;
+      }
+      items.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${p.image}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <div class="muted" style="min-height:40px;">${p.description}</div>
+          <div class="row" style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="price">$${p.price.toFixed(2)}</span>
+            <div style="display:flex; gap:6px;">
+              <button class="btn" aria-label="View product" onclick="viewProduct('${p.id}')">View</button>
+              <button class="btn primary" aria-label="Add to cart" onclick="addToCart('${p.id}')">Add</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // Occasions select fill
+      const occSel = document.getElementById('filterOccasion');
+      if(occSel.options.length <= 1){
+        const uniqueOcc = Array.from(new Set(catalog.flatMap(p => p.occasion)));
+        uniqueOcc.forEach(o => {
+          const opt = document.createElement('option');
+          opt.value = o;
+          opt.textContent = o;
+          occSel.appendChild(opt);
+        });
+      }
+    }
+
+    function searchValue(){
+      const el = document.getElementById('searchInput');
+      return (el && el.value || '').toLowerCase().trim();
+    }
+
+    // Product detail view
+    function viewProduct(id){
+      const p = catalog.find(x => x.id === id);
+      if(!p) return;
+      const detail = document.getElementById('product-detail');
+      const body = document.getElementById('productDetailBody');
+      detail.style.display = 'block';
+      detail.hidden = false;
+      // build detail content
+      body.innerHTML = `
+        <div>
+          <img src="${p.image}" alt="${p.name}" style="width:100%; height:320px; object-fit:cover; border-radius:8px;">
+        </div>
+        <div>
+          <h2>${p.name}</h2>
+          <div class="row" style="gap:8px; align-items:center;">
+            <span class="price" style="font-size:1.25rem;">$${p.price.toFixed(2)}</span>
+            <span class="muted">Rating ${p.rating} (${p.reviews} reviews)</span>
+          </div>
+          <p>${p.description}</p>
+          <div class="row">
+            <span class="muted">Category:</span><strong>${p.category}</strong>
+          </div>
+          <div class="row">
+            <span class="muted">Occasion:</span>
+            <span>${p.occasion.join(', ')}</span>
+          </div>
+          <div class="row" aria-label="Size options">
+            <span class="muted" style="margin-right:6px;">Size:</span>
+            <div id="sizeOptions" class="option" role="group" aria-label="Size options">
+              ${p.sizes.map((s,i)=>`<button class="size ${i===0?'active':''}" data-size="${s}" aria-label="Size ${s}">${s}</button>`).join('')}
+            </div>
+          </div>
+          <div class="row">
+            <label for="deliveryDateSingle" class="muted">Delivery date</label>
+            <input type="date" id="deliveryDateSingle" value="" aria-label="Delivery date"/>
+          </div>
+          <button class="btn primary" onclick="addToCart('${p.id}', 1, getSelectedSize('${p.id}'))" aria-label="Add to cart from detail">Add to cart</button>
+          <button class="btn" onclick="navigateHash('/shop')">Back to shop</button>
+        </div>
+      `;
+      // size selection wiring
+      setTimeout(()=>{ // bind active class
+        document.querySelectorAll('#sizeOptions .size').forEach(btn=>{
+          btn.addEventListener('click', ()=> {
+            document.querySelectorAll('#sizeOptions .size').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+          });
+        });
+      }, 0);
+    }
+
+    function getSelectedSize(productId){
+      const p = catalog.find(x => x.id === productId);
+      if(!p || !p.sizes || p.sizes.length === 0) return null;
+      const el = document.querySelector('#sizeOptions .size.active');
+      return el ? el.getAttribute('data-size') : p.sizes[0];
+    }
+
+    // Cart operations
+    function addToCart(productId, qty=1, size=null){
+      const p = catalog.find(x => x.id === productId);
+      if(!p) return;
+      const itemSize = size || (p.sizes ? p.sizes[0] : null);
+      // if exists, increase
+      const idx = cart.findIndex(it => it.id === productId && it.size === itemSize);
+      if(idx >= 0){
+        cart[idx].qty += qty;
+      } else {
+        cart.push({ id: productId, qty:<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FloraFlow - Home</title>
+  <meta name="description" content="FloraFlow: a Flora-inspired, Teleflora-inspired mock flower shop with Home, Shop, Product, Cart, Checkout and Account flows."/>
+  <style>
+    :root{
+      --bg: #fefaf7;
+      --card: #ffffff;
+      --text: #1b1b1b;
+      --muted: #5a5a5a;
+      --pink: #f7cbd8;
+      --pink-dark: #e6a9bd;
+      --green: #9bd6a5;
+      --green-dark: #6aa777;
+      --cream: #fff7ea;
+      --shadow: 0 6px 20px rgba(0,0,0,.07);
+      --radius: 14px;
+      --focus: 0 0 0 3px rgba(236, 160, 232, .5);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;}
+    body{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 12px 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,.04);
+    }
+    .brand {
+      display:flex; align-items:center; gap:12px;
+      font-weight: 700; font-size: 1.05rem;
+    }
+    .brand .logo {
+      width: 34px; height: 34px; border-radius:8px;
+      background: linear-gradient(135deg, #fbd3e9 0%, #d5f1e0 60%);
+      display:grid; place-items:center; color:#c83b86;
+      box-shadow: inset 0 0 6px rgba(0,0,0,.08);
+    }
+    nav a{
+      color: var(--muted);
+      text-decoration: none; padding: 8px 12px;
+      border-radius: 8px;
+    }
+    nav a.active, nav a:hover{ color: var(--text); background: #fff; border:1px solid #eee; }
+    .header-actions { display:flex; align-items:center; gap:10px; }
+    .btn {
+      padding: 10px 14px; border-radius: 10px;
+      border: 1px solid #e6e6e6; background:#fff;
+      cursor: pointer; font-weight:600;
+    }
+    .btn.primary {
+      background: linear-gradient(135deg, #f7b4c9, #f6a6d4);
+      border: none; color:white;
+    }
+    .btn.ghost { background: transparent; border:1px solid #ddd; }
+    .icon-btn{ position: relative; }
+    .badge {
+      position: absolute; top: -6px; right: -6px;
+      background: #e84393; color:white; border-radius: 999px;
+      padding: 2px 6px; font-size: 11px;
+    }
+
+    main { padding: 20px; max-width:1100px; margin: 0 auto; }
+
+    /* Sections / pages */
+    .page{ display:none; }
+    .page.active{ display:block; }
+
+    /* Hero */
+    .hero {
+      position: relative; overflow:hidden; border-radius: var(--radius);
+      background: linear-gradient(135deg, #ffe7f0 0%, #eaf5ea 60%);
+      padding: 28px; display:flex; gap:20px; align-items: center;
+      min-height: 240px;
+      box-shadow: var(--shadow);
+    }
+    .hero h1{ margin:0 0 6px 0; font-size: 2rem; }
+    .hero p{ margin:0 0 12px 0; color:var(--muted); }
+    .hero .cta{ margin-top:8px; }
+
+    .hero-art{
+      width: 100%; display:flex; justify-content:center; align-items:center;
+    }
+    .hero-art svg{ width: 260px; height: 180px; opacity:.95; }
+
+    /* Grid / Cards */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--card); border-radius: 12px; padding: 12px; box-shadow: var(--shadow);
+      display:flex; flex-direction:column; gap:8px; min-height: 260px;
+    }
+    .card img { width:100%; height: 160px; object-fit: cover; border-radius: 8px; }
+    .card h3{ margin:0; font-size: 1.05rem; }
+    .price{ font-weight: 700; color:#d13b7d; }
+    .muted{ color: var(--muted); font-size: 0.92rem; }
+
+    /* Filters */
+    .filters { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin: 8px 0 12px; }
+    .filters select, .filters input[type="text"]{ padding:8px 10px; border-radius: 8px; border:1px solid #ddd; min-width: 140px; }
+
+    /* Sections: product detail */
+    #product-detail{ padding: 0; display: none; }
+    .detail{ display:grid; grid-template-columns: 1fr 1fr; gap:20px; align-items:start; }
+    .detail img{ width:100%; height:320px; object-fit: cover; border-radius:10px; }
+    .detail h2{ margin:8px 0 6px; }
+    .detail .row{ display:flex; gap:8px; align-items:center; margin:6px 0; }
+    .option{ display:flex; gap:8px; flex-wrap:wrap; }
+    .size{ padding:6px 10px; border-radius:6px; border:1px solid #ddd; cursor:pointer; }
+    .size.active{ background:#f9d9ea; border-color:#e4a4bd; }
+    .qty { display:flex; align-items:center; gap:6px; }
+    .qty button{ width:26px; height:26px; border-radius:6px; border:1px solid #ddd; background:#fff; cursor:pointer; }
+
+    /* Cart Drawer */
+    .cart-drawer {
+      position: fixed; top:0; right:0; height:100%; width: 360px;
+      background: #fff; box-shadow: -6px 0 20px rgba(0,0,0,.08);
+      transform: translateX(100%); transition: transform .25s ease;
+      z-index: 60; display:flex; flex-direction:column;
+    }
+    .cart-drawer.open{ transform: translateX(0); }
+    .cart-head{ padding:12px; border-bottom:1px solid #eee; display:flex; justify-content: space-between; align-items:center; }
+    .cart-items{ flex:1; overflow:auto; padding:12px; display:flex; flex-direction:column; gap:8px; }
+    .cart-item{ display:flex; gap:8px; align-items:center; border:1px solid #eee; padding:6px; border-radius:8px; }
+    .cart-item img{ width:54px; height:54px; object-fit:cover; border-radius:6px; }
+    .cart-total{ padding:12px; border-top:1px solid #eee; display:flex; justify-content: space-between; align-items:center; }
+    .cart-foot{ padding:12px; border-top:1px solid #eee; display:flex; gap:10px; }
+
+    /* Checkout / account sections */
+    form { display:flex; flex-direction:column; gap:12px; }
+    label { font-weight:600; font-size: .92rem; }
+    input, select { padding:10px; border-radius:8px; border:1px solid #ddd; }
+    .section{ padding:14px; border-radius:12px; background:#fff; border:1px solid #eee; }
+
+    /* Footer */
+    footer{ text-align:center; padding:40px 12px; color:var(--muted); }
+
+    /* Responsive tweaks */
+    @media (max-width: 900px){
+      .hero { flex-direction:column; text-align:left; }
+      .detail{ grid-template-columns:1fr; }
+      .cart-drawer{ width:100%; height:60%; bottom:0; top:auto; right:0; transform: translateY(100%); transition: transform .25s ease; }
+      .cart-drawer.open{ transform: translateY(0); }
+    }
+    /* Accessibility */
+    :focus-visible { outline: 3px solid #f4a6d8; outline-offset: 2px; border-radius:6px; }
+  </style>
+</head>
+<body>
+  <header role="navigation" aria-label="Main">
+    <div class="brand" aria-label="FloraFlow brand">
+      <div class="logo" aria-label="FloraFlow logo">FF</div>
+      <span>FloraFlow</span>
+    </div>
+    <nav aria-label="Main navigation">
+      <a href="#/home" class="nav-link" data-page="home">Home</a>
+      <a href="#/shop" class="nav-link" data-page="shop">Shop</a>
+      <a href="#/occasions" class="nav-link" data-page="occasions">Occasions</a>
+      <a href="#/deals" class="nav-link" data-page="deals">Deals</a>
+      <a href="#/account" class="nav-link" data-page="account">Account</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn ghost" id="openCartBtn" aria-label="Open cart">Cart</button>
+      <button class="btn primary" id="shopNowTop" aria-label="Shop now">Shop Now</button>
+    </div>
+  </header>
+
+  <main id="app" aria-label=" FloraFlow main content">
+    <!-- Home Page -->
+    <section id="home" class="page active" aria-label="Home">
+      <div class="hero" role="region" aria-label="Hero banner">
+        <div style="flex:1;">
+          <h1>Welcome to FloraFlow</h1>
+          <p>Elegant, pastel florals for every occasion. Fresh designs, fast delivery, and a love for gifting.</p>
+          <div class="cta">
+            <button class="btn primary" id="shopNowBtn" aria-label="Shop FloraFlow now">Shop the Collection</button>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="Hero art">
+          <!-- Inline floral SVG art placeholder -->
+          <svg viewBox="0 0 400 260" role="img" aria-label="Floral hero" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                <stop stop-color="#ffd7e2"/>
+                <stop offset="1" stop-color="#eaf5ea"/>
+              </linearGradient>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grad)"/>
+            <circle cx="60" cy="60" r="28" fill="#f6a4c6" opacity=".9"/>
+            <circle cx="120" cy="100" r="22" fill="#bde3d9" opacity=".8"/>
+            <text x="180" y="115" font-family="Verdana" font-size="22" fill="#a24e88">FloraFlow</text>
+          </svg>
+        </div>
+      </div>
+
+      <section class="section" aria-label="Deal of the Day" style="margin-top:14px;">
+        <h2 style="margin:0 0 8px 0;">Deal of the Day</h2>
+        <div class="grid" id="dealOfDay" aria-label="Deal of the Day grid" style="grid-template-columns:1fr;">
+          <!-- dynamically filled -->
+        </div>
+      </section>
+
+      <section class="section" aria-label="Shop by Occasion" style="margin-top:14px;">
+        <h2 style="margin:0 0 8px 0;">Shop by Occasion</h2>
+        <div class="grid" id="occasionGrid" aria-label="Shop by Occasion grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));">
+          <!-- 4 cards -->
+        </div>
+      </section>
+
+      <section class="section" aria-label="Featured collections" style="margin-top:14px;">
+        <h2 style="margin:0 0 8px 0;">Featured Collections</h2>
+        <div class="grid" id="collections" aria-label="Featured collections grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr));">
+          <!-- placeholders -->
+        </div>
+      </section>
+    </section>
+
+    <!-- Shop Page -->
+    <section id="shop" class="page" aria-label="Shop page">
+      <h2 style="margin:0 0 12px 0;">Shop FloraFlow</h2>
+      <div class="filters" aria-label="Shop filters">
+        <select id="filterCategory" aria-label="Filter by category">
+          <option value="">All Categories</option>
+          <option value="Flowers">Flowers</option>
+          <option value="Plants">Plants</option>
+          <option value="Gifts">Gifts</option>
+          <option value="Add-ons">Add-ons</option>
+        </select>
+        <select id="filterOccasion" aria-label="Filter by occasion">
+          <option value="">All Occasions</option>
+        </select>
+        <select id="filterColor" aria-label="Filter by color">
+          <option value="">All Colors</option>
+          <option value="pink">Pink</option>
+          <option value="red">Red</option>
+          <option value="green">Green</option>
+          <option value="cream">Cream</option>
+        </select>
+        <span style="flex:1 1 auto;"></span>
+        <input id="searchInput" type="text" placeholder="Search flowers..." aria-label="Search products"/>
+      </div>
+
+      <div id="searchSuggestions" role="listbox" aria-label="Search suggestions" style="background:#fff;border:1px solid #ddd; border-radius:8px; max-height:180px; overflow:auto; display:none; position:relative; z-index:2;">
+        <!-- suggestions injected -->
+      </div>
+
+      <div class="grid" id="productGrid" aria-label="Product grid" style="margin-top:8px;">
+        <!-- products render here -->
+      </div>
+    </section>
+
+    <!-- Product Detail (dynamic) -->
+    <section id="product-detail" aria-label="Product details" class="section" hidden>
+      <div class="detail" id="productDetailBody">
+        <!-- filled with JS -->
+      </div>
+    </section>
+
+    <!-- Cart Drawer (toggleable) -->
+    <aside id="cartDrawer" class="cart-drawer" aria-label="Cart">
+      <div class="cart-head">
+        <strong>Your Cart</strong>
+        <button class="btn" id="closeCartBtn" aria-label="Close cart">Close</button>
+      </div>
+      <div class="cart-items" id="cartItems">
+        <!-- items -->
+      </div>
+      <div class="cart-total" aria-live="polite">
+        <span>Subtotal</span><span id="cartSubtotal">$0.00</span>
+      </div>
+      <div class="cart-foot">
+        <button class="btn" id="continueShop" aria-label="Continue shopping">Continue Shopping</button>
+        <button class="btn primary" id="checkoutBtn" aria-label="Checkout">Checkout</button>
+      </div>
+    </aside>
+
+    <!-- Checkout -->
+    <section id="checkout" class="page" aria-label="Checkout" hidden>
+      <h2>Checkout</h2>
+      <div class="section" aria-label="Checkout details" style="max-width:800px;">
+        <form id="checkoutForm">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label for="fullName">Full Name</label>
+              <input id="fullName" required placeholder="Jane Doe"/>
+            </div>
+            <div>
+              <label for="phone">Phone</label>
+              <input id="phone" placeholder="(555) 555-5555" />
+            </div>
+          </div>
+          <div>
+            <label for="address">Address</label>
+            <input id="address" required placeholder="123 Flower Ave" />
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <label for="city">City</label>
+              <input id="city" required placeholder="Floraville"/>
+            </div>
+            <div>
+              <label for="zip">ZIP / Postal</label>
+              <input id="zip" required placeholder="12345"/>
+            </div>
+          </div>
+          <div>
+            <label for="deliveryDate">Delivery Date</label>
+            <input type="date" id="deliveryDate" required />
+          </div>
+          <div>
+            <label>Payment Method</label>
+            <div class="row" style="display:flex; gap:12px;">
+              <label><input type="radio" name="pay" value="card" checked/> Card</label>
+              <label><input type="radio" name="pay" value="paypal"/> PayPal</label>
+            </div>
+          </div>
+          <div id="cardInfo" style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label for="cc">Card Number</label>
+                <input id="cc" placeholder="4242 4242 4242 4242" />
+              </div>
+              <div>
+                <label for="exp">Exp</label>
+                <input id="exp" placeholder="12/34" />
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label for="cvv">CVV</label>
+                <input id="cvv" placeholder="123" />
+              </div>
+              <div>
+                <label for="nameOnCard">Name on Card</label>
+                <input id="nameOnCard" placeholder="Jane Doe" />
+              </div>
+            </div>
+          </div>
+          <button class="btn primary" type="submit" aria-label="Place order">Place Order</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Order Confirmation -->
+    <section id="order-confirm" class="page" aria-label="Order confirmation" hidden>
+      <h2>Thank you for your order!</h2>
+      <p>Your FloraFlow order has been received. A confirmation number will be emailed shortly.</p>
+      <div class="section" id="orderSummary" aria-label="Order summary" style="max-width:700px;">
+        <!-- summary injected -->
+      </div>
+      <button class="btn" id="backHome" aria-label="Back to home">Back to Home</button>
+    </section>
+
+    <!-- Account -->
+    <section id="account" class="page" aria-label="Account" hidden>
+      <h2>Your FloraFlow Account</h2>
+      <div id="accountContent" class="section" style="max-width:800px;">
+        <!-- dynamic: login or profile -->
+      </div>
+    </section>
+
+    <!-- Occasions / About / FAQ placeholders for routing completeness -->
+    <section id="occasions" class="page" aria-label="Occasions" hidden>
+      <h2>Occasions</h2>
+      <p class="muted">Explore our curated occasions and send the perfect bouquet.</p>
+    </section>
+    <section id="deals" class="page" aria-label="Deals" hidden>
+      <h2>Deals</h2>
+      <p class="muted">Limited-time promotions. Check back often.</p>
+    </section>
+  </main>
+
+  <footer aria-label="Footer">
+    <p>FloraFlow © <span id="year"></span>. All placeholders. Brand assets are mock.</p>
+  </footer>
+
+  <script>
+    // Data and state (mock catalog, promotions, occasions)
+    const catalog = [
+      {
+        id: 'rose-blush',
+        name: 'Blushing Rose Bouquet',
+        price: 59.99,
+        description: 'A romantic mix of blush roses with soft greenery.',
+        category: 'Flowers',
+        colors: ['pink','cream'],
+        occasion: ['Birthday','Love'],
+        stock: 12,
+        rating: 4.7,
+        reviews: 42,
+        sizes: ['Standard','Deluxe'],
+        image: null
+      },
+      {
+        id: 'sunlit-daisy',
+        name: 'Sunlit Daisy Garden',
+        price: 44.99,
+        description: 'Sunny daisies with fresh greens in a keepsake vase.',
+        category: 'Plants',
+        colors: ['cream','green'],
+        occasion: ['New Home','Get Well'],
+        stock: 8,
+        rating: 4.5,
+        reviews: 21,
+        image: null
+      },
+      {
+        id: 'loved-hello',
+        name: 'Loved & Laughter Floral Basket',
+        price: 69.99,
+        description: 'A cheerful basket with mixed blooms and soft hues.',
+        category: 'Gifts',
+        colors: ['pink','red'],
+        occasion: ['Love','Birthday'],
+        stock: 6,
+        rating: 4.6,
+        reviews: 30,
+        image: null
+      },
+      {
+        id: 'get-well-lift',
+        name: 'Get Well Wishes Arrangements',
+        price: 39.99,
+        description: 'Bright blooms to brighten anyone’s day.',
+        category: 'Gifts',
+        colors: ['green','cream'],
+        occasion: ['Get Well'],
+        stock: 20,
+        rating: 4.3,
+        reviews: 12,
+        image: null
+      },
+      {
+        id: 'midnight-pink',
+        name: 'Midnight Pink Elegance',
+        price: 89.99,
+        description: 'Elegant arrangement with deep pink tones.',
+        category: 'Flowers',
+        colors: ['pink'],
+        occasion: ['Celebration','Birthday'],
+        stock: 5,
+        rating: 4.9,
+        reviews: 68,
+        sizes: ['Standard','Deluxe','Premium'],
+        image: null
+      },
+      {
+        id: 'green-thumb',
+        name: 'Green Thumb Planting Tray',
+        price: 29.99,
+        description: 'Low-maintenance greenery for the home or office.',
+        category: 'Plants',
+        colors: ['green'],
+        occasion: ['New Home','Thank You'],
+        stock: 15,
+        rating: 4.2,
+        reviews: 9,
+        image: null
+      },
+      {
+        id: 'sweet-pal',
+        name: 'Sweet Pal Gift Box',
+        price: 34.99,
+        description: 'A curated box with chocolates and mini florals.',
+        category: 'Gifts',
+        colors: ['cream','pink'],
+        occasion: ['Birthday','Love'],
+        stock: 25,
+        rating: 4.4,
+        reviews: 17,
+        image: null
+      },
+      {
+        id: 'tiny-tulips',
+        name: 'Tulip Whisper Mix',
+        price: 24.99,
+        description: 'A pastel mix of tulips for a delicate gift.',
+        category: 'Flowers',
+        colors: ['pink','cream'],
+        occasion: ['Love','Anniversary'],
+        stock: 40,
+        rating: 4.1,
+        reviews: 8,
+        image: null
+      }
+    ];
+
+    const occasions = [
+      { id:'birthday', title:'Birthday' },
+      { id:'love', title:'Love' },
+      { id:'sympathy', title:'Sympathy' },
+      { id:'getwell', title:'Get Well' },
+      { id:'holidays', title:'Holidays' }
+    ];
+
+    const promotions = {
+      dealOfDay: null, // to fill after data init
+      banners: []
+    };
+
+    // Helpers: simple SVG placeholders for images
+    function svgPlaceholder(text, color1, color2){
+      const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="600" height="420">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="${color1}"/>
+            <stop offset="1" stop-color="${color2}"/>
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#g)"/>
+        <circle cx="70" cy="70" r="28" fill="white" opacity=".8"/>
+        <text x="120" y="70" font-family="Arial" font-size="22" fill="white" opacity=".95">${text}</text>
+      </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    // Initialize images for catalog
+    catalog.forEach(p => {
+      const t = p.name.split(' ').slice(0,3).join(' ');
+      const color1 = p.colors.includes('pink') ? '#f7cbd8' : '#f3e8d6';
+      const color2 = p.colors.includes('green') ? '#cdebd6' : '#ffd9e3';
+      p.image = svgPlaceholder(t, color1, color2);
+      // ensure sizes if missing
+      if(!p.sizes) p.sizes = ['Standard'];
+    });
+
+    // Local storage utilities
+    const storage = {
+      cartKey: 'ff_cart',
+      userKey: 'ff_user',
+      ordersKey: 'ff_orders'
+    };
+
+    let cart = [];
+    function loadCart(){
+      const raw = localStorage.getItem(storage.cartKey);
+      cart = raw ? JSON.parse(raw) : [];
+    }
+    function saveCart(){
+      localStorage.setItem(storage.cartKey, JSON.stringify(cart));
+    }
+
+    let currentUser = null;
+    function loadUser(){
+      const u = localStorage.getItem(storage.userKey);
+      currentUser = u ? JSON.parse(u) : null;
+    }
+    function saveUser() {
+      localStorage.setItem(storage.userKey, JSON.stringify(currentUser));
+    }
+
+    function loadOrders(){
+      const raw = localStorage.getItem(storage.ordersKey);
+      return raw ? JSON.parse(raw) : [];
+    }
+
+    // UI rendering helpers
+    const yearEl = document.getElementById('year');
+    yearEl.textContent = new Date().getFullYear();
+
+    // Router
+    function parseHash(){
+      const h = location.hash || '#/home';
+      const parts = h.replace('#/','').split('/');
+      const page = parts[0] || 'home';
+      const params = parts.slice(1);
+      return { page, params };
+    }
+
+    // Render helpers
+    function setActiveNav(page){
+      document.querySelectorAll('.nav-link').forEach(a=>{
+        const p = a.getAttribute('data-page');
+        if(p === page){
+          a.classList.add('active');
+        } else {
+          a.classList.remove('active');
+        }
+      });
+    }
+
+    // Cart Drawer actions
+    function openCart(){ document.getElementById('cartDrawer').classList.add('open'); }
+    function closeCart(){ document.getElementById('cartDrawer').classList.remove('open'); }
+
+    // Home content injections
+    function renderHome(){
+      // Deal of the Day content
+      const deal = catalog[0];
+      promotions.dealOfDay = deal;
+      const dealEl = document.getElementById('dealOfDay');
+      dealEl.innerHTML = '';
+      dealEl.style.gridTemplateColumns = '1fr';
+      const dealCard = document.createElement('div');
+      dealCard.className = 'card';
+      dealCard.style.display = 'flex'; dealCard.style.flexDirection = 'row';
+      dealCard.style.alignItems = 'center';
+      dealCard.style.gap = '12px';
+
+      dealCard.innerHTML = `
+        <img src="${deal.image}" alt="${deal.name}" style="width:180px; height:120px; object-fit:cover; border-radius:8px;" />
+        <div style="flex:1;">
+          <strong>${deal.name}</strong>
+          <p class="muted" style="margin:6px 0 8px; max-width:320px;">${deal.description}</p>
+          <div class="row" style="display:flex; gap:8px; align-items:center;">
+            <span class="price" style="font-size:1.1rem;">$${deal.price.toFixed(2)}</span>
+            <button class="btn primary" aria-label="Add deal to cart" onclick="addToCart('${deal.id}');">Add to cart</button>
+          </div>
+        </div>
+      `;
+      dealEl.appendChild(dealCard);
+
+      // Occasion cards
+      const occEl = document.getElementById('occasionGrid');
+      occEl.innerHTML = '';
+      const occs = [
+        { id:'birthday', title:'Birthday' },
+        { id:'love', title:'Love' },
+        { id:'getwell', title:'Get Well' },
+        { id:'holidays', title:'Holidays' }
+      ];
+      occs.forEach(o=>{
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.cursor='pointer';
+        card.tabIndex = 0;
+        card.setAttribute('aria-label', o.title);
+        card.innerHTML = `
+          <div style="height:90px; border-radius:8px; background: linear-gradient(135deg, #fbd0e6, #eaf5ea); display:flex; align-items:center; justify-content:center;">
+            <strong>${o.title}</strong>
+          </div>
+          <div style="font-weight:600;">Shop ${o.title}</div>
+        `;
+        card.addEventListener('click', ()=> {
+          // filter shop by occasion
+          document.getElementById('filterOccasion').value = '';
+          // simulate navigation to shop with a preset filter
+          navigateHash('#/shop');
+          // store the occasion filter in localStorage for cross-page filter
+          localStorage.setItem('ff_filter_occ', o.id);
+          // trigger a small delay to re-render
+          setTimeout(()=> renderShopFiltersAndProducts(),50);
+        });
+        occEl.appendChild(card);
+      });
+
+      // Collections placeholder
+      const colEl = document.getElementById('collections');
+      colEl.innerHTML = '';
+      const cols = [
+        { name:'Pastel Palettes', img: catalog[2].image },
+        { name:'Spring Bloom', img: catalog[0].image },
+        { name:'Green Fresh', img: catalog[5].image }
+      ];
+      cols.forEach(c => {
+        const cCard = document.createElement('div');
+        cCard.className = 'card';
+        cCard.innerHTML = `<img src="${c.img}" alt="${c.name}" style="width:100%; height:140px; object-fit:cover; border-radius:8px;">
+          <div style="font-weight:700;">${c.name}</div>`;
+        colEl.appendChild(cCard);
+      });
+    }
+
+    // Shop rendering
+    function renderShop(){
+      // Ensure correct page active
+      // Render products according to filters
+      renderShopFiltersAndProducts();
+    }
+
+    function renderShopFiltersAndProducts(){
+      // Read filters
+      const category = document.getElementById('filterCategory').value;
+      const occasion = document.getElementById('filterOccasion').value;
+      const color = document.getElementById('filterColor').value;
+      const search = searchValue();
+      // Build product list
+      let items = catalog.filter(p => {
+        if(category && p.category !== category) return false;
+        if(color && !p.colors.includes(color)) return false;
+        if(occasion && !p.occasion.includes(occasion)) return false;
+        if(search && !(p.name.toLowerCase().includes(search) || p.description.toLowerCase().includes(search))) return false;
+        return true;
+      });
+
+      // Apply any persisted occasion filter
+      const persistedOcc = localStorage.getItem('ff_filter_occ');
+      if(persistedOcc){
+        items = items.filter(p => p.occasion.join(',').toLowerCase().includes(persistedOcc) || p.occasion.includes(persistedOcc));
+        localStorage.removeItem('ff_filter_occ');
+      }
+
+      // Products grid
+      const grid = document.getElementById('productGrid');
+      grid.innerHTML = '';
+      if(items.length === 0){
+        grid.innerHTML = '<div class="muted" style="grid-column: 1 / -1;">No products found. Try adjusting filters.</div>';
+        return;
+      }
+      items.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${p.image}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <div class="muted" style="min-height:40px;">${p.description}</div>
+          <div class="row" style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="price">$${p.price.toFixed(2)}</span>
+            <div style="display:flex; gap:6px;">
+              <button class="btn" aria-label="View product" onclick="viewProduct('${p.id}')">View</button>
+              <button class="btn primary" aria-label="Add to cart" onclick="addToCart('${p.id}')">Add</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      // Occasions select fill
+      const occSel = document.getElementById('filterOccasion');
+      if(occSel.options.length <= 1){
+        const uniqueOcc = Array.from(new Set(catalog.flatMap(p => p.occasion)));
+        uniqueOcc.forEach(o => {
+          const opt = document.createElement('option');
+          opt.value = o;
+          opt.textContent = o;
+          occSel.appendChild(opt);
+        });
+      }
+    }
+
+    function searchValue(){
+      const el = document.getElementById('searchInput');
+      return (el && el.value || '').toLowerCase().trim();
+    }
+
+    // Product detail view
+    function viewProduct(id){
+      const p = catalog.find(x => x.id === id);
+      if(!p) return;
+      const detail = document.getElementById('product-detail');
+      const body = document.getElementById('productDetailBody');
+      detail.style.display = 'block';
+      detail.hidden = false;
+      // build detail content
+      body.innerHTML = `
+        <div>
+          <img src="${p.image}" alt="${p.name}" style="width:100%; height:320px; object-fit:cover; border-radius:8px;">
+        </div>
+        <div>
+          <h2>${p.name}</h2>
+          <div class="row" style="gap:8px; align-items:center;">
+            <span class="price" style="font-size:1.25rem;">$${p.price.toFixed(2)}</span>
+            <span class="muted">Rating ${p.rating} (${p.reviews} reviews)</span>
+          </div>
+          <p>${p.description}</p>
+          <div class="row">
+            <span class="muted">Category:</span><strong>${p.category}</strong>
+          </div>
+          <div class="row">
+            <span class="muted">Occasion:</span>
+            <span>${p.occasion.join(', ')}</span>
+          </div>
+          <div class="row" aria-label="Size options">
+            <span class="muted" style="margin-right:6px;">Size:</span>
+            <div id="sizeOptions" class="option" role="group" aria-label="Size options">
+              ${p.sizes.map((s,i)=>`<button class="size ${i===0?'active':''}" data-size="${s}" aria-label="Size ${s}">${s}</button>`).join('')}
+            </div>
+          </div>
+          <div class="row">
+            <label for="deliveryDateSingle" class="muted">Delivery date</label>
+            <input type="date" id="deliveryDateSingle" value="" aria-label="Delivery date"/>
+          </div>
+          <button class="btn primary" onclick="addToCart('${p.id}', 1, getSelectedSize('${p.id}'))" aria-label="Add to cart from detail">Add to cart</button>
+          <button class="btn" onclick="navigateHash('/shop')">Back to shop</button>
+        </div>
+      `;
+      // size selection wiring
+      setTimeout(()=>{ // bind active class
+        document.querySelectorAll('#sizeOptions .size').forEach(btn=>{
+          btn.addEventListener('click', ()=> {
+            document.querySelectorAll('#sizeOptions .size').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+          });
+        });
+      }, 0);
+    }
+
+    function getSelectedSize(productId){
+      const p = catalog.find(x => x.id === productId);
+      if(!p || !p.sizes || p.sizes.length === 0) return null;
+      const el = document.querySelector('#sizeOptions .size.active');
+      return el ? el.getAttribute('data-size') : p.sizes[0];
+    }
+
+    // Cart operations
+    function addToCart(productId, qty=1, size=null){
+      const p = catalog.find(x => x.id === productId);
+      if(!p) return;
+      const itemSize = size || (p.sizes ? p.sizes[0] : null);
+      // if exists, increase
+      const idx = cart.findIndex(it => it.id === productId && it.size === itemSize);
+      if(idx >= 0){
+        cart[idx].qty += qty;
+      } else {
+        cart.push({ id: productId, qty: qty, size: itemSize });
+      }
+      saveCart();
+      renderCartItems();
+      openCart();
+    }
+
+    function renderCartItems(){
+      const container = document.getElementById('cartItems');
+      container.innerHTML = '';
+      if(!cart.length){
+        container.innerHTML = '<div class="muted" style="padding:12px;">Your cart is empty</div>';
+        updateSubtotalUI();
+        return;
+      }
+      cart.forEach((it, idx) => {
+        const p = catalog.find(x => x.id === it.id);
+        if(!p) return;
+        const item = document.createElement('div');
+        item.className = 'cart-item';
+        item.innerHTML = `const item = document.createElement('div');
+        item.className = 'cart-item';
+        item.innerHTML = `
+          <img src="${p.image}" alt="${p.name}" style="width:60px; height:60px; object-fit:cover; border-radius:6px;" />
+          <div style="flex:1;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong>${p.name}</strong>
+              <span>$${(p.price * it.qty).toFixed(2)}</span>
+            </div>
+            <div class="muted" style="font-size:.9em;">Size: ${it.size || (p.sizes ? p.sizes[0] : '')}</div>
+            <div class="qty" style="margin-top:6px;">
+              <button class="btn" data-action="decr" data-idx="${idx}" aria-label="Decrease quantity">-</button>
+              <span style="min-width:20px; text-align:center;">${it.qty}</span>
+              <button class="btn" data-action="incr" data-idx="${idx}" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+          <button class="btn" data-action="remove" data-idx="${idx}" aria-label="Remove item" style="align-self:flex-start;">Remove</button>
+        `;
+        // Bind actions for this item
+        item.querySelectorAll('button[data-action]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const action = btn.getAttribute('data-action');
+            const i = parseInt(btn.getAttribute('data-idx'), 10);
+            if(action === 'incr'){
+              cart[i].qty += 1;
+              saveCart();
+              renderCartItems();
+              updateSubtotalUI();
+            } else if(action === 'decr'){
+              if(cart[i].qty > 1){
+                cart[i].qty -= 1;
+              } else {
+                cart.splice(i, 1);
+              }
+              saveCart();
+              renderCartItems();
+              updateSubtotalUI();
+            } else if(action === 'remove'){
+              cart.splice(i, 1);
+              saveCart();
+              renderCartItems();
+              updateSubtotalUI();
+            }
+          });
+        });
+        container.appendChild(item);
+      });
+      updateSubtotalUI();
+    }
+
+    function updateSubtotalUI(){
+      let total = cart.reduce((sum, it) => {
+        const p = catalog.find(x => x.id === it.id);
+        return sum + ((p ? p.price : 0) * (it.qty || 1));
+      }, 0);
+      const subtotalEl = document.getElementById('cartSubtotal');
+      if(subtotalEl) subtotalEl.textContent = '$' + total.toFixed(2);
+      // Enable checkout only when there are items
+      const canCheckout = cart.length > 0;
+      const btn = document.getElementById('checkoutBtn');
+      if(btn) btn.disabled = !canCheckout;
+    }
+
+    function navigateHash(path){
+      if(!path.startsWith('#')) path = '#' + path;
+      location.hash = path;
+    }
+
+    function renderRoute(){
+      const { page } = parseHash();
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const el = document.getElementById(page);
+      if(el) el.classList.add('active');
+      // Page-specific renders
+      if(page === 'home') renderHome();
+      else if(page === 'shop') renderShop();
+      else if(page === 'account') renderAccount();
+      // Ensure UI state
+      setActiveNav(page);
+      closeCart();
+    }
+
+    function renderAccount(){
+      const accEl = document.getElementById('accountContent');
+      if(!accEl) return;
+      if(currentUser){
+        accEl.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+            <div>Welcome, ${currentUser.name}</div>
+            <button class="btn" id="logoutBtn" aria-label="Logout">Logout</button>
+          </div>
+          <div class="section" style="margin-top:12px;">
+            <h3>Past Orders</h3>
+            <p class="muted">This is a mock account. No real data.</p>
+          </div>
+        `;
+        document.getElementById('logoutBtn').addEventListener('click', ()=> {
+          currentUser = null;
+          saveUser();
+          renderAccount();
+        });
+      } else {
+        accEl.innerHTML = `
+          <form id="loginForm" class="section" style="max-width:420px;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label>Email</label>
+                <input id="loginEmail" type="email" placeholder="you@example.com" required />
+              </div>
+              <div>
+                <label>Password</label>
+                <input id="loginPwd" type="password" placeholder="Password" required />
+              </div>
+            </div>
+            <button class="btn primary" type="submit" style="margin-top:6px;">Login</button>
+          </form>
+        `;
+        document.getElementById('loginForm').addEventListener('submit', (e)=>{
+          e.preventDefault();
+          const email = document.getElementById('loginEmail').value;
+          currentUser = { name: email.split('@')[0] || 'Guest' };
+          saveUser();
+          renderAccount();
+        });
+      }
+    }
+
+    // Lightweight hash-based navigation handler
+    function parseHash(){
+      const h = location.hash || '#/home';
+      const parts = h.replace('#/','').split('/');
+      const page = parts[0] || 'home';
+      const params = parts.slice(1);
+      return { page, params };
+    }
+
+    // Initialize app state from localStorage
+    const storage = {
+      cartKey: 'ff_cart',
+      userKey: 'ff_user',
+      ordersKey: 'ff_orders'
+    };
+    let cart = [];
+    let currentUser = null;
+
+    function loadCart(){ const raw = localStorage.getItem(storage.cartKey); cart = raw ? JSON.parse(raw) : []; }
+    function saveCart(){ localStorage.setItem(storage.cartKey, JSON.stringify(cart)); }
+
+    function loadUser(){ const u = localStorage.getItem(storage.userKey); currentUser = u ? JSON.parse(u) : null; }
+    function saveUser(){ localStorage.setItem(storage.userKey, JSON.stringify(currentUser)); }
+
+    // Home page injections and shop rendering (existing logic continues)
+    // ... (existing prior functions for renderHome, renderShop, renderShopFiltersAndProducts, viewProduct, addToCart, etc.)
+    // The rest of the page continues from here with the previously defined functions
+
+  </script>
+
+  <script>
+    // Bootstrapping and wiring for the complete SPA (simplified entry)
+    // After the long inline script above, ensure the app initializes
+    (function boot(){
+      // Load persisted state
+      loadCart();
+      loadUser();
+
+      // Global UI bindings
+      const openCartBtn = document.getElementById('openCartBtn');
+      const closeCartBtn = document.getElementById('closeCartBtn');
+      const continueShop = document.getElementById('continueShop');
+      const shopNowTop = document.getElementById('shopNowTop');
+      const shopNowBtn = document.getElementById('shopNowBtn');
+      const backHome = document.getElementById('backHome');
+      const searchInput = document.getElementById('searchInput');
+      const productGrid = document.getElementById('productGrid');
+
+      if(openCartBtn) openCartBtn.addEventListener('click', ()=> openCart());
+      if(closeCartBtn) closeCartBtn.addEventListener('click', ()=> closeCart());
+      if(continueShop) continueShop.addEventListener('click', ()=> navigateHash('#/shop'));
+      if(shopNowTop) shopNowTop.addEventListener('click', ()=> navigateHash('#/shop'));
+      if(shopNowBtn) shopNowBtn.addEventListener('click', ()=> navigateHash('#/shop'));
+      if(backHome) backHome.addEventListener('click', ()=> navigateHash('#/home'));
+
+      // Simple search suggestions
+      if(searchInput){
+        searchInput.addEventListener('input', ()=>{
+          const q = (searchInput.value || '').toLowerCase().trim();
+          const suggestions = catalog.filter(p => p.name.toLowerCase().includes(q)).slice(0,5);
+          const list = document.getElementById('searchSuggestions');
+          if(q && suggestions.length){
+            list.style.display = 'block';
+            list.innerHTML = suggestions.map(s => `<div style="padding:6px 8px; cursor:pointer;">${s.name}</div>`).join('');
+          } else {
+            list.style.display = 'none';
+            list.innerHTML = '';
+          }
+        });
+      }
+
+      // Router
+      window.addEventListener('hashchange', renderRoute);
+
+      // Initialize folder-agnostic UI
+      renderRoute();
+      renderHome();
+      renderShop();
+      renderCartItems();
+      updateSubtotalUI();
+    })();
+  </script>
+
+  <footer aria-label="Footer">
+    <p>FloraFlow © <span id="year2"></span>. All placeholders. Brand assets are mock.</p>
+  </footer>
+
+  <script>
+    // Minor duplicate year element for final render
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
