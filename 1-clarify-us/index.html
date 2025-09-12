@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Engineering-Prototype Chat</title>
+  <style>
+    :root{
+      --bg: #0b1020;
+      --panel: #141a2b;
+      --panel2: #1e2540;
+      --text: #e7eaf6;
+      --muted: #aab4d6;
+      --primary: #4f8cff;
+      --accent: #22d3ee;
+      --success: #34d399;
+      --danger: #f87171;
+      --bubble-me: #2b6fff;
+      --bubble-you: #1f2a44;
+      --shadow: 0 6px 18px rgba(0,0,0,.25);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; font-family: Inter, system-ui, Arial, sans-serif; background: radial-gradient(circle at 20% -10%, rgba(79,140,255,.2), transparent 40%), #0b1020; color: var(--text); }
+    a { color: #9bd3ff; text-decoration: none; }
+    .container {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      grid-gap: 12px;
+      height: 100vh;
+      padding: 12px;
+    }
+    .panel {
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(20,26,42,.95), rgba(20,26,42,.8));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      padding: 12px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      background: linear-gradient(#1a2140, #141a2b);
+    }
+    .header h1{ font-size: 14px; margin:0; letter-spacing:.4px; text-transform: uppercase; color:#dbe6ff; }
+    .header .hint { font-size:12px; color:var(--muted); }
+    .btn {
+      appearance: none; border: none; background: var(--primary);
+      color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+    }
+    .btn.secondary { background: #2a315a; color: #e8edff; }
+    .section { padding: 12px; border-bottom: 1px solid rgba(255,255,255,.06); }
+    .search {
+      width: 100%; padding: 8px 10px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.04);
+      color: var(--text);
+    }
+    .chat-item {
+      display: flex; gap: 10px; padding: 10px 8px; cursor: pointer; align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .chat-item:hover { background: rgba(255,255,255,.04); }
+    .avatar {
+      width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+      color: white; font-weight: bold;
+    }
+    .chat-meta { display: flex; flex-direction: column; }
+    .chat-name { font-weight: 600; }
+    .chat-last { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+    .badge { font-size: 11px; padding: 2px 6px; border-radius: 999px; background: rgba(79,140,255,.25); color: #d8e6ff; }
+    .divider { height:1px; background: rgba(255,255,255,.06); margin:6px 0; }
+
+    .chat-area { display: flex; flex-direction: column; height: 100%; }
+    .chat-header {
+      padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.06);
+      display:flex; align-items:center; justify-content: space-between; background: linear-gradient(#1b2147, #12183b);
+    }
+    .chat-title { display:flex; gap:10px; align-items:center; }
+    .presence { width:8px; height:8px; border-radius:50%; display:inline-block; margin-left:6px; }
+    .presence.online { background: #34d399; }
+    .presence.offline { background: #64748b; }
+    .chat-controls { display:flex; gap:8px; align-items:center; }
+    .messages { flex:1; overflow:auto; padding: 14px; background: #0b1220; }
+    .msg { display:flex; gap:8px; margin: 8px 0; align-items:flex-end; }
+    .msg.you { flex-direction: row-reverse; }
+    .bubble {
+      max-width: 70%; padding: 10px 12px; border-radius: 12px;
+      background: var(--bubble-you); color: white;
+      position: relative; word-wrap: break-word;
+    }
+    .bubble.me { background: var(--bubble-me); }
+    .meta { font-size:11px; color: #d0d7ff; margin-top:6px; display:flex; gap:8px; align-items:center; }
+    .attachment { margin-top:6px; border-radius:8px; overflow:hidden; border:1px solid rgba(255,255,255,.15); }
+    .attachment img { max-width: 320px; max-height: 240px; display:block; }
+    .link-preview {
+      border:1px solid rgba(255,255,255,.15); border-radius:8px; padding:6px; margin-top:6px;
+      display:flex; align-items:center; gap:8px; background: rgba(255,255,255,.04);
+    }
+    .link-thumb { width: 40px; height: 40px; border-radius:6px; background: #1f2a44; display:inline-block; }
+    .link-domain { font-weight:600; }
+    .link-title { font-size:12px; color: #dbe4ff; }
+    .toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+      background: #111827; color:#e5e7eb; padding: 10px 14px; border-radius: 8px;
+      border:1px solid rgba(255,255,255,.15); box-shadow: 0 6px 14px rgba(0,0,0,.3);
+      z-index: 9999; max-width: 90%; display:none;
+    }
+    .toast.show { display:block; animation: fadein .2s ease-out; }
+    @keyframes fadein { from {opacity:0; transform: translate(-50%, 8px);} to {opacity:1; transform: translate(-50%,0);} }
+
+    .composer { padding: 12px; border-top: 1px solid rgba(255,255,255,.06); background: rgba(10,12,25,.9);
+      display:flex; gap:8px; align-items:flex-end;
+    }
+    .composer textarea {
+      flex:1; min-height: 48px; max-height: 180px; resize: vertical; padding: 10px 12px; border-radius: 8px;
+      border:1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.04); color: var(--text);
+    }
+    .composer .tools { display:flex; gap:6px; align-items:center; }
+    .hidden { display:none; }
+    .saved-view { padding:12px; display:flex; flex-direction:column; gap:8px; }
+    .saved-item { padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); }
+    .view-toggle { display:flex; gap:8px; align-items:center; }
+    .kbd { font-family: ui-monospace,SF Mono,Monaco,monospace; font-size: 11px; padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,.15); color:#fff; }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .container { grid-template-columns: 1fr; height: auto; }
+      .panel.left { order: 1; }
+      .panel.right { order: 2; height: auto; }
+      .messages { height: calc(100vh - 240px); }
+    }
+
+    /* Accessibility focus */
+    button:focus-visible, [role="button"]:focus-visible, a:focus-visible, textarea:focus-visible {
+      outline: 2px solid #93c5fd; outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top-level README-style usage note (inline for quick reference) -->
+  <div id="app-spotlight" aria-live="polite" class="hidden" style="position:fixed; top:8px; left:50%; transform: translateX(-50%); background: rgba(0,0,0,.6); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,.25); z-index:9999;">
+    <strong>Chat Prototype</strong> • Local-first, no server. Seed data on first load; toggle latency to simulate network; wired for REST/socket integration points.
+  </div>
+
+  <div class="container" id="app-root">
+    <!-- Left panel: Chats / Controls -->
+    <aside class="panel left" aria-label="Chats list panel" style="min-width: 320px;">
+      <div class="header" style="border-bottom:1px solid rgba(255,255,255,.08);">
+        <div>
+          <h1>Chats</h1>
+          <div class="hint" id="hint-left">Tip: Use Enter to send, Ctrl/Cmd+S to Save</div>
+        </div>
+        <button class="btn" id="btn-export" title="Export data">Export</button>
+      </div>
+
+      <div class="section" role="region" aria-label="User switcher" style="display:flex; gap:8px; align-items:center;">
+        <div class="avatar" id="current-user-avatar" style="width:32px; height:32px; font-size:14px;">?</div>
+        <div style="flex:1;">
+          <div id="current-user-name" style="font-weight:600; font-size:14px;">(You)</div>
+          <div id="current-user-status" style="font-size:12px; color:var(--muted);">Online</div>
+        </div>
+        <button class="btn secondary" id="btn-simulate" title="Toggle simulated bot replies">Toggle Bot</button>
+      </div>
+
+      <div class="section" aria-label="Search chats">
+        <input id="search-chats" class="search" placeholder="Search chats..." />
+      </div>
+
+      <div class="section" style="flex:1; overflow:auto;">
+        <div id="chat-list" role="navigation" aria-label="Chat list"></div>
+      </div>
+
+      <div class="section" style="border-top:1px solid rgba(255,255,255,.08); display:flex; gap:8px; align-items:center;">
+        <button class="btn" id="btn-clear" title="Clear all data">Clear Data</button>
+        <span class="badge" id="version-pill" style="margin-left:auto;">v1</span>
+      </div>
+    </aside>
+
+    <!-- Right panel: Chat window -->
+    <section class="panel chat-area right" aria-label="Chat window" style="min-width: 0;">
+      <div class="chat-header" id="chat-header">
+        <div class="chat-title">
+          <div id="chat-avatar" class="avatar" style="width:34px; height:34px; font-size:13px;">?</div>
+          <div>
+            <div id="chat-name" style="font-weight:700;">Select a chat</div>
+            <div id="chat-subtitle" style="font-size:12px; color:var(--muted);">No chat selected</div>
+          </div>
+        </div>
+        <div class="chat-controls">
+          <span id="presence-dot" class="presence offline" title="Presence"></span>
+          <span class="badge" id="badge-unread">0 unread</span>
+        </div>
+      </div>
+
+      <div class="messages" id="messages" role="log" aria-label="Messages area"></div>
+
+      <div class="composer" aria-label="Message composer">
+        <input type="file" id="attachment-input" class="hidden" multiple accept="image/*,.pdf,.txt,.doc,.docx" />
+        <button class="btn secondary" id="btn-attach" title="Attach files">Attach</button>
+        <textarea id="message-input" placeholder="Message..." aria-label="Message input"></textarea>
+        <button class="btn" id="btn-send" title="Send message">Send ⏎</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Toasts -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Inline scripts: all in one file, no external assets -->
+  <script>
+  // Top-level notes for developers (wired for backend replacement)
+  // - REST endpoints (placeholders): 
+  //   const REST_ORIGIN = 'http://localhost:3000';
+  //   const LOGIN_URL = REST_ORIGIN + '/api/auth/login';
+  //   const CHATS_URL = REST_ORIGIN + '/api/chats';
+  //   const UPLOAD_URL = REST_ORIGIN + '/api/uploads';
+  // - Socket events (placeholders):
+  //   const SOCKET_EVENTS = { SEND: 'message:send', NEW: 'message:new', TYPING: 'typing', PRESENCE: 'presence:update', READ: 'message:read' };
+
+  // Simple in-file models and state
+  const STORAGE_KEY = 'chat_prototype_v1';
+  const BC_NAME = 'chat_proto_sync';
+  let state = {
+    version: 1,
+    currentChatId: null,
+    currentUserId: 'u_me',
+    users: [],       // filled by seed
+    chats: [],       // filled by seed
+    savedMessageIds: new Set(), // message ids saved by user
+    latencyMs: 0,
+    botEnabled: true,
+    online: true,
+    attachments: [],   // temporary attachments queue per message
+    pendingSends: [],    // messages queued while "offline"
+    lastSeed: 0
+  };
+  let bc = null;
+  let isFirstLoad = true;
+  // Simple seed data
+  function seedData() {
+    const now = Date.now();
+    const uMe = { id: 'u_me', name: 'You', color: '#4f8cff', online: true };
+    const uAlex = { id: 'u_alex', name: 'Alex Chen', color: '#e879f9', online: true };
+    const uSam = { id: 'u_sam', name: 'Sam Rivera', color: '#34d399', online: true };
+    const bot = { id: 'bot', name: 'ChatBot', color: '#f59e0b', online: true };
+
+    const chats = [
+      {
+        id: 'c_direct_alex',
+        type: 'direct',
+        name: 'Alex Chen',
+        participantIds: ['u_me','u_alex'],
+        messages: [
+          { id: 'm1', chatId: 'c_direct_alex', authorId: 'u_alex', content: 'Hey! Ready for the prototype walkthrough?', timestamp: now - 1000*60*60*12, edited:false, readBy: ['u_me'], reactions: {} }
+        ]
+      },
+      {
+        id: 'c_group_dev',
+        type: 'group',
+        name: 'Dev Team',
+        participantIds: ['u_me','u_alex','u_sam','bot'],
+        messages: [
+          { id: 'm2', chatId: 'c_group_dev', authorId: 'u_sam', content: 'Welcome to the engineering chat. Let\'s start with a quick demo of the UI. See **bold** and *italic* formatting.', timestamp: now - 1000*60*60*5, edited:false, readBy: ['u_me','u_alex','u_sam'], reactions: {} },
+          { id: 'm3', chatId: 'c_group_dev', authorId: 'bot', content: 'Hello! I can simulate bot replies. Try sending a message.', timestamp: now - 1000*60*60*5 + 60000, edited:false, readBy: ['u_me','u_alex','u_sam'], reactions: {} }
+        ]
+      }
+    ];
+
+    // initial messages for direct chat
+    // ensure names included
+    const users = [uMe, uAlex, uSam].map(u=> ({...u}));
+    // add bot user
+    users.push(bot);
+
+    // Normalize
+    state = {
+      version: 1,
+      currentChatId: chats[0].id,
+      currentUserId: uMe.id,
+      users: users,
+      chats: chats,
+      savedMessageIds: new Set(),
+      latencyMs: 0,
+      botEnabled: true,
+      online: true,
+      attachments: [],
+      pendingSends: [],
+    };
+  }
+
+  // Helpers
+  function byId(arr, id){ return arr.find(x => x.id === id); }
+  function timeLabel(ts){
+    const d = new Date(ts);
+    return d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  }
+
+  // Persist and migrate
+  function loadState() {
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw){
+        seedData();
+        saveState();
+        isFirstLoad = true;
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      // Basic migration guard
+      state = Object.assign(state, parsed);
+      // Rehydrate Set
+      if (state.savedMessageIds && Array.isArray(state.savedMessageIds)){
+        state.savedMessageIds = new Set(state.savedMessageIds);
+      } else state.savedMessageIds = new Set();
+      isFirstLoad = false;
+    } catch(e){
+      console.error('Load state failed', e);
+      seedData();
+    }
+  }
+
+  function saveState(){
+    // clone to serialize
+    const toStore = {
+      version: state.version,
+      currentChatId: state.currentChatId,
+      currentUserId: state.currentUserId,
+      users: state.users,
+      chats: state.chats,
+      savedMessageIds: Array.from(state.savedMessageIds),
+      latencyMs: state.latencyMs,
+      botEnabled: state.botEnabled,
+      online: state.online
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+  }
+
+  // UI helpers
+  function createAvatar(name, color){
+    const initials = name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+    const el = document.createElement('span');
+    el.style.background = color;
+    el.className = 'avatar';
+    el.textContent = initials;
+    return el;
+  }
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    t.style.display = 'block';
+    setTimeout(()=>{ t.classList.remove('show'); t.style.display='none'; }, 1800);
+  }
+
+  // Markdown-like formatting: **bold** and *italic*
+  function parseMarkdown(text){
+    let safe = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    safe = safe.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    // simple URL to anchor
+    safe = safe.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+    return safe;
+  }
+
+  function extractLinks(text){
+    const urls = [];
+    const re = /(https?:\/\/[^\s]+)/g;
+    let m;
+    while((m = re.exec(text)) !== null){
+      urls.push(m[0]);
+    }
+    return urls;
+  }
+
+  function createLinkPreview(url){
+    const domain = (new URL(url)).hostname;
+    // simple mock thumbnail as a data URI SVG
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="60">
+      <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#4f8cff"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs>
+      <rect width="120" height="60" fill="url(#g)"/>
+      <text x="10" y="35" fill="#fff" font-family="Arial" font-size="12">${domain}</text>
+    </svg>`;
+    return 'data:image/svg+xml;base64,' + btoa(svg);
+  }
+
+  function renderChatList(){
+    const container = document.getElementById('chat-list');
+    container.innerHTML = '';
+    // filter based on search
+    const q = (document.getElementById('search-chats')?.value || '').toLowerCase();
+    state.chats
+      .filter(c => c.name.toLowerCase().includes(q) || c.participantIds.map(id => byId(state.users, id).name).join(' ').toLowerCase().includes(q))
+      .forEach(chat => {
+        const div = document.createElement('div');
+        div.className = 'chat-item';
+        div.role = 'button';
+        div.tabIndex = 0;
+        div.setAttribute('aria-label', 'Open chat ' + chat.name);
+        const avatar = document.createElement('div');
+        avatar.className = 'avatar';
+        const firstUserId = chat.participantIds.find(id => id !== state.currentUserId) || chat.participantIds[0];
+        const firstUser = byId(state.users, firstUserId);
+        avatar.style.background = firstUser?.color || '#888';
+        avatar.textContent = firstUser?.name?.[0] || '?';
+        const meta = document.createElement('div');
+        meta.className = 'chat-meta';
+        const name = document.createElement('div');
+        name.className = 'chat-name';
+        name.textContent = chat.name;
+        const last = document.createElement('div');
+        last.className = 'chat-last';
+        const lastMsg = chat.messages[chat.messages.length-1];
+        const preview = lastMsg ? (lastMsg.content.length>40 ? lastMsg.content.slice(0,40)+'…' : lastMsg.content) : 'No messages yet';
+        last.textContent = lastMsg ? preview : 'Start the conversation';
+        div.appendChild(avatar);
+        meta.appendChild(name);
+        meta.appendChild(last);
+        div.appendChild(meta);
+        const unread = chat.messages.filter(m => !m.readBy?.includes(state.currentUserId)).length;
+        if(unread>0){
+          const b = document.createElement('span');
+          b.className = 'badge';
+          b.textContent = unread + ' new';
+          div.appendChild(b);
+        }
+        div.addEventListener('click', ()=> openChat(chat.id));
+        div.addEventListener('keydown', (e)=>{ if(e.key==='Enter') openChat(chat.id);});
+        container.appendChild(div);
+      });
+  }
+
+  function renderMessages(chat){
+    const el = document.getElementById('messages');
+    el.innerHTML = '';
+    if(!chat) return;
+
+    // Show messages with simple grouping by date not implemented for brevity
+    chat.messages.forEach(m => {
+      const isMe = m.authorId === state.currentUserId;
+      const row = document.createElement('div');
+      row.className = 'msg ' + (isMe ? 'you' : ''); row.setAttribute('data-id', m.id);
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      const author = byId(state.users, m.authorId);
+      avatar.style.background = author?.color || '#666';
+      avatar.textContent = author?.name?.[0] ?? '?';
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble ' + (isMe ? 'me' : '');
+      bubble.innerHTML = parseMarkdown(m.content);
+      // Attachments
+      if(m.attachments && m.attachments.length){
+        const attBox = document.createElement('div');
+        attBox.className = 'attachment';
+        m.attachments.forEach(att => {
+          if(att.type==='image'){
+            const img = document.createElement('img');
+            img.src = att.dataUrl;
+            img.alt = att.name || 'image';
+            attBox.appendChild(img);
+          } else {
+            const a = document.createElement('a');
+            a.href = att.dataUrl;
+            a.download = att.name || 'file';
+            a.textContent = att.name || 'file';
+            attBox.appendChild(a);
+          }
+        });
+        bubble.appendChild(attBox);
+      }
+
+      // Link previews
+      const links = extractLinks(m.content);
+      if(links.length){
+        links.forEach(url=>{
+          const preview = document.createElement('div');
+          preview.className = 'link-preview';
+          const thumb = document.createElement('img');
+          thumb.className = 'link-thumb';
+          thumb.src = createLinkPreview(url);
+          const domain = document.createElement('div');
+          domain.className = 'link-domain';
+          domain.textContent = new URL(url).hostname;
+          const title = document.createElement('div');
+          title.className = 'link-title';
+          title.textContent = url;
+          preview.appendChild(thumb);
+          preview.appendChild(domain);
+          preview.appendChild(title);
+          bubble.appendChild(preview);
+        });
+      }
+
+      // Metadata
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      const ts = document.createElement('span');
+      ts.textContent = timeLabel(m.timestamp);
+      meta.appendChild(ts);
+      // Edit / Undo / Save
+      const actions = document.createElement('span');
+      actions.style.marginLeft = 'auto';
+      actions.style.display = 'inline-flex'; actions.style.gap = '6px';
+      const editBtn = document.createElement('button');
+      editBtn.textContent = 'Edit';
+      editBtn.className = 'btn secondary';
+      editBtn.style.padding = '4px 6px'; editBtn.style.fontSize='12px';
+      editBtn.addEventListener('click', ()=> startEdit(m.id));
+      const saveBtn = document.createElement('button');
+      saveBtn.textContent = state.savedMessageIds.has(m.id) ? 'Unsave' : 'Save';
+      saveBtn.className = 'btn secondary';
+      saveBtn.style.padding = '4px 6px'; saveBtn.style.fontSize='12px';
+      saveBtn.addEventListener('click', ()=> toggleSave(m.id, saveBtn));
+      const delBtn = document.createElement('button');
+      delBtn.textContent = 'Delete';
+      delBtn.className = 'btn secondary';
+      delBtn.style.padding = '4px 6px'; delBtn.style.fontSize='12px';
+      delBtn.addEventListener('click', ()=> deleteMessage(chat.id, m.id));
+
+      // Reactions (very simple)
+      const reactBtn = document.createElement('button');
+      reactBtn.textContent = '😊';
+      reactBtn.className = 'btn secondary';
+      reactBtn.style.padding = '4px 6px';
+      reactBtn.style.fontSize='12px';
+      reactBtn.addEventListener('click', ()=> addReaction(m.id, '😊'));
+
+      actions.appendChild(reactBtn);
+      actions.appendChild(editBtn);
+      actions.appendChild(saveBtn);
+      actions.appendChild(delBtn);
+      meta.appendChild(actions);
+
+      row.appendChild(isMe ? bubble : avatar);
+      row.appendChild(bubble);
+      row.appendChild(meta);
+      el.appendChild(row);
+    });
+
+    // Scroll to bottom
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function openChat(chatId){
+    const chat = byId(state.chats, chatId);
+    if(!chat) return;
+    state.currentChatId = chatId;
+    // Update header
+    const chatName = document.getElementById('chat-name');
+    chatName.textContent = chat.name;
+    const chatAvatar = document.getElementById('chat-avatar');
+    const firstUserId = chat.participantIds.find(id => id !== state.currentUserId) || chat.participantIds[0];
+    const firstUser = byId(state.users, firstUserId);
+    chatAvatar.textContent = (firstUser?.name?.[0] ?? '?');
+    chatAvatar.style.background = firstUser?.color ?? '#555';
+    // presence
+    const presence = document.getElementById('presence-dot');
+    presence.className = 'presence online';
+    const subtitle = document.getElementById('chat-subtitle');
+    subtitle.textContent = chat.type === 'group' ? 'Group chat' : 'Direct message';
+    // unread reset
+    chat.messages.forEach(m => { if(!m.readBy?.includes(state.currentUserId)){ m.readBy?.push(state.currentUserId); }});
+    document.getElementById('badge-unread').textContent = '0 unread';
+    renderMessages(chat);
+    // notify others (read)
+    broadcastEvent({ type: 'read', chatId, userId: state.currentUserId, timestamp: Date.now() });
+  }
+
+  function updatePresence(userId, online){
+    const u = byId(state.users, userId);
+    if(!u) return;
+    u.online = online;
+    // quick UI update: refresh chat list presence indicators
+    renderChatList();
+  }
+
+  function addReaction(msgId, emoji){
+    const chat = state.chats.find(c => c.messages.find(m => m.id===msgId));
+    if(!chat) return;
+    const m = chat.messages.find(ms => ms.id===msgId);
+    if(!m.reactions[emoji]) m.reactions[emoji] = [];
+    const uid = state.currentUserId;
+    if(!m.reactions[emoji].includes(uid)) m.reactions[emoji].push(uid);
+    renderMessages(chat);
+  }
+
+  function deleteMessage(chatId, msgId){
+    const chat = byId(state.chats, chatId);
+    if(!chat) return;
+    chat.messages = chat.messages.filter(m => m.id !== msgId);
+    renderMessages(chat);
+  }
+
+  function startEdit(msgId){
+    // Basic in-place edit: replace message content with editable input and Save
+    const chat = state.chats.find(c => c.messages.some(m => m.id===msgId));
+    if(!chat) return;
+    const m = chat.messages.find(mm => mm.id===msgId);
+    // create simple inline editor
+    const row = document.querySelector(`.msg[data-id="${msgId}"]`);
+    if(!row) return;
+    const bubble = row.querySelector('.bubble');
+    const editor = document.createElement('textarea');
+    editor.value = m.content;
+    editor.style.width = '100%';
+    editor.style.height = '60px';
+    bubble.innerHTML = '';
+    bubble.appendChild(editor);
+
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Save';
+    saveBtn.className = 'btn';
+    saveBtn.style.marginTop = '6px';
+    saveBtn.addEventListener('click', ()=>{
+      m.content = editor.value;
+      m.edited = true;
+      renderMessages(chat);
+    });
+    bubble.appendChild(saveBtn);
+  }
+
+  function toggleSave(msgId, btn){
+    if(state.savedMessageIds.has(msgId)){
+      state.savedMessageIds.delete(msgId);
+      btn.textContent = 'Save';
+    } else {
+      state.savedMessageIds.add(msgId);
+      btn.textContent = 'Unsave';
+    }
+    saveState();
+  }
+
+  function exportData(){
+    const exportObj = {
+      version: state.version,
+      timestamp: Date.now(),
+      data: {
+        users: state.users,
+        chats: state.chats,
+        saved: Array.from(state.savedMessageIds)
+      }
+    };
+    const blob = new Blob([JSON.stringify(exportObj, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'chat_prototype_export.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Data exported');
+  }
+
+  // Messaging flow
+  function sendMessage(content, chatId, attachments = []){
+    const chat = byId(state.chats, chatId);
+    if(!chat) return;
+    const id = 'm' + Math.random().toString(36).slice(2,8);
+    const msg = {
+      id,
+      chatId,
+      authorId: state.currentUserId,
+      content,
+      timestamp: Date.now(),
+      edited:false,
+      readBy: [state.currentUserId],
+      attachments,
+      reactions: {}
+    };
+    chat.messages.push(msg);
+    renderMessages(chat);
+    // simulate latency
+    const latency = Math.max(0, parseInt(state.latencyMs || 0, 10));
+    if(latency > 0){
+      setTimeout(()=> {
+        // after latency, mark as delivered (broadcast)
+        broadcastEvent({type:'message:new', chatId, message: msg});
+        // also perhaps bot reply
+        if(state.botEnabled && chat.participantIds.includes('bot')){
+          botReply(chatId);
+        }
+      }, latency);
+      // show sending status? skip for brevity; could add pendingSends queue
+    } else {
+      // immediate
+      broadcastEvent({type:'message:new', chatId, message: msg});
+      if(state.botEnabled && chat.participantIds.includes('bot')){
+        botReply(chatId);
+      }
+    }
+  }
+
+  function botReply(chatId){
+    // simple canned reply after a short delay
+    if(!state.botEnabled) return;
+    const chat = byId(state.chats, chatId);
+    if(!chat) return;
+    const bot = byId(state.users, 'bot');
+    if(!bot) return;
+    const latency = Math.max(400, 1200 - state.latencyMs); // slight variability
+    setTimeout(()=>{
+      const content = "Hello from " + bot.name + "! This is a simulated reply. You can test features like **bold** and *italic*.";
+      const msg = { id: 'm' + Math.random().toString(36).slice(2,7),
+                    chatId,
+                    authorId: bot.id,
+                    content,
+                    timestamp: Date.now(),
+                    edited:false,
+                    readBy: [state.currentUserId],
+                    attachments: [], reactions:{} };
+      chat.messages.push(msg);
+      renderMessages(chat);
+      broadcastEvent({type:'message:new', chatId, message: msg});
+    }, latency);
+  }
+
+  // BroadcastChannel for cross-tab sync
+  function setupBroadcast(){
+    bc = new BroadcastChannel(BC_NAME);
+    bc.onmessage = (e) => {
+      const data = e.data;
+      if(!data || !data.type) return;
+      switch(data.type){
+        case 'presence:update':
+          updatePresence(data.userId, data.online);
+          break;
+        case 'message:new':
+          // incoming message from other tab: insert into appropriate chat
+          if(data.chatId && data.message){
+            const chat = byId(state.chats, data.chatId);
+            if(chat){
+              // avoid duplicating if same message id exists
+              if(!chat.messages.find(m=>m.id===data.message.id)){
+                chat.messages.push(data.message);
+                renderMessages(chat);
+              }
+            }
+          }
+          break;
+        case 'read':
+          // mark as read in other tab for given chat
+          if(data.chatId && data.userId){
+            const chat = byId(state.chats, data.chatId);
+            if(chat){
+              chat.messages.forEach(m => {
+                if(!m.readBy.includes(data.userId)){
+                  // naive: mark as read if this tab had read
+                  // for simplicity, push in readBy
+                  m.readBy.push(data.userId);
+                }
+              });
+              renderMessages(chat);
+            }
+          }
+          break;
+        case 'typing':
+          // could show typing indicator; simplified
+          break;
+      }
+    };
+  }
+
+  function broadcastEvent(payload){
+    if(!bc) return;
+    bc.postMessage(payload);
+  }
+
+  // Attach UI handlers
+  function initUI(){
+    // current user display
+    const me = state.users.find(u => u.id === state.currentUserId) || state.users[0];
+    const meAvatar = document.getElementById('current-user-avatar');
+    meAvatar.textContent = me.name[0];
+    meAvatar.style.background = me.color;
+    document.getElementById('current-user-name').textContent = me.name;
+    document.getElementById('current-user-status').textContent = me.online ? 'Online' : 'Offline';
+
+    // Chat list events
+    document.getElementById('search-chats').addEventListener('input', ()=> renderChatList());
+
+    // Export
+    document.getElementById('btn-export').addEventListener('click', exportData);
+
+    // Clear
+    document.getElementById('btn-clear').addEventListener('click', ()=> {
+      if(confirm('Clear all prototype data? This cannot be undone.')){
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
+    });
+
+    // Attach button
+    document.getElementById('btn-attach').addEventListener('click', ()=> {
+      document.getElementById('attachment-input').click();
+    });
+
+    // File reader for attachments
+    document.getElementById('attachment-input').addEventListener('change', (e)=>{
+      const files = Array.from(e.target.files || []);
+      state.attachments = files.map(f => ({
+        name: f.name,
+        dataUrl: null,
+        type: f.type.startsWith('image/') ? 'image' : 'file'
+      }));
+      // read as data URL for images
+      const readers = [];
+      state.attachments.forEach((att, idx) => {
+        const file = files[idx];
+        if(file && file.type.startsWith('image/')){
+          const r = new FileReader();
+          r.onload = ()=> { att.dataUrl = r.result; renderPreviewInComposer(); };
+          r.readAsDataURL(file);
+          readers.push(r);
+        } else {
+          att.dataUrl = URL.createObjectURL(file);
+          renderPreviewInComposer();
+        }
+      });
+      // reset input
+      e.target.value = '';
+    });
+
+    // Message composing
+    const input = document.getElementById('message-input');
+    input.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' && !e.shiftKey){
+        e.preventDefault();
+        const content = input.value.trim();
+        if(!content) return;
+        const chatId = state.currentChatId;
+        const attachments = state.attachments || [];
+        sendMessage(content, chatId, attachments);
+        input.value = '';
+        state.attachments = [];
+        renderPreviewInComposer();
+      }
+    });
+
+    document.getElementById('btn-send').addEventListener('click', ()=> {
+      const content = input.value.trim();
+      if(!content) return;
+      const chatId = state.currentChatId;
+      const attachments = state.attachments || [];
+      sendMessage(content, chatId, attachments);
+      input.value = '';
+      state.attachments = [];
+      renderPreviewInComposer();
+    });
+
+    // Bot toggle hint
+    document.getElementById('btn-simulate').addEventListener('click', ()=> {
+      state.botEnabled = !state.botEnabled;
+      showToast('Bot replies ' + (state.botEnabled ? 'enabled' : 'disabled'));
+    });
+
+    // Presence: simulate own online/offline toggle
+    setInterval(()=> {
+      // simply toggle online state for demo every 60 seconds (optional)
+    }, 60000);
+
+    // On first load, select first chat if exists
+    if(state.currentChatId==null && state.chats.length){
+      openChat(state.chats[0].id);
+    }
+
+    // Keyboard help
+    document.addEventListener('keydown', (e)=>{
+      if((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's'){
+        e.preventDefault();
+        showToast('Prototype saved (local)');
+        saveState();
+      }
+    });
+  }
+
+  function renderPreviewInComposer(){
+    // show a small preview of attachments under textarea
+    const container = document.getElementById('messages');
+    // Not injecting UI here; keep simple.
+  }
+
+  // Boot
+  function bootstrap(){
+    loadState();
+    // If first load, seed content
+    if(isFirstLoad){
+      // seed user-friendly data; already done in seedData
+    }
+    setupBroadcast();
+    initUI();
+    renderChatList();
+    // show onboarding overlay only on first load
+    if(isFirstLoad){
+      showToast('Welcome! Use the left panel to switch chats. Attachments supported.');
+    }
+  }
+
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', bootstrap);
+
+  // Also wire a little UI helper to show presence status (randomize online/offline for demo)
+  setInterval(()=> {
+    // simulate presence updates
+    state.users.forEach(u => {
+      if(u.id === state.currentUserId) return;
+      if(Math.random() < 0.08){
+        u.online = !u.online;
+        broadcastEvent({type:'presence:update', userId: u.id, online: u.online});
+        renderChatList();
+      }
+    });
+  }, 5000);
+
+  // End of script
+  </script>
+
+  
+</body>
+</html>
