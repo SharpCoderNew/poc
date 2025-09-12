@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FloraFlow - Floral E-commerce</title>
+  <meta name="description" content="FloraFlow: elegant floral e-commerce inspired by Teleflora. Mobile-first shopping experience with a simple mock backend." />
+  <style>
+    :root{
+      --pink:#f8cbdc;
+      --pink-dark:#e29bc1;
+      --green:#a8d5ba;
+      --cream:#fff9f0;
+      --text:#2a2a2a;
+      --muted:#6b6b6b;
+      --bg:#fffaf6;
+      --accent:#f28fb3;
+      --card:#ffffff;
+      --shadow:0 6px 20px rgba(0,0,0,.08);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--text);scroll-behavior:smooth}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{max-width:1100px;margin:0 auto;padding:0 16px}
+    header{position:sticky;top:0;z-index:50;background:linear-gradient(#fff, #fffdfb);border-bottom:1px solid #eee}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{width:38px;height:38px;border-radius:9px;background:conic-gradient(from 180deg at 50% 50%, #ffd3e1, #c9f3e0, #fff);display:inline-block;box-shadow:inset 0 0 0 2px #fff}
+    .brand-name{font-weight:700;font-size:1.05rem;letter-spacing:.4px}
+    nav ul{list-style:none;display:flex;gap:14px;margin:0;padding:0}
+    nav li{padding:8px 12px;border-radius:999px}
+    nav li.active{background:var(--pink);color:white}
+    .search{flex:1;display:flex;gap:8px;justify-content:center}
+    .search input{width:100%;max-width:420px;padding:10px 12px;border:1px solid #eee;border-radius:999px;background:white}
+    .cta{padding:8px 14px;border-radius:999px;background:var(--pink);color:white;border:0;cursor:pointer}
+    .layout{display:grid;grid-template-columns:1fr;gap:20px}
+    .hero{position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg, #ffe9f3 0%, #f5fff0 60%);min-height:180px;display:flex;align-items:center}
+    .hero .hs{padding:22px}
+    .h-title{font-size:2rem;font-weight:800;line-height:1.05;margin:0 0 8px}
+    .h-sub{color:var(--muted);font-size:0.95rem;margin-bottom:12px}
+    .deal{position:absolute;right:14px;top:14px;background:var(--cream);border:1px solid #e8e1d9;padding:8px 12px;border-radius:999px;font-weight:600}
+    .grid{display:grid;gap:14px}
+    @media (min-width: 640px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .layout{grid-template-columns:1fr 340px}
+      .hero{min-height:240px}
+    }
+    @media (min-width: 980px){
+      .grid{grid-template-columns:repeat(3,1fr)}
+    }
+    .card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;border:1px solid #f0f0f0;display:flex;flex-direction:column}
+    .card-img{height:180px;background:#f6f6f6;display:flex;align-items:center;justify-content:center}
+    .card-body{padding:12px 12px 14px;flex:1;display:flex;flex-direction:column}
+    .title{font-weight:700;font-size:1rem;margin:6px 0}
+    .price{margin-top:auto;font-weight:700}
+    .tag{font-size:12px;color:#555;background:#f0f0f0;padding:4px 8px;border-radius:999px;align-self:flex-start}
+    .filters{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+    .filter{padding:8px 12px;border-radius:999px;border:1px solid #e9e0db;background:#fff}
+    .btn{cursor:pointer;border:0;padding:10px 14px;border-radius:10px;background:#333;color:white}
+    .btn.secondary{background:#eee;color:#333}
+    .drawer{position:fixed;top:0;right:0;width:360px;max-width:90vw;height:100%;background:white;box-shadow:-6px 0 20px rgba(0,0,0,.15);transform:translateX(100%);transition:transform .25s ease;z-index:60;padding:16px;overflow:auto}
+    .drawer.open{transform:translateX(0)}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);opacity:0;visibility:hidden;transition:.2s;z-index:50}
+    .overlay.show{opacity:1;visibility:visible}
+    .row{display:flex;gap:12px;align-items:center}
+    .qty{display:flex;gap:6px;align-items:center}
+    .muted{color:var(--muted);font-size:.92rem}
+    .divider{height:1px;background:#eee;margin:12px 0}
+    .section{margin:18px 0}
+    .section h3{margin:0 0 8px;font-size:1.05rem}
+    .gallery{display:flex;gap:8px;flex-direction:column}
+    .thumbs{display:flex;gap:6px}
+    .thumb{width:54px;height:54px;border-radius:8px;border:1px solid #eee;overflow:hidden;cursor:pointer}
+    .thumb.active{border-color:var(--pink);box-shadow:0 0 0 2px #ffd7e0}
+    .large{aspect-ratio:4/3;background:#fafafa;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid #eee;overflow:hidden}
+    .order{border:1px solid #eee;border-radius:12px;padding:12px;margin-bottom:8px;background:#fff}
+    .empty{text-align:center;color:var(--muted);padding:40px 0}
+    .footer{padding:20px 0;text-align:center;color:var(--muted);font-size:.9rem}
+    /* simple modal help */
+    .modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:600px;background:white;border-radius:12px;box-shadow:0 20px 40px rgba(0,0,0,.25);padding:18px;display:none;z-index:70}
+    .modal.open{display:block}
+    @media (max-width: 720px){
+      .layout{grid-template-columns:1fr}
+      .hero{min-height:180px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav" role="navigation" aria-label="Main navigation">
+      <div class="brand" style="gap:10px">
+        <span class="brand-logo" aria-hidden="true"></span>
+        <span class="brand-name">FloraFlow</span>
+      </div>
+      <div class="search" aria-label="Site search">
+        <input id="globalSearch" placeholder="Search flowers, occasions..." />
+        <button class="cta" id="openHelp" title="Help">?</button>
+      </div>
+      <div class="row" style="gap:8px">
+        <button class="btn" data-route="#/">Home</button>
+        <button class="btn" data-route="#/shop">Shop</button>
+        <button class="btn" data-route="#/account">Account</button>
+        <button class="btn" id="openCartBtn" aria-label="Open cart">Cart</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="app" role="main" aria-label="FloraFlow main content">
+    <!-- dynamic content injected here -->
+  </main>
+
+  <footer class="footer" aria-label="Footer">
+    FloraFlow © <span id="year"></span> • Elegant floral gifting
+  </footer>
+
+  <!-- Cart Drawer -->
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="cartDrawer" aria-label="Cart drawer" aria-live="polite">
+    <div class="row" style="justify-content:space-between">
+      <strong>Your Cart</strong>
+      <button class="btn secondary" id="closeCart" aria-label="Close cart">Close</button>
+    </div>
+    <div id="cartItems" style="margin-top:8px"></div>
+    <div class="divider"></div>
+    <div class="row" style="justify-content:space-between">
+      <span class="muted">Total</span>
+      <span id="cartTotal" style="font-weight:700"></span>
+    </div>
+    <button class="btn" id="checkoutFromCart" style="width:100%;margin-top:10px">Checkout</button>
+  </aside>
+
+  <!-- Help modal (setup/run info) -->
+  <div class="modal" id="helpModal" aria-label="Help and setup information" role="dialog">
+    <h3 style="margin:0 0 8px">Help & Quick Setup</h3>
+    <p class="muted" style="margin:0 0 8px">This is a self-contained prototype SPA. No external assets required. Data is JSON-driven and stored in localStorage for cart and account state.</p>
+    <ul style="margin:0 0 8px;padding-left:18px">
+      <li>Navigate via the top menu or URL hash (e.g., #/shop, #/product/rose-whisper-bouquet).</li>
+      <li>Use the cart drawer to review items. Start checkout to simulate a multi-step flow.</li>
+      <li>Search autocompletes on product name and occasion in Shop.</li>
+    </ul>
+    <div class="row" style="justify-content:flex-end;margin-top:8px">
+      <button class="btn" id="closeHelp">Close</button>
+    </div>
+  </div>
+
+  <script>
+  // FloraFlow SPA - Vanilla JS (no frameworks)
+  // Data models (mock backend)
+  const palette = {
+    pink: '#f8cbdc',
+    green: '#a8d5ba',
+    cream: '#fff9f0',
+  };
+
+  // Simple data seed using placeholder images
+  function placeholderImg(label, color = '#888') {
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+        <defs>
+          <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+            <stop stop-color="${color}" offset="0"/>
+            <stop stop-color="#ffffff" offset="1"/>
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#g)"/>
+        <g fill="white" opacity="0.9">
+          <circle cx="260" cy="260" r="120" fill="#f18dbd"/>
+          <circle cx="520" cy="360" r="90" fill="#b5e6c3"/>
+        </g>
+        <text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="40" fill="#ffffff" style="paint-order:stroke">${label}</text>
+      </svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+
+  // Product catalog (JSON-driven)
+  const catalog = [
+    {
+      id: 'rose-whisper-bouquet',
+      name: 'Rose Whisper Bouquet',
+      price: 59.99,
+      description: 'A delicate arrangement of garden roses with soft pink hues and greenery.',
+      images: [placeholderImg('Rose Whisper', '#eaa2b7')],
+      category: 'Bouquets',
+      color: 'Pink',
+      occasion: 'Love',
+      rating: 4.8,
+      reviews: 128,
+      variants: [
+        { id: 'standard', name: 'Standard', priceDelta: 0 },
+        { id: 'deluxe', name: 'Deluxe', priceDelta: 15 },
+      ],
+      stock: 12
+    },
+    {
+      id: 'tulip-serenade',
+      name: 'Tulip Serenade',
+      price: 49.99,
+      description: 'Vibrant tulips with a graceful curved bouquet.',
+      images: [placeholderImg('Tulip Serenade', '#ffb4cc')],
+      category: 'Bouquets',
+      color: 'Pastel',
+      occasion: 'Birthday',
+      rating: 4.6,
+      reviews: 92,
+      variants: [{ id: 'standard', name: 'Standard', priceDelta: 0 }],
+      stock: 25
+    },
+    {
+      id: 'peony-dream',
+      name: 'Peony Dream Vase',
+      price: 69.99,
+      description: 'Lush peonies arranged in a timeless vase with soft tones.',
+      images: [placeholderImg('Peony Dream', '#f6a6d8')],
+      category: 'Vase Arrangements',
+      color: 'Cream',
+      occasion: 'Get Well',
+      rating: 4.9,
+      reviews: 210,
+      variants: [{ id: 'standard', name: 'Standard', priceDelta: 0 }, { id: 'deluxe', name: 'Deluxe', priceDelta: 20 }],
+      stock: 8
+    },
+    {
+      id: 'lavender-lullaby',
+      name: 'Lavender Lullaby',
+      price: 44.99,
+      description: 'Soothing lavender sprigs with a touch of greenery.',
+      images: [placeholderImg('Lavender Lullaby', '#a6d5e1')],
+      category: 'Boutonnières',
+      color: 'Lavender',
+      occasion: 'Sympathy',
+      rating: 4.5,
+      reviews: 45,
+      variants: [{ id: 'standard', name: 'Standard', priceDelta: 0 }],
+      stock: 40
+    },
+    {
+      id: 'sunrise-vase',
+      name: 'Sunrise Garden Vase',
+      price: 39.99,
+      description: 'Cheery mix of spring blooms in a sunny vase.',
+      images: [placeholderImg('Sunrise Vase', '#ffd9a6')],
+      category: 'Gifts',
+      color: 'Yellow',
+      occasion: 'Birthday',
+      rating: 4.4,
+      reviews: 60,
+      variants: [{ id: 'standard', name: 'Standard', priceDelta: 0 }],
+      stock: 30
+    },
+    {
+      id: 'orchid-harmony',
+      name: 'Orchid Harmony',
+      price: 89.99,
+      description: 'Elegant orchid stems with minimalist greens.',
+      images: [placeholderImg('Orchid Harmony', '#d3c2ff')],
+      category: 'Plants',
+      color: 'White',
+      occasion: 'Love',
+      rating: 4.7,
+      reviews: 140,
+      variants: [{ id: 'standard', name: 'Standard', priceDelta: 0 }, { id: 'deluxe', name: 'Deluxe', priceDelta: 25 }],
+      stock: 6
+    }
+  ];
+
+  // Promotions and hero promos
+  const promotions = {
+    dealOfTheDay: { title: 'Deal of the Day', discount: 0.15 }, // 15% off on all items above 50
+    hero: { text: 'Seasonal palettes • Free card with every order' }
+  };
+
+  // App state
+  const state = {
+    cart: [],
+    user: { loggedIn: false, name: 'Guest' },
+  };
+
+  // Helpers
+  function $(sel){ return document.querySelector(sel) }
+  function $$ (sel){ return Array.from(document.querySelectorAll(sel)) }
+
+  function saveCart(){
+    localStorage.setItem('ff_cart', JSON.stringify(state.cart))
+  }
+  function loadCart(){
+    const raw = localStorage.getItem('ff_cart')
+    if(raw){ try{ state.cart = JSON.parse(raw) }catch(e){ state.cart=[] } }
+  }
+
+  function saveUser(){
+    localStorage.setItem('ff_user', JSON.stringify(state.user))
+  }
+  function loadUser(){
+    const raw = localStorage.getItem('ff_user')
+    if(raw){ try{ state.user = JSON.parse(raw) }catch(e){ state.user = {loggedIn:false,name:'Guest'} } }
+  }
+
+  // Simple router
+  function render(route){
+    const app = document.getElementById('app')
+    const now = new Date()
+    document.getElementById('year').textContent = now.getFullYear()
+    let html = ''
+    const path = route || location.hash || '#/'
+    // Normalize
+    const routeParts = path.replace('#','').split('?')[0].split('/')
+    const page = routeParts[1] || ''
+    // Update active nav
+    $$('.btn[data-route]').forEach(btn=>{
+      btn.classList.remove('active')
+      if(btn.getAttribute('data-route') === '#' + (path.replace('#',''))){
+        btn.classList.add('active')
+      } else if (path === '#/' && btn.getAttribute('data-route') === '#/') {
+        btn.classList.add('active')
+      }
+    })
+
+    // Persistent search value
+    const searchInput = document.getElementById('globalSearch')
+    if(searchInput){
+      searchInput.value = ''
+    }
+
+    // Route handling
+    if(path === '#' || path === '#/' || page === ''){
+      html = renderHome()
+      document.title = 'FloraFlow - Floral gifting'
+    } else if(path.startsWith('#/shop')){
+      html = renderShop()
+      document.title = 'FloraFlow - Shop'
+    } else if(path.startsWith('#/product/')){
+      const id = routeParts[2]
+      html = renderProduct(id)
+      document.title = 'FloraFlow - Product'
+    } else if(path.startsWith('#/cart')){
+      html = renderCartPage()
+      document.title = 'FloraFlow - Cart'
+    } else if(path.startsWith('#/checkout')){
+      html = renderCheckout()
+      document.title = 'FloraFlow - Checkout'
+    } else if(path.startsWith('#/account')){
+      html = renderAccount()
+      document.title = 'FloraFlow - Account'
+    } else {
+      html = renderHome()
+      document.title = 'FloraFlow - Floral gifting'
+    }
+
+    app.innerHTML = html
+    afterRenderHooks()
+  }
+
+  // Rendering components
+  function renderHome(){
+    // Hero + Deal banner + quick categories
+    const firstThree = catalog.slice(0,3)
+    const featured = catalog.filter(p => p.rating >= 4.7).slice(0,2)
+
+    return `
+      <section class="layout">
+        <section class="hero" aria-label="Hero promotion">
+          <div class="hs container" style="max-width:720px">
+            <span class="deal" aria-label="Deal of the Day">${promotions.dealOfTheDay.title}</span>
+            <h1 class="h-title" style="font-size:1.8rem">FloraFlow</h1>
+            <p class="h-sub">Elegant floral gifts. Hand-crafted arrangements with seasonal palettes.</p>
+            <button class="btn" id="shopNow" data-route="#/shop">Shop the Collection</button>
+          </div>
+        </section>
+
+        <section class="section" aria-label="Deal of the Day banner" style="margin-top:8px">
+          <div class="card" style="padding:14px;background:linear-gradient(#fff,#fff9f5)">
+            <div class="row" style="justify-content:space-between;align-items:center">
+              <strong>${promotions.dealOfTheDay.title}</strong>
+              <span class="muted" style="font-size:.95rem">Today only: 15% off orders over $50</span>
+            </div>
+            <div class="divider"></div>
+            <div class="row" style="gap:8px;flex-wrap:wrap">
+              ${catalog.map(p => `<span class="tag" style="cursor:pointer" onclick="location.hash='#/product/${p.id}'">${p.name}</span>`).join('')}
+            </div>
+          </div>
+        </section>
+
+        <section class="section" aria-label="Shop by Occasion">
+          <h3 style="margin:0 0 8px">Shop by Occasion</h3>
+          <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));">
+            ${['Birthday','Love','Get Well','Sympathy','Thank You','Congratulations'].map(o => `
+              <div class="card" style="cursor:pointer" onclick="location.hash='#/shop?occasion=${encodeURIComponent(o)}'">
+                <div class="card-body" style="padding:12px 12px 10px">
+                  <div class="title" style="font-size:14px">Occasion</div>
+                  <div style="font-weight:700">${o}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <section class="section" aria-label="Featured collections">
+          <h3 style="margin:0 0 8px">Featured</h3>
+          <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr));">
+            ${featured.map(p => `
+              <div class="card" onclick="location.hash='#/product/${p.id}'" style="cursor:pointer">
+                <div class="card-img" style="height:140px;background:#f2f2f2;overflow:hidden">
+                  <img src="${p.images[0]}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover" />
+                </div>
+                <div class="card-body">
+                  <div class="title">${p.name}</div>
+                  <div class="muted" style="font-size:.9rem">${p.category} • ${p.color}</div>
+                  <div class="price" style="margin-top:6px">$${p.price.toFixed(2)}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+      </section>
+    `
+  }
+
+  function renderShop(){
+    // filters & search
+    const q = new URLSearchParams(window.location.hash.split('?')[1]||'')
+    const occasionFilter = q.get('occasion') || ''
+    const categoryList = Array.from(new Set(catalog.map(p => p.category)))
+    // Autocomplete suggestions
+    const suggestions = catalog.flatMap(p => [p.name, p.occasion]).filter((v,i,arr)=>arr.indexOf(v)===i)
+
+    // Build product cards
+    // Apply filters
+    let items = catalog.filter(p => (occasionFilter ? p.occasion===occasionFilter : true))
+    // simple search box global (handled by element)
+    const searchValue = (document.getElementById('globalSearch')?.value || '').toLowerCase()
+    if(searchValue){
+      items = items.filter(p => (p.name.toLowerCase().includes(searchValue) || p.occasion.toLowerCase().includes(searchValue)))
+    }
+
+    // Quick filter by category if param
+    const catFilter = (window.location.hash.includes('category=')) ? new URLSearchParams(window.location.hash.split('?')[1]).get('category') : ''
+    if(catFilter){
+      items = items.filter(p => p.category === catFilter)
+    }
+
+    // HTML
+    return `
+      <section class="section" aria-label="Shop">
+        <div class="row" style="flex-wrap:wrap;gap:8px;align-items:center">
+          <h2 style="margin:0">Shop FloraFlow</h2>
+          <span class="muted" style="margin-left:auto">Explore our floral collections</span>
+        </div>
+
+        <div class="filters" role="group" aria-label="Filters">
+          ${categoryList.map(c => `<button class="filter" data-filter="category" data-value="${c}">${c}</button>`).join('')}
+          <button class="filter" data-filter="price" data-value="0-50">$0 - $50</button>
+          <button class="filter" data-filter="price" data-value="50-100">$50 - $100</button>
+          <button class="filter" data-filter="occasion" data-value="">All Occasions</button>
+        </div>
+
+        <div class="row" style="gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0">
+          <input id="shopSearch" placeholder="Search by name or occasion" style="flex:1;min-width:220px;padding:10px 12px;border:1px solid #e9e0db;border-radius:999px" />
+          <div class="tag" style="cursor:default">Suggestions:
+            ${suggestions.slice(0,4).map(s => `<span style="margin-left:6px">${s}</span>`).join('')}
+          </div>
+        </div>
+
+        <div class="grid" id="shopGrid" style="margin-top:8px">
+          ${items.map(p => renderProductCardHTML(p)).join('')}
+        </div>
+      </section>
+
+      <script>
+        // lightweight search debounce for shop
+        (function(){
+          const input = document.getElementById('shopSearch')
+          if(input){
+            input.addEventListener('input', function(){
+              const text = this.value
+              location.hash = '#/shop'
+              // store search term in a simple param
+              const url = new URL(location.href)
+              url.hash = '#/shop'
+              url.searchParams.set('q', text)
+              location.href = url.toString()
+            })
+          }
+        })()
+      </script>
+    `
+  }
+
+  function renderProductCardHTML(p){
+    const img = p.images[0]
+    // price with possible variant
+    const v = p.variants[0] || {name:'Standard', priceDelta:0}
+    const price = (p.price + v.priceDelta).toFixed(2)
+    return `
+      <div class="card" style="cursor:pointer" onclick="location.hash='#/product/${p.id}'" aria-label="Product ${p.name}">
+        <div class="card-img" aria-label="${p.name}">
+          <img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover" />
+        </div>
+        <div class="card-body">
+          <div class="title">${p.name}</div>
+          <div class="muted" style="font-size:.9rem">${p.occasion} • ${p.color}</div>
+          <div class="row" style="justify-content:space-between;margin-top:6px">
+            <span class="price">$${price}</span>
+            <span class="tag" aria-label="Rating" title="Rating">${p.rating.toFixed(1)}★</span>
+          </div>
+        </div>
+      </div>
+    `
+  }
+
+  function renderProduct(id){
+    const p = catalog.find(x => x.id === id)
+    if(!p){
+      return `<div class="empty">Product not found. Go back to <a href="#/">home</a>.</div>`
+    }
+    const gallery = p.images
+    // choose default index 0
+    let active = 0
+    const priceBase = p.price
+    const priceWithVariant = (p.variants[0]?.priceDelta ? p.price + p.variants[0].priceDelta : p.price)
+    // Build variants HTML
+    const variantsHTML = p.variants.map(v => `
+      <button class="filter" data-variant-id="${v.id}" style="margin-right:6px">${v.name} ${v.priceDelta>0?`(+${v.priceDelta})`:''}</button>
+    `).join('')
+    // Delivery date
+    const deliveryInput = `<input type="date" id="deliveryDate" style="padding:8px 10px;border-radius:6px;border:1px solid #ddd" />`
+    return `
+      <section class="section" aria-label="Product detail">
+        <div class="row" style="gap:12px;flex-wrap:wrap">
+          <button class="btn secondary" onclick="location.hash='#/shop'">Back to Shop</button>
+          <span class="muted" style="align-self:center">In stock: ${p.stock}</span>
+        </div>
+        <div class="layout" style="margin-top:6px">
+          <div class="gallery" aria-label="Image gallery" style="padding-right:6px">
+            <div class="large" id="largeImage" style="min-height:260px;">
+              <img src="${gallery[active]}" alt="${p.name}" id="mainImage" style="width:100%;height:100%;object-fit:cover" />
+            </div>
+            <div class="thumbs" id="thumbs">
+              ${gallery.map((img,i)=>`<img src="${img}" class="thumb ${i===active?'active':''}" data-index="${i}" alt="Thumbnail ${i+1}"/>`).join('')}
+            </div>
+          </div>
+          <div class="card" style="padding:14px">
+            <div class="title" style="font-size:1.25rem">${p.name}</div>
+            <div class="muted" style="margin:6px 0 6px">${p.description}</div>
+            <div class="row" style="gap:8px;align-items:center;margin:4px 0">
+              <span class="tag">${p.category}</span>
+              <span class="tag" aria-label="Occasion">${p.occasion}</span>
+            </div>
+            <div class="price" style="font-size:1.3rem;margin:6px 0">$${priceWithVariant.toFixed(2)}</div>
+            <div class="section" style="margin:6px 0 0;padding:0 0">
+              <div class="section" style="padding:0">
+                <h3 style="margin:0 0 6px">Variants</h3>
+                ${variantsHTML}
+              </div>
+            </div>
+            <div class="section" style="padding:0">
+              <h3 style="margin:0 0 6px">Delivery Date</h3>
+              ${deliveryInput}
+            </div>
+            <button class="btn" id="addToCart" style="margin-top:8px;width:100%">Add to cart</button>
+          </div>
+        </div>
+        <div class="section" aria-label="Reviews">
+          <strong>Reviews</strong> • ${p.rating.toFixed(1)} / 5 (${p.reviews} reviews)
+        </div>
+      </section>
+    `
+  }
+
+  function renderCartPage(){
+    // Build cart view
+    const itemsHTML = state.cart.map(item => {
+      const prod = catalog.find(p => p.id === item.productId)
+      if(!prod) return ''
+      const unitPrice = prod.price + (prod.variants.find(v => v.id===item.variantId)?.priceDelta || 0)
+      const total = unitPrice * item.quantity
+      return `
+        <div class="order" data-id="${item.productId}" data-variant="${item.variantId}">
+          <div class="row" style="justify-content:space-between">
+            <strong>${prod.name} (${item.variantId})</strong>
+            <span>$${total.toFixed(2)}</span>
+          </div>
+          <div class="row" style="align-items:center;margin-top:6px">
+            <div class="qty" aria-label="Quantity">
+              <button class="filter" data-action="dec" data-id="${item.productId}" data-variant="${item.variantId}">-</button>
+              <span>${item.quantity}</span>
+              <button class="filter" data-action="inc" data-id="${item.productId}" data-variant="${item.variantId}">+</button>
+            </div>
+            <button class="btn secondary" data-action="remove" data-id="${item.productId}" data-variant="${item.variantId}">Remove</button>
+          </div>
+        </div>
+      `
+    }).join('') || `<div class="empty">Your cart is empty. Explore our bouquets and add something beautiful.</div>`
+
+    const total = calculateCartTotal()
+
+    return `
+      <section aria-label="Cart" class="container" style="padding-top:6px">
+        <h2 style="margin:6px 0 12px">Your Cart</h2>
+        <div id="cartContent">${itemsHTML}</div>
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between">
+          <span class="muted">Subtotal</span>
+          <span id="cartSubtotal" style="font-weight:700">$${total.toFixed(2)}</span>
+        </div>
+        <button class="btn" id="toCheckout" style="width:100%;margin-top:10px" ${state.cart.length===0?'disabled':''}>Proceed to Checkout</button>
+      </section>
+    `
+  }
+
+  function renderCheckout(){
+    // Simple 3-step: address, delivery, payment
+    const total = calculateCartTotal()
+    return `
+      <section class="section" aria-label="Checkout" style="padding:0 0 40px">
+        <h2 style="margin:6px 0 12px">Checkout</h2>
+        <div id="checkoutSteps" class="grid" style="grid-template-columns:1fr">
+          <div class="card" style="padding:12px">
+            <h3 style="margin:0 0 6px">1. Delivery Address</h3>
+            <div class="row" style="flex-wrap:wrap;gap:8px">
+              <input id="name" placeholder="Full name" style="flex:1 1 200px;padding:8px 10px;border-radius:6px;border:1px solid #ddd" />
+              <input id="address" placeholder="Address line" style="flex:2 1 300px;padding:8px 10px;border-radius:6px;border:1px solid #ddd" />
+              <input id="city" placeholder="City" style="flex:1 1 120px;padding:8px 10px;border-radius:6px;border:1px solid #ddd" />
+              <input id="zip" placeholder="ZIP / Postal" style="flex:1 1 120px;padding:8px 10px;border-radius:6px;border:1px solid #ddd" />
+            </div>
+          </div>
+          <div class="card" style="padding:12px">
+            <h3 style="margin:0 0 6px">2. Delivery Date</h3>
+            <input id="deliveryDate" type="date" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid #ddd" />
+            <div class="muted" style="margin-top:6px">Same-day delivery available on select products.</div>
+          </div>
+          <div class="card" style="padding:12px">
+            <h3 style="margin:0 0 6px">3. Payment</h3>
+            <div class="row" style="gap:8px;flex-wrap:wrap">
+              <label><input type="radio" name="pay" value="paypal" checked/> PayPal</label>
+              <label><input type="radio" name="pay" value="card" /> Card</label>
+            </div>
+            <div class="divider"></div>
+            <div class="row" style="justify-content:space-between">
+              <span>Total</span>
+              <strong style="font-size:1.1rem">$${total.toFixed(2)}</strong>
+            </div>
+          </div>
+        </div>
+        <button class="btn" id="placeOrder" style="width:100%;margin-top:8px">Place Order</button>
+      </section>
+    `
+  }
+
+  function renderAccount(){
+    // Simple dashboard with past orders (mock)
+    const orders = JSON.parse(localStorage.getItem('ff_orders') || '[]')
+    if(!state.user.loggedIn){
+      return `
+        <section class="section" aria-label="Account">
+          <h2>Account</h2>
+          <p class="muted">You're currently browsing as Guest. Sign in to access past orders.</p>
+          <button class="btn" id="loginBtn" style="margin-top:6px">Sign In (demo)</button>
+        </section>
+      `
+    }
+    const list = orders.length ? orders.map(o => `
+      <div class="order">
+        <div class="row" style="justify-content:space-between">
+          <strong>Order #${o.id}</strong>
+          <span>${new Date(o.date).toLocaleDateString()}</span>
+        </div>
+        <div class="row" style="gap:8px;margin-top:6px">
+          ${o.items.map(it => `<span class="tag">${it.name} x${it.qty}</span>`).join('')}
+        </div>
+        <div class="row" style="justify-content:space-between;margin-top:6px">
+          <span>Total</span>
+          <strong>$${o.total.toFixed(2)}</strong>
+        </div>
+      </div>
+    `).join('') : '<div class="empty">No past orders yet. Shop FloraFlow and place your first order!</div>'
+
+    return `
+      <section class="section" aria-label="Account dashboard">
+        <h2>Account</h2>
+        <div class="row" style="gap:8px;flex-wrap:wrap;margin:6px 0">
+          <span class="tag">Welcome, ${state.user.name}</span>
+          <button class="btn secondary" id="logoutBtn">Sign Out</button>
+        </div>
+        <div class="divider"></div>
+        <h3 style="margin:6px 0">Past Orders</h3>
+        ${list}
+      </section>
+    `
+  }
+
+  // Rendering helpers
+  function calculateCartTotal(){
+    let total = 0
+    for(const item of state.cart){
+      const p = catalog.find(x => x.id === item.productId)
+      if(!p) continue
+      const unit = p.price + (p.variants.find(v => v.id===item.variantId)?.priceDelta || 0)
+      total += unit * item.quantity
+    }
+    // Apply a simple promo if total > 50
+    if(total > 50) total = total * (1 - promotions.dealOfTheDay.discount)
+    return total
+  }
+
+  function renderCartItems() {
+    const cartEl = document.getElementById('cartItems')
+    if(!cartEl) return
+    // simple list
+    if(state.cart.length===0){
+      cartEl.innerHTML = `<div class="empty" style="padding:20px 0">Cart is empty</div>`
+      document.getElementById('cartTotal').textContent = '$0.00'
+      return
+    }
+    const lines = state.cart.map(item => {
+      const prod = catalog.find(p => p.id === item.productId)
+      if(!prod) return ''
+      const unit = prod.price + (prod.variants.find(v => v.id===item.variantId)?.priceDelta || 0)
+      const lineTotal = unit * item.quantity
+      return `
+        <div class="row" style="justify-content:space-between;align-items:center;margin:6px 0">
+          <span>${prod.name} x${item.quantity}</span>
+          <span>$${lineTotal.toFixed(2)}</span>
+        </div>
+      `
+    }).join('')
+    cartEl.innerHTML = lines
+    document.getElementById('cartTotal').textContent = '$' + calculateCartTotal().toFixed(2)
+  }
+
+  // Event handlers after render
+  function afterRenderHooks(){
+    // Hash links navigation
+    $$('#app a, [data-route]').forEach(el=>{
+      el.addEventListener('click', (e)=> {
+        const to = el.getAttribute('data-route')
+        if(to){
+          location.hash = to
+          e.preventDefault()
+        }
+      })
+    })
+    // Add to cart button on product page
+    const addToCartBtn = document.getElementById('addToCart')
+    if(addToCartBtn){
+      addToCartBtn.onclick = function(){
+        const prodId = location.hash.split('/')[2]
+        const prod = catalog.find(p => p.id === prodId)
+        if(!prod) return
+        // variant
+        const vEl = document.querySelector('[data-variant-id]')
+        const variantId = vEl ? vEl.getAttribute('data-variant-id') : prod.variants[0]?.id
+        addToCart(prod.id, variantId, 1)
+      }
+    }
+
+    // Image gallery thumbs
+    const thumbs = document.querySelectorAll('.thumb')
+    if(thumbs.length){
+      thumbs.forEach(t=>{
+        t.onclick = function(){
+          const idx = parseInt(this.getAttribute('data-index'))
+          const main = document.getElementById('mainImage')
+          const img = catalog.find(p => p.id === location.hash.split('/')[2]).images[ idx ]
+          if(img){
+            main.src = img
+          }
+          thumbs.forEach(th => th.classList.remove('active'))
+          this.classList.add('active')
+        }
+      })
+    }
+
+    // Cart drawer
+    const openCart = document.getElementById('openCartBtn')
+    const overlay = document.getElementById('overlay')
+    const cart = document.getElementById('cartDrawer')
+    const closeCart = document.getElementById('closeCart')
+    if(openCart){ openCart.onclick = () => { overlay.classList.add('show'); cart.classList.add('open'); renderCartItems(); } }
+    if(closeCart){ closeCart.onclick = () => { overlay.classList.remove('show'); cart.classList.remove('open'); } }
+    overlay.onclick = () => { overlay.classList.remove('show'); cart.classList.remove('open'); }
+
+    // Checkout button from cart
+    const checkoutFromCart = document.getElementById('checkoutFromCart')
+    if(checkoutFromCart){
+      checkoutFromCart.onclick = () => { location.hash = '#/checkout' }
+    }
+
+    // In cart page: handling update/remove
+    const cartContent = document.getElementById('cartContent')
+    if(cartContent){
+      cartContent.addEventListener('click', (e) => {
+        const target = e.target
+        if(target.dataset.action){
+          const id = target.dataset.id
+          const variant = target.dataset.variant
+          if(target.getAttribute('data-action') === 'remove'){
+            state.cart = state.cart.filter(i => !(i.productId===id && i.variantId===variant))
+            saveCart()
+            render('#/cart')
+            return
+          }
+          if(target.getAttribute('data-action') === 'inc'){
+            const found = state.cart.find(i => i.productId===id && i.variantId===variant)
+            if(found) found.quantity++
+          }
+          if(target.getAttribute('data-action') === 'dec'){
+            const found = state.cart.find(i => i.productId===id && i.variantId===variant)
+            if(found){
+              found.quantity = Math.max(1, found.quantity - 1)
+            }
+          }
+          saveCart()
+          render('#/cart')
+        }
+      })
+    }
+
+    // In product page: variant button click
+    const variantButtons = document.querySelectorAll('[data-variant-id]')
+    if(variantButtons.length){
+      variantButtons.forEach(btn => {
+        btn.add<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FloraFlow - Floral E-commerce</title>
+  <meta name="description" content="FloraFlow: elegant floral e-commerce inspired by Teleflora. Mobile-first shopping experience with a simple mock backend." />
+  <style>
+    :root{
+      --pink:#f8cbdc;
+      --pink-dark:#e29bc1;
+      --green:#a8d5ba;
+      --cream:#fff9f0;
+      --text:#2a2a2a;
+      --muted:#6b6b6b;
+      --bg:#fffaf6;
+      --accent:#f28fb3;
+      --card:#ffffff;
+      --shadow:0 6px 20px rgba(0,0,0,.08);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--text);scroll-behavior:smooth}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{max-width:1100px;margin:0 auto;padding:0 16px}
+    header{position:sticky;top:0;z-index:50;background:linear-gradient(#fff, #fffdfb);border-bottom:1px solid #eee}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{width:38px;height:38px;border-radius:9px;background:conic-gradient(from 180deg at 50% 50%, #ffd3e1, #c9f3e0, #fff);display:inline-block;box-shadow:inset 0 0 0 2px #fff}
+    .brand-name{font-weight:700;font-size:1.05rem;letter-spacing:.4px}
+    nav ul{list-style:none;display:flex;gap:14px;margin:0;padding:0}
+    nav li{padding:8px 12px;border-radius:999px}
+    nav li.active{background:var(--pink);color:white}
+    .search{flex:1;display:flex;gap:8px;justify-content:center}
+    .search input{width:100%;max-width:420px;padding:10px 12px;border:1px solid #eee;border-radius:999px;background:white}
+    .cta{padding:8px 14px;border-radius:999px;background:var(--pink);color:white;border:0;cursor:pointer}
+    .layout{display:grid;grid-template-columns:1fr;gap:20px}
+    .hero{position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg, #ffe9f3 0%, #f5fff0 60%);min-height:180px;display:flex;align-items:center}
+    .hero .hs{padding:22px}
+    .h-title{font-size:2rem;font-weight:800;line-height:1.05;margin:0 0 8px}
+    .h-sub{color:var(--muted);font-size:0.95rem;margin-bottom:12px}
+    .deal{position:absolute;right:14px;top:14px;background:var(--cream);border:1px solid #e8e1d9;padding:8px 12px;border-radius:999px;font-weight:600}
+    .grid{display:grid;gap:14px}
+    @media (min-width: 640px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .layout{grid-template-columns:1fr 340px}
+      .hero{min-height:240px}
+    }
+    @media (min-width: 980px){
+      .grid{grid-template-columns:repeat(3,1fr)}
+    }
+    .card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;border:1px solid #f0f0f0;display:flex;flex-direction:column}
+    .card-img{height:180px;background:#f6f6f6;display:flex;align-items:center;justify-content:center}
+    .card-body{padding:12px 12px 14px;flex:1;display:flex;flex-direction:column}
+    .title{font-weight:700;font-size:1rem;margin:6px 0}
+    .price{margin-top:auto;font-weight:700}
+    .tag{font-size:12px;color:#555;background:#f0f0f0;padding:4px 8px;border-radius:999px;align-self:flex-start}
+    .filters{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+    .filter{padding:8px 12px;border-radius:999px;border:1px solid #e9e0db;background:#fff}
+    .btn{cursor:pointer;border:0;padding:10px 14px;border-radius:10px;background:#333;color:white}
+    .btn.secondary{background:#eee;color:#333}
+    .drawer{position:fixed;top:0;right:0;width:360px;max-width:90vw;height:100%;background:white;box-shadow:-6px 0 20px rgba(0,0,0,.15);transform:translateX(100%);transition:transform .25s ease;z-index:60;padding:16px;overflow:auto}
+    .drawer.open{transform:translateX(0)}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);opacity:0;visibility:hidden;transition:.2s;z-index:50}
+    .overlay.show{opacity:1;visibility:visible}
+    .row{display:flex;gap:12px;align-items:center}
+    .qty{display:flex;gap:6px;align-items:center}
+    .muted{color:var(--muted);font-size:.92rem}
+    .divider{height:1px;background:#eee;margin:12px 0}
+    .section{margin:18px 0}
+    .section h3{margin:0 0 8px;font-size:1.05rem}
+    .gallery{display:flex;gap:8px;flex-direction:column}
+    .thumbs{display:flex;gap:6px}
+    .thumb{width:54px;height:54px;border-radius:8px;border:1px solid #eee;overflow:hidden;cursor:pointer}
+    .thumb.active{border-color:var(--pink);box-shadow:0 0 0 2px #ffd7e0}
+    .large{aspect-ratio:4/3;background:#fafafa;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid #eee;overflow:hidden}
+    .order{border:1px solid #eee;border-radius:12px;padding:12px;margin-bottom:8px;background:#fff}
+    .empty{text-align:center;color:var(--muted);padding:40px 0}
+    .footer{padding:20px 0;text-align:center;color:var(--muted);font-size:.9rem}
+    /* simple modal help */
+    .modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:600px;background:white;border-radius:12px;box-shadow:0 20px 40px rgba(0,0,0,.25);padding:18px;display:none;z-index:70}
+    .modal.open{display:block}
+    @media (max-width: 720px){
+      .layout{grid-template-columns:1fr}
+      .hero{min-height:180px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav" role="navigation" aria-label="Main navigation">
+      <div class="brand" style="gap:10px">
+        <span class="brand-logo" aria-hidden="true"></span>
+        <span class="brand-name">FloraFlow</span>
+      </div>
+      <div class="search" aria-label="Site search">
+        <input id="globalSearch" placeholder="Search flowers, occasions..." />
+        <button class="cta" id="openHelp" title="Help">?</button>
+      </div>
+      <div class="row" style="gap:8px">
+        <button class="btn" data-route="#/">Home</button>
+        <button class="btn" data-route="#/shop">Shop</button>
+        <button class="btn" data-route="#/account">Account</button>
+        <button class="btn" id="openCartBtn" aria-label="Open cart">Cart</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="app" role="main" aria-label="FloraFlow main content">
+    <!-- dynamic content injected here -->
+  </main>
+
+  <footer class="footer" aria-label="Footer">
+    FloraFlow © <span id="year"></span> • Elegant floral gifting
+  </footer>
+
+  <!-- Cart Drawer -->
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="cartDrawer" aria-label="Cart drawer" aria-live="polite">
+    <div class="row" style="justify-content:space-between">
+      <strong>Your Cart</strong>
+      <button class="btn secondary" id="closeCart" aria-label="Close cart">Close</button>
+    </div>
+    <div id="cartItems" style="margin-top:8px"></div>
+    <div class="divider"></div>
+    <div class="row" style="justify-content:space-between">
+      <span class="muted">Total</span>
+      <span id="cartTotal" style="font-weight:700"></span>
+    </div>
+    <button class="btn" id="checkoutFromCart" style="width:100%;margin-top:10px">Checkout</button>
+  </aside>
+
+  <!-- Help modal (setup/run info) -->
+  <div class="modal" id="helpModal" aria-label="Help and setup information" role="dialog">
+    <h3 style="margin:0 0 8px">Help & Quick Setup</h3>
+    <p class="muted" style="margin:0 0 8px">This is a self-contained prototype SPA. No external assets required. Data is JSON-driven and stored in localStorage for cart and account state.</p>
+    <ul style="margin:0 0 8px;padding-left:18px">
+      <li>Navigate via the top menu or URL hash (e.g., #/shop, #/product/rose-whisper-bouquet).</li>
+      <li>Use the cart drawer to review items. Start checkout to simulate a multi-step flow.</li>
+      <li>Search autocompletes on product name and occasion in Shop.</li>
+    </ul>
+    <div class="row" style="justify-content:flex-end;margin-top:8px">
+      <button class="btn" id="closeHelp">Close</button>
+    </div>
+  </div>
+
+  <script>
+  // FloraFlow SPA - Vanilla JS (no frameworks)
+  // Data models (mock backend)
+  const palette = {
+    pink: '#f8cbdc',
+    green: '#a8d5ba',
+    cream: '#fff9f0',
+  };
+
+  // Simple data seed using placeholder images
+  function placeholderImg(label, color = '#888') {
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+        <defs>
+          <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+            <stop stop-color="${color}" offset="0"/>
+            <stop stop-color="#ffffff" offset="1"/>
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#g)"/>
+        <g fill="white" opacity="0.9">
+          <circle cx="260" cy="260" r="120" fill="#f18dbd"/>
+          <circle cx="520" cy="360" r="90" fill="#b5e6c3"/>
+        </g>
+        <text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="40" fill="#ffffff" style="paint-order:stroke">${label}</text>
+      </svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+
+  // Product catalog (JSON-driven)
+  const catalog = [
+    {
+      id: 'rose-whisper-bouquet',
+      name: 'Rose Whisper Bouquet',
+      price: 59.99,
+      description: 'A delicate arrangement of garden roses with soft pink hues and greenery.',
+      images: [placeholderImg('Rose Whisper', '#eaa2b7')],
+      category: 'Bouquets',
+      color: 'Pink',
+      occasion: 'Love',
+      rating: 4.8,
+      reviews: 128,
+      variants: [
+        { id: 'standard', name: 'Standard', priceDelta: 0 },
+        { id: 'deluxe', name: 'Deluxe', priceDelta: 15 },
+      ],
+      stock: 12
+    },
+    {
+      id: 'tulip-serenade',
+      name: 'Tulip Serenade',
+      price: 49.99,
+      description: 'Vibrant tulips with a graceful curved bouquet.',
+      images: [placeholderImg('Tulip Serenade', '#ffb4cc')],
+      category: 'Bouquets',
+      color: 'Pastel',
+      occasion: 'Birthday',
+      rating: 4.6,
+      reviews: 92,
+      variants: [{ id: 'standard', name: 'Standard', priceDelta: 0 }],
+      stock: 25
+    },
+    {
+      id: 'peony-dream',
+      name: 'Peony Dream Vase',
+      price: 69.99,
+      description: 'Lush peonies arranged in a timeless vase with soft tones.',
+      images: [placeholderImg('Peony Dream', '#f6a6d8')],
+      category: 'Vase Arrangements',
+      color: 'Cream',
+      occasion: 'Get Well',
+      rating: 4.9,
+      reviews: 210,
+      variants: [{ id: 'standard', name: 'Standard', priceDelta: 0 }, { id: 'deluxe', name: 'Deluxe', priceDelta: 20 }],
+      stock: 8
+    },
+    {
+      id: 'lavender-lullaby',
+      name: 'Lavender Lullaby',
+      price: 44.99,
+      description: 'Soothing lavender sprigs with a touch of greenery.',
+      images: [placeholderImg('Lavender Lullaby', '#a6d5e1')],
+      category: 'Boutonnières',
+      color: 'Lavender',
+      occasion: 'Sympathy',
+      rating: 4.5,
+      reviews: 45,
+      variants: [{ id: 'standard', name: 'Standard', priceDelta: 0 }],
+      stock: 40
+    },
+    {
+      id: 'sunrise-vase',
+      name: 'Sunrise Garden Vase',
+      price: 39.99,
+      description: 'Cheery mix of spring blooms in a sunny vase.',
+      images: [placeholderImg('Sunrise Vase', '#ffd9a6')],
+      category: 'Gifts',
+      color: 'Yellow',
+      occasion: 'Birthday',
+      rating: 4.4,
+      reviews: 60,
+      variants: [{ id: 'standard', name: 'Standard', priceDelta: 0 }],
+      stock: 30
+    },
+    {
+      id: 'orchid-harmony',
+      name: 'Orchid Harmony',
+      price: 89.99,
+      description: 'Elegant orchid stems with minimalist greens.',
+      images: [placeholderImg('Orchid Harmony', '#d3c2ff')],
+      category: 'Plants',
+      color: 'White',
+      occasion: 'Love',
+      rating: 4.7,
+      reviews: 140,
+      variants: [{ id: 'standard', name: 'Standard', priceDelta: 0 }, { id: 'deluxe', name: 'Deluxe', priceDelta: 25 }],
+      stock: 6
+    }
+  ];
+
+  // Promotions and hero promos
+  const promotions = {
+    dealOfTheDay: { title: 'Deal of the Day', discount: 0.15 }, // 15% off on all items above 50
+    hero: { text: 'Seasonal palettes • Free card with every order' }
+  };
+
+  // App state
+  const state = {
+    cart: [],
+    user: { loggedIn: false, name: 'Guest' },
+  };
+
+  // Helpers
+  function $(sel){ return document.querySelector(sel) }
+  function $$ (sel){ return Array.from(document.querySelectorAll(sel)) }
+
+  function saveCart(){
+    localStorage.setItem('ff_cart', JSON.stringify(state.cart))
+  }
+  function loadCart(){
+    const raw = localStorage.getItem('ff_cart')
+    if(raw){ try{ state.cart = JSON.parse(raw) }catch(e){ state.cart=[] } }
+  }
+
+  function saveUser(){
+    localStorage.setItem('ff_user', JSON.stringify(state.user))
+  }
+  function loadUser(){
+    const raw = localStorage.getItem('ff_user')
+    if(raw){ try{ state.user = JSON.parse(raw) }catch(e){ state.user = {loggedIn:false,name:'Guest'} } }
+  }
+
+  // Simple router
+  function render(route){
+    const app = document.getElementById('app')
+    const now = new Date()
+    document.getElementById('year').textContent = now.getFullYear()
+    let html = ''
+    const path = route || location.hash || '#/'
+    // Normalize
+    const routeParts = path.replace('#','').split('?')[0].split('/')
+    const page = routeParts[1] || ''
+    // Update active nav
+    $$('.btn[data-route]').forEach(btn=>{
+      btn.classList.remove('active')
+      if(btn.getAttribute('data-route') === '#' + (path.replace('#',''))){
+        btn.classList.add('active')
+      } else if (path === '#/' && btn.getAttribute('data-route') === '#/') {
+        btn.classList.add('active')
+      }
+    })
+
+    // Persistent search value
+    const searchInput = document.getElementById('globalSearch')
+    if(searchInput){
+      searchInput.value = ''
+    }
+
+    // Route handling
+    if(path === '#' || path === '#/' || page === ''){
+      html = renderHome()
+      document.title = 'FloraFlow - Floral gifting'
+    } else if(path.startsWith('#/shop')){
+      html = renderShop()
+      document.title = 'FloraFlow - Shop'
+    } else if(path.startsWith('#/product/')){
+      const id = routeParts[2]
+      html = renderProduct(id)
+      document.title = 'FloraFlow - Product'
+    } else if(path.startsWith('#/cart')){
+      html = renderCartPage()
+      document.title = 'FloraFlow - Cart'
+    } else if(path.startsWith('#/checkout')){
+      html = renderCheckout()
+      document.title = 'FloraFlow - Checkout'
+    } else if(path.startsWith('#/account')){
+      html = renderAccount()
+      document.title = 'FloraFlow - Account'
+    } else {
+      html = renderHome()
+      document.title = 'FloraFlow - Floral gifting'
+    }
+
+    app.innerHTML = html
+    afterRenderHooks()
+  }
+
+  // Rendering components
+  function renderHome(){
+    // Hero + Deal banner + quick categories
+    const firstThree = catalog.slice(0,3)
+    const featured = catalog.filter(p => p.rating >= 4.7).slice(0,2)
+
+    return `
+      <section class="layout">
+        <section class="hero" aria-label="Hero promotion">
+          <div class="hs container" style="max-width:720px">
+            <span class="deal" aria-label="Deal of the Day">${promotions.dealOfTheDay.title}</span>
+            <h1 class="h-title" style="font-size:1.8rem">FloraFlow</h1>
+            <p class="h-sub">Elegant floral gifts. Hand-crafted arrangements with seasonal palettes.</p>
+            <button class="btn" id="shopNow" data-route="#/shop">Shop the Collection</button>
+          </div>
+        </section>
+
+        <section class="section" aria-label="Deal of the Day banner" style="margin-top:8px">
+          <div class="card" style="padding:14px;background:linear-gradient(#fff,#fff9f5)">
+            <div class="row" style="justify-content:space-between;align-items:center">
+              <strong>${promotions.dealOfTheDay.title}</strong>
+              <span class="muted" style="font-size:.95rem">Today only: 15% off orders over $50</span>
+            </div>
+            <div class="divider"></div>
+            <div class="row" style="gap:8px;flex-wrap:wrap">
+              ${catalog.map(p => `<span class="tag" style="cursor:pointer" onclick="location.hash='#/product/${p.id}'">${p.name}</span>`).join('')}
+            </div>
+          </div>
+        </section>
+
+        <section class="section" aria-label="Shop by Occasion">
+          <h3 style="margin:0 0 8px">Shop by Occasion</h3>
+          <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));">
+            ${['Birthday','Love','Get Well','Sympathy','Thank You','Congratulations'].map(o => `
+              <div class="card" style="cursor:pointer" onclick="location.hash='#/shop?occasion=${encodeURIComponent(o)}'">
+                <div class="card-body" style="padding:12px 12px 10px">
+                  <div class="title" style="font-size:14px">Occasion</div>
+                  <div style="font-weight:700">${o}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <section class="section" aria-label="Featured collections">
+          <h3 style="margin:0 0 8px">Featured</h3>
+          <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr));">
+            ${featured.map(p => `
+              <div class="card" onclick="location.hash='#/product/${p.id}'" style="cursor:pointer">
+                <div class="card-img" style="height:140px;background:#f2f2f2;overflow:hidden">
+                  <img src="${p.images[0]}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover" />
+                </div>
+                <div class="card-body">
+                  <div class="title">${p.name}</div>
+                  <div class="muted" style="font-size:.9rem">${p.category} • ${p.color}</div>
+                  <div class="price" style="margin-top:6px">$${p.price.toFixed(2)}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+      </section>
+    `
+  }
+
+  function renderShop(){
+    // filters & search
+    const q = new URLSearchParams(window.location.hash.split('?')[1]||'')
+    const occasionFilter = q.get('occasion') || ''
+    const categoryList = Array.from(new Set(catalog.map(p => p.category)))
+    // Autocomplete suggestions
+    const suggestions = catalog.flatMap(p => [p.name, p.occasion]).filter((v,i,arr)=>arr.indexOf(v)===i)
+
+    // Build product cards
+    // Apply filters
+    let items = catalog.filter(p => (occasionFilter ? p.occasion===occasionFilter : true))
+    // simple search box global (handled by element)
+    const searchValue = (document.getElementById('shopSearch')?.value || '').toLowerCase()
+    if(searchValue){
+      items = items.filter(p => (p.name.toLowerCase().includes(searchValue) || p.occasion.toLowerCase().includes(searchValue)))
+    }
+
+    // Quick filter by category if param
+    const catFilter = (window.location.hash.includes('category=')) ? new URLSearchParams(window.location.hash.split('?')[1]).get('category') : ''
+    if(catFilter){
+      items = items.filter(p => p.category === catFilter)
+    }
+
+    // HTML
+    return `
+      <section class="section" aria-label="Shop">
+        <div class="row" style="flex-wrap:wrap;gap:8px;align-items:center">
+          <h2 style="margin:0">Shop FloraFlow</h2>
+          <span class="muted" style="margin-left:auto">Explore our floral collections</span>
+        </div>
+
+        <div class="filters" role="group" aria-label="Filters">
+          ${categoryList.map(c => `<button class="filter" data-filter="category" data-value="${c}">${c}</button>`).join('')}
+          <button class="filter" data-filter="price" data-value="0-50">$0 - $50</button>
+          <button class="filter" data-filter="price" data-value="50-100">$50 - $100</button>
+          <button class="filter" data-filter="occasion" data-value="">All Occasions</button>
+        </div>
+
+        <div class="row" style="gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0">
+          <input id="shopSearch" placeholder="Search by name or occasion" style="flex:1;min-width:220px;padding:10px 12px;border:1px solid #e9e0db;border-radius:999px" />
+          <div class="tag" style="cursor:default">Suggestions:
+            ${suggestions.slice(0,4).map(s => `<span style="margin-left:6px">${s}</span>`).join('')}
+          </div>
+        </div>
+
+        <div class="grid" id="shopGrid" style="margin-top:8px">
+          ${items.map(p => renderProductCardHTML(p)).join('')}
+        </div>
+      </section>
+
+      <script>
+        // lightweight search debounce for shop
+        (function(){
+          const input = document.getElementById('shopSearch')
+          if(input){
+            input.addEventListener('input', function(){
+              const text = this.value
+              location.hash = '#/shop'
+              // store search term in a simple param
+              const url = new URL(location.href)
+              url.hash = '#/shop'
+              url.searchParams.set('q', text)
+              location.href = url.toString()
+            })
+          }
+        })()
+      </script>
+    `
+  }
+
+  function renderProductCardHTML(p){
+    const img = p.images[0]
+    // price with possible variant
+    const v = p.variants[0] || {name:'Standard', priceDelta:0}
+    const price = (p.price + v.priceDelta).toFixed(2)
+    return `
+      <div class="card" style="cursor:pointer" onclick="location.hash='#/product/${p.id}'" aria-label="Product ${p.name}">
+        <div class="card-img" aria-label="${p.name}">
+          <img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover" />
+        </div>
+        <div class="card-body">
+          <div class="title">${p.name}</div>
+          <div class="muted" style="font-size:.9rem">${p.occasion} • ${p.color}</div>
+          <div class="row" style="justify-content:space-between;margin-top:6px">
+            <span class="price">$${price}</span>
+            <span class="tag" aria-label="Rating" title="Rating">${p.rating.toFixed(1)}★</span>
+          </div>
+        </div>
+      </div>
+    `
+  }
+
+  function renderProduct(id){
+    const p = catalog.find(x => x.id === id)
+    if(!p){
+      return `<div class="empty">Product not found. Go back to <a href="#/">home</a>.</div>`
+    }
+    const gallery = p.images
+    // choose default index 0
+    let active = 0
+    const priceBase = p.price
+    const priceWithVariant = (p.variants[0]?.priceDelta ? p.price + p.variants[0].priceDelta : p.price)
+    // Build variants HTML
+    const variantsHTML = p.variants.map(v => `
+      <button class="filter" data-variant-id="${v.id}" style="margin-right:6px">${v.name} ${v.priceDelta>0?`(+${v.priceDelta})`:''}</button>
+    `).join('')
+    // Delivery date
+    const deliveryInput = `<input type="date" id="deliveryDate" style="padding:8px 10px;border-radius:6px;border:1px solid #ddd" />`
+    return `
+      <section class="section" aria-label="Product detail">
+        <div class="row" style="gap:12px;flex-wrap:wrap">
+          <button class="btn secondary" onclick="location.hash='#/shop'">Back to Shop</button>
+          <span class="muted" style="align-self:center">In stock: ${p.stock}</span>
+        </div>
+        <div class="layout" style="margin-top:6px">
+          <div class="gallery" aria-label="Image gallery" style="padding-right:6px">
+            <div class="large" id="largeImage" style="min-height:260px;">
+              <img src="${gallery[active]}" alt="${p.name}" id="mainImage" style="width:100%;height:100%;object-fit:cover" />
+            </div>
+            <div class="thumbs" id="thumbs">
+              ${gallery.map((img,i)=>`<img src="${img}" class="thumb ${i===active?'active':''}" data-index="${i}" alt="Thumbnail ${i+1}"/>`).join('')}
+            </div>
+          </div>
+          <div class="card" style="padding:14px">
+            <div class="title" style="font-size:1.25rem">${p.name}</div>
+            <div class="muted" style="margin:6px 0 6px">${p.description}</div>
+            <div class="row" style="gap:8px;align-items:center;margin:4px 0">
+              <span class="tag">${p.category}</span>
+              <span class="tag" aria-label="Occasion">${p.occasion}</span>
+            </div>
+            <div class="price" style="font-size:1.3rem;margin:6px 0">$${priceWithVariant.toFixed(2)}</div>
+            <div class="section" style="margin:6px 0 0;padding:0 0">
+              <div class="section" style="padding:0">
+                <h3 style="margin:0 0 6px">Variants</h3>
+                ${variantsHTML}
+              </div>
+            </div>
+            <div class="section" style="padding:0">
+              <h3 style="margin:0 0 6px">Delivery Date</h3>
+              ${deliveryInput}
+            </div>
+            <button class="btn" id="addToCart" style="margin-top:8px;width:100%">Add to cart</button>
+          </div>
+        </div>
+        <div class="section" aria-label="Reviews">
+          <strong>Reviews</strong> • ${p.rating.toFixed(1)} / 5 (${p.reviews} reviews)
+        </div>
+      </section>
+    `
+  }
+
+  function renderCartPage(){
+    // Build cart view
+    const itemsHTML = state.cart.map(item => {
+      const prod = catalog.find(p => p.id === item.productId)
+      if(!prod) return ''
+      const unitPrice = prod.price + (prod.variants.find(v => v.id===item.variantId)?.priceDelta || 0)
+      const total = unitPrice * item.quantity
+      return `
+        <div class="order" data-id="${item.productId}" data-variant="${item.variantId}">
+          <div class="row" style="justify-content:space-between">
+            <strong>${prod.name} (${item.variantId})</strong>
+            <span>$${total.toFixed(2)}</span>
+          </div>
+          <div class="row" style="align-items:center;margin-top:6px">
+            <div class="qty" aria-label="Quantity">
+              <button class="filter" data-action="dec" data-id="${item.productId}" data-variant="${item.variantId}">-</button>
+              <span>${item.quantity}</span>
+              <button class="filter" data-action="inc" data-id="${item.productId}" data-variant="${item.variantId}">+</button>
+            </div>
+            <button class="btn secondary" data-action="remove" data-id="${item.productId}" data-variant="${item.variantId}">Remove</button>
+          </div>
+        </div>
+      `
+    }).join('') || `<div class="empty">Your cart is empty. Explore our bouquets and add something beautiful.</div>`
+
+    const total = calculateCartTotal()
+
+    return `
+      <section aria-label="Cart" class="container" style="padding-top:6px">
+        <h2 style="margin:6px 0 12px">Your Cart</h2>
+        <div id="cartContent">${itemsHTML}</div>
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between">
+          <span class="muted">Subtotal</span>
+          <span id="cartSubtotal" style="font-weight:700">$${total.toFixed(2)}</span>
+        </div>
+        <button class="btn" id="toCheckout" style="width:100%;margin-top:10px" ${state.cart.length===0?'disabled':''}>Proceed to Checkout</button>
+      </section>
+    `
+  }
+
+  function renderCheckout(){
+    // Simple 3-step: address, delivery, payment
+    const total = calculateCartTotal()
+    return `
+      <section class="section" aria-label="Checkout" style="padding:0 0 40px">
+        <h2 style="margin:6px 0 12px">Checkout</h2>
+        <div id="checkoutSteps" class="grid" style="grid-template-columns:1fr">
+          <div class="card" style="padding:12px">
+            <h3 style="margin:0 0 6px">1. Delivery Address</h3>
+            <div class="row" style="flex-wrap:wrap;gap:8px">
+              <input id="name" placeholder="Full name" style="flex:1 1 200px;padding:8px 10px;border-radius:6px;border:1px solid #ddd" />
+              <input id="address" placeholder="Address line" style="flex:2 1 300px;padding:8px 10px;border-radius:6px;border:1px solid #ddd" />
+              <input id="city" placeholder="City" style="flex:1 1 120px;padding:8px 10px;border-radius:6px;border:1px solid #ddd" />
+              <input id="zip" placeholder="ZIP / Postal" style="flex:1 1 120px;padding:8px 10px;border-radius:6px;border:1px solid #ddd" />
+            </div>
+          </div>
+          <div class="card" style="padding:12px">
+            <h3 style="margin:0 0 6px">2. Delivery Date</h3>
+            <input id="deliveryDate" type="date" style="width:100%;padding:8px 10px;border-radius:6px;border:1px solid #ddd" />
+            <div class="muted" style="margin-top:6px">Same-day delivery available on select products.</div>
+          </div>
+          <div class="card" style="padding:12px">
+            <h3 style="margin:0 0 6px">3. Payment</h3>
+            <div class="row" style="gap:8px;flex-wrap:wrap">
+              <label><input type="radio" name="pay" value="paypal" checked/> PayPal</label>
+              <label><input type="radio" name="pay" value="card" /> Card</label>
+            </div>
+            <div class="divider"></div>
+            <div class="row" style="justify-content:space-between">
+              <span>Total</span>
+              <strong style="font-size:1.1rem">$${total.toFixed(2)}</strong>
+            </div>
+          </div>
+        </div>
+        <button class="btn" id="placeOrder" style="width:100%;margin-top:8px">Place Order</button>
+      </section>
+    `
+  }
+
+  function renderAccount(){
+    // Simple dashboard with past orders (mock)
+    const orders = JSON.parse(localStorage.getItem('ff_orders') || '[]')
+    if(!state.user.loggedIn){
+      return `
+        <section class="section" aria-label="Account">
+          <h2>Account</h2>
+          <p class="muted">You're currently browsing as Guest. Sign in to access past orders.</p>
+          <button class="btn" id="loginBtn" style="margin-top:6px">Sign In (demo)</button>
+        </section>
+      `
+    }
+    const list = orders.length ? orders.map(o => `
+      <div class="order">
+        <div class="row" style="justify-content:space-between">
+          <strong>Order #${o.id}</strong>
+          <span>${new Date(o.date).toLocaleDateString()}</span>
+        </div>
+        <div class="row" style="gap:8px;margin-top:6px">
+          ${o.items.map(it => `<span class="tag">${it.name} x${it.qty}</span>`).join('')}
+        </div>
+        <div class="row" style="justify-content:space-between;margin-top:6px">
+          <span>Total</span><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FloraFlow - Floral E-commerce</title>
+  <meta name="description" content="FloraFlow: elegant floral e-commerce inspired by Teleflora. Mobile-first shopping experience with a simple mock backend." />
+  <style>
+    :root{
+      --pink:#f8cbdc;
+      --pink-dark:#e29bc1;
+      --green:#a8d5ba;
+      --cream:#fff9f0;
+      --text:#2a2a2a;
+      --muted:#6b6b6b;
+      --bg:#fffaf6;
+      --accent:#f28fb3;
+      --card:#ffffff;
+      --shadow:0 6px 20px rgba(0,0,0,.08);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;background:var(--bg);color:var(--text);scroll-behavior:smooth}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{max-width:1100px;margin:0 auto;padding:0 16px}
+    header{position:sticky;top:0;z-index:50;background:linear-gradient(#fff, #fffdfb);border-bottom:1px solid #eee}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-logo{width:38px;height:38px;border-radius:9px;background:conic-gradient(from 180deg at 50% 50%, #ffd3e1, #c9f3e0, #fff);display:inline-block;box-shadow:inset 0 0 0 2px #fff}
+    .brand-name{font-weight:700;font-size:1.05rem;letter-spacing:.4px}
+    nav ul{list-style:none;display:flex;gap:14px;margin:0;padding:0}
+    nav li{padding:8px 12px;border-radius:999px}
+    nav li.active{background:var(--pink);color:white}
+    .search{flex:1;display:flex;gap:8px;justify-content:center}
+    .search input{width:100%;max-width:420px;padding:10px 12px;border:1px solid #eee;border-radius:999px;background:white}
+    .cta{padding:8px 14px;border-radius:999px;background:var(--pink);color:white;border:0;cursor:pointer}
+    .layout{display:grid;grid-template-columns:1fr;gap:20px}
+    .hero{position:relative;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg, #ffe9f3 0%, #f5fff0 60%);min-height:180px;display:flex;align-items:center}
+    .hero .hs{padding:22px}
+    .h-title{font-size:2rem;font-weight:800;line-height:1.05;margin:0 0 8px}
+    .h-sub{color:var(--muted);font-size:0.95rem;margin-bottom:12px}
+    .deal{position:absolute;right:14px;top:14px;background:var(--cream);border:1px solid #e8e1d9;padding:8px 12px;border-radius:999px;font-weight:600}
+    .grid{display:grid;gap:14px}
+    @media (min-width: 640px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .layout{grid-template-columns:1fr 340px}
+      .hero{min-height:240px}
+    }
+    @media (min-width: 980px){
+      .grid{grid-template-columns:repeat(3,1fr)}
+    }
+    .card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;border:1px solid #f0f0f0;display:flex;flex-direction:column}
+    .card-img{height:180px;background:#f6f6f6;display:flex;align-items:center;justify-content:center}
+    .card-body{padding:12px 12px 14px;flex:1;display:flex;flex-direction:column}
+    .title{font-weight:700;font-size:1rem;margin:6px 0}
+    .price{margin-top:auto;font-weight:700}
+    .tag{font-size:12px;color:#555;background:#f0f0f0;padding:4px 8px;border-radius:999px;align-self:flex-start}
+    .filters{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+    .filter{padding:8px 12px;border-radius:999px;border:1px solid #e9e0db;background:#fff}
+    .btn{cursor:pointer;border:0;padding:10px 14px;border-radius:10px;background:#333;color:white}
+    .btn.secondary{background:#eee;color:#333}
+    .drawer{position:fixed;top:0;right:0;width:360px;max-width:90vw;height:100%;background:white;box-shadow:-6px 0 20px rgba(0,0,0,.15);transform:translateX(100%);transition:transform .25s ease;z-index:60;padding:16px;overflow:auto}
+    .drawer.open{transform:translateX(0)}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);opacity:0;visibility:hidden;transition:.2s;z-index:50}
+    .overlay.show{opacity:1;visibility:visible}
+    .row{display:flex;gap:12px;align-items:center}
+    .qty{display:flex;gap:6px;align-items:center}
+    .muted{color:var(--muted);font-size:.92rem}
+    .divider{height:1px;background:#eee;margin:12px 0}
+    .section{margin:18px 0}
+    .section h3{margin:0 0 8px;font-size:1.05rem}
+    .gallery{display:flex;gap:8px;flex-direction:column}
+    .thumbs{display:flex;gap:6px}
+    .thumb{width:54px;height:54px;border-radius:8px;border:1px solid #eee;overflow:hidden;cursor:pointer}
+    .thumb.active{border-color:var(--pink);box-shadow:0 0 0 2px #ffd7e0}
+    .large{aspect-ratio:4/3;background:#fafafa;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid #eee;overflow:hidden}
+    .order{border:1px solid #eee;border-radius:12px;padding:12px;margin-bottom:8px;background:#fff}
+    .empty{text-align:center;color:var(--muted);padding:40px 0}
+    .footer{padding:20px 0;text-align:center;color:var(--muted);font-size:.9rem}
+    /* simple modal help */
+    .modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:600px;background:white;border-radius:12px;box-shadow:0 20px 40px rgba(0,0,0,.25);padding:18px;display:none;z-index:70}
+    .modal.open{display:block}
+    @media (max-width: 720px){
+      .layout{grid-template-columns:1fr}
+      .hero{min-height:180px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav" role="navigation" aria-label="Main navigation">
+      <div class="brand" style="gap:10px">
+        <span class="brand-logo" aria-hidden="true"></span>
+        <span class="brand-name">FloraFlow</span>
+      </div>
+      <div class="search" aria-label="
