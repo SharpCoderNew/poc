@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FloraFlow Shop</title>
+  <style>
+    :root{
+      --bg: #0b0a15;
+      --card: rgba(18, 14, 32, 0.75);
+      --surface: rgba(255,255,255,0.08);
+      --text: #e9e1f7;
+      --muted: #c9c3d9;
+      --accent1: #a78bfa;
+      --accent2: #4c1d95;
+      --shadow: 0 8px 22px rgba(0,0,0,.4);
+      --radius: 14px;
+    }
+    @media (prefers-color-scheme: light){
+      :root{ --bg: #f7f5fb; --card: rgba(255,255,255,0.9); --text:#1f1a2a; --muted:#524357; }
+    }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: linear-gradient(135deg, var(--accent1) 0%, var(--accent2) 100%), #0b0a15;
+      background-attachment: fixed;
+    }
+    header{
+      position: sticky; top:0; z-index: 50;
+      backdrop-filter: saturate(1.2) blur(6px);
+      background: linear-gradient(135deg, rgba(18,14,32,.9), rgba(18,14,32,.75));
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .container{ width: min(1100px, 90%); margin: 0 auto; }
+    .brand{ display:flex; align-items:center; gap:12px; padding:14px 0; }
+    .brand .logo{ width:38px; height:38px; border-radius:9px;
+      background: conic-gradient(from 180deg at 50% 50%, #a78bfa, #4c1d95);
+      display:flex; align-items:center; justify-content:center; font-weight:700;
+      box-shadow: 0 4px 12px rgba(0,0,0,.4);
+    }
+    nav{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .nav-links{ display:flex; gap:12px; flex-wrap:wrap; }
+    a{ color:var(--text); text-decoration:none; padding:10px 12px; border-radius:8px; }
+    a:hover{ background: rgba(255,255,255,.08); }
+    .lang-select{ background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); color:var(--text); padding:8px; border-radius:8px; }
+
+    main{ padding: 28px 0 80px; }
+
+    .hero{ padding:28px 0 18px; border-radius: 0 0 22px 22px; background: linear-gradient(135deg, rgba(167,139,250,.25), rgba(76,29,149,.4)); }
+    .hero h1{ font-family: "Georgia", serif; font-weight:700; font-size: clamp(28px, 4vw, 44px); margin:6px 0 4px; }
+    .hero p{ color:var(--muted); margin:0; }
+
+    .filters{ display:grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap:12px; padding:12px 0 6px; }
+    .filter{ background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); border-radius:10px; padding:8px; display:flex; flex-direction:column; gap:6px; }
+    .filter label{ font-size:12px; color:#ddd; text-transform:uppercase; letter-spacing:.5px; }
+    select, input[type="range"]{ background: rgba(0,0,0,.15); color: var(--text); border:1px solid rgba(255,255,255,.25); border-radius:6px; padding:8px; font-size:14px; }
+    .clear{ align-self:start; padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.1); cursor:pointer; }
+
+    .section{ margin: 28px 0; }
+    .section h2{ font-family: "Georgia", serif; font-size: 1.6rem; margin:0 0 12px; }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap:14px; }
+    .card{ background: var(--card); border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow); display:flex; flex-direction:column; min-height: 320px; position:relative; }
+    .visual{ height: 150px; display:flex; align-items:center; justify-content:center; background:#2a2341; position:relative; overflow:hidden; }
+    .visual .emoji{ font-size:38px; filter: saturate(1.1); }
+    .lo-image{ width:100%; height:100%; object-fit:cover; display:none; }
+    .skeleton{ position:absolute; inset:0; background: linear-gradient(90deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.22) 50%, rgba(255,255,255,.08) 100%); background-size: 200% 100%; animation: shimmer 1.2s infinite; }
+    @keyframes shimmer { 0%{ background-position: 200% 0; } 100%{ background-position: -200% 0; } }
+    .card-content{ padding:12px 12px 14px; display:flex; flex-direction:column; gap:6px; flex:1; }
+    .title{ font-family: "Georgia", serif; font-size:1.05rem; margin:0; }
+    .tag{ color:var(--muted); font-size:12px; }
+    .price{ font-weight:700; margin-top:auto; display:flex; align-items:center; gap:6px; }
+    .old{ text-decoration: line-through; color: #f0c; opacity:.7; font-size:12px; }
+    .stars{ color:#ffd76f; font-size:12px; }
+
+    .card-actions{ display:flex; gap:8px; padding:0 0 6px; }
+    .btn{ border:none; outline:none; border-radius:8px; padding:9px 12px; cursor:pointer; background: rgba(0,0,0,.25); color:var(--text); }
+    .btn.primary{ background: linear-gradient(135deg, #8b5cf6, #4c1d95); }
+    .btn.secondary{ background: rgba(255,255,255,.15); }
+
+    aside#cartDrawer{ position: fixed; top:0; right:0; height:100%; width: min(420px, 92%); background: rgba(8,8,16,.98); border-left:1px solid rgba(255,255,255,.15); transform: translateX(100%); transition: transform .25s ease-out; z-index:60; display:flex; flex-direction:column; }
+    aside#cartDrawer.open{ transform: translateX(0); }
+    .cart-header{ display:flex; align-items:center; justify-content:space-between; padding:14px; border-bottom:1px solid rgba(255,255,255,.12); }
+    .cart-items{ padding:12px; overflow:auto; flex:1; display:flex; flex-direction:column; gap:10px; }
+    .cart-item{ display:flex; gap:8px; align-items:center; padding:6px; border-radius:8px; background: rgba(255,255,255,.05); }
+    .cart-thumb{ width:40px; height:40px; border-radius:6px; background:#2a2a2a; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .cart-thumb img{ width:100%; height:100%; object-fit:cover; }
+    .cart-info{ display:flex; flex-direction:column; gap:4px; font-size:13px; }
+    .qty{ display:inline-flex; align-items:center; gap:6px; }
+    .cart-footer{ padding:12px; border-top:1px solid rgba(255,255,255,.12); }
+    .checkout{ width:100%; padding:12px; border-radius:8px; background: linear-gradient(135deg, #8b5cf6, #4c1d95); color:white; border:none; cursor:pointer; }
+
+    .fab-chat{ position: fixed; bottom:20px; right:20px; z-index: 60; }
+    .chat-toggle{ width:56px; height:56px; border-radius:50%; background: linear-gradient(135deg, #a78bfa, #4c1d95); color:white; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.3); }
+
+    .chat{ width: 320px; height: 420px; background: rgba(20,12,40,.95); border-radius:12px; padding:10px; display:flex; flex-direction:column; box-shadow: var(--shadow); }
+    .chat-header{ display:flex; justify-content:space-between; align-items:center; padding:6px; border-bottom:1px solid rgba(255,255,255,.14); }
+    .chat-messages{ flex:1; overflow:auto; padding:6px; font-size:13px; display:flex; flex-direction:column; gap:6px; }
+    .msg{ max-width: 80%; padding:8px 10px; border-radius:10px; }
+    .from{ align-self: flex-end; background:#3b2c60; border-bottom-right-radius:4px; }
+    .to{ align-self: flex-start; background:#2a2a4a; }
+    .chat-input{ display:flex; gap:6px; padding:6px; border-top:1px solid rgba(255,255,255,.14); }
+    .chat-input input{ flex:1; padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,.25); background:#fff; }
+    .sr-only{ position:absolute; left:-10000px; width:1px; height:1px; overflow:hidden; }
+
+    @media (max-width: 700px){
+      .grid{ grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+      aside#cartDrawer{ width: 100%; height:auto; bottom:0; top:auto; transform: translateY(100%); }
+      aside#cartDrawer.open{ transform: translateY(0); height: calc(60%); }
+      .fab-chat{ right:12px; bottom:12px; }
+    }
+  </style>
+</head>
+<body>
+  <header aria-label="Site header" role="banner">
+    <div class="container" style="display:flex; align-items:center; justify-content:space-between;">
+      <div class="brand" aria-label="FloraFlow Brand">
+        <div class="logo" aria-label="FloraFlow Logo">FF</div>
+        <div style="display:flex; flex-direction:column;">
+          <strong style="letter-spacing:.5px;">FloraFlow</strong>
+          <span style="font-size:12px; color:#d8cfee;">Shop & Gifts</span>
+        </div>
+      </div>
+      <nav aria-label="Main navigation">
+        <div class="nav-links" id="navLinks">
+          <a href="#shop" data-i18n="nav.shop">Shop</a>
+          <a href="#occasions" data-i18n="nav.occasions">Occasions</a>
+          <a href="#bestsellers" data-i18n="nav.bestsellers">Bestsellers</a>
+          <a href="#about" data-i18n="nav.about">About</a>
+          <a href="#contact" data-i18n="nav.contact">Contact</a>
+        </div>
+        <button class="btn" id="cartBtn" aria-label="Open cart" style="margin-left:6px;">
+          🛒 <span data-i18n="cart.label" style="margin-left:6px;">Cart</span> (<span id="cart-count">0</span>)
+        </button>
+        <select id="langSelect" class="lang-select" aria-label="Language switcher" title="Language">
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="fr">FR</option>
+          <option value="de">DE</option>
+        </select>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" role="main">
+    <section class="hero" aria-label="Hero">
+      <div class="container">
+        <h1 data-i18n="sections.shop.heading" style="margin:0; font-family: Georgia, serif;"> FloraFlow Shop</h1>
+        <p data-i18n="sections.shop.subheading" style="margin-top:6px; opacity:.9;">
+          <span aria-label="Lavender gradient badge" role="img">🌸</span> Curated bouquets, decor, and gifts crafted with care.
+        </p>
+      </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters" aria-label="Filters" id="filters">
+      <div class="filter" aria-label="Filter by category">
+        <label data-i18n="filters.category">Category</label>
+        <select id="catFilter" aria-label="Category">
+          <option value="">All</option>
+        </select>
+      </div>
+      <div class="filter" aria-label="Filter by occasion">
+        <label data-i18n="filters.occasion">Occasion</label>
+        <select id="occFilter" aria-label="Occasion">
+          <option value="">All</option>
+        </select>
+      </div>
+      <div class="filter" aria-label="Filter by color">
+        <label data-i18n="filters.color">Color</label>
+        <select id="colorFilter" aria-label="Color">
+          <option value="">All</option>
+          <option value="Purple">Purple</option>
+          <option value="Pink">Pink</option>
+          <option value="White">White</option>
+          <option value="Yellow">Yellow</option>
+        </select>
+      </div>
+      <div class="filter" aria-label="Filter by price">
+        <label data-i18n="filters.price">Price</label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="range" id="minPrice" min="0" max="100" value="0" />
+          <input type="range" id="maxPrice" min="0" max="100" value="100" />
+        </div>
+        <div style="font-size:12px; color:var(--muted); display:flex; justify-content:space-between;">
+          <span id="priceMinLabel">0</span>
+          <span id="priceMaxLabel">100</span>
+        </div>
+      </div>
+      <div class="filter" aria-label="Sort by">
+        <label data-i18n="filters.sortBy">Sort By</label>
+        <select id="sortBy" aria-label="Sort by">
+          <option value="default">Default</option>
+          <option value="price-asc" selected>Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="rating-desc">Rating</option>
+        </select>
+      </div>
+      <button class="clear" id="clearFilters" data-i18n="filters.clear">Clear Filters</button>
+    </section>
+
+    <!-- Shop -->
+    <section class="section" id="shop" aria-labelledby="shop-heading">
+      <h2 id="shop-heading" data-i18n="sections.shop.heading" style="margin:0 0 8px;">Shop</h2>
+      <p id="shop-sub" style="color:var(--muted); margin:0 0 12px;">Browse our curated flowers and gifts.</p>
+      <div class="grid" id="shop-grid" aria-label="Shop products"></div>
+    </section>
+
+    <!-- Occasions -->
+    <section class="section" id="occasions" aria-labelledby="occasions-heading">
+      <h2 id="occasions-heading" data-i18n="sections.occasions.heading" style="margin:0 0 8px;">Occasions</h2>
+      <p id="occasions-sub" style="color:var(--muted); margin:0 0 12px;">Perfect moments to celebrate with style.</p>
+      <div class="grid" id="occasions-grid" aria-label="Occasions products"></div>
+    </section>
+
+    <!-- Bestsellers -->
+    <section class="section" id="bestsellers" aria-labelledby="bestsellers-heading">
+      <h2 id="bestsellers-heading" data-i18n="sections.bestsellers.heading" style="margin:0 0 8px;">Bestsellers</h2>
+      <p id="bestsellers-sub" style="color:var(--muted); margin:0 0 12px;">Our most-loved picks this season.</p>
+      <div class="grid" id="bestsellers-grid" aria-label="Bestsellers products"></div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section" aria-labelledby="about-heading">
+      <h2 id="about-heading" data-i18n="sections.about.heading" style="margin:0 0 8px;">About FloraFlow</h2>
+      <p id="about-content" style="color:var(--muted); max-width: 70ch;">
+        FloraFlow blends lavender gradients with violet hues to create a serene shopping experience. We craft thoughtful bouquets and curated decor, with sustainability in mind.
+      </p>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section" aria-labelledby="contact-heading">
+      <h2 id="contact-heading" data-i18n="sections.contact.heading" style="margin:0 0 8px;">Contact Us</h2>
+      <form id="contactForm" aria-label="Contact form" style="max-width:700px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <input type="text" id="name" placeholder="Your name" required style="padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.25);" aria-label="Name" />
+          <input type="email" id="email" placeholder="Your email" required style="padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.25);" aria-label="Email" />
+        </div>
+        <div style="margin-top:12px;">
+          <textarea id="message" placeholder="Your message" required rows="6" style="width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.25);" aria-label="Message"></textarea>
+        </div>
+        <button type="submit" class="btn primary" style="margin-top:8px;">Submit</button>
+      </form>
+      <p id="formStatus" aria-live="polite" style="color:var(--muted); margin-top:6px;"></p>
+    </section>
+  </main>
+
+  <footer class="container" role="contentinfo" aria-label="Footer" style="padding:20px 0 40px; color:var(--muted);">
+    FloraFlow © <span id="yr"></span> • All rights reserved
+  </footer>
+
+  <!-- Cart Drawer -->
+  <aside id="cartDrawer" aria-label="Cart Drawer" role="complementary">
+    <div class="cart-header">
+      <strong data-i18n="cart.label" style="font-size:15px;">Cart</strong>
+      <button class="btn" id="closeCart" aria-label="Close cart">Close</button>
+    </div>
+    <div class="cart-items" id="cart-items" aria-live="polite">
+      <p style="color:var(--muted); padding:12px;">Your cart is empty. Add items to get started.</p>
+    </div>
+    <div class="cart-footer" aria-label="Cart total">
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0;">
+        <span>Subtotal</span>
+        <strong id="cart-subtotal">$0</strong>
+      </div>
+      <button class="checkout" id="checkoutBtn" aria-label="Checkout">Checkout</button>
+    </div>
+  </aside>
+
+  <!-- Floating Chat Widget -->
+  <div class="fab-chat" aria-label="Chat with FloraFlow">
+    <button class="chat-toggle" id="chatToggle" title="Chat with FloraFlow">💬</button>
+  </div>
+  <div id="chat" class="chat" style="display:none;" aria-label="Chat window" role="dialog" aria-modal="false">
+    <div class="chat-header">
+      <strong>FloraFlow Chat</strong>
+      <button class="btn" id="chatClose" aria-label="Close chat">✖</button>
+    </div>
+    <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+    <div class="chat-input">
+      <input type="text" id="userMessage" placeholder="Ask me anything..." aria-label="Message"/>
+      <button class="btn" id="sendBtn" aria-label="Send message">Send</button>
+    </div>
+  </div>
+
+  <span id="sr" class="sr-only" aria-live="polite"></span>
+
+  <script>
+  // Data, translations, and app state
+  const products = [];
+  const allCategories = new Set();
+  const allOccasions = new Set();
+
+  // Simple SVG-based image data URL generator (no external assets)
+  function makeDataUrl(label, colorA, colorB){
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="600" height="400">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="${colorA}" offset="0"/>
+            <stop stop-color="${colorB}" offset="1"/>
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#g)"/>
+        <text x="50%" y="50%" text-anchor="middle" dy=".35em" fill="white" font-family="Georgia, serif" font-size="48" opacity="0.9">${label}</text>
+      </svg>
+    `;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+
+  // Translations (EN default, with fallbacks)
+  const i18n = {
+    en: {
+      nav: { shop: "Shop", occasions: "Occasions", bestsellers: "Bestsellers", about: "About", contact: "Contact" },
+      cart: { label: "Cart" },
+      filters: { category: "Category", occasion: "Occasion", color: "Color", price: "Price", sortBy: "Sort By", clear: "Clear Filters" },
+      sections: { shop: { heading: "Shop", headingAlt: "Shop Products", sub: "Hand-picked items for every moment" },
+                  occasions: { heading: "Occasions" },
+                  bestsellers: { heading: "Bestsellers" },
+                  about: { heading: "About FloraFlow" },
+                  contact: { heading: "Contact Us" } },
+      sectionsTitle: " FloraFlow Shop",
+      sectionsAbout: { heading: "About FloraFlow" },
+      sectionsContact: { heading: "Contact Us" },
+    },
+    es: {
+      nav: { shop: "Tienda", occasions: "Ocasiones", bestsellers: "Más Vendidos", about: "Acerca de", contact: "Contacto" },
+      cart: { label: "Carrito" },
+      filters: { category: "Categoría", occasion: "Ocasión", color: "Color", price: "Precio", sortBy: "Ordenar Por", clear: "Limpiar Filtros" },
+      sections: { shop: { heading: "Tienda", sub: "Artículos seleccionados" },
+                  occasions: { heading: "Ocasiones" },
+                  bestsellers: { heading: "Más Vendidos" },
+                  about: { heading: "Acerca de FloraFlow" },
+                  contact: { heading: "Contacto" } },
+    },
+    fr: {
+      nav: { shop: "Boutique", occasions: "Occasions", bestsellers: "Meilleures Ventes", about: "À Propos", contact: "Contact" },
+      cart: { label: "Panier" },
+      filters: { category: "Catégorie", occasion: "Occasion", color: "Couleur", price: "Prix", sortBy: "Trier Par", clear: "Effacer les Filtres" },
+      sections: { shop: { heading: "Boutique" }, occasions: { heading: "Occasions" }, bestsellers: { heading: "Meilleures Ventes" } },
+    },
+    de: {
+      nav: { shop: "Shop", occasions: "Anlässe", bestsellers: "Bestseller", about: "Über Uns", contact: "Kontakt" },
+      cart: { label: "Warenkorb" },
+      filters: { category: "Kategorie", occasion: "Anlass", color: "Farbe", price: "Preis", sortBy: "Sortieren nach", clear: "Filter Löschen" },
+      sections: { shop: { heading: "Shop" }, occasions: { heading: "Anlässe" }, bestsellers: { heading: "Bestseller" } },
+    }
+  };
+
+  let currentLang = 'en';
+  const t = (path) => {
+    const keys = path.split('.');
+    let val = i18n[currentLang];
+    for (const k of keys) {
+      val = val?.[k];
+      if (val === undefined) break;
+    }
+    if (val === undefined) {
+      // fallback to EN
+      val = path.split('.').reduce((acc, k) => acc?.[k], i18n.en);
+    }
+    return val ?? path;
+  };
+
+  // Data population
+  function seedProducts(){
+    const colorPairs = [
+      ['#a78bfa','#4c1d95'], ['#f472b6','#8b5cf6'], ['#7c3aed','#6d28d9'],
+      ['#60a5fa','#4f46e5'], ['#f59e0b','#f472b6'], ['#34d399','#10b981'],
+    ];
+    // 12 Shop
+    const shop = [
+      {id:'p001', name:'Rose Garden', tagline:'Elegant lavender tones', category:'Bouquet', color:'Purple', occasion:'Birthday', price:34, rating:4.7, reviews:128, emoji:'🌹', section:'shop'},
+      {id:'p002', name:'Lavender Dream', tagline:'Soft scent, bold charm', category:'Bouquet', color:'Purple', occasion:'Anniversary', price:42, rating:4.8, reviews:214, emoji:'💜', section:'shop'},
+      {id:'p003', name:'Sunlit Posy', tagline:'Bright, cheerful blooms', category:'Bouquet', color:'Yellow', occasion:'Get Well', price:28, rating:4.5, reviews:90, emoji:'🌼', section:'shop'},
+      {id:'p004', name:'Moonlit Vase', tagline:'Evening elegance', category:'Decor', color:'White', occasion:'Wedding', price:59, rating:4.6, reviews:150, emoji:'🕯️', section:'shop'},
+      {id:'p005', name:'Petal Cascade', tagline:'A waterfall of petals', category:'Bouquet', color:'Pink', occasion:'Birthday', price:46, rating:4.9, reviews:320, emoji:'💐', section:'shop'},
+      {id:'p006', name:'Violet Whisper', tagline:'Subtle chic accents', category:'Decor', color:'Purple', occasion:'Anniversary', price:39, rating:4.4, reviews:80, emoji:'🪞', section:'shop'},
+      {id:'p007', name:'Blossom Box', tagline:'Compact surprise', category:'Gifts', color:'Pink', occasion:'Get Well', price:32, rating:4.3, reviews:65, emoji:'🎁', section:'shop'},
+      {id:'p008', name:'Iris Charm', tagline:'A pop of color', category:'Bouquet', color:'Purple', occasion:'Birthday', price:29, rating:4.2, reviews:40, emoji:'🪻', section:'shop'},
+      {id:'p009', name:'Petal Ribbon', tagline:'Graceful wrapping', category:'Decor', color:'White', occasion:'Wedding', price:55, rating:4.7, reviews:210, emoji:'🎀', section:'shop'},
+      {id:'p010', name:'Flora Charm', tagline:'Rustic elegance', category:'Gifts', color:'Purple', occasion:'Anniversary', price:45, rating:4.5, reviews:133, emoji:'🪴', section:'shop'},
+      {id:'p011', name:'Garden Glitz', tagline:'Shimmering accents', category:'Decor', color:'Yellow', occasion:'Birthday', price:40, rating:4.1, reviews:77, emoji:'✨', section:'shop'},
+      {id:'p012', name:'Peony Pulse', tagline:'Soft petals, strong style', category:'Bouquet', color:'Pink', occasion:'Wedding', price:48, rating:4.8, reviews:198, emoji:'🌸', section:'shop'},
+    ];
+    // 4 Occasions
+    const occs = [
+      {id:'p101', name:'Birthday Glow', tagline:'Make their day brighter', category:'Gifts', color:'Purple', occasion:'Birthday', price:38, rating:4.6, reviews:120, emoji:'🎂', section:'occasions'},
+      {id:'p102', name:'Anniversary Spark', tagline:'Celebrate love', category:'Gifts', color:'Purple', occasion:'Anniversary', price:52, rating:4.9, reviews:210, emoji:'💍', section:'occasions'},
+      {id:'p103', name:'Wedding Still', tagline:'Timeless decor', category:'Decor', color:'White', occasion:'Wedding', price:70, rating:4.7, reviews:180, emoji:'💒', section:'occasions'},
+      {id:'p104', name:'Get Well Wishes', tagline:'Brighten their day', category:'Gifts', color:'Yellow', occasion:'Get Well', price:25, rating:4.2, reviews:68, emoji:'🌻', section:'occasions'},
+    ];
+    // 4 Bestsellers
+    const bests = [
+      {id:'p201', name:'Luxe Lavender Bouquet', tagline:'Premium stems', category:'Bouquet', color:'Purple', occasion:'Anniversary', price:72, rating:4.9, reviews:340, emoji:'💜', section:'bestsellers'},
+      {id:'p202', name:'Silk Rose Ensemble', tagline:'Chic and timeless', category:'Bouquet', color:'Pink', occasion:'Birthday', price:68, rating:4.8, reviews:290, emoji:'🌹', section:'bestsellers'},
+      {id:'p203', name:'White Whisper Vase', tagline:'Minimalist grace', category:'Decor', color:'White', occasion:'Wedding', price:60, rating:4.6, reviews:210, emoji:'🏺', section:'bestsellers'},
+      {id:'p204', name:'Golden Glow Box', tagline:'Warmth in a box', category:'Gifts', color:'Yellow', occasion:'Get Well', price:44, rating:4.4, reviews:150, emoji:'🎁', section:'bestsellers'},
+    ];
+
+    // merge
+    const all = [...shop, ...occs, ...bests];
+    // ensure data-url images for each
+    const palette = [
+      ['#a78bfa','#4c1d95'], ['#7c3aed','#6d28d9'], ['#f472b6','#4c1d95'], ['#60a5fa','#4f46e5'],
+      ['#f59e0b','#f472b6'], ['#34d399','#10b981'], ['#93c5fd','#4c46e2'], ['#f472a1','#c084fc']
+    ];
+    all.forEach((p, idx) => {
+      const [c1,c2] = palette[idx % palette.length];
+      p.image = makeDataUrl(p.name, c1, c2);
+      products.push(p);
+      allCategories.add(p.category);
+      if(p.occasion) allOccasions.add(p.occasion);
+    });
+  }
+
+  seedProducts();
+
+  // Helpers
+  function formatPrice(n){
+    return '$' + Number(n).toFixed(2);
+  }
+
+  // Debounce
+  function debounce(fn, delay=250){
+    let t;
+    return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), delay); };
+  }
+
+  // State
+  const state = {
+    filters: { category:'', occasion:'', color:'', min:0, max:100, sort:'price-asc' },
+    cart: []
+  };
+
+  // Init: render filter options
+  function populateFilters(){
+    const catSel = document.getElementById('catFilter');
+    const occSel = document.getElementById('occFilter');
+    const colors = ['Purple','Pink','White','Yellow'];
+
+    const cats = Array.from(allCategories).sort();
+    cats.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      catSel.appendChild(o);
+    });
+
+    const occs = Array.from(allOccasions).sort();
+    occs.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o; opt.textContent = o;
+      occSel.appendChild(opt);
+    });
+
+    // color
+    // color options
+  }
+
+  // Render items by section
+  function renderGrid(sectionKey, containerId){
+    const grid = document.getElementById(containerId);
+    grid.innerHTML = '';
+    const filtered = products.filter(p => {
+      const f = state.filters;
+      // section mapping
+      const inSection = (sectionKey === 'shop' && p.section === 'shop') ||
+                        (sectionKey === 'occasions' && p.section === 'occasions') ||
+                        (sectionKey === 'bestsellers' && p.section === 'bestsellers');
+      if(!inSection) return false;
+      // category
+      if(f.category && p.category !== f.category) return false;
+      if(f.occasion && p.occasion !== f.occasion) return false;
+      if(f.color && p.color !== f.color) return false;
+      // price range
+      const price = p.price;
+      if(price < f.min || price > f.max) return false;
+      // sorting handled later globally
+      return true;
+    });
+
+    // sort
+    const f = state.filters;
+    if(f.sort === 'price-asc'){
+      filtered.sort((a,b)=> a.price - b.price);
+    } else if(f.sort === 'price-desc'){
+      filtered.sort((a,b)=> b.price - a.price);
+    } else if(f.sort === 'rating-desc'){
+      filtered.sort((a,b)=> b.rating - a.rating);
+    }
+
+    // render cards
+    for(const item of filtered){
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.setAttribute('aria-label', item.name);
+      card.style.minHeight = '320px';
+      // Visual
+      const visual = document.createElement('div');
+      visual.className = 'visual';
+      const emoji = document.createElement('span');
+      emoji.className = 'emoji';
+      emoji.textContent = item.emoji;
+      emoji.setAttribute('aria-label', item.name);
+      emoji.setAttribute('role','img');
+      const img = document.createElement('img');
+      img.className = 'lo-image';
+      img.alt = item.name;
+      img.loading = 'lazy';
+      // skeleton overlay
+      const ske = document.createElement('div');
+      ske.className = 'skeleton';
+      ske.setAttribute('aria-hidden','true');
+      visual.appendChild(emoji);
+      visual.appendChild(img);
+      visual.appendChild(ske);
+      // load image (data URL)
+      const loader = new Image();
+      loader.onload = () => {
+        img.src = item.image;
+        img.style.display = 'block';
+        emoji.style.display = 'none';
+        ske.style.display = 'none';
+      };
+      // simulate slow network
+      setTimeout(()=> loader.src = item.image, Math.floor(Math.random()*400+200));
+      card.appendChild(visual);
+
+      // content
+      const content = document.createElement('div');
+      content.className = 'card-content';
+      const title = document.createElement('h3');
+      title.className = 'title';
+      title.textContent = item.name;
+      const tag = document.createElement('div');
+      tag.className = 'tag';
+      tag.textContent = item.tagline || '';
+      const rating = document.createElement('div');
+      rating.className = 'stars';
+      rating.setAttribute('aria-label','Rating');
+      rating.textContent = '★'.repeat(Math.round(item.rating)) + '☆'.repeat(5 - Math.round(item.rating));
+      const priceLine = document.createElement('div');
+      priceLine.className = 'price';
+      const priceText = document.createElement('span');
+      priceText.textContent = formatPrice(item.price);
+      priceLine.appendChild(priceText);
+      if(item.discount){
+        const old = document.createElement('span');
+        old.className = 'old';
+        old.textContent = formatPrice(item.price * (1 + item.discount/100));
+        priceLine.appendChild(old);
+      }
+      const actions = document.createElement('div');
+      actions.className = 'card-actions';
+      const addBtn = document.createElement('button');
+      addBtn.className = 'btn primary';
+      addBtn.textContent = 'Add to cart';
+      addBtn.addEventListener('click', ()=> addToCart(item.id, 1));
+      const viewBtn = document.createElement('button');
+      viewBtn.className = 'btn';
+      viewBtn.textContent = 'View';
+      viewBtn.addEventListener('click', ()=> alert(item.name + ' - ' + item.tagline));
+      actions.appendChild(addBtn);
+      actions.appendChild(viewBtn);
+
+      content.appendChild(title);
+      content.appendChild(tag);
+      content.appendChild(rating);
+      content.appendChild(priceLine);
+      content.appendChild(actions);
+
+      card.appendChild(content);
+      grid.appendChild(card);
+    }
+
+    // update aria-live region
+    document.getElementById('sr').textContent = `${filtered.length} items loaded in ${sectionKey}.`;
+  }
+
+  // Cart management
+  function loadCart(){
+    const raw = localStorage.getItem('ff-cart');
+    if(raw){
+      try{ state.cart = JSON.parse(raw); }catch(e){ state.cart = []; }
+    } else state.cart = [];
+    renderCart();
+  }
+
+  function saveCart(){ localStorage.setItem('ff-cart', JSON.stringify(state.cart)); renderCart(); }
+
+  function addToCart(id, qty){
+    const prod = products.find(p=>p.id===id);
+    if(!prod) return;
+    const existing = state.cart.find(ci => ci.id===id);
+    if(existing){
+      existing.qty += qty;
+    } else {
+      state.cart.push({ id, name: prod.name, price: prod.price, qty, emoji: prod.emoji, image: prod.image });
+    }
+    saveCart();
+    announceCart();
+  }
+
+  function updateQty(id, delta){
+    const item = state.cart.find(c => c.id===id);
+    if(!item) return;
+    item.qty += delta;
+    if(item.qty <=0){
+      state.cart = state.cart.filter(c=>c.id!==id);
+    }
+    saveCart();
+    announceCart();
+  }
+
+  function removeItem(id){
+    state.cart = state.cart.filter(c=>c.id!==id);
+    saveCart();
+    announceCart();
+  }
+
+  function renderCart(){
+    const container = document.getElementById('cart-items');
+    container.innerHTML = '';
+    if(state.cart.length===0){
+      container.innerHTML = '<p style="color:var(--muted); padding:12px;">Your cart is empty. Add items to get started.</p>';
+      document.getElementById('cart-subtotal').textContent = '$0';
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    let subtotal = 0;
+    state.cart.forEach(item=>{
+      const row = document.createElement('div');
+      row.className = 'cart-item';
+      const thumb = document.createElement('div');
+      thumb.className = 'cart-thumb';
+      const img = document.createElement('img');
+      img.src = item.image;
+      img.alt = item.name;
+      thumb.appendChild(img);
+      const info = document.createElement('div');
+      info.className = 'cart-info';
+      const nm = document.createElement('div');
+      nm.textContent = item.name;
+      const priceLine = document.createElement('div');
+      priceLine.textContent = `$${item.price.toFixed(2)} each`;
+      const qty = document.createElement('div');
+      qty.className = 'qty';
+      const minus = document.createElement('button');
+      minus.className = 'btn';
+      minus.textContent = '−';
+      minus.addEventListener('click', ()=> updateQty(item.id, -1));
+      const qlbl = document.createElement('span');
+      qlbl.textContent = item.qty;
+      const plus = document.createElement('button');
+      plus.className = 'btn';
+      plus.textContent = '+';
+      plus.addEventListener('click', ()=> updateQty(item.id, 1));
+      const del = document.createElement('button');
+      del.className = 'btn';
+      del.textContent = 'Remove';
+      del.addEventListener('click', ()=> removeItem(item.id));
+      qty.appendChild(minus);
+      qty.appendChild(qlbl);
+      qty.appendChild(plus);
+      info.appendChild(nm);
+      info.appendChild(priceLine);
+      info.appendChild(qty);
+      row.appendChild(thumb);
+      row.appendChild(info);
+      row.appendChild(del);
+      frag.appendChild(row);
+      subtotal += item.qty * item.price;
+    });
+    container.appendChild(frag);
+    document.getElementById('cart-subtotal').textContent = '$' + subtotal.toFixed(2);
+  }
+
+  function announceCart(){
+    const total = state.cart.reduce((a,c)=> a + c.qty, 0);
+    document.getElementById('cart-count').textContent = total;
+    document.getElementById('sr').textContent = `Cart updated. ${total} item(s).`;
+  }
+
+  // Chat widget
+  function chatInit(){
+    const btn = document.getElementById('chatToggle');
+    const chat = document.getElementById('chat');
+    const closeBtn = document.getElementById('chatClose');
+    btn.addEventListener('click', ()=> {
+      chat.style.display = chat.style.display === 'flex' ? 'none' : 'flex';
+      chat.style.flexDirection = 'column';
+      if(chat.style.display==='flex'){ pushBot("Hi! I'm FloraFlow. Need help choosing a bouquet?"); }
+    });
+    closeBtn.addEventListener('click', ()=> chat.style.display='none');
+    document.getElementById('sendBtn').addEventListener('click', ()=> {
+      const input = document.getElementById('userMessage');
+      const text = input.value.trim();
+      if(text){
+        pushUser(text);
+        input.value = '';
+        setTimeout(()=> pushBot("Thanks for your message! We'll respond shortly."), 500);
+      }
+    });
+  }
+
+  function pushUser(text){
+    const m = document.createElement('div');
+    m.className = 'msg from';
+    m.textContent = text;
+    document.getElementById('chatMessages').appendChild(m);
+  }
+  function pushBot(text){
+    const m = document.createElement('div');
+    m.className = 'msg to';
+    m.textContent = text;
+    document.getElementById('chatMessages').appendChild(m);
+  }
+
+  // Translation texts updater
+  function updateTexts(){
+    // nav
+    document.querySelectorAll('[data-i18n^="nav."]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      if(key){
+        el.textContent = t(key);
+      } else {
+        // or skip
+      }
+    });
+    // filters
+    document.querySelectorAll('[data-i18n^="filters."]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      if(key){
+        el.textContent = t(key);
+      }
+    });
+    // sections headings
+    document.querySelectorAll('[data-i18n^="sections."]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      if(key){
+        el.textContent = t(key);
+      }
+    });
+  }
+
+  // Language switch
+  document.getElementById('langSelect').addEventListener('change', (e)=>{
+    currentLang = e.target.value;
+    updateTexts();
+  });
+
+  // Filters: populate and apply
+  function applyFiltersDebounced(){
+    updateTexts();
+    renderGrid('shop','shop-grid');
+    renderGrid('occasions','occasions-grid');
+    renderGrid('bestsellers','bestsellers-grid');
+  }
+  const applyFilters = debounce(applyFiltersDebounced, 200);
+
+  function initFilters(){
+    // populate filter labels (already via i18n)
+    populateFilters();
+    // event listeners
+    document.getElementById('catFilter').addEventListener('change', (e)=>{ state.filters.category = e.target.value; applyFilters(); });
+    document.getElementById('occFilter').addEventListener('change', (e)=>{ state.filters.occasion = e.target.value; applyFilters(); });
+    document.getElementById('colorFilter').addEventListener('change', (e)=>{ state.filters.color = e.target.value; applyFilters(); });
+    const min = document.getElementById('minPrice');
+    const max = document.getElementById('maxPrice');
+    function onPrice(){
+      const a = Number(min.value);
+      const b = Number(max.value);
+      state.filters.min = Math.min(a,b);
+      state.filters.max = Math.max(a,b);
+      document.getElementById('priceMinLabel').textContent = state.filters.min;
+      document.getElementById('priceMaxLabel').textContent = state.filters.max;
+      applyFilters();
+    }
+    min.addEventListener('input', onPrice);
+    max.addEventListener('input', onPrice);
+    document.getElementById('sortBy').addEventListener('change', (e)=>{ state.filters.sort = e.target.value; applyFilters(); });
+    document.getElementById('clearFilters').addEventListener('click', ()=>{
+      state.filters = { category:'', occasion:'', color:'', min:0, max:100, sort:'price-asc' };
+      document.getElementById('catFilter').value = '';
+      document.getElementById('occFilter').value = '';
+      document.getElementById('colorFilter').value = '';
+      document.getElementById('minPrice').value = 0;
+      document.getElementById('maxPrice').value = 100;
+      document.getElementById('priceMinLabel').textContent = '0';
+      document.getElementById('priceMaxLabel').textContent = '100';
+      document.getElementById('sortBy').value = 'price-asc';
+      applyFilters();
+    });
+  }
+
+  // Cart drawer toggling
+  const cartDrawer = document.getElementById('cartDrawer');
+  document.getElementById('cartBtn').addEventListener('click', ()=> {
+    cartDrawer.classList.toggle('open');
+  });
+  document.getElementById('closeCart').addEventListener('click', ()=> cartDrawer.classList.remove('open'));
+  document.getElementById('checkoutBtn').addEventListener('click', ()=>{
+    alert('Checkout stub: This is a demo. Your cart total is ' + document.getElementById('cart-subtotal').textContent);
+  });
+
+  // Light skeleton: ensure initial year
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Init app
+  function init(){
+    loadCart();
+    initFilters();
+    // language defaults
+    updateTexts();
+    // render grids
+    renderGrid('shop','shop-grid');
+    renderGrid('occasions','occasions-grid');
+    renderGrid('bestsellers','bestsellers-grid');
+    chatInit();
+  }
+
+  // Accessibility: announce focus changes
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){
+      cartDrawer.classList.remove('open');
+      document.getElementById('chat').style.display='none';
+    }
+  });
+
+  // Contact form
+  document.getElementById('contactForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const msg = document.getElementById('message').value.trim();
+    if(name && email && msg){
+      document.getElementById('formStatus').textContent = 'Message sent. Thank you!';
+      e.target.reset();
+    } else {
+      document.getElementById('formStatus').textContent = 'Please complete all fields.';
+    }
+  });
+
+  // Initialize
+  init();
+  </script>
+
+  
+</body>
+</html>
