@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NebulaChat Demo</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --surface: #141a2a;
+      --surface-2: #1f2540;
+      --text: #e9eaf7;
+      --muted: #a5a9b8;
+      --accent: #6ea8fe;
+      --green: #4cd14b;
+      --red: #f87171;
+      --card: #1b2140;
+      --bubble-me: #4e6cff;
+      --bubble-you: #2b2f55;
+      --shadow: 0 6px 20px rgba(0,0,0,.25);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient( circle at 20% -10%, rgba(110,168,254,.25) 0%, transparent 40% ),
+                  radial-gradient( circle at 100% 0%, rgba(72,187,255,.15) 0%, transparent 40% ),
+                  var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+    .topbar {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      background: linear-gradient(135deg, #0e1130 0%, #1a1f3a 100%);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .brand {
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .presence-dot {
+      width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+      background: #777;
+    }
+    .presence-dot.online { background: #22c55e; }
+    .container {
+      height: calc(100vh - 64px);
+      display: grid;
+      grid-template-columns: 320px 1fr 260px;
+      gap: 12px;
+      padding: 12px;
+      align-items: stretch;
+    }
+    .panel { background: rgba(10,12,28,.6); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); overflow: hidden; }
+    .card { background: rgba(20,22,50,.7); border-radius: 12px; padding: 12px; }
+    /* Login panel */
+    #loginPanel { display: none; align-items: center; justify-content: center; padding: 24px; }
+    .loginCard { width: min(420px, 92%); padding: 20px; border-radius: 12px; background: rgba(18, 20, 45, .9); border: 1px solid rgba(255,255,255,.08); }
+    .loginCard h2 { margin: 0 0 12px; font-size: 20px; }
+    .field { margin-bottom: 12px; }
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    input[type="text"] { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #324; background: #0e1130; color: #fff; }
+    button.btn { padding: 10px 14px; border-radius: 8px; border: none; background: var(--accent); color: white; cursor: pointer; }
+    button.btn.secondary { background: #333a66; color: #eaf; }
+    .grow { flex: 1; }
+    .sectionTitle { font-size: 14px; color: var(--muted); margin: 6px 0 8px; text-transform: uppercase; letter-spacing: .6px; }
+    .seedRow { display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-top: 8px; }
+    /* Chat layout */
+    #chatPanel { display: grid; grid-template-columns: 320px 1fr 260px; height: 100%; gap: 12px; }
+    .sidebar { overflow: hidden; display: flex; flex-direction: column; height: 100%; }
+    .sidebarHeader { padding: 6px 6px 8px; display: flex; gap: 8px; align-items: center; }
+    #chatSearch { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #334; background: #0b1130; color: white; }
+    #chatList { list-style: none; padding: 0; margin: 0; overflow: auto; height: calc(100% - 40px); }
+    .chatItem { padding: 10px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,.05); }
+    .chatItem:hover { background: rgba(255,255,255,.04); }
+    .avatar { width: 28px; height: 28px; border-radius: 8px; display: inline-block; background: #334; }
+    .chatInfo { display: flex; flex-direction: column; }
+    .chatName { font-weight: 600; font-size: 14px; }
+    .chatMeta { font-size: 11px; color: var(--muted); }
+    .newChatRow { padding: 8px; display: flex; gap: 8px; }
+    .chatArea { display: flex; flex-direction: column; height: 100%; border-left: 1px solid rgba(255,255,255,.06); border-right: 1px solid rgba(255,255,255,.06); }
+    .chatHeader { padding: 12px; border-bottom: 1px solid rgba(255,255,255,.06); display: flex; align-items: center; justify-content: space-between; background: rgba(6,8,28,.6); }
+    .messages { padding: 12px; overflow: auto; height: calc(100% - 120px); background: linear-gradient(#0a0f27, #0a0f27 60%, #0a0f27); }
+    .bubble { max-width: 70%; padding: 8px 12px; border-radius: 14px; margin-bottom: 8px; position: relative; word-wrap: break-word; }
+    .bubble.me { align-self: flex-end; background: var(--bubble-me); color: white; border-bottom-right-radius: 4px; }
+    .bubble.you { align-self: flex-start; background: var(--bubble-you); color: white; }
+    .att { display: block; margin-top: 6px; border-radius: 8px; max-width: 100%; }
+    .composer { display: flex; gap: 8px; padding: 8px; border-top: 1px solid rgba(255,255,255,.06); align-items: center; background: rgba(6,8,28,.6); }
+    #messageInput { flex: 1; padding: 10px 12px; border-radius: 8px; border: 1px solid #334; background: #0b1130; color: #fff; }
+    #attachBtn { border: none; background: #2b2f55; color: white; border-radius: 8px; padding: 9px 12px; cursor: pointer; }
+    #sendBtn { padding: 10px 14px; border-radius: 8px; border: none; background: #2a7fff; color: white; cursor: pointer; }
+    .rightbar { overflow: auto; padding: 12px; height: 100%; }
+    .profile { display:flex; gap: 10px; align-items:center; padding: 8px; border-radius: 8px; background: rgba(255,255,255,.04); }
+    .profileAvatar { width: 40px; height: 40px; border-radius: 8px; background: #334; }
+    .profile h3 { margin: 0; font-size: 14px; }
+    .profile p { margin: 0; font-size: 12px; color: var(--muted); }
+    /* Responsive tweaks */
+    @media (max-width: 1024px){
+      .container { grid-template-columns: 260px 1fr; }
+      .rightbar { display: none; }
+      #chatPanel { grid-template-columns: 1fr; height: calc(100vh - 64px); }
+      .chatHeader { position: sticky; top: 0; z-index: 1; }
+    }
+    @media (max-width: 700px){
+      .container { grid-template-columns: 1fr; height: auto; grid-auto-rows: 0; }
+      #loginPanel { display: flex; }
+      #chatPanel { display: none; height: auto; }
+    }
+    /* Simple helpers for accessibility */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+  </style>
+</head>
+<body>
+  <header class="topbar" aria-label="Top bar">
+    <div class="brand" aria-label="App name">NebulaChat Demo</div>
+    <div class="status" aria-live="polite">
+      <span id="currentUserName" style="font-weight:600"></span>
+      <span id="currentUserPresence" class="presence-dot" aria-label="presence"></span>
+    </div>
+  </header>
+
+  <main class="container" id="appContainer" role="main">
+    <!-- Login Panel (Step 1 scaffold) -->
+    <section id="loginPanel" class="panel card" aria-label="Login panel" style="display:flex; align-items:center; justify-content:center;">
+      <div class="loginCard">
+        <h2>Welcome to NebulaChat</h2>
+        <p style="color:var(--muted); margin-top:0 0 8px;">Sign in with a username. If new, a demo user will be created.</p>
+
+        <div class="field">
+          <label for="usernameInput">Username</label>
+          <input type="text" id="usernameInput" placeholder="e.g. Alice" autocomplete="username" />
+        </div>
+
+        <div class="seedRow" style="margin-top:6px;">
+          <button id="loginBtn" class="btn" aria-label="Login with username">Login</button>
+          <button id="seedBtn" class="btn secondary" aria-label="Load demo data">Load demo data</button>
+        </div>
+
+        <div class="sectionTitle" style="margin-top:14px;">Quick tips</div>
+        <ul style="margin:0; padding-left:20px; color:var(--muted); font-size:12px;">
+          <li>All data is stored locally in your browser for this demo.</li>
+          <li>Open another tab to see presence updates (simulated).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Chat Panel (Step 1 scaffold) -->
+    <section id="chatPanel" class="panel" aria-label="Chat dashboard" style="display:none;">
+      <!-- Left: Chats -->
+      <aside class="sidebar" aria-label="Chats">
+        <div class="sidebarHeader" style="gap:8px; align-items:center;">
+          <input id="chatSearch" type="text" placeholder="Search chats..." />
+        </div>
+        <ul id="chatList" aria-label="Chat list" style="margin:0; padding:0; list-style:none; overflow:auto; height: calc(100% - 46px);">
+          <!-- dynamic chat items -->
+        </ul>
+        <div class="newChatRow" aria-label="New chat">
+          <button id="newChatBtn" class="btn" style="flex:1;">New chat</button>
+        </div>
+      </aside>
+
+      <!-- Middle: Messages -->
+      <section class="chatArea" aria-label="Conversation window" style="min-width:0;">
+        <div class="chatHeader" id="chatHeader" style="gap:10px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="avatar" id="headerChatAvatar" aria-label="Chat avatar" style="width:32px; height:32px; border-radius:6px;"></span>
+            <div>
+              <strong id="headerChatName" style="font-size:14px;">No chat selected</strong><br/>
+              <span id="headerChatMeta" style="font-size:12px; color:var(--muted);">Choose a chat to start messaging</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="messages" id="messages" role="log" aria-live="polite"></div>
+
+        <div class="composer" aria-label="Message composer">
+          <input id="messageInput" type="text" placeholder="Type a message..." />
+          <input id="attachInput" type="file" accept="image/*" style="display:none" />
+          <button id="attachBtn" class="btn" aria-label="Attach image">📎</button>
+          <button id="sendBtn" class="btn" aria-label="Send message">Send</button>
+        </div>
+      </section>
+
+      <!-- Right: Profile / Helpers -->
+      <aside class="rightbar" aria-label="Profile and settings">
+        <div class="profile" style="margin-bottom:12px;">
+          <span id="profileAvatar" class="profileAvatar" aria-label="Your avatar"></span>
+          <div>
+            <h3 id="profileName" style="margin:0;">You</h3>
+            <p id="profileStatus" style="margin:0;">Online</p>
+          </div>
+        </div>
+
+        <div style="font-size:12px; color:var(--muted);">
+          This is a local, in-browser demo. Messages persist in this tab's storage.
+        </div>
+
+        <div style="height: 16px;"></div>
+
+        <button id="signOutBtn" class="btn" style="width:100%;" aria-label="Sign out">Sign out</button>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    // Simple, self-contained demo chat app.
+    // Notes:
+    // - Data is stored in localStorage under a single key.
+    // - Multi-tab presence is simulated via BroadcastChannel and storage events.
+    // - Attachments are read as Data URLs and embedded in messages.
+    // - This is a scaffold for Step 1; extend here for authentication, storage backends, and real-time sockets.
+
+    // Storage keys and helpers
+    const STORAGE_KEY = 'nebulachat_demo_v1';
+    const PRESENCE_KEY = 'nebulachat_presence_v1';
+    const BC_NAME = 'nebulachat_bc_v1';
+    let data = null;
+
+    // UI refs
+    const loginPanel = document.getElementById('loginPanel');
+    const chatPanel = document.getElementById('chatPanel');
+    const usernameInput = document.getElementById('usernameInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const seedBtn = document.getElementById('seedBtn');
+    const seedRow = document.querySelector('.seedRow');
+    const currentUserNameEl = document.getElementById('currentUserName');
+    const currentUserPresenceEl = document.getElementById('currentUserPresence');
+    const chatSearch = document.getElementById('chatSearch');
+    const chatList = document.getElementById('chatList');
+    const newChatBtn = document.getElementById('newChatBtn');
+    const headerChatName = document.getElementById('headerChatName');
+    const headerChatAvatar = document.getElementById('headerChatAvatar');
+    const messagesEl = document.getElementById('messages');
+    const messageInput = document.getElementById('messageInput');
+    const attachBtn = document.getElementById('attachBtn');
+    const attachInput = document.getElementById('attachInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const profileName = document.getElementById('profileName');
+    const profileStatus = document.getElementById('profileStatus');
+    const profileAvatar = document.getElementById('profileAvatar');
+    const signOutBtn = document.getElementById('signOutBtn');
+    const headerChatMeta = document.getElementById('headerChatMeta');
+
+    // Current state
+    let currentUserId = null;
+    let activeChatId = null;
+
+    // Presence via BroadcastChannel (optional)
+    let bc = null;
+    let hasBC = 'BroadcastChannel' in window;
+    function initBroadcast() {
+      if (!hasBC) return;
+      bc = new BroadcastChannel(BC_NAME);
+      bc.onmessage = (ev) => {
+        const { type, payload } = ev.data || {};
+        if (type === 'presence') {
+          renderPresence();
+        } else if (type === 'new-message') {
+          // If same chat is active, re-render; otherwise, refresh chat list badge
+          if (payload && payload.chatId === activeChatId) {
+            renderMessages(activeChatId);
+          }
+          renderChatList();
+          maybeNotify('New message in a chat');
+        }
+      };
+      // Broadcast own presence
+      setPresence(data?.currentUserId, true);
+    }
+
+    function loadData() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try { data = JSON.parse(raw); } catch { data = null; }
+      }
+      if (!data) {
+        seedData();
+      }
+    }
+
+    function seedData() {
+      // Minimal demo users & a sample chat
+      data = {
+        users: {
+          u1: { id: 'u1', name: 'Alice', color: '#6b8aff' },
+          u2: { id: 'u2', name: 'Bob', color: '#4ade80' },
+          u3: { id: 'u3', name: 'Carol', color: '#f472b6' }
+        },
+        chats: [
+          {
+            id: 'c1',
+            type: 'dm',
+            participants: ['u1','u2'],
+            name: 'Alice & Bob',
+            messages: [
+              { id: 'm1', sender: 'u1', text: 'Hey Bob! 👋', ts: Date.now() - 1000 * 60 * 60 * 2, attachments: [], readBy: ['u1','u2'] },
+              { id: 'm2', sender: 'u2', text: 'Hi Alice! How are you?', ts: Date.now() - 1000 * 60 * 60 * 1.8, attachments: [], readBy: ['u2'] }
+            ]
+          },
+          {
+            id: 'c2',
+            type: 'dm',
+            participants: ['u1','u3'],
+            name: 'Alice & Carol',
+            messages: [
+              { id: 'm3', sender: 'u3', text: 'Hello from Carol', ts: Date.now() - 1000 * 60 * 60 * 6, attachments: [], readBy: ['u3'] }
+            ]
+          }
+        ],
+        currentUserId: 'u1'
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      ensurePresence();
+      renderAll();
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function ensurePresence() {
+      // Init presence map
+      let pres = JSON.parse(localStorage.getItem(PRESENCE_KEY) || '{}');
+      // set current user online
+      if (data?.currentUserId) {
+        pres[data.currentUserId] = { online: true, lastActive: Date.now() };
+        localStorage.setItem(PRESENCE_KEY, JSON.stringify(pres));
+        if (bc) bc.postMessage({ type: 'presence', payload: { userId: data.currentUserId, online: true } });
+      }
+    }
+
+    function setPresence(userId, online) {
+      if (!userId) return;
+      let pres = JSON.parse(localStorage.getItem(PRESENCE_KEY) || '{}');
+      pres[userId] = { online, lastActive: Date.now() };
+      localStorage.setItem(PRESENCE_KEY, JSON.stringify(pres));
+      // notify others
+      if (bc) bc.postMessage({ type: 'presence', payload: { userId, online } });
+      renderPresence();
+    }
+
+    function getUserName(id) {
+      return data?.users?.[id]?.name || 'Unknown';
+    }
+
+    function getUserColor(id) {
+      return data?.users?.[id]?.color || '#6b8aff';
+    }
+
+    function otherParticipantNames(chat) {
+      const me = data?.currentUserId;
+      const others = chat.participants.filter(p => p !== me);
+      return others.map(id => getUserName(id)).join(', ');
+    }
+
+    function formatTs(ts) {
+      const d = new Date(ts);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function renderPresence() {
+      // Update presence indicators in chat list and header?
+      // For simplicity, just re-render chat list (which shows presence)
+      renderChatList();
+      // Update current user status in header
+      const me = data?.currentUserId;
+      if (me) {
+        currentUserNameEl.textContent = getUserName(me);
+        // online status badge for current user (always online when in app)
+        currentUserPresenceEl.className = 'presence-dot online';
+      }
+    }
+
+    function renderChatList() {
+      chatList.innerHTML = '';
+      const me = data?.currentUserId;
+      if (!data || !me) return;
+      const chats = data.chats.filter(c => c.participants.includes(me));
+      // simple badge about unread
+      chats.forEach(chat => {
+        const otherNames = chat.type === 'dm'
+          ? otherParticipantNames(chat)
+          : chat.name;
+        const li = document.createElement('li');
+        li.className = 'chatItem';
+        li.setAttribute('role','button');
+        li.onclick = () => { openChat(chat.id); };
+
+        const avatar = document.createElement('span');
+        avatar.className = 'avatar';
+        avatar.style.background = getUserColor(chat.participants.find(p => p !== me)) || '#334';
+        avatar.style.width = '28px';
+        avatar.style.height = '28px';
+        avatar.style.borderRadius = '6px';
+        avatar.setAttribute('aria-label','Chat avatar');
+        li.appendChild(avatar);
+
+        const info = document.createElement('div');
+        info.className = 'chatInfo';
+        const name = document.createElement('div');
+        name.className = 'chatName';
+        name.textContent = otherNames;
+        const last = document.createElement('div');
+        last.className = 'chatMeta';
+        const lastMsg = chat.messages[chat.messages.length - 1];
+        last.textContent = lastMsg ? `${getUserName(lastMsg.sender)}: ${truncate(lastMsg.text, 28)}` : 'No messages yet';
+        info.appendChild(name);
+        info.appendChild(last);
+        li.appendChild(info);
+
+        // presence badge for other participant(s)
+        const presence = document.createElement('span');
+        presence.style.marginLeft = 'auto';
+        presence.style.fontSize = '11px';
+        presence.style.color = 'var(--muted)';
+        const otherId = chat.participants.find(p => p !== me);
+        const pres = (JSON.parse(localStorage.getItem(PRESENCE_KEY) || '{}'))[otherId];
+        presence.textContent = pres?.online ? 'Online' : 'Last seen';
+        li.appendChild(presence);
+
+        chatList.appendChild(li);
+      });
+    }
+
+    function truncate(s, n){
+      if (!s) return '';
+      return s.length > n ? s.substring(0, n-1) + '…' : s;
+    }
+
+    function openChat(chatId) {
+      activeChatId = chatId;
+      const chat = data.chats.find(c => c.id === chatId);
+      headerChatName.textContent = chat.type === 'dm'
+        ? otherParticipantNames(chat)
+        : chat.name;
+      headerChatAvatar.style.background = chat.participants.length > 0
+        ? getUserColor(chat.participants.find(p => p !== data.currentUserId)) : '#334';
+      headerChatMeta.textContent = `Participants: ${chat.participants.map(id => getUserName(id)).join(', ')}`;
+
+      renderMessages(chatId);
+      // update input focus
+      setTimeout(() => messageInput.focus(), 60);
+
+      // Mark messages as read by current user
+      markRead(chatId);
+      saveData();
+    }
+
+    function renderMessages(chatId) {
+      messagesEl.innerHTML = '';
+      const chat = data.chats.find(c => c.id === chatId);
+      if (!chat) return;
+      chat.messages.forEach(msg => {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble ' + (msg.sender === data.currentUserId ? 'me' : 'you');
+        // sender label
+        const sender = document.createElement('div');
+        sender.style.fontSize = '11px';
+        sender.style.color = '#cbd5e1';
+        sender.style.marginBottom = '4px';
+        sender.textContent = getUserName(msg.sender);
+        bubble.appendChild(sender);
+
+        // text
+        if (msg.text) {
+          const text = document.createElement('div');
+          text.textContent = msg.text;
+          bubble.appendChild(text);
+        }
+
+        // attachments
+        if (msg.attachments && msg.attachments.length > 0) {
+          msg.attachments.forEach(att => {
+            if (att.dataUrl && att.type.startsWith('image/')) {
+              const img = document.createElement('img');
+              img.src = att.dataUrl;
+              img.alt = att.name;
+              img.className = 'att';
+              img.style.maxHeight = '180px';
+              img.style.display = 'block';
+              bubble.appendChild(img);
+            } else {
+              const anchor = document.createElement('a');
+              anchor.href = att.dataUrl;
+              anchor.download = att.name;
+              anchor.textContent = att.name;
+              anchor.style.display = 'inline-block';
+              anchor.style.color = '#93c5fd';
+              bubble.appendChild(anchor);
+            }
+          });
+        }
+
+        // timestamp
+        const ts = document.createElement('div');
+        ts.style.fontSize = '10px';
+        ts.style.color = 'var(--muted)';
+        ts.style.marginTop = '4px';
+        ts.textContent = formatTs(msg.ts);
+        bubble.appendChild(ts);
+
+        messagesEl.appendChild(bubble);
+      });
+      // auto-scroll
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function markRead(chatId) {
+      const me = data.currentUserId;
+      const chat = data.chats.find(c => c.id === chatId);
+      if (!chat) return;
+      let changed = false;
+      chat.messages.forEach(m => {
+        if (m.sender !== me && !m.readBy.includes(me)) {
+          m.readBy.push(me);
+          changed = true;
+        }
+      });
+      if (changed) saveData();
+    }
+
+    function createDummyChatWith(name) {
+      // create a new DM with a new or existing user
+      const me = data.currentUserId;
+      // find or create user
+      let otherId = null;
+      const existing = Object.values(data.users).find(u => u.name.toLowerCase() === name.toLowerCase());
+      if (existing) {
+        otherId = existing.id;
+      } else {
+        const nextIndex = Object.keys(data.users).length + 1;
+        otherId = 'u' + (nextIndex + 100); // simple unique
+        data.users[otherId] = { id: otherId, name, color: randomColor() };
+      }
+      // ensure a chat pair exists
+      const existingChat = data.chats.find(c => c.type === 'dm' && c.participants.includes(me) && c.participants.includes(otherId));
+      if (existingChat) {
+        openChat(existingChat.id);
+        renderChatList();
+        saveData();
+        return;
+      }
+      const chatId = 'c' + (data.chats.length + 1);
+      const newChat = { id: chatId, type: 'dm', participants: [me, otherId], name: name, messages: [
+        { id: 'm' + (Math.random()*1000|0), sender: otherId, text: 'Hey '+ name +', this is a new chat!', ts: Date.now(), attachments: [], readBy: [otherId] }
+      ]};
+      data.chats.push(newChat);
+      renderChatList();
+      openChat(chatId);
+      saveData();
+    }
+
+    function randomColor(){
+      const colors = ['#6b8aff','#4ade80','#f472b6','#f59e0b','#34d399','#f472b6'];
+      return colors[(Math.random()*colors.length)|0];
+    }
+
+    function renderAll() {
+      renderChatList();
+      renderPresence();
+      // ensure some header content if a chat already open
+      if (data?.chats?.length && activeChatId == null) {
+        // open first chat by default
+        openChat(data.chats[0].id);
+      }
+      // set profile info
+      const me = data?.currentUserId;
+      if (me) {
+        profileName.textContent = getUserName(me);
+        profileStatus.textContent = 'Online';
+        profileAvatar.style.background = getUserColor(me);
+      }
+    }
+
+    function getChatDisplayName(chat) {
+      if (chat.type === 'dm') {
+        const others = chat.participants.filter(p => p !== data.currentUserId);
+        return others.map(id => getUserName(id)).join(', ');
+      }
+      return chat.name;
+    }
+
+    // Event handlers
+    loginBtn.addEventListener('click', () => {
+      const name = (usernameInput.value || '').trim();
+      if (!name) return alert('Please enter a username.');
+      let meId = null;
+      // find if user exists
+      for (const id of Object.keys(data.users || {})) {
+        if (data.users[id].name.toLowerCase() === name.toLowerCase()) {
+          meId = id; break;
+        }
+      }
+      if (!data.users) data.users = {};
+      if (!meId) {
+        // create new user
+        const nextIndex = Object.keys(data.users).length + 1;
+        meId = 'u' + nextIndex;
+        data.users[meId] = { id: meId, name, color: randomColor() };
+      }
+      data.currentUserId = meId;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      // Update UI
+      loginPanel.style.display = 'none';
+      chatPanel.style.display = '';
+      // update header
+      currentUserNameEl.textContent = name;
+      currentUserPresenceEl.className = 'presence-dot online';
+      initializeAfterLogin();
+    });
+
+    seedBtn.addEventListener('click', () => {
+      seedData();
+    });
+
+    function initializeAfterLogin() {
+      if (hasBC) {
+        if (!bc) initBroadcast();
+      }
+      // Ensure UI reflects current user
+      const me = data.currentUserId;
+      if (me) {
+        currentUserNameEl.textContent = getUserName(me);
+        currentUserPresenceEl.className = 'presence-dot online';
+        profileName.textContent = getUserName(me);
+        profileAvatar.style.background = getUserColor(me);
+      }
+      renderAll();
+    }
+
+    // Chat search
+    chatSearch.addEventListener('input', () => {
+      const q = chatSearch.value.toLowerCase();
+      Array.from(chatList.children).forEach(li => {
+        const text = li.textContent.toLowerCase();
+        li.style.display = text.includes(q) ? '' : 'none';
+      });
+    });
+
+    newChatBtn.addEventListener('click', () => {
+      // Simple prompt-based new chat
+      const name = prompt('Start a chat with: (enter a user name or a new one)');
+      if (name) createDummyChatWith(name.trim());
+    });
+
+    attachBtn.addEventListener('click', () => {
+      attachInput.click();
+    });
+
+    attachInput.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const chat = data.chats.find(c => c.id === activeChatId);
+        if (!chat) return;
+        const m = {
+          id: 'm' + Math.random().toString(36).slice(2,9),
+          sender: data.currentUserId,
+          text: '',
+          ts: Date.now(),
+          attachments: [
+            {
+              name: file.name,
+              type: file.type,
+              dataUrl: reader.result
+            }
+          ],
+          readBy: [data.currentUserId]
+        };
+        chat.messages.push(m);
+        renderMessages(activeChatId);
+        saveData();
+        if (bc) bc.postMessage({ type: 'new-message', payload: { chatId: activeChatId } });
+      };
+      reader.readAsDataURL(file);
+      // reset
+      e.target.value = '';
+    });
+
+    messageInput.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        sendCurrentMessage();
+      } else {
+        // optional: emit "typing" status
+        if (bc) bc.postMessage({ type: 'typing', payload: { chatId: activeChatId, userId: data.currentUserId } });
+      }
+    });
+
+    sendBtn.addEventListener('click', sendCurrentMessage);
+
+    signOutBtn.addEventListener('click', () => {
+      // simple sign out
+      setPresence(data.currentUserId, false);
+      data.currentUserId = null;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      // show login panel
+      loginPanel.style.display = '';
+      chatPanel.style.display = 'none';
+      // clear UI
+      currentUserNameEl.textContent = '';
+      messagesEl.innerHTML = '';
+    });
+
+    function sendCurrentMessage() {
+      const text = (messageInput.value || '').trim();
+      if (!text && (!data?.chats?.length || !activeChatId)) return;
+      const chat = data.chats.find(c => c.id === activeChatId);
+      if (!chat) return;
+      const m = {
+        id: 'm' + Math.random().toString(36).slice(2,9),
+        sender: data.currentUserId,
+        text: text,
+        ts: Date.now(),
+        attachments: [],
+        readBy: [data.currentUserId]
+      };
+      if (!chat.messages) chat.messages = [];
+      chat.messages.push(m);
+      messageInput.value = '';
+      renderMessages(activeChatId);
+      saveData();
+      if (bc) bc.postMessage({ type: 'new-message', payload: { chatId: activeChatId } });
+    }
+
+    // Load/save wrapper for storage across events
+    window.addEventListener('storage', (e) => {
+      if (e.key !== STORAGE_KEY) return;
+      try {
+        data = JSON.parse(e.newValue);
+        // re-render as needed
+        renderAll();
+      } catch {}
+    });
+
+    // On load
+    window.addEventListener('load', () => {
+      loadData();
+      // Show login panel until a user is selected
+      if (data?.currentUserId) {
+        loginPanel.style.display = 'none';
+        chatPanel.style.display = '';
+        initializeAfterLogin();
+      } else {
+        loginPanel.style.display = '';
+        chatPanel.style.display = 'none';
+      }
+      // Setup presence refresh
+      setInterval(() => {
+        if (data?.currentUserId) {
+          let pres = JSON.parse(localStorage.getItem(PRESENCE_KEY) || '{}');
+          pres[data.currentUserId] = { online: true, lastActive: Date.now() };
+          localStorage.setItem(PRESENCE_KEY, JSON.stringify(pres));
+          if (bc) bc.postMessage({ type: 'presence', payload: { userId: data.currentUserId, online: true } });
+        }
+      }, 60000);
+    });
+
+    // Simple initial render after load
+    function render() {
+      if (data?.currentUserId) {
+        currentUserNameEl.textContent = getUserName(data.currentUserId);
+      }
+    }
+
+    // Attach document visibility changes to simulate presence
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        if (data?.currentUserId) setPresence(data.currentUserId, false);
+      } else {
+        if (data?.currentUserId) setPresence(data.currentUserId, true);
+      }
+      renderPresence();
+      saveData();
+    });
+
+    // Init: show login panel on first load if not authenticated
+    // We'll render a minimal UI state
+    (function bootstrap() {
+      // Style: ensure login shown if no user
+      if (!data?.currentUserId) {
+        loginPanel.style.display = 'flex';
+        chatPanel.style.display = 'none';
+        // prefill fake
+        currentUserNameEl.textContent = '';
+        currentUserPresenceEl.className = 'presence-dot';
+      } else {
+        loginPanel.style.display = 'none';
+        chatPanel.style.display = '';
+      }
+    })();
+
+    // Helpers for full demo:
+    // - Open first chat after seed
+    // - Show demo rules in the UI
+    function maybeNotify(title) {
+      if ('Notification' in window) {
+        if (Notification.permission === 'granted') {
+          new Notification(title || 'NebulaChat');
+        } else if (Notification.permission !== 'denied') {
+          // auto-request (non-intrusive)
+          // ignore automatic prompts in a demo
+        }
+      }
+    }
+
+    // Initialize docs hint for keyboard users
+    document.title = 'NebulaChat Demo';
+  </script>
+</body>
+</html>
