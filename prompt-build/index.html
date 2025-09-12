@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FloraFlow Blueprint — Teleflora-inspired E-commerce Spec</title>
+  <meta name="description" content="A production-ready specification and design/tech blueprint for a responsive e-commerce site for fresh flowers, plants, and gifts." />
+  <style>
+    :root{
+      --bg: #0b0b12;
+      --surface: #14121b;
+      --surface-2: #1f1a24;
+      --text: #f4f0f8;
+      --muted: #c9c3d1;
+      --brand: #8e3bd8;
+      --brand-2: #e11d74;
+      --green: #22c55e;
+      --accent: #f59e0b;
+      --card: #1e1622;
+      --shadow: 0 6px 18px rgba(0,0,0,.25);
+      --radius: 12px;
+      --code-bg: #0f111a;
+      --code-border: #272a34;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: Inter, system-ui, -apple-system, Arial, sans-serif; }
+    a { color: var(--brand); text-decoration: none; }
+    a:focus, button:focus { outline: 2px solid #fff; outline-offset: 2px; }
+    header { position: sticky; top: 0; z-index: 50; background: linear-gradient(90deg, rgba(142,59,216,0.92), rgba(255,0,122,0.92)); color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-logo { width: 34px; height: 34px; border-radius: 8px; background: radial-gradient(circle at 30% 30%, #fff 0 30%, transparent 30%), linear-gradient(135deg, #ff6b6b, #8e3bd8); box-shadow: inset 0 0 16px rgba(0,0,0,.25); }
+    h1{ font-size: 1.05rem; margin: 0; font-weight: 700; letter-spacing: .2px; }
+    .tagline{ font-size:.9rem; opacity:.95; margin-left:6px; }
+    .controls { display: flex; gap:8px; align-items:center; }
+    button, .btn { background: white; color: #111; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    button.primary { background: #7c3aed; color: white; }
+    button.ghost { background: transparent; color: white; border: 1px solid rgba(255,255,255,.5); }
+    main { display: grid; grid-template-columns: 260px 1fr; gap: 28px; max-width: 1200px; margin: 28px auto; padding: 0 16px; }
+    /* Table of contents */
+    nav.toc { position: sticky; top: 76px; align-self: start; padding: 16px; background: rgba(20,18,28,.8); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); box-shadow: var(--shadow); }
+    nav.toc h2 { font-size: 1rem; margin: 0 0 8px; color: #f8eaff; }
+    nav.toc ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+    nav.toc a { display: block; padding: 8px 10px; border-radius: 6px; color: #e9d9f7; font-size: 0.92rem; }
+    nav.toc a:hover { background: rgba(255,255,255,.08); }
+    section.section { padding: 20px; border-radius: var(--radius); background: rgba(20,16,28,.85); border: 1px solid rgba(255,255,255,.08); margin-bottom: 22px; }
+    section.section h2 { margin: 0 0 8px; font-size: 1.05rem; }
+    .section-content { color: #eae0f5; line-height: 1.6; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .card { padding: 14px; border-radius: 10px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
+    pre { margin: 0; padding: 12px; background: var(--code-bg); border: 1px solid var(--code-border); border-radius: 8px; overflow: auto; font-family: ui-monospace, SFMono-Regular, Consolas, "Courier New", monospace; font-size: 12.5px; color: #e6e4f2; }
+    .section-title { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Consolas; padding:2px 6px; border-radius:6px; background:#111; border:1px solid #333; color:#fff; font-size:12px; }
+    /* Architecture diagram */
+    .diagram { width: 100%; height: 260px; display: block; margin: 12px 0 8px; border-radius: 8px; background: #0b0b12; border: 1px solid rgba(255,255,255,.08); }
+    /* Responsive tweaks */
+    @media (max-width: 1024px){
+      main { grid-template-columns: 1fr; }
+      nav.toc { order: -1; position: static; }
+    }
+    @media (prefers-color-scheme: dark){
+      /* Ensure readability on dark themes if user switches)
+      */
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">Skip to content</a>
+
+  <header aria-label="Header">
+    <div class="brand" role="img" aria-label="FloraFlow brand">
+      <span class="brand-logo" aria-hidden="true"></span>
+      <div>
+        <h1>FloraFlow Blueprint</h1>
+        <span class="tagline" aria-label="Brand tagline">Teleflora-inspired e-commerce spec</span>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="exportBtn" class="primary" aria-label="Export specification as JSON">Export Spec (JSON)</button>
+      <button id="themeToggle" class="ghost" aria-label="Toggle theme">Theme</button>
+    </div>
+  </header>
+
+  <main id="main" aria-label="Blueprint content">
+    <!-- Table of contents / navigation -->
+    <nav class="toc" aria-label="Section navigation">
+      <h2>Table of Contents</h2>
+      <ul>
+        <li><a href="#objective" aria-label="Go to Objective & Intent">1. Objective & Intent</a></li>
+        <li><a href="#domain" aria-label="Go to Domain Context">2. Domain Context</a></li>
+        <li><a href="#inputs" aria-label="Go to Inputs & Variables">3. Inputs & Hidden Variables</a></li>
+        <li><a href="#constraints" aria-label="Go to Constraints">4. Constraints</a></li>
+        <li><a href="#outputs" aria-label="Go to Outputs">5. Outputs</a></li>
+        <li><a href="#success" aria-label="Go to Success Criteria">6. Success Criteria</a></li>
+        <li><a href="#edge" aria-label="Go to Edge Cases">7. Edge Cases</a></li>
+        <li><a href="#validation" aria-label="Go to Validation & Coherence">8. Validation</a></li>
+      </ul>
+    </nav>
+
+    <!-- Section 1 -->
+    <section id="objective" class="section" aria-labelledby="objective-title">
+      <div class="section-title">
+        <h2 id="objective-title">1. Objective & Intent</h2>
+      </div>
+      <div class="section-content">
+        <p>The objective is to design, scope, and specify a fully responsive e-commerce website for fresh flowers, plants, and gifts that mirrors the shopping experience, features, and branding sensibilities of Teleflora.</p>
+        <p>Goals include: a fast, trust-worthy storefront; intuitive UX across desktop/tablet/mobile; a robust catalog with same-day delivery where available; strong branding and accessibility; scalable admin tooling and integrations for a florist network.</p>
+        <ul>
+          <li>Provide a comprehensive, production-ready specification and design/technical blueprint covering architecture, data models, user journeys, UI/UX guidelines, CMS/admin tooling, integrations, performance & SEO practices, and edge-case coverage.</li>
+          <li>Deliver a blueprint that a development team can implement end-to-end with clear milestones and acceptance criteria.</li>
+        </ul>
+        <!-- EXTEND: foundation for future multi-language support, regional tax rules, and onboarding flows -->
+      </div>
+    </section>
+
+    <!-- Section 2 -->
+    <section id="domain" class="section" aria-labelledby="domain-title">
+      <div class="section-title">
+        <h2 id="domain-title">2. Domain Context & Knowledge</h2>
+      </div>
+      <div class="section-content">
+        <p>Domain knowledge applied includes florist networks, freshness guarantees, substitutions policies, bouquet assembly, packaging standards, and local delivery logistics. It also encompasses commerce fundamentals (product catalogs, variants, pricing, promotions, same-day options), brand storytelling, and customer support touchpoints.</p>
+        <div class="grid-2">
+          <div class="card">
+            <strong>Assumptions</strong>
+            <ul>
+              <li>Target markets in English with USD; optional multi-language support in a future phase.</li>
+              <li>Headless CMS + e-commerce backend with secure payment integration.</li>
+              <li>PCI-DSS compliant payment handling and secure data storage.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <strong>Dependencies</strong>
+            <ul>
+              <li>Catalog and inventory management, promotions engine, delivery/logistics integrations.</li>
+              <li>Asset management for photography and media; analytics & marketing tech stack.</li>
+              <li>Hosting, CDN, and security tooling; accessibility and SEO tooling.</li>
+            </ul>
+          </div>
+        </div>
+        <!-- EXTEND: add regional partner onboarding and SLA definitions -->
+      </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section id="inputs" class="section" aria-labelledby="inputs-title">
+      <div class="section-title">
+        <h2 id="inputs-title">3. Inputs & Hidden Variables</h2>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li>Brand assets: logo, color palette, typography, photography guidelines.</li>
+          <li>Catalog data: categories, products, variants, descriptions, care notes, inclusions, multiple imagery per SKU, delivery area checks.</li>
+          <li>Promotions: calendars, discount rules, eligibility criteria.</li>
+          <li>Content: guides, FAQs, policy pages, translation workflows.</li>
+          <li>Localization: languages, currencies, regional tax rules, shipping restrictions.</li>
+          <li>Security/compliance artifacts: privacy notices, terms, accessibility conformance notes.</li>
+        </ul>
+        <div class="grid-2">
+          <div class="card">
+            <strong>Hidden Variables</strong>
+            <ul>
+              <li>Seasonal demand patterns, partner capacity, substitutions policies.</li>
+              <li>Real-time inventory sync, delivery zone constraints, courier reliability.</li>
+              <li>Regulatory nuances, data retention, consent rules.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <strong>Data Flows</strong>
+            <p>Illustrative data flows from product ingestion, promotions, checkout, and order tracking to the florist network and customers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section id="constraints" class="section" aria-labelledby="constraints-title">
+      <div class="section-title">
+        <h2 id="constraints-title">4. Constraints</h2>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li>Mobile-first, accessible (WCAG 2.1 AA), with performance budgets (LCP, CLS, TBT).</li>
+          <li>Semantic HTML, structured data (schema.org), sitemap and canonical URLs.</li>
+          <li>Secure by default: HTTPS, TLS, PCI-DSS-compliant payments, data minimization.</li>
+          <li>SEO-friendly: clean URLs, canonicalization, rich metadata, and robust internal linking.</li>
+          <li>Regulatory: GDPR/CCPA considerations, cookie consent, data retention policies.</li>
+        </ul>
+        <!-- EXTEND: define blue/green deployment and feature flags for staged rollouts -->
+      </div>
+    </section>
+
+    <!-- Section 5 -->
+    <section id="outputs" class="section" aria-labelledby="outputs-title">
+      <div class="section-title">
+        <h2 id="outputs-title">5. Expected Outputs</h2>
+      </div>
+      <div class="section-content">
+        <p>Deliverables include architecture diagrams, data models, API contracts, UX guidelines, admin tooling specs, testing plans, and deployment considerations.</p>
+
+        <!-- Architecture Diagram (inline SVG) -->
+        <svg class="diagram" role="img" aria-label="Frontend architecture diagram" viewBox="0 0 1000 260" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#8e3bd8"/>
+              <stop offset="100%" stop-color="#e11d74"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="1000" height="260" fill="url(#grad)" opacity="0.08"/>
+          <!-- Components -->
+          <rect x="60" y="60" width="220" height="60" rx="10" fill="#1e1622" stroke="#ffffff" />
+          <text x="170" y="95" fill="#fff" text-anchor="middle" font-family="Arial" font-size="14">Frontend (Web/Mobile)</text>
+
+          <rect x="320" y="60" width="240" height="60" rx="10" fill="#1e1622" stroke="#ffffff" />
+          <text x="440" y="95" fill="#fff" text-anchor="middle" font-family="Arial" font-size="14">CMS / Content</text>
+
+          <rect x="600" y="60" width="260" height="60" rx="10" fill="#1e1622" stroke="#fff" />
+          <text x="730" y="95" fill="#fff" text-anchor="middle" font-family="Arial" font-size="14">E‑commerce Backend</text>
+
+          <rect x="60" y="150" width="820" height="60" rx="10" fill="#1e1622" stroke="#fff" />
+          <text x="470" y="185" fill="#fff" text-anchor="middle" font-family="Arial" font-size="14">APIs, Payments, Logistics & Inventory</text>
+
+          <!-- Arrows -->
+          <line x1="280" y1="90" x2="320" y2="90" stroke="#fff" stroke-width="2" marker-end="url(#arrow)"/>
+          <line x1="560" y1="90" x2="600" y2="90" stroke="#fff" stroke-width="2" marker-end="url(#arrow)"/>
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L0,6 L9,3 z" fill="#fff" />
+            </marker>
+          </defs>
+        </svg>
+
+        <div class="grid-2" aria-label="Data models & API contracts">
+          <div class="card">
+            <strong>Sample Data Models (JSON Schema)</strong>
+            <pre>// Product
+{
+  "title": "Product",
+  "type": "object",
+  "properties": {
+    "id": {"type": "string"},
+    "name": {"type": "string"},
+    "categories": {"type": "array", "items": {"type": "string"}},
+    "variants": {"type": "array", "items": {"$ref": "#/definitions/Variant"}},
+    "price": {"type": "number"},
+    "images": {"type": "array", "items": {"type": "string"}},
+    "deliveryZones": {"type": "array", "items": {"type": "string"}}
+  },
+  "required": ["id","name","price"]
+}</pre>
+          </div>
+          <div class="card">
+            <strong>Order Schema (snippet)</strong>
+            <pre>{
+  "title": "Order",
+  "type": "object",
+  "properties": {
+    "orderId": {"type": "string"},
+    "customerId": {"type": "string"},
+    "items": {"type": "array", "items": {"$ref": "#/definitions/OrderItem"}},
+    "delivery": {"$ref": "#/definitions/Delivery"},
+    "payments": {"type": "array", "items": {"type": "string"}},
+    "status": {"type": "string"},
+    "timestamps": {"type": "object",
+      "properties": {
+        "placed": {"type": "string", "format": "date-time"},
+        "delivered": {"type": "string", "format": "date-time"}
+      }
+    }
+  }
+}</pre>
+          </div>
+        </div>
+
+        <div class="grid-2" aria-label="Admin & CMS tooling">
+          <div class="card">
+            <strong>CMS/Admin Tooling (high level)</strong>
+            <ul>
+              <li>Product, category, and collection management with versioning.</li>
+              <li>Promotions engine with eligibility rules and schedule.</li>
+              <li>Content composer for care guides, gift guides, FAQs; translation workflows.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <strong>Content Workflows</strong>
+            <ul>
+              <li>Review cycles, asset licensing, and localization handoffs.</li>
+              <li>QA checklists for product data accuracy and image licensing.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6 -->
+    <section id="success" class="section" aria-labelledby="success-title">
+      <div class="section-title">
+        <h2 id="success-title">6. Success Criteria & Evaluation</h2>
+      </div>
+      <div class="section-content">
+        <p>Measure success with product, technical, and UX metrics. Acceptance criteria require documentation, contract sign-offs, and QA pass.</p>
+        <ul>
+          <li>Product metrics: conversion rate, AOV, cart abandonment, repeat purchase rate, revenue.</li>
+          <li>Delivery metrics: same-day success rate, on-time delivery, window accuracy.</li>
+          <li>Technical: Core Web Vitals targets (LCP < 2.5s, CLS < 0.1, TTI/FID optimized).</li>
+          <li>Content & UX: WCAG checks, readability, image loading quality, branding consistency.</li>
+        </ul>
+        <!-- EXTEND: define dashboards and baseline values for staging vs production -->
+      </div>
+    </section>
+
+    <!-- Section 7 -->
+    <section id="edge" class="section" aria-labelledby="edge-title">
+      <div class="section-title">
+        <h2 id="edge-title">7. Edge Cases & Coverage</h2>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li>Substitutions and substitutions-override messaging for bouquets, inventory shortfalls.</li>
+          <li>Geographic delivery limits, weather disruptions, peak-season constraints.</li>
+          <li>Payment retries, fraud prevention, partial shipments, refunds & returns policy.</li>
+          <li>Localization fallbacks for missing translations, currency handling.</li>
+        </ul>
+        <p>Coverage strategies include feature flags, rollback plans, and partner escalation paths with florist network.</p>
+      </div>
+    </section>
+
+    <!-- Section 8 -->
+    <section id="validation" class="section" aria-labelledby="validation-title">
+      <div class="section-title">
+        <h2 id="validation-title">8. Validation, Coherence & Governance</h2>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li>Cross-check data models against catalog flows, promotions, and delivery constraints.</li>
+          <li>Branding, design language, and content align with accessibility and SEO requirements.</li>
+          <li>APIs and data contracts for payments, logistics, and florist network are clearly defined.</li>
+          <li>Security & privacy controls implemented; compliance documentation prepared.</li>
+        </ul>
+        <p>Output traceability: map each requirement to deliverables, validation steps, and acceptance criteria.</p>
+        <!-- EXTEND: create a formal traceability matrix and QA runbooks -->
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Simple theming toggle (light/dark) to demonstrate interactivity without external assets
+    (function(){
+      const toggle = document.getElementById('themeToggle');
+      let dark = true;
+      toggle.addEventListener('click', () => {
+        if(dark){
+          document.documentElement.style.filter = 'invert(0) hue-rotate(0deg)';
+          document.body.style.background = '#f7f5fb';
+          document.body.style.color = '#111';
+        } else {
+          document.documentElement.style.filter = '';
+          document.body.style.background = '';
+          document.body.style.color = '';
+        }
+        dark = !dark;
+      });
+    })();
+
+    // Export the current blueprint as JSON (structure: sections with HTML content)
+    document.getElementById('exportBtn').addEventListener('click', function(){
+      const sections = Array.from(document.querySelectorAll('section.section'));
+      const specSections = sections.map(sec => {
+        const titleEl = sec.querySelector('h2');
+        const contentEl = sec.querySelector('.section-content');
+        return {
+          id: sec.id,
+          title: titleEl ? titleEl.textContent.trim() : '',
+          contentHTML: contentEl ? contentEl.innerHTML.trim() : ''
+        };
+      });
+      const payload = {
+        title: "FloraFlow Blueprint",
+        description: "Teleflora-inspired fully responsive e-commerce specification",
+        generatedAt: new Date().toISOString(),
+        sections: specSections
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'floraflow_blueprint.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
