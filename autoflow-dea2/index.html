@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AutoFlow — Car Dealer Showroom</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg: #0b0b1a;
+      --card: #141428;
+      --muted: #a5a1b8;
+      --text: #e7e0ff;
+      --accent: #7e5bd8;
+      --accent2: #9b6cff;
+      --chip: #2a2450;
+      --success: #28c76f;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --shadow: 0 8px 24px rgba(0,0,0,.25);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color: var(--text);
+      background: radial-gradient(circle at 20% -10%, rgba(128,0,255,.15), transparent 40%), 
+                  radial-gradient(circle at 100% 0%, rgba(142,68,212,.15), transparent 40%), 
+                  linear-gradient(135deg, #0b0b1a 0%, #1a0f2a 100%);
+      background-attachment: fixed;
+    }
+
+    /* Purple gradient header brand bar */
+    .brand {
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(124, 58, 237, .9), rgba(99, 102, 241, .9));
+      color:white;
+      position: sticky; top: 0; z-index: 50;
+      border-bottom: 1px solid rgba(255,255,255,.15);
+    }
+    .brand-title { display:flex; align-items:center; gap:12px; font-weight:700; font-size:1.25rem; letter-spacing:.4px; }
+    .brand-title .logo { width:34px; height:34px; border-radius:9px; background: rgba(255,255,255,.15); display:grid; place-items:center; }
+    .brand-controls { display:flex; gap:12px; align-items:center; }
+
+    /* Layout */
+    .container { display:grid; grid-template-columns: 280px 1fr 360px; gap: 20px; padding: 20px; min-height: calc(100vh - 72px); }
+    @media (max-width: 1100px){
+      .container { grid-template-columns: 1fr; padding: 12px; }
+      .filters { order: -1; }
+      .admin { order: 2; }
+      .showroom { order: 3; }
+    }
+
+    /* Panels */
+    .panel { background: rgba(20,20,40,.8); border:1px solid rgba(255,255,255,.08); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
+    .panel h3 { margin: 8px 0 12px; font-size: 1rem; font-weight: 700; color:#e9e4ff; }
+
+    /* Showroom grid */
+    .showroom { display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; align-content:start; }
+    .card { background: #17162b; border-radius: 12px; overflow:hidden; border:1px solid rgba(255,255,255,.08); display:flex; flex-direction:column; min-height: 320px; }
+    .image-wrap { position: relative; height: 150px; background:#2b2440; display:flex; align-items:center; justify-content:center; }
+    .image-wrap img { width:100%; height:100%; object-fit: cover; display:none; }
+    .emoji { font-size: 38px; }
+    .skeleton { position:absolute; inset:0; background: linear-gradient(90deg, rgba(255,255,255,.05) 25%, rgba(255,255,255,.15) 50%, rgba(255,255,255,.05) 75%); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
+    @keyframes shimmer { 0%{ background-position: 200% 0 } 100%{ background-position: -200% 0 } }
+
+    .card-content { padding: 12px; display:flex; flex-direction:column; gap:6px; flex:1; }
+    .car-title { font-weight:700; font-size: 1rem; margin:0; }
+    .car-sub { color: var(--muted); font-size:.85rem; margin:0; }
+    .meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; align-items:center; }
+    .tag { background: rgba(126,91,216,.18); color:#e9d4ff; padding:4px 8px; border-radius:999px; font-size:.75rem; }
+
+    .price { font-weight:700; margin-left:auto; color:#e6e6ff; }
+
+    .card-actions { display:flex; gap:8px; padding:8px 12px 12px; margin-top:auto; }
+
+    button, input, select { font: inherit; }
+
+    .btn { padding: 8px 12px; border-radius: 8px; border:1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.04); color: #fff; cursor: pointer; }
+    .btn.primary { background: var(--accent); border-color: rgba(0,0,0,.15); color:white; }
+    .btn.danger { background: rgba(239,68,68,.85); border: none; color:white; }
+    .btn.ghost { background: transparent; border:1px solid rgba(255,255,255,.2); color:#fff; }
+    .btn:focus { outline:2px solid #fff; outline-offset:2px; }
+
+    .section-title { font-size: 0.95rem; font-weight: 700; margin: 6px 0 12px; color:#e9e0ff; }
+
+    .row { display:flex; gap:8px; align-items:center; }
+
+    .field { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
+    .field label { font-size:.8rem; color:#d9d4ff; }
+    .field input, .field select { padding:8px 10px; border-radius:6px; border:1px solid rgba(255,255,255,.25); background:#11102a; color:#fff; }
+
+    .filters { display:flex; flex-direction:column; gap:12px; }
+
+    /* Admin tweaks */
+    .admin { display:flex; flex-direction:column; gap:12px; }
+
+    /* Detail modal */
+    .modal { position: fixed; top:0; left:0; width:100%; height:100%; display:none; align-items:center; justify-content:center; background: rgba(0,0,0,.65); padding: 20px; z-index: 60; }
+    .modal.open { display:flex; }
+    .modal-content { width: min(860px, 92%); background:#141428; border-radius:12px; padding:14px; border:1px solid rgba(255,255,255,.15); display:flex; gap:14px; }
+    .modal-image { width: 50%; min-height:320px; background:#2b2440; display:flex; align-items:center; justify-content:center; position: relative; }
+    .modal-details { width: 50%; display:flex; flex-direction:column; gap:8px; }
+    .close { position:absolute; top:8px; right:8px; background: rgba(0,0,0,.6); border:1px solid rgba(255,255,255,.2); color:#fff; border-radius:6px; padding:6px 10px; cursor:pointer; }
+
+    /* Toasts */
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1f1b3a; color:#fff; padding:12px 16px; border-radius: 999px; border:1px solid rgba(255,255,255,.25); box-shadow: var(--shadow); z-index: 80; display:none; }
+
+    /* Tiny helpers */
+    .hidden { display:none; }
+    .muted { color: var(--muted); }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas; font-size: .8em; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); }
+
+  </style>
+</head>
+<body>
+  <header class="brand" aria-label="AutoFlow header">
+    <div class="brand-title">
+      <div class="logo" aria-label="AutoFlow logo">🚗</div>
+      <div>AutoFlow</div>
+      <span class="muted" aria-live="polite" id="build-status" style="font-size:.8rem; margin-left:6px;">offline</span>
+    </div>
+    <div class="brand-controls" aria-label="Brand controls">
+      <button class="btn ghost" id="btn-toggle-theme" aria-label="Toggle theme">Theme</button>
+    </div>
+  </header>
+
+  <main class="container" id="app" role="main">
+    <!-- Filters Panel -->
+    <section class="panel filters" aria-labelledby="filters-title" id="filters">
+      <h3 id="filters-title" class="section-title">Filters</h3>
+
+      <div class="field">
+        <label for="search">Search cars</label>
+        <input id="search" placeholder="Model, make, year…" aria-label="Search cars" />
+      </div>
+
+      <div class="field">
+        <label>Make</label>
+        <div id="make-chips" class="row" role="group" aria-label="Make chips"></div>
+      </div>
+
+      <div class="field">
+        <label for="bodyType">Body type</label>
+        <select id="bodyType" aria-label="Body type">
+          <option value="">Any</option>
+          <option>Sedan</option>
+          <option>SUV</option>
+          <option>Coupe</option>
+          <option>Hatchback</option>
+          <option>Pickup</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="fuel">Fuel</label>
+        <select id="fuel" aria-label="Fuel type">
+          <option value="">Any</option>
+          <option>Gasoline</option>
+          <option>Hybrid</option>
+          <option>Electric</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="transmission">Transmission</label>
+        <select id="transmission" aria-label="Transmission">
+          <option value="">Any</option>
+          <option>Automatic</option>
+          <option>Manual</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="color">Color</label>
+        <input id="color" placeholder="e.g., red" aria-label="Color" />
+      </div>
+
+      <div class="field">
+        <label>Price range</label>
+        <div class="row" style="gap:6px;">
+          <input id="minPrice" type="number" placeholder="Min" style="flex:1" aria-label="Minimum price"/>
+          <span style="align-self:center; opacity:.6">-</span>
+          <input id="maxPrice" type="number" placeholder="Max" style="flex:1" aria-label="Maximum price"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Year range</label>
+        <div class="row" style="gap:6px;">
+          <input id="minYear" type="number" placeholder="From" style="flex:1" aria-label="From year"/>
+          <span style="align-self:center; opacity:.6">-</span>
+          <input id="maxYear" type="number" placeholder="To" style="flex:1" aria-label="To year"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="sort">Sort by</label>
+        <select id="sort" aria-label="Sort cars">
+          <option value="newest">Newest</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="mileage-asc">Mileage: Low to High</option>
+          <option value="year-asc">Year: Oldest</option>
+          <option value="year-desc" selected>Year: Newest</option>
+        </select>
+      </div>
+
+      <div class="row" style="justify-content: space-between; align-items:center;">
+        <button class="btn" id="btn-reset-filters" aria-label="Reset filters">Reset</button>
+        <span class="muted" style="font-size:.8rem;">Showing results from local simulated DB.json</span>
+      </div>
+    </section>
+
+    <!-- Showroom -->
+    <section class="panel show-area showroom" aria-label="Car showroom" id="showroom">
+      <!-- Cards populated by JS -->
+    </section>
+
+    <!-- Admin Panel -->
+    <section class="panel admin" aria-labelledby="admin-title" id="admin">
+      <h3 id="admin-title" class="section-title" style="margin: 0;">Admin</h3>
+      <div class="row" style="gap:12px; align-items: stretch;">
+        <!-- Sellers Admin -->
+        <div class="panel" style="flex:1; min-width: 260px;">
+          <h4 style="margin:6px 0 8px;">Sellers</h4>
+          <div id="sellers-list" class="row" style="flex-direction:column; gap:8px; align-items: stretch;">
+            <!-- List populated by JS -->
+          </div>
+          <div class="row" style="margin-top:8px;">
+            <button class="btn primary" id="add-seller-btn" aria-label="Add seller">Add Seller</button>
+          </div>
+          <div id="new-seller-form" class="hidden" style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
+            <input id="new-seller-name" placeholder="Name" aria-label="Seller name"/>
+            <input id="new-seller-email" placeholder="Email" aria-label="Seller email"/>
+            <input id="new-seller-phone" placeholder="Phone" aria-label="Seller phone"/>
+            <div class="row" style="gap:6px;">
+              <button class="btn" id="save-seller-btn" aria-label="Save seller">Save</button>
+              <button class="btn ghost" id="cancel-seller-btn" aria-label="Cancel">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cars Admin -->
+        <div class="panel" style="flex:2; min-width: 420px;">
+          <h4 style="margin:6px 0 8px;">Cars</h4>
+          <div id="cars-list" class="row" style="flex-direction:column; gap:8px; align-items: stretch;">
+            <!-- List populated by JS -->
+          </div>
+          <div class="row" style="margin-top:8px;">
+            <button class="btn primary" id="add-car-btn" aria-label="Add car">Add Car</button>
+          </div>
+          <div id="new-car-form" class="hidden" style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
+            <div class="row" style="gap:6px;">
+              <input id="car-new-make" placeholder="Make" aria-label="Car make" />
+              <input id="car-new-model" placeholder="Model" aria-label="Car model" />
+              <input id="car-new-year" placeholder="Year" type="number" aria-label="Car year" />
+            </div>
+            <div class="row" style="gap:6px;">
+              <select id="car-new-body" aria-label="Body type">
+                <option value="Sedan">Sedan</option>
+                <option value="SUV">SUV</option>
+                <option value="Hatchback">Hatchback</option>
+                <option value="Pickup">Pickup</option>
+              </select>
+              <select id="car-new-fuel" aria-label="Fuel">
+                <option value="Gasoline">Gasoline</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="Electric">Electric</option>
+              </select>
+              <select id="car-new-trans" aria-label="Transmission">
+                <option value="Automatic">Automatic</option>
+                <option value="Manual">Manual</option>
+              </select>
+            </div>
+            <div class="row" style="gap:6px;">
+              <input id="car-new-color" placeholder="Color" aria-label="Car color"/>
+              <input id="car-new-price" placeholder="Price" type="number" aria-label="Car price"/>
+              <input id="car-new-mileage" placeholder="Mileage" type="number" aria-label="Car mileage"/>
+            </div>
+            <div class="row" style="gap:6px;">
+              <input id="car-new-seller" placeholder="Seller ID" aria-label="Seller ID"/>
+              <input id="car-new-image" placeholder="Image query" aria-label="Image query"/>
+            </div>
+            <div class="row" style="gap:6px;">
+              <button class="btn" id="save-car-btn" aria-label="Save car">Save</button>
+              <button class="btn ghost" id="cancel-car-btn" aria-label="Cancel">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Car detail modal -->
+  <div class="modal" id="detail-modal" aria-hidden="true" role="dialog" aria-label="Car details">
+    <div class="modal-content">
+      <button class="close" id="close-detail" aria-label="Close details">Close</button>
+      <div class="modal-image" id="modal-image" aria-label="Car image" style="min-width:0;">
+        <!-- emoji or image swapped on load -->
+        <span class="emoji" id="modal-emoji" style="font-size:64px;">🚗</span>
+        <img id="modal-img" alt="car image" style="display:none; width:100%; height:100%; object-fit:cover;" />
+        <div class="skeleton" aria-hidden="true" style="display:none;"></div>
+      </div>
+      <div class="modal-details">
+        <h3 id="modal-title" style="margin:0; font-size:1.1rem;"></h3>
+        <p id="modal-desc" class="muted" style="margin:0; color:#ddd;"></p>
+        <div class="row" id="modal-meta" style="flex-wrap:wrap; gap:6px;"></div>
+        <div class="row" style="margin-top:auto;">
+          <button class="btn primary" id="modal-close" aria-label="Close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // AutoFlow — single-file SPA with in-browser simulated db.json persistence (localStorage)
+    // Seed data and in-memory "db.json" persistence
+    const DB_KEY = 'db.json';
+    let dbCache = null;
+    let writeQueue = Promise.resolve();
+
+    // Seed data (two sellers, 12 cars)
+    function generateId() {
+      try { return crypto.randomUUID(); } catch (e) { return 'id-' + Math.random().toString(36).slice(2); }
+    }
+
+    const seedData = () => {
+      const now = new Date().toISOString();
+      const s1 = { id: generateId(), name: "Nova Autos", email: "hello@novaautos.example", phone: "+1 555-0148", createdAt: now, updatedAt: now };
+      const s2 = { id: generateId(), name: "Quasar Motors", email: "contact@quasarmotors.example", phone: "+1 555-0199", createdAt: now, updatedAt: now };
+
+      const cars = [
+        { id: generateId(), sellerId: s1.id, make: "Toyota", model: "Camry", year: 2020, color: "Midnight Black", bodyType: "Sedan", fuel: "Gasoline", transmission: "Automatic", price: 18999, mileage: 34000, imageQuery: "toyota-camry-2020", emoji: "🚗", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s1.id, make: "Honda", model: "Civic", year: 2018, color: "Crystal Blue", bodyType: "Sedan", fuel: "Gasoline", transmission: "Automatic", price: 14999, mileage: 52000, imageQuery: "honda-civic-2018", emoji: "🚘", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s1.id, make: "Ford", model: "F-150", year: 2019, color: "Red", bodyType: "Pickup", fuel: "Gasoline", transmission: "Automatic", price: 27999, mileage: 41000, imageQuery: "ford-f150-2019", emoji: "🚙", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s2.id, make: "Tesla", model: "Model 3", year: 2021, color: "Pearl White", bodyType: "Sedan", fuel: "Electric", transmission: "Automatic", price: 38999, mileage: 12000, imageQuery: "tesla-model-3-2021", emoji: "⚡", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s2.id, make: "BMW", model: "3 Series", year: 2017, color: "Gray", bodyType: "Sedan", fuel: "Gasoline", transmission: "Automatic", price: 17999, mileage: 61000, imageQuery: "bmw-3-series-2017", emoji: "🚘", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s2.id, make: "Audi", model: "A4", year: 2016, color: "Blue", bodyType: "Sedan", fuel: "Gasoline", transmission: "Automatic", price: 13999, mileage: 78000, imageQuery: "audi-a4-2016", emoji: "🎯", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s1.id, make: "Hyundai", model: "Elantra", year: 2020, color: "White", bodyType: "Sedan", fuel: "Gasoline", transmission: "Automatic", price: 15999, mileage: 23000, imageQuery: "hyundai-elantra-2020", emoji: "🚗", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s1.id, make: "Nissan", model: "Altima", year: 2019, color: "Silver", bodyType: "Sedan", fuel: "Gasoline", transmission: "Automatic", price: 14999, mileage: 36000, imageQuery: "nissan-altima-2019", emoji: "🚗", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s2.id, make: "Chevrolet", model: "Malibu", year: 2015, color: "Red", bodyType: "Sedan", fuel: "Gasoline", transmission: "Automatic", price: 10999, mileage: 90000, imageQuery: "chevrolet-malibu-2015", emoji: "🚗", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s2.id, make: "Kia", model: "Sportage", year: 2019, color: "Green", bodyType: "SUV", fuel: "Gasoline", transmission: "Automatic", price: 19999, mileage: 24000, imageQuery: "kia-sportage-2019", emoji: "🚙", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s1.id, make: "Mazda", model: "CX-5", year: 2020, color: "Red", bodyType: "SUV", fuel: "Gasoline", transmission: "Automatic", price: 21999, mileage: 15000, imageQuery: "mazda-cx-5-2020", emoji: "🚗", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s2.id, make: "Mercedes", model: "C-Class", year: 2018, color: "Black", bodyType: "Sedan", fuel: "Gasoline", transmission: "Automatic", price: 25999, mileage: 42000, imageQuery: "mercedes-c-class-2018", emoji: "🚗", createdAt: now, updatedAt: now },
+        { id: generateId(), sellerId: s1.id, make: "Toyota", model: "RAV4", year: 2020, color: "Army Green", bodyType: "SUV", fuel: "Hybrid", transmission: "Automatic", price: 28999, mileage: 15000, imageQuery: "toyota-rav4-2020", emoji: "🚙", createdAt: now, updatedAt: now }
+      ];
+
+      return { sellers: [s1, s2], cars: cars, meta: { updatedAt: now } };
+    };
+
+    async function loadDb() {
+      if (dbCache) return dbCache;
+      const raw = localStorage.getItem(DB_KEY);
+      if (raw) {
+        try { dbCache = JSON.parse(raw); }
+        catch(e){ dbCache = seedData(); await saveDb(); }
+      } else {
+        dbCache = seedData();
+        await saveDb();
+      }
+      return dbCache;
+    }
+
+    async function saveDb() {
+      // simple atomic-like write (localStorage is synchronous)
+      const data = JSON.stringify(dbCache, null, 2);
+      localStorage.setItem(DB_KEY, data);
+      return true;
+    }
+
+    // Debounce helper
+    const debounce = (fn, wait) => {
+      let t = null;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(null, args), wait);
+      };
+    };
+
+    // API surface (in-browser mock of /api with JSON db.json)
+    const Api = {
+      async ensureDb() { await loadDb(); },
+      async getSellers() {
+        await this.ensureDb();
+        return dbCache.sellers;
+      },
+      async getSeller(id) {
+        await this.ensureDb();
+        return dbCache.sellers.find(s => s.id === id);
+      },
+      async createSeller(payload) {
+        await this.ensureDb();
+        const now = new Date().toISOString();
+        if (!payload || !payload.name || !payload.email) throw { status: 400, message: "Invalid seller data" };
+        // simple unique email check
+        if (dbCache.sellers.find(s => s.email.toLowerCase() === payload.email.toLowerCase())) {
+          throw { status: 409, message: "Seller email already exists" };
+        }
+        const seller = { id: generateId(), name: payload.name.trim(), email: payload.email.trim(), phone: payload.phone?.toString().trim(), createdAt: now, updatedAt: now };
+        dbCache.sellers.push(seller);
+        await saveDb();
+        return seller;
+      },
+      async updateSeller(id, payload) {
+        await this.ensureDb();
+        const seller = dbCache.sellers.find(s => s.id === id);
+        if (!seller) throw { status: 404, message: "Seller not found" };
+        if (payload.name) seller.name = payload.name.trim();
+        if (payload.email) {
+          const exists = dbCache.sellers.find(s => s.email.toLowerCase() === payload.email.toLowerCase() && s.id !== id);
+          if (exists) throw { status: 409, message: "Seller email already exists" };
+          seller.email = payload.email.trim();
+        }
+        if (payload.phone) seller.phone = payload.phone.trim();
+        seller.updatedAt = new Date().toISOString();
+        await saveDb();
+        return seller;
+      },
+      async deleteSeller(id) {
+        await this.ensureDb();
+        // FK check: any car references this seller?
+        const hasCars = dbCache.cars.some(c => c.sellerId === id);
+        if (hasCars) throw { status: 409, message: "Cannot delete seller with referenced cars" };
+        const idx = dbCache.sellers.findIndex(s => s.id === id);
+        if (idx < 0) throw { status: 404, message: "Seller not found" };
+        dbCache.sellers.splice(idx, 1);
+        await saveDb();
+        return true;
+      },
+      async getCars(opts = {}) {
+        await this.ensureDb();
+        let cars = dbCache.cars.slice();
+        const { q, make, bodyType, fuel, transmission, color, minPrice, maxPrice, minYear, maxYear, sellerId, sort = 'year-desc', page = 1, limit = 12 } = opts;
+
+        if (q) {
+          const term = q.toLowerCase();
+          cars = cars.filter(c => (c.make?.toLowerCase().includes(term) || c.model?.toLowerCase().includes(term) || String(c.year).includes(term)));
+        }
+        if (make) cars = cars.filter(c => c.make === make);
+        if (bodyType) cars = cars.filter(c => c.bodyType === bodyType);
+        if (fuel) cars = cars.filter(c => c.fuel === fuel);
+        if (transmission) cars = cars.filter(c => c.transmission === transmission);
+        if (color) cars = cars.filter(c => c.color?.toLowerCase() === color.toLowerCase());
+        if (typeof minPrice === 'number') cars = cars.filter(c => Number(c.price) >= minPrice);
+        if (typeof maxPrice === 'number') cars = cars.filter(c => Number(c.price) <= maxPrice);
+        if (typeof minYear === 'number') cars = cars.filter(c => Number(c.year) >= minYear);
+        if (typeof maxYear === 'number') cars = cars.filter(c => Number(c.year) <= maxYear);
+        if (sellerId) cars = cars.filter(c => c.sellerId === sellerId);
+
+        // sort
+        const sorter = {
+          'newest': (a,b) => b.createdAt.localeCompare(a.createdAt),
+          'year-desc': (a,b) => b.year - a.year,
+          'year-asc': (a,b) => a.year - b.year,
+          'price-desc': (a,b) => b.price - a.price,
+          'price-asc': (a,b) => a.price - b.price,
+          'mileage-asc': (a,b) => a.mileage - b.mileage
+        }[sort] || ((a,b) => b.year - a.year);
+        cars.sort(sorter);
+
+        const total = cars.length;
+        const start = (page - 1) * limit;
+        const end = start + limit;
+        const results = cars.slice(start, end);
+
+        // hydrate seller info for display
+        const sellers = dbCache.sellers;
+        results.forEach(c => {
+          const s = sellers.find(x => x.id === c.sellerId);
+          c.sellerName = s?.name || 'Unknown';
+        });
+
+        return { total, cars: results };
+      },
+      async getCar(id) {
+        await this.ensureDb();
+        const car = dbCache.cars.find(c => c.id === id);
+        if (!car) return null;
+        const seller = dbCache.sellers.find(s => s.id === car.sellerId);
+        return { ...car, sellerName: seller?.name || 'Unknown' };
+      },
+      async createCar(payload) {
+        await this.ensureDb();
+        const now = new Date().toISOString();
+        const required = ['sellerId','make','model','year','bodyType','fuel','transmission','price','mileage','imageQuery'];
+        for (const k of required) if (!payload?.[k]) throw { status: 400, message: `Missing ${k}` };
+        const sellerExists = dbCache.sellers.find(s => s.id === payload.sellerId);
+        if (!sellerExists) throw { status: 400, message: 'Invalid sellerId' };
+        const car = {
+          id: generateId(),
+          sellerId: payload.sellerId,
+          make: payload.make.trim(),
+          model: payload.model.trim(),
+          year: Number(payload.year),
+          bodyType: payload.bodyType,
+          color: payload.color?.trim() || '',
+          fuel: payload.fuel,
+          transmission: payload.transmission,
+          price: Number(payload.price),
+          mileage: Number(payload.mileage),
+          imageQuery: payload.imageQuery || payload.make + '-' + payload.model,
+          emoji: payload.emoji || '🚗',
+          createdAt: now,
+          updatedAt: now
+        };
+        dbCache.cars.push(car);
+        await saveDb();
+        return car;
+      },
+      async updateCar(id, payload) {
+        await this.ensureDb();
+        const car = dbCache.cars.find(c => c.id === id);
+        if (!car) throw { status: 404, message: 'Car not found' };
+        if (payload.sellerId) {
+          const sellerExists = dbCache.sellers.find(s => s.id === payload.sellerId);
+          if (!sellerExists) throw { status: 400, message: 'Invalid sellerId' };
+          car.sellerId = payload.sellerId;
+        }
+        if (payload.make) car.make = payload.make.trim();
+        if (payload.model) car.model = payload.model.trim();
+        if (payload.year) car.year = Number(payload.year);
+        if (payload.bodyType) car.bodyType = payload.bodyType;
+        if (payload.color !== undefined) car.color = payload.color?.trim();
+        if (payload.fuel) car.fuel = payload.fuel;
+        if (payload.transmission) car.transmission = payload.transmission;
+        if (payload.price !== undefined) car.price = Number(payload.price);
+        if (payload.mileage !== undefined) car.mileage = Number(payload.mileage);
+        if (payload.imageQuery) car.imageQuery = payload.imageQuery;
+        if (payload.emoji) car.emoji = payload.emoji;
+        car.updatedAt = new Date().toISOString();
+        await saveDb();
+        return car;
+      },
+      async deleteCar(id) {
+        await this.ensureDb();
+        const idx = dbCache.cars.findIndex(c => c.id === id);
+        if (idx < 0) throw { status: 404, message: 'Car not found' };
+        dbCache.cars.splice(idx, 1);
+        await saveDb();
+        return true;
+      }
+    };
+
+    // Image helper
+    const UNSPLASH_BASE = "https://images.unsplash.com/photo-1515165562835-3d0f1f0c8cd5";
+    function imageUrlFor(query) {
+      // Incorporate query into a stable-ish image URL; in reality you'd use a proper Unsplash API or curated URLs
+      // We'll fallback to a deterministic seed by using query string length to vary a bit
+      const seed = Array.from(query).reduce((a,c)=> a + c.charCodeAt(0), 0) % 1000;
+      // Return a generic image with query-like flavor
+      // Note: Unsplash accepts query param, but we simulate by appending seed
+      return `${UNSPLASH_BASE}?auto=format&fit=crop&w=600&h=400&sig=${seed}`;
+    }
+
+    // UI helpers
+    function showToast(msg, duration = 1800) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      clearTimeout(t._t);
+      t._t = setTimeout(() => t.style.display = 'none', duration);
+    }
+
+    // Elements
+    const showroomEl = document.getElementById('showroom');
+    const makeChipsEl = document.getElementById('make-chips') || document.getElementById('make-chips');
+    // Filters
+    const searchEl = document.getElementById('search');
+    const bodyTypeEl = document.getElementById('bodyType');
+    const fuelEl = document.getElementById('fuel');
+    const transEl = document.getElementById('transmission');
+    const colorEl = document.getElementById('color');
+    const minPriceEl = document.getElementById('minPrice');
+    const maxPriceEl = document.getElementById('maxPrice');
+    const minYearEl = document.getElementById('minYear');
+    const maxYearEl = document.getElementById('maxYear');
+    const sortEl = document.getElementById('sort');
+    const resetBtn = document.getElementById('btn-reset-filters');
+    const addSellerBtn = document.getElementById('add-seller-btn');
+    const addCarBtn = document.getElementById('add-car-btn');
+    const newSellerForm = document.getElementById('new-seller-form');
+    const saveSellerBtn = document.getElementById('save-seller-btn');
+    const cancelSellerBtn = document.getElementById('cancel-seller-btn');
+    const newSellerName = document.getElementById('new-seller-name');
+    const newSellerEmail = document.getElementById('new-seller-email');
+    const newSellerPhone = document.getElementById('new-seller-phone');
+    const newCarForm = document.getElementById('new-car-form');
+    const saveCarBtn = document.getElementById('save-car-btn');
+    const cancelCarBtn = document.getElementById('cancel-car-btn');
+    const carMakeInput = document.getElementById('car-new-make');
+    const carModelInput = document.getElementById('car-new-model');
+    const carYearInput = document.getElementById('car-new-year');
+    const carBodyInput = document.getElementById('car-new-body');
+    const carFuelInput = document.getElementById('car-new-fuel');
+    const carTransInput = document.getElementById('car-new-trans');
+    const carColorInput = document.getElementById('car-new-color');
+    const carPriceInput = document.getElementById('car-new-price');
+    const carMileageInput = document.getElementById('car-new-mileage');
+    const carSellerInput = document.getElementById('car-new-seller');
+    const carImageInput = document.getElementById('car-new-image');
+    const detailModal = document.getElementById('detail-modal');
+    const closeDetailBtn = document.getElementById('close-detail');
+    const modalImage = document.getElementById('modal-img');
+    const modalEmoji = document.getElementById('modal-emoji');
+    const modalTitle = document.getElementById('modal-title');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalMeta = document.getElementById('modal-meta');
+    const modalClose = document.getElementById('modal-close');
+    const buildStatus = document.getElementById('build-status');
+
+    let currentViewCars = []; // cache current showroom data
+    let allMakes = [];
+
+    // Initialize app
+    function init() {
+      // Build make chips after seed
+      Api.ensureDb().then(() => {
+        renderMakeChips();
+        loadCarsAndRender();
+        // seed info in header
+        buildStatus.textContent = "ready";
+      }).catch(()=>{ buildStatus.textContent = "db ready (offline)"; });
+    }
+
+    // Build chips for makes
+    function renderMakeChips() {
+      Api.getCars({ limit: 1000 }).then(r => {
+        // derive unique makes from seed (or current)
+        const makes = Array.from(new Set(dbCache.cars.map(c => c.make))).sort();
+        allMakes = makes;
+        const container = document.getElementById('make-chips');
+        container.innerHTML = '';
+        makes.forEach(make => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'btn ghost';
+          btn.textContent = make;
+          btn.style.padding = '6px 10px';
+          btn.style.borderRadius = '999px';
+          btn.addEventListener('click', () => {
+            // toggle active filter
+            const current = (colorEl.dataset.activeMake || '');
+            // simple toggle: if same as clicked, clear; else set
+            if (current === make) {
+              colorEl.dataset.activeMake = '';
+              btn.style.outline = '';
+              filterUpdate({ make: '' });
+            } else {
+              colorEl.dataset.activeMake = make;
+              // visually indicate
+              document.querySelectorAll('#make-chips .btn').forEach(b => b.style.background = '');
+              btn.style.background = 'rgba(126,91,216,.25)';
+              filterUpdate({ make });
+            }
+          });
+          container.appendChild(btn);
+        });
+      });
+    }
+
+    // Simple filter application
+    function filterUpdate(next) {
+      // Merge next into query and redraw showroom
+      // We'll implement by reloading cars with current filters
+      loadCarsAndRender();
+    }
+
+    // Load and render showroom
+    function loadCarsAndRender() {
+      // Gather filters
+      const q = (searchEl.value || '').trim();
+      const make = (typeof colorEl.dataset.activeMake === 'string' ? colorEl.dataset.activeMake : '') || '';
+      const bodyType = bodyTypeEl.value || '';
+      const fuel = fuelEl.value || '';
+      const transmission = transEl.value || '';
+      const color = colorEl.value?.trim() || '';
+      const minP = minPriceEl.value ? Number(minPriceEl.value) : undefined;
+      const maxP = maxPriceEl.value ? Number(maxPriceEl.value) : undefined;
+      const minY = minYearEl.value ? Number(minYearEl.value) : undefined;
+      const maxY = maxYearEl.value ? Number(maxYearEl.value) : undefined;
+      const sort = sortEl.value || 'year-desc';
+      const page = 1;
+      const limit = 12;
+
+      Api.getCars({ q, make, bodyType, fuel, transmission, color, minPrice: minP, maxPrice: maxP, minYear: minY, maxYear: maxY, sellerId: null, sort, page, limit })
+        .then(({ total, cars }) => {
+          currentViewCars = cars;
+          renderShowroom(cars, total);
+        });
+    }
+
+    // Render showroom cards
+    function renderShowroom(cars, total) {
+      showroomEl.innerHTML = '';
+      if (!cars || cars.length === 0) {
+        showroomEl.innerHTML = '<div class="panel" style="padding:20px; text-align:center; width:100%;">No cars match the filters. Try resetting.</div>';
+        return;
+      }
+      cars.forEach(car => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.setAttribute('data-id', car.id);
+
+        // image area with emoji placeholder
+        const imageWrap = document.createElement('div');
+        imageWrap.className = 'image-wrap';
+        imageWrap.setAttribute('aria-label', car.make + ' ' + car.model);
+        const emojiSpan = document.createElement('span');
+        emojiSpan.className = 'emoji';
+        emojiSpan.textContent = car.emoji || '🚗';
+        imageWrap.appendChild(emojiSpan);
+        const img = document.createElement('img');
+        img.alt = car.make + ' ' + car.model;
+        imageWrap.appendChild(img);
+        // track loading to swap emoji on load
+        const imgSrc = imageUrlFor(car.imageQuery || (car.make + '-' + car.model));
+        const loader = new Image();
+        loader.src = imgSrc;
+        loader.onload = () => {
+          img.src = imgSrc;
+          img.style.display = 'block';
+          emojiSpan.style.display = 'none';
+        };
+        loader.onerror = () => {
+          // keep emoji
+        };
+
+        // content
+        const content = document.createElement('div');
+        content.className = 'card-content';
+
+        const title = document.createElement('p');
+        title.className = 'car-title';
+        title.textContent = `${car.year} ${car.make} ${car.model}`;
+        content.appendChild(title);
+
+        const sub = document.createElement('p');
+        sub.className = 'car-sub';
+        sub.textContent = car.color + ' • ' + car.bodyType + ' • ' + car.fuel + ' • ' + car.transmission;
+        content.appendChild(sub);
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const sellerTag = document.createElement('span');
+        sellerTag.className = 'tag';
+        sellerTag.textContent = car.sellerName ? 'Seller: ' + car.sellerName : 'Seller';
+        meta.appendChild(sellerTag);
+
+        const price = document.createElement('span');
+        price.className = 'price';
+        price.textContent = '$' + car.price.toLocaleString();
+        meta.appendChild(price);
+        content.appendChild(meta);
+
+        const actions = document.createElement('div');
+        actions.className = 'card-actions';
+        const viewBtn = document.createElement('button');
+        viewBtn.className = 'btn primary';
+        viewBtn.textContent = 'View';
+        viewBtn.addEventListener('click', () => openDetail(car.id));
+        const quickDelete = document.createElement('button');
+        quickDelete.className = 'btn ghost';
+        quickDelete.textContent = 'Delete';
+        quickDelete.style.marginLeft = 'auto';
+        // lightweight delete with confirmation
+        quickDelete.addEventListener('click', () => {
+          if (confirm('Delete this car?')) {
+            Api.deleteCar(car.id).then(() => {
+              showToast('Car deleted');
+              loadCarsAndRender();
+            }).catch(e => {
+              showToast('Error deleting car');
+            });
+          }
+        });
+        actions.appendChild(viewBtn);
+        actions.appendChild(quickDelete);
+        content.appendChild(actions);
+
+        card.appendChild(imageWrap);
+        card.appendChild(content);
+
+        showroomEl.appendChild(card);
+      });
+    }
+
+    // Detail modal
+    function openDetail(carId) {
+      Api.getCar(carId).then(car => {
+        if (!car) return;
+        modalTitle.textContent = car.year + ' ' + car.make + ' ' + car.model;
+        modalDesc.textContent = car.color + ' • ' + car.bodyType + ' • ' + car.fuel + ' • ' + car.transmission + ' • ' + car.mileage.toLocaleString() + ' miles';
+        modalMeta.innerHTML = '';
+        const sellerP = document.createElement('span');
+        sellerP.className = 'tag';
+        sellerP.textContent = 'Seller: ' + car.sellerName;
+        modalMeta.appendChild(sellerP);
+        const priceP = document.createElement('span');
+        priceP.className = 'tag';
+        priceP.textContent = 'Price: $' + car.price.toLocaleString();
+        modalMeta.appendChild(priceP);
+
+        // image swap in modal
+        const imgSrc = imageUrlFor(car.imageQuery);
+        modalEmoji.style.display = 'none';
+        modalImgAltFix(car, imgSrc);
+        // open
+        detailModal.classList.add('open');
+        detailModal.setAttribute('aria-hidden', 'false');
+      });
+    }
+
+    function modalImgAltFix(car, src) {
+      const img = modalImage.querySelector('img');
+      if (!img) {
+        const newImg = document.createElement('img');
+        newImg.alt = car.make + ' ' + car.model;
+        newImg.style.width = '100%';
+        newImg.style.height = '100%';
+        newImg.style.objectFit = 'cover';
+        modalImage.appendChild(newImg);
+      }
+      const realImg = modalImage.querySelector('img');
+      realImg.style.display = 'block';
+      modalEmoji.style.display = 'none';
+      // show skeleton until load
+      const sk = modalImage.querySelector('.skeleton');
+      if (sk) sk.style.display = 'block';
+      const pre = new Image();
+      pre.src = src;
+      pre.onload = () => {
+        realImg.src = src;
+        realImg.style.display = 'block';
+        if (sk) sk.style.display = 'none';
+      };
+      pre.onerror = () => {
+        if (sk) sk.style.display = 'none';
+        realImg.style.display = 'none';
+      };
+    }
+
+    // Close modal
+    closeDetailBtn.addEventListener('click', () => {
+      detailModal.classList.remove('open');
+      detailModal.setAttribute('aria-hidden', 'true');
+    });
+    modalClose.addEventListener('click', () => {
+      detailModal.classList.remove('open');
+      detailModal.setAttribute('aria-hidden', 'true');
+    });
+
+    // Admin: Sellers
+    function renderSellers() {
+      Api.getSellers().then(list => {
+        const container = document.getElementById('sellers-list');
+        container.innerHTML = '';
+        list.forEach(s => {
+          const row = document.createElement('div');
+          row.className = 'row';
+          row.style.alignItems = 'center';
+          row.style.justifyContent = 'space-between';
+          row.style.padding = '6px 0';
+          const label = document.createElement('span');
+          label.textContent = s.name + ' (' + s.email + ')';
+          const actions = document.createElement('div');
+          const edit = document.createElement('button');
+          edit.className = 'btn ghost';
+          edit.textContent = 'Edit';
+          edit.addEventListener('click', () => {
+            // simple in-place edit prompts
+            const newName = prompt('Name', s.name);
+            if (newName == null) return;
+            const newEmail = prompt('Email', s.email);
+            if (newEmail == null) return;
+            Api.updateSeller(s.id, { name: newName, email: newEmail }).then(() => {
+              renderSellers();
+              showToast('Seller updated');
+            }).catch(e => showToast(e?.message || 'Error updating seller'));
+          });
+          const del = document.createElement('button');
+          del.className = 'btn danger';
+          del.textContent = 'Delete';
+          del.addEventListener('click', () => {
+            if (confirm('Delete seller? This cannot be undone if cars exist.')) {
+              Api.deleteSeller(s.id).then(() => {
+                renderSellers();
+                loadCarsAndRender();
+                showToast('Seller deleted');
+              }).catch(e => showToast(e?.message || 'Error deleting seller'));
+            }
+          });
+
+          actions.appendChild(edit);
+          actions.appendChild(del);
+          row.appendChild(label);
+          row.appendChild(actions);
+          container.appendChild(row);
+        });
+      });
+    }
+
+    // Admin: Cars
+    function renderCars() {
+      Api.ensureDb().then(() => {
+        const p = dbCache.cars;
+        const container = document.getElementById('cars-list');
+        container.innerHTML = '';
+        p.forEach(car => {
+          const item = document.createElement('div');
+          item.style.border = '1px solid rgba(255,255,255,.15)';
+          item.style.borderRadius = '8px';
+          item.style.padding = '8px';
+          item.style.display = 'flex';
+          item.style.flexDirection = 'column';
+          item.style.gap = '6px';
+          const title = document.createElement('strong');
+          title.textContent = car.make + ' ' + car.model + ' (' + car.year + ')';
+          item.appendChild(title);
+          const info = document.createElement('div');
+          info.style.display = 'flex'; info.style.flexWrap = 'wrap'; info.style.gap = '6px';
+          info.innerHTML = `
+            <span class="tag">Price $${car.price}</span>
+            <span class="tag">${car.bodyType}</span>
+            <span class="tag">${car.fuel}</span>
+            <span class="tag">${car.transmission}</span>
+            <span class="tag">Seller: ${dbCache.sellers.find(s => s.id === car.sellerId)?.name || 'Unknown'}</span>
+          `;
+          item.appendChild(info);
+          const actions = document.createElement('div');
+          actions.style.display = 'flex'; actions.style.gap = '6px';
+          const edit = document.createElement('button');
+          edit.className = 'btn ghost';
+          edit.textContent = 'Edit';
+          edit.addEventListener('click', () => {
+            const make = prompt('Make', car.make);
+            if (make == null) return;
+            const model = prompt('Model', car.model);
+            if (model == null) return;
+            Api.updateCar(car.id, { make, model }).then(() => { renderCars(); loadCarsAndRender(); showToast('Car updated'); }).catch(e => showToast(e?.message || 'Update failed'));
+          });
+          const del = document.createElement('button');
+          del.className = 'btn danger';
+          del.textContent = 'Delete';
+          del.addEventListener('click', () => {
+            if (confirm('Delete this car?')) {
+              Api.deleteCar(car.id).then(() => { renderCars(); loadCarsAndRender(); showToast('Car deleted'); }).catch(e => showToast(e?.message || 'Delete failed'));
+            }
+          });
+          actions.appendChild(edit);
+          actions.appendChild(del);
+          item.appendChild(actions);
+          container.appendChild(item);
+        });
+      });
+    }
+
+    // Admin: show/hide new seller form
+    addSellerBtn.addEventListener('click', () => {
+      newSellerForm.classList.toggle('hidden');
+    });
+    cancelSellerBtn.addEventListener('click', () => {
+      newSellerName.value = '';
+      newSellerEmail.value = '';
+      newSellerPhone.value = '';
+      newSellerForm.classList.add('hidden');
+    });
+    saveSellerBtn.addEventListener('click', () => {
+      const payload = {
+        name: newSellerName.value,
+        email: newSellerEmail.value,
+        phone: newSellerPhone.value
+      };
+      Api.createSeller(payload).then(() => {
+        newSellerName.value = '';
+        newSellerEmail.value = '';
+        newSellerPhone.value = '';
+        newSellerForm.classList.add('hidden');
+        renderSellers();
+        showToast('Seller created');
+      }).catch(e => showToast(e?.message || 'Error creating seller'));
+    });
+
+    addCarBtn.addEventListener('click', () => {
+      newCarForm.classList.toggle('hidden');
+    });
+    cancelCarBtn.addEventListener('click', () => {
+      newCarForm.classList.add('hidden');
+    });
+    saveCarBtn.addEventListener('click', () => {
+      const payload = {
+        sellerId: carSellerInput.value,
+        make: carMakeInput.value,
+        model: carModelInput.value,
+        year: carYearInput.value,
+        bodyType: carBodyInput.value,
+        fuel: carFuelInput.value,
+        transmission: carTransInput.value,
+        price: carPriceInput.value,
+        mileage: carMileageInput.value,
+        imageQuery: carImageInput.value
+      };
+      Api.createCar(payload).then(() => {
+        resetNewCarForm();
+        newCarForm.classList.add('hidden');
+        loadCarsAndRender();
+        renderCars();
+        showToast('Car created');
+      }).catch(e => showToast(e?.message || 'Error creating car'));
+    });
+
+    function resetNewCarForm() {
+      carMakeInput.value = '';
+      carModelInput.value = '';
+      carYearInput.value = '';
+      carBodyInput.value = 'Sedan';
+      carFuelInput.value = 'Gasoline';
+      carTransInput.value = 'Automatic';
+      carColorInput.value = '';
+      carPriceInput.value = '';
+      carMileageInput.value = '';
+      carSellerInput.value = '';
+      carImageInput.value = '';
+    }
+
+    // Bind filter UI
+    searchEl.addEventListener('input', debounce(loadCarsAndRender, 250));
+    bodyTypeEl.addEventListener('change', loadCarsAndRender);
+    fuelEl.addEventListener('change', loadCarsAndRender);
+    transEl.addEventListener('change', loadCarsAndRender);
+    colorEl.addEventListener('input', () => { /* color is optional; handled in render */ loadCarsAndRender(); });
+    minPriceEl.addEventListener('input', debounce(loadCarsAndRender, 250));
+    maxPriceEl.addEventListener('input', debounce(loadCarsAndRender, 250));
+    minYearEl.addEventListener('input', debounce(loadCarsAndRender, 250));
+    maxYearEl.addEventListener('input', debounce(loadCarsAndRender, 250));
+    sortEl.addEventListener('change', loadCarsAndRender);
+    resetBtn.addEventListener('click', () => {
+      searchEl.value = '';
+      bodyTypeEl.value = '';
+      fuelEl.value = '';
+      transEl.value = '';
+      colorEl.value = '';
+      minPriceEl.value = '';
+      maxPriceEl.value = '';
+      minYearEl.value = '';
+      maxYearEl.value = '';
+      sortEl.value = 'year-desc';
+      loadCarsAndRender();
+    });
+
+    // Theme toggle (local demo)
+    document.getElementById('btn-toggle-theme').addEventListener('click', () => {
+      document.body.style.background = document.body.style.background.includes('rgb') ? '' : '';
+      showToast('Theme toggle (visual only)');
+    });
+
+    // Initialize admin lists
+    document.addEventListener('DOMContentLoaded', () => {
+      // Prepare UI
+      // Seeded data may not populate chips until data loads
+      init();
+
+      // Admin renderers
+      renderSellers();
+      renderCars();
+    });
+
+    // Helper: Api shim for cars (convenience wrapper)
+    // Extend on first render
+    // On initial load, fetch all cars to populate makes
+    Api.ensureDb().then(() => {
+      // Populate make chips after DB is loaded
+      renderMakeChips();
+      loadCarsAndRender();
+      // Seed UI place-holders for seller dropdown in new car form
+      // Populate seller options for new car
+      Api.getSellers().then(list => {
+        const select = document.getElementById('car-new-seller');
+        if (select) {
+          select.innerHTML = '<option value="">Select seller</option>';
+          list.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.id;
+            opt.textContent = s.name;
+            select.appendChild(opt);
+          });
+        }
+      });
+    });
+
+  </script>
+
+  
+</body>
+</html>
