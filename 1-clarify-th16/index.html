@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AutoFlow Dealer Showroom</title>
+  <style>
+    :root{
+      --bg: #0b1020;
+      --card: #141a2b;
+      --muted: #7a839a;
+      --accent: #6be675;
+      --accent-2: #5cc9f5;
+      --surface: #0f1424;
+      --chip: #1e2540;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: radial-gradient(circle at 20% -10%, rgba(107,230,117,0.15), transparent 40%), radial-gradient(circle at 100% 0%, rgba(92,201,245,0.12), transparent 30%), var(--bg); color: #e8eaf6; }
+    a { color: inherit; text-decoration: none; }
+    header { position: sticky; top: 0; z-index: 10; background: linear-gradient(135deg, #0c1130 0%, #0e1a2b 60%, #0b1020 100%); padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand .logo { width: 34px; height: 34px; display: grid; place-items: center; font-size: 20px; border-radius: 9px; background: linear-gradient(135deg, #2b2f6a, #1b1f57); }
+    .brand h1 { font-size: 1.1rem; margin: 0; font-weight: 700; letter-spacing: .2px; }
+    .grow { flex: 1 1 auto; }
+    .btn { padding: 10px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.04); color: #fff; cursor: pointer; transition: transform .1s ease, background .2s ease; }
+    .btn.primary { background: linear-gradient(135deg, #5bd96b, #3bb45d); border: none; color: #062b0e; font-weight: 600; }
+    .btn.ghost { background: transparent; border: 1px solid rgba(255,255,255,.25); color: #fff; }
+    .container { display: grid; grid-template-columns: 280px 1fr; gap: 16px; padding: 16px; max-width: 1200px; margin: 0 auto; width: 100%; }
+    @media (max-width: 940px){
+      .container { grid-template-columns: 1fr; padding: 8px; }
+      aside.filters { order: 2; }
+      section.showroom { order: 1; }
+    }
+    aside.filters { background: rgba(20,24,40,.75); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); padding: 12px; height: fit-content; position: sticky; top: 64px; align-self: start; }
+    aside.filters h2 { font-size: 0.95rem; margin: 6px 0 12px; color: #dce1ff; }
+    .field { margin-bottom: 12px; display: grid; gap: 6px; }
+    label { font-size: 0.85rem; color: #cad3ff; }
+    input[type="text"], input[type="number"], select { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.04); color: #fff; }
+    input[type="range"] { width: 100%; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+    .card { background: rgba(12,16,32,.8); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
+    .image-wrap { position: relative; width: 100%; height: 180px; background: #111; display: grid; place-items: center; overflow: hidden; }
+    .image-wrap .car-photo { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .image-wrap.loaded .car-photo { display: block; }
+    .image-wrap .emoji { font-size: 42px; }
+    .card .body { padding: 12px; display: grid; gap: 6px; }
+    .title { font-size: 1rem; font-weight: 700; color: #f6f7ff; display: flex; justify-content: space-between; align-items: center; }
+    .meta { font-size: 0.85rem; color: var(--muted); display: flex; gap: 8px; align-items: center; }
+    .chip { background: var(--chip); border-radius: 999px; padding: 6px 10px; font-size: 12px; color: #e5e7ff; }
+    .card-actions { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px 12px; gap: 8px; }
+    .small { font-size: 12px; color: #cbd5ff; }
+    .muted { color: #a6adce; }
+    .padded { padding: 8px; }
+
+    /* Modal */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 20; }
+    .modal-backdrop.active { display: flex; }
+    .modal { background: #0b1228; border-radius: 12px; width: min(720px, 96%); max-height: 90vh; overflow: auto; padding: 12px; }
+    .modal header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .modal .content { padding: 8px 4px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 700px){ .modal .content { grid-template-columns: 1fr; } }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    @media (max-width: 600px){ .form-row { grid-template-columns: 1fr; } }
+    .form-group { display: grid; gap: 6px; }
+    .section-title { font-size: 0.9rem; color: #dbe4ff; margin: 6px 0 4px; }
+    .table { width: 100%; border-collapse: collapse; }
+    .table th, .table td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.08); text-align: left; font-size: 13px; }
+    .avatar { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: #1b1f57; color: #fff; font-size: 14px; }
+
+    /* Admin toolbar */
+    .admin { display: none; position: fixed; bottom: 12px; right: 12px; z-index: 9; background: rgba(12,16,32,.92); border: 1px solid rgba(255,255,255,.25); border-radius: 12px; padding: 8px; gap: 8px; align-items: center; }
+    .admin.active { display: flex; }
+    .tabs { display: flex; gap: 6px; }
+    .tab { padding: 8px 12px; border-radius: 999px; cursor: pointer; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.04); }
+    .tab.active { background: #2b387a; border-color: #5a6bd6; }
+
+    /* Accessibility helpers */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand" aria-label="Brand">
+      <div class="logo" aria-label="logo">🚗</div>
+      <h1>AutoFlow Dealer Showroom</h1>
+    </div>
+    <button id="adminToggle" class="btn" aria-expanded="false" aria-controls="adminPanel">Admin</button>
+    <button id="clearCache" class="btn ghost" title="Reset local data">Reset Seed</button>
+    <div class="grow" aria-hidden="true"></div>
+    <div class="chip" role="status" aria-live="polite" id="statusChip">Ready</div>
+  </header>
+
+  <main class="container" aria-label="Main content">
+    <!-- Filters -->
+    <aside class="filters" aria-label="Filters">
+      <h2>Filters</h2>
+
+      <div class="field">
+        <label for="search">Search</label>
+        <input id="search" type="text" placeholder="Search by make, model, color…" />
+      </div>
+
+      <div class="field">
+        <label for="makeSelect">Make</label>
+        <select id="makeSelect">
+          <option value="">Any</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="bodySelect">Body Type</label>
+        <select id="bodySelect">
+          <option value="">Any</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="fuelSelect">Fuel</label>
+        <select id="fuelSelect">
+          <option value="">Any</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="transSelect">Transmission</label>
+        <select id="transSelect">
+          <option value="">Any</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Price range ($)</label>
+        <div class="form-row">
+          <input id="minPrice" type="number" placeholder="Min" min="0" />
+          <input id="maxPrice" type="number" placeholder="Max" min="0" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Year range</label>
+        <div class="form-row">
+          <input id="minYear" type="number" placeholder="Min" />
+          <input id="maxYear" type="number" placeholder="Max" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Mileage max</label>
+        <input id="maxMileage" type="number" placeholder="Max mileage" />
+      </div>
+
+      <div class="field">
+        <label for="colorSelect">Color</label>
+        <select id="colorSelect">
+          <option value="">Any</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="sortSelect">Sort</label>
+        <select id="sortSelect">
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="year_desc">Year: Newest</option>
+          <option value="mileage_asc">Mileage: Low to High</option>
+        </select>
+      </div>
+
+      <div class="field" style="margin-top:6px;">
+        <button id="resetFilters" class="btn ghost" title="Reset all filters">Reset Filters</button>
+      </div>
+    </aside>
+
+    <!-- Showroom -->
+    <section class="showroom" aria-label="Car showroom">
+      <div id="resultsInfo" class="muted" style="margin:4px 0 8px; color:#cbd5ff;"></div>
+      <div class="grid" id="carGrid"></div>
+
+      <div id="pagination" class="padded" style="display:flex; gap:8px; justify-content:center; padding:8px 0;">
+        <button class="btn" id="prevPage">Prev</button>
+        <span id="pageInfo" class="small" aria-live="polite" style="align-self:center; padding-top:4px;"></span>
+        <button class="btn" id="nextPage">Next</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Detail Modal -->
+  <div id="modalBackdrop" class="modal-backdrop" aria-label="Car details modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" id="carModal" tabindex="-1" aria-label="Car details">
+      <header>
+        <strong id="modalTitle">Car Details</strong>
+        <button class="btn" id="closeModal" aria-label="Close details">Close</button>
+      </header>
+      <div class="content" id="modalContent">
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div class="image-wrap" style="height:260px;">
+            <span class="emoji" id="modalEmoji" aria-label="car emoji">🚗</span>
+            <img class="car-photo" id="modalPhoto" alt="car image" />
+          </div>
+          <div class="muted small" id="modalMeta"></div>
+          <div class="chip" id="modalVin" aria-label="VIN"></div>
+        </div>
+        <div>
+          <div class="section-title">Overview</div>
+          <div id="modalOverview" style="font-size:14px; line-height:1.4;"></div>
+          <div class="section-title" style="margin-top:8px;">Seller</div>
+          <div id="modalSeller" style="font-size:14px; display:flex; gap:8px; align-items:center;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Panel (toggle) -->
+  <div id="adminPanel" class="admin" aria-label="Admin panel" role="region" aria-live="polite">
+    <div class="tabs" role="tablist" aria-label="Admin tabs">
+      <button class="tab active" data-tab="cars" role="tab" aria-selected="true">Cars</button>
+      <button class="tab" data-tab="sellers" role="tab" aria-selected="false">Sellers</button>
+    </div>
+    <div id="carsTab" class="admin-panel" role="tabpanel" aria-label="Cars admin" style="min-width: 420px;">
+      <div class="section-title" style="margin:8px 0;">Add Car</div>
+      <form id="carForm" class="form" autocomplete="off" onsubmit="return false;">
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <input id="carMake" placeholder="Make" required />
+          <input id="carModel" placeholder="Model" required />
+        </div>
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <input id="carYear" type="number" placeholder="Year" required />
+          <input id="carPrice" type="number" placeholder="Price" required />
+        </div>
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <input id="carMileage" type="number" placeholder="Mileage" required />
+          <input id="carColor" placeholder="Color" />
+        </div>
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <select id="carBody" required>
+            <option value="">Body Type</option><option>SUV</option><option>Sedan</option><option>Coupe</option><option>Hatchback</option>
+          </select>
+          <select id="carFuel" required>
+            <option value="">Fuel</option><option>Petrol</option><option>Diesel</option><option>Hybrid</option><option>Electric</option>
+          </select>
+        </div>
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <select id="carTrans" required><option value="">Transmission</option><option>Automatic</option><option>Manual</option></select>
+          <select id="carSeller" required><option value="">Seller</option></select>
+        </div>
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <input id="carEmoji" placeholder="Emoji" value="🚗" required />
+          <input id="carVin" placeholder="VIN (optional)" />
+        </div>
+        <div class="form-row" style="grid-template-columns:1fr; gap:8px;">
+          <input id="carQuery" placeholder="Unsplash query (e.g., car,vehicle)" value="car" />
+        </div>
+        <button class="btn primary" id="addCarBtn" style="width:max-content;">Add Car</button>
+      </form>
+
+      <div class="section-title" style="margin:8px 0;">Cars</div>
+      <table class="table" aria-label="Cars list">
+        <thead>
+          <tr><th>Make</th><th>Model</th><th>Year</th><th>Price</th><th>Seller</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="carsList"></tbody>
+      </table>
+    </div>
+
+    <div id="sellersTab" class="admin-panel" role="tabpanel" aria-label="Sellers admin" style="display:none; min-width: 420px;">
+      <div class="section-title" style="margin:8px 0;">Add Seller</div>
+      <form id="sellerForm" autocomplete="off" onsubmit="return false;">
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <input id="sellerName" placeholder="Name" required />
+          <input id="sellerEmail" type="email" placeholder="Email" required />
+        </div>
+        <div class="form-row" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <input id="sellerPhone" placeholder="Phone" />
+          <input id="sellerLocation" placeholder="Location" />
+        </div>
+        <button class="btn primary" id="addSellerBtn" style="width:max-content;">Add Seller</button>
+      </form>
+
+      <div class="section-title" style="margin:8px 0;">Sellers</div>
+      <table class="table" aria-label="Sellers list">
+        <thead><tr><th>Name</th><th>Email</th><th>Location</th><th>Actions</th></tr></thead>
+        <tbody id="sellersList"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Inline in-browser "API" backed by localStorage
+    const DB_KEY = 'af-db-v1';
+    let db = null;
+    let writeQueue = Promise.resolve();
+
+    // Seed data
+    function getSeed() {
+      const now = new Date().toISOString();
+      // Two sellers
+      const s1 = { id: id(), name: "Apex Motors", email: "hello@apex.example", phone: "+1 555-1111", location: "New York, NY", createdAt: now, updatedAt: now };
+      const s2 = { id: id(), name: "Horizon Autos", email: "contact@horizon.example", phone: "+1 555-2222", location: "Los Angeles, CA", createdAt: now, updatedAt: now };
+      // Cars (12)
+      const cars = [
+        { id: id(), make: "Toyota", model: "Camry", year: 2018, price: 13999, mileage: 42000, bodyType: "Sedan", fuel: "Hybrid", transmission: "Automatic", color: "Blue", sellerId: s1.id, emoji: "🚗", unsplashQuery: "car blue", vin: "1HGBH41JXMN000000", createdAt: now, updatedAt: now },
+        { id: id(), make: "Honda", model: "Civic", year: 2020, price: 17999, mileage: 21000, bodyType: "Sedan", fuel: "Petrol", transmission: "Automatic", color: "Red", sellerId: s2.id, emoji: "🚗", unsplashQuery: "car red", vin: "2HGEJ6678X0000001", createdAt: now, updatedAt: now },
+        { id: id(), make: "Tesla", model: "Model 3", year: 2021, price: 39999, mileage: 12000, bodyType: "Sedan", fuel: "Electric", transmission: "Automatic", color: "White", sellerId: s1.id, emoji: "⚡", unsplashQuery: "electric car", vin: "5YJ3E1EA7MF000000", createdAt: now, updatedAt: now },
+        { id: id(), make: "Ford", model: "Explorer", year: 2019, price: 28999, mileage: 34000, bodyType: "SUV", fuel: "Petrol", transmission: "Automatic", color: "Black", sellerId: s2.id, emoji: "🚙", unsplashQuery: "suv black", vin: "1FM5K8D73KLA00000", createdAt: now, updatedAt: now },
+        { id: id(), make: "BMW", model: "3 Series", year: 2017, price: 21999, mileage: 54000, bodyType: "Sedan", fuel: "Diesel", transmission: "Automatic", color: "Grey", sellerId: s1.id, emoji: "🚗", unsplashQuery: "bmw car", vin: "WBA8E9G56GNU00000", createdAt: now, updatedAt: now },
+        { id: id(), make: "Audi", model: "A4", year: 2018, price: 23999, mileage: 42000, bodyType: "Sedan", fuel: "Petrol", transmission: "Automatic", color: "Silver", sellerId: s2.id, emoji: "🚘", unsplashQuery: "audi car", vin: "WAUZZZ8K6JA000000", createdAt: now, updatedAt: now },
+        { id: id(), make: "Hyundai", model: "Tucson", year: 2020, price: 19999, mileage: 18000, bodyType: "SUV", fuel: "Petrol", transmission: "Automatic", color: "Green", sellerId: s1.id, emoji: "🚗", unsplashQuery: "hyundai tucson", vin: "KM8J33A45LU000000", createdAt: now, updatedAt: now },
+        { id: id(), make: "Toyota", model: "RAV4", year: 2022, price: 28999, mileage: 8000, bodyType: "SUV", fuel: "Hybrid", transmission: "Automatic", color: "White", sellerId: s2.id, emoji: "🛻", unsplashQuery: "rav4", vin: "2T3JFREV7NW000000", createdAt: now, updatedAt: now },
+        { id: id(), make: "Mercedes", model: "C-Class", year: 2016, price: 16999, mileage: 78000, bodyType: "Sedan", fuel: "Petrol", transmission: "Automatic", color: "Blue", sellerId: s1.id, emoji: "🚗", unsplashQuery: "mercedes car", vin: "WDDGF8AB6GR000000", createdAt: now, updatedAt: now },
+        { id: id(), make: "Nissan", model: "Altima", year: 2015, price: 11999, mileage: 94000, bodyType: "Sedan", fuel: "Petrol", transmission: "Automatic", color: "Gold", sellerId: s2.id, emoji: "🚗", unsplashQuery: "nissan altima", vin: "1N4AL3AP0FC000000", createdAt: now, updatedAt: now },
+        { id: id(), make: "Kia", model: "Sorento", year: 2018, price: 15999, mileage: 52000, bodyType: "SUV", fuel: "Petrol", transmission: "Automatic", color: "Red", sellerId: s1.id, emoji: "🚗", unsplashQuery: "kia sorento", vin: "5XYPK4A56JG000000", createdAt: now, updatedAt: now }
+      ];
+      return { meta: { version: 1 }, sellers: [s1, s2], cars };
+    }
+
+    // ID helper
+    function id() { try { return crypto.randomUUID(); } catch (e) { return 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2,8); } }
+
+    // DB load/seed
+    function loadDB() {
+      const raw = localStorage.getItem(DB_KEY);
+      if (!raw) {
+        const seed = getSeed();
+        localStorage.setItem(DB_KEY, JSON.stringify(seed));
+        return seed;
+      }
+      try { return JSON.parse(raw); } catch { return getSeed(); }
+    }
+
+    function saveDB(newDb) {
+      // naive atomic-ish write with queue to simulate lock
+      writeQueue = writeQueue.then(() => {
+        localStorage.setItem(DB_KEY, JSON.stringify(newDb));
+        db = newDb;
+        return;
+      }).catch(() => {});
+      return writeQueue;
+    }
+
+    // Simple API shim
+    const apiFetch = {
+      get: async (path, params) => {
+        const data = db;
+        if (path === '/api/cars') {
+          let cars = data.cars.slice();
+          // Filtering
+          const p = new URLSearchParams(params || '');
+          const q = (p.get('search') || '').toLowerCase();
+          if (q) cars = cars.filter(c => [c.make, c.model, c.color, c.bodyType, c.fuel].join(' ').toLowerCase().includes(q));
+          const make = p.get('make'); if (make) cars = cars.filter(c => c.make === make);
+          const body = p.get('bodyType'); if (body) cars = cars.filter(c => c.bodyType === body);
+          const fuel = p.get('fuel'); if (fuel) cars = cars.filter(c => c.fuel === fuel);
+          const trans = p.get('transmission'); if (trans) cars = cars.filter(c => c.transmission === trans);
+          const color = p.get('color'); if (color) cars = cars.filter(c => c.color === color);
+
+          // numeric ranges
+          const minP = parseInt(p.get('minPrice')); if (!isNaN(minP)) cars = cars.filter(c => c.price >= minP);
+          const maxP = parseInt(p.get('maxPrice')); if (!isNaN(maxP)) cars = cars.filter(c => c.price <= maxP);
+          const minY = parseInt(p.get('minYear')); if (!isNaN(minY)) cars = cars.filter(c => c.year >= minY);
+          const maxY = parseInt(p.get('maxYear')); if (!isNaN(maxY)) cars = cars.filter(c => c.year <= maxY);
+          const maxM = parseInt(p.get('maxMileage')); if (!isNaN(maxM)) cars = cars.filter(c => c.mileage <= maxM);
+
+          // sort
+          const sort = p.get('sort') || 'price_asc';
+          const [sField, sDir] = sort.split('_');
+          cars.sort((a,b) => {
+            const va = a[sField], vb = b[sField];
+            if (va < vb) return sDir==='asc' ? -1 : 1;
+            if (va > vb) return sDir==='asc' ? 1 : -1;
+            return 0;
+          });
+
+          // pagination
+          const page = parseInt(p.get('page')) || 1;
+          const pageSize = parseInt(p.get('pageSize')) || 6;
+          const total = cars.length;
+          const start = (page-1)*pageSize;
+          const paged = cars.slice(start, start+pageSize);
+          return { status: 200, json: () => Promise.resolve({ total, page, pageSize, cars: paged }) };
+        }
+        if (path.startsWith('/api/cars/')) {
+          const cid = path.split('/').pop();
+          const c = data.cars.find(x => x.id === cid);
+          if (!c) return { status: 404, json: () => Promise.resolve({ error: 'Not found' }) };
+          return { status: 200, json: () => Promise.resolve(c) };
+        }
+        if (path === '/api/sellers') {
+          return { status: 200, json: () => Promise.resolve(data.sellers) };
+        }
+        if (path.startsWith('/api/sellers/')) {
+          const sid = path.split('/').pop();
+          const s = data.sellers.find(x => x.id === sid);
+          if (!s) return { status: 404, json: () => Promise.resolve({ error: 'Not found' }) };
+          return { status: 200, json: () => Promise.resolve(s) };
+        }
+        return { status: 404, json: () => Promise.resolve({error:'Unknown endpoint'}) };
+      },
+      post: async (path, body) => {
+        if (path === '/api/sellers') {
+          // validation
+          if (!body.name || !body.email) return { status: 400, json: () => Promise.resolve({ error: 'Missing seller fields' }) };
+          // unique email
+          if (db.sellers.find(s => s.email === body.email)) return { status: 409, json: () => Promise.resolve({ error: 'Email already exists' }) };
+          const seller = { id: id(), name: body.name, email: body.email, phone: body.phone || '', location: body.location || '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+          const newDb = { ...db, sellers: [...db.sellers, seller] };
+          return { status: 201, json: () => Promise.resolve(seller), headers: {} , then: null }.then ? null : (async () => { await saveDB(newDb); return { status: 201, json: () => Promise.resolve(seller) }; })();
+        }
+        if (path === '/api/cars') {
+          if (!body.make || !body.model || !body.year || !body.price || !body.mileage || !body.bodyType || !body.fuel || !body.transmission || !body.sellerId) {
+            return { status: 400, json: () => Promise.resolve({ error: 'Missing car fields' }) };
+          }
+          // FK
+          if (!db.sellers.find(s => s.id === body.sellerId)) {
+            return { status: 409, json: () => Promise.resolve({ error: 'Seller not found' }) };
+          }
+          // unique VIN to some extent
+          if (body.vin && db.cars.find(c => c.vin === body.vin)) {
+            return { status: 409, json: () => Promise.resolve({ error: 'VIN already exists' }) };
+          }
+          const c = {
+            id: id(), make: body.make, model: body.model, year: Number(body.year),
+            price: Number(body.price), mileage: Number(body.mileage), bodyType: body.bodyType,
+            fuel: body.fuel, transmission: body.transmission, color: body.color || '', sellerId: body.sellerId,
+            emoji: body.emoji || '🚗', unsplashQuery: body.unsplashQuery || 'car', vin: body.vin || '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+          };
+          const newDb = { ...db, cars: [c, ...db.cars] };
+          return (async () => { await saveDB(newDb); return { status: 201, json: () => Promise.resolve(c) }; })();
+        }
+        return { status: 404, json: () => Promise.resolve({ error: 'Unknown endpoint' }) };
+      },
+      put: async (path, body) => {
+        if (path.startsWith('/api/sellers/')) {
+          const sid = path.split('/').pop();
+          const s = db.sellers.find(x => x.id === sid);
+          if (!s) return { status: 404, json: () => Promise.resolve({ error: 'Not found' }) };
+          // unique email if changed
+          if (body.email && body.email !== s.email && db.sellers.find(x => x.email === body.email)) {
+            return { status: 409, json: () => Promise.resolve({ error: 'Email already exists' }) };
+          }
+          const updated = { ...s, ...body, updatedAt: new Date().toISOString() };
+          const sellers = db.sellers.map(x => x.id === sid ? updated : x);
+          const newDb = { ...db, sellers };
+          await saveDB(newDb);
+          return { status: 200, json: () => Promise.resolve(updated) };
+        }
+        if (path.startsWith('/api/cars/')) {
+          const cid = path.split('/').pop();
+          const car = db.cars.find(x => x.id === cid);
+          if (!car) return { status: 404, json: () => Promise.resolve({ error: 'Not found' }) };
+          // FK check if sellerId changed
+          if (body.sellerId && !db.sellers.find(s => s.id === body.sellerId)) {
+            return { status: 409, json: () => Promise.resolve({ error: 'Seller not found' }) };
+          }
+          const updated = { ...car, ...body, updatedAt: new Date().toISOString() };
+          const cars = db.cars.map(x => x.id === cid ? updated : x);
+          const newDb = { ...db, cars };
+          await saveDB(newDb);
+          return { status: 200, json: () => Promise.resolve(updated) };
+        }
+        return { status: 404, json: () => Promise.resolve({ error: 'Unknown endpoint' }) };
+      },
+      delete: async (path) => {
+        if (path.startsWith('/api/sellers/')) {
+          const sid = path.split('/').pop();
+          // cannot delete if cars reference seller
+          if (db.cars.find(c => c.sellerId === sid)) {
+            return { status: 409, json: () => Promise.resolve({ error: 'Seller has cars; cannot delete' }) };
+          }
+          const sellers = db.sellers.filter(x => x.id !== sid);
+          const newDb = { ...db, sellers };
+          await saveDB(newDb);
+          return { status: 200, json: () => Promise.resolve({ message: 'Deleted' }) };
+        }
+        if (path.startsWith('/api/cars/')) {
+          const cid = path.split('/').pop();
+          const exists = db.cars.some(c => c.id === cid);
+          if (!exists) return { status: 404, json: () => Promise.resolve({ error: 'Not found' }) };
+          const cars = db.cars.filter(c => c.id !== cid);
+          const newDb = { ...db, cars };
+          await saveDB(newDb);
+          return { status: 200, json: () => Promise.resolve({ message: 'Deleted' }) };
+        }
+        return { status: 404, json: () => Promise.resolve({ error: 'Unknown endpoint' }) };
+      }
+    };
+
+    // Override fetch for /api calls
+    (function patchFetch(){
+      const real = window.fetch.bind(window);
+      window.fetch = async function(input, init){
+        if (typeof input === 'string' && input.startsWith('/api')) {
+          const url = new URL(input, location.origin);
+          const path = url.pathname;
+          const params = Object.fromEntries(url.searchParams.entries());
+          const method = (init && init.method) || 'GET';
+          const body = init && init.body ? JSON.parse(init.body) : null;
+
+          if (method === 'GET') {
+            const resp = await apiFetch.get(path, params);
+            return new Response(JSON.stringify(await resp.json()), { status: resp.status, headers: { 'Content-Type': 'application/json' } });
+          } else if (method === 'POST') {
+            const resp = await apiFetch.post(path, body || {});
+            const status = resp.status;
+            const payload = await resp.json();
+            return new Response(JSON.stringify(payload), { status, headers: { 'Content-Type': 'application/json' } });
+          } else if (method === 'PUT') {
+            const resp = await apiFetch.put(path, body || {});
+            const status = resp.status;
+            const payload = await resp.json();
+            return new Response(JSON.stringify(payload), { status, headers: { 'Content-Type': 'application/json' } });
+          } else if (method === 'DELETE') {
+            const resp = await apiFetch.delete(path);
+            const status = resp.status;
+            const payload = await resp.json();
+            return new Response(JSON.stringify(payload), { status, headers: { 'Content-Type': 'application/json' } });
+          }
+        }
+        return real(input, init);
+      };
+    })();
+
+    // UI helpers
+    function showStatus(text){
+      const el = document.getElementById('statusChip');
+      el.textContent = text;
+    }
+
+    function $(sel){ return document.querySelector(sel); }
+    function $all(sel){ return Array.from(document.querySelectorAll(sel)); }
+
+    // Init app
+    function init() {
+      db = loadDB();
+      // build seller select
+      renderSellersInAdmin();
+      // populate filter options
+      populateFilterOptions();
+      // render initial grid
+      renderGrid();
+
+      // event bindings
+      $('#search').addEventListener('input', debounce(() => applyFilters(), 250));
+      $('#makeSelect').addEventListener('change', applyFilters);
+      $('#bodySelect').addEventListener('change', applyFilters);
+      $('#fuelSelect').addEventListener('change', applyFilters);
+      $('#transSelect').addEventListener('change', applyFilters);
+      $('#colorSelect').addEventListener('change', applyFilters);
+      $('#minPrice').addEventListener('input', applyFilters);
+      $('#maxPrice').addEventListener('input', applyFilters);
+      $('#minYear').addEventListener('input', applyFilters);
+      $('#maxYear').addEventListener('input', applyFilters);
+      $('#maxMileage').addEventListener('input', applyFilters);
+      $('#sortSelect').addEventListener('change', applyFilters);
+      $('#resetFilters').addEventListener('click', resetFilters);
+
+      $('#prevPage').addEventListener('click', () => { if (state.page > 1) { state.page--; renderGrid(); } });
+      $('#nextPage').addEventListener('click', () => { if (state.page * state.pageSize < state.total) { state.page++; renderGrid(); } });
+
+      $('#adminToggle').addEventListener('click', () => {
+        const panel = document.getElementById('adminPanel');
+        panel.classList.toggle('active');
+        const on = panel.classList.contains('active');
+        $('#adminToggle').setAttribute('aria-expanded', on ? 'true' : 'false');
+      });
+
+      $('#closeModal').addEventListener('click', closeModal);
+      $('#modalBackdrop').addEventListener('click', (e) => {
+        if (e.target === $('#modalBackdrop')) closeModal();
+      });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+      // Admin: add car
+      $('#addCarBtn').addEventListener('click', async () => {
+        const payload = {
+          make: $('#carMake').value,
+          model: $('#carModel').value,
+          year: Number($('#carYear').value),
+          price: Number($('#carPrice').value),
+          mileage: Number($('#carMileage').value),
+          bodyType: $('#carBody').value,
+          fuel: $('#carFuel').value,
+          transmission: $('#carTrans').value,
+          color: $('#carColor').value,
+          sellerId: $('#carSeller').value,
+          emoji: $('#carEmoji').value,
+          unsplashQuery: $('#carQuery').value,
+          vin: $('#carVin').value
+        };
+        // basic client-side validation
+        if (!payload.make || !payload.model || !payload.year || !payload.price || !payload.mileage || !payload.bodyType || !payload.fuel || !payload.transmission || !payload.sellerId) {
+          alert('Please fill required fields');
+          return;
+        }
+        const res = await fetch('/api/cars', { method: 'POST', headers: {'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+        if (res.status === 201) {
+          const newCar = await res.json();
+          // refresh data
+          db = loadDB();
+          renderSellersInAdmin();
+          showStatus('Car added');
+          renderGrid();
+        } else {
+          const err = await res.json();
+          alert('Error: ' + (err?.error || 'Could not add car'));
+        }
+      });
+
+      // Admin: add seller
+      $('#addSellerBtn')?.addEventListener('click', async () => {
+        const payload = {
+          name: $('#sellerName').value,
+          email: $('#sellerEmail').value,
+          phone: $('#sellerPhone').value,
+          location: $('#sellerLocation').value
+        };
+        if (!payload.name || !payload.email) { alert('Name and email required'); return; }
+        const res = await fetch('/api/sellers', { method: 'POST', headers: {'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+        if (res.status === 201) {
+          await res.json();
+          db = loadDB();
+          renderSellersInAdmin();
+          showStatus('Seller added');
+        } else {
+          const err = await res.json();
+          alert('Error: ' + (err?.error || 'Could not add seller'));
+        }
+      });
+
+      // initial UI polish
+      // Build color options
+      populateColorSet();
+    }
+
+    // Debounce helper
+    function debounce(fn, ms){ let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn.apply(this, a), ms); }; }
+
+    // Admin renderers
+    function renderSellersInAdmin(){
+      const select = $('#carSeller');
+      if (!select) return;
+      // clear
+      select.innerHTML = '<option value="">Seller</option>';
+      db.sellers.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = s.name;
+        select.appendChild(opt);
+      });
+      // sellers list table
+      const t = document.getElementById('sellersList');
+      t.innerHTML = '';
+      db.sellers.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${s.name}</td><td>${s.email}</td><td>${s.location || ''}</td><td><button class="btn ghost" data-id="${s.id}">Delete</button></td>`;
+        t.appendChild(tr);
+      });
+      t.querySelectorAll('button[data-id]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const sid = e.target.getAttribute('data-id');
+          const res = await fetch('/api/sellers/' + sid, { method: 'DELETE' });
+          if (res.status === 200) {
+            db = loadDB();
+            renderSellersInAdmin();
+            renderGrid();
+            showStatus('Seller deleted');
+          } else {
+            const err = await res.json();
+            alert('Error: ' + (err?.error || 'Could not delete seller'));
+          }
+        });
+      });
+    }
+
+    function populateFilterOptions(){
+      const makes = new Set(); const body = new Set(); const colors = new Set(); const fuels = new Set(); const trans = new Set();
+      db.cars.forEach(c => {
+        makes.add(c.make); body.add(c.bodyType); colors.add(c.color); fuels.add(c.fuel); trans.add(c.transmission);
+      });
+      const m = document.getElementById('makeSelect'); makes.forEach(v => {
+        const opt = document.createElement('option'); opt.value = v; opt.textContent = v; m.appendChild(opt);
+      });
+      const b = document.getElementById('bodySelect'); body.forEach(v => { const opt = document.createElement('option'); opt.value = v; opt.textContent = v; b.appendChild(opt); });
+      const f = document.getElementById('fuelSelect'); fuels.forEach(v => { const opt = document.createElement('option'); opt.value = v; opt.textContent = v; f.appendChild(opt); });
+      const t = document.getElementById('transSelect'); trans.forEach(v => { const opt = document.createElement('option'); opt.value = v; opt.textContent = v; t.appendChild(opt); });
+      const clr = document.getElementById('colorSelect'); colors.forEach(v => { const opt = document.createElement('option'); opt.value = v; opt.textContent = v; clr.appendChild(opt); });
+      // color options done
+      // also update seller list in car form
+      renderSellersInAdmin();
+    }
+
+    function populateColorSet(){
+      // ensure color options exist (already populated in populateFilterOptions)
+    }
+
+    // Filtering state
+    const state = {
+      page: 1,
+      pageSize: 6,
+      total: 0
+    };
+
+    function resetFilters(){
+      $('#search').value = '';
+      $('#makeSelect').value = '';
+      $('#bodySelect').value = '';
+      $('#fuelSelect').value = '';
+      $('#transSelect').value = '';
+      $('#colorSelect').value = '';
+      $('#minPrice').value = '';
+      $('#maxPrice').value = '';
+      $('#minYear').value = '';
+      $('#maxYear').value = '';
+      $('#maxMileage').value = '';
+      $('#sortSelect').value = 'price_asc';
+      applyFilters();
+    }
+
+    // Car grid rendering
+    async function renderGrid(){
+      const params = {
+        search: $('#search').value,
+        make: $('#makeSelect').value,
+        bodyType: $('#bodySelect').value,
+        fuel: $('#fuelSelect').value,
+        transmission: $('#transSelect').value,
+        color: $('#colorSelect').value,
+        minPrice: $('#minPrice').value,
+        maxPrice: $('#maxPrice').value,
+        minYear: $('#minYear').value,
+        maxYear: $('#maxYear').value,
+        maxMileage: $('#maxMileage').value,
+        sort: $('#sortSelect').value,
+        page: state.page,
+        pageSize: state.pageSize
+      };
+      // fetch from fake API
+      const res = await fetch('/api/cars?' + new URLSearchParams(params).toString(), { method: 'GET' });
+      if (res.status !== 200) {
+        showStatus('Failed to load cars');
+        return;
+      }
+      const data = await res.json();
+      state.total = data.total || 0;
+      const grid = document.getElementById('carGrid');
+      grid.innerHTML = '';
+      data.cars.forEach(car => grid.appendChild(renderCarCard(car)));
+      document.getElementById('pageInfo').textContent = `Page ${state.page} / ${Math.max(1, Math.ceil(state.total / state.pageSize))}`;
+      document.getElementById('resultsInfo').textContent = `${data.total} car(s) found`;
+    }
+
+    function renderCarCard(car){
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.setAttribute('role', 'article');
+      card.setAttribute('aria-label', `${car.year} ${car.make} ${car.model}`);
+      const imageWrap = document.createElement('div');
+      imageWrap.className = 'image-wrap';
+      imageWrap.style.background = '#111';
+      const emojiEl = document.createElement('span');
+      emojiEl.className = 'emoji';
+      emojiEl.textContent = car.emoji || '🚗';
+      const img = document.createElement('img');
+      img.className = 'car-photo';
+      img.alt = car.make + ' ' + car.model;
+      // attempt to load unsplash image after render
+      imageWrap.appendChild(emojiEl);
+      imageWrap.appendChild(img);
+      // image loading
+      const url = `https://source.unsplash.com/600x400/?${encodeURIComponent(car.unsplashQuery || 'car')}`;
+      img.onload = () => imageWrap.classList.add('loaded');
+      img.onerror = () => {
+        // keep emoji visible
+      };
+      // Start loading image after small delay to show emoji-first
+      setTimeout(() => { img.src = url; }, 150);
+
+      const body = document.createElement('div');
+      body.className = 'body';
+      const t = document.createElement('div'); t.className = 'title';
+      t.textContent = car.make + ' ' + car.model;
+      const price = document.createElement('span');
+      price.textContent = '$' + car.price.toLocaleString();
+      t.appendChild(price);
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.innerHTML = `<span class="chip">${car.year}</span><span class="chip">${car.mileage.toLocaleString()} mi</span><span class="chip">${car.bodyType}</span>`;
+
+      body.appendChild(t);
+      body.appendChild(meta);
+
+      const actions = document.createElement('div');
+      actions.className = 'card-actions';
+      const details = document.createElement('button');
+      details.className = 'btn';
+      details.textContent = 'Details';
+      details.addEventListener('click', () => openModal(car.id));
+      const edit = document.createElement('button');
+      edit.className = 'btn ghost';
+      edit.textContent = 'Edit';
+      edit.addEventListener('click', () => editCarInline(car.id));
+      actions.appendChild(details);
+      actions.appendChild(edit);
+
+      card.appendChild(imageWrap);
+      card.appendChild(body);
+      card.appendChild(actions);
+      return card;
+    }
+
+    // Modal
+    async function openModal(carId){
+      const c = db.cars.find(x => x.id === carId);
+      if (!c) return;
+      $('#modalEmoji').textContent = c.emoji || '🚗';
+      const img = $('#modalPhoto');
+      const url = `https://source.unsplash.com/1200x800/?${encodeURIComponent(c.unsplashQuery || 'car')}`;
+      img.onload = () => $('#carModal').classList.add('loaded');
+      img.onerror = () => {};
+      img.src = url;
+      $('#modalVin').textContent = 'VIN: ' + (c.vin || 'N/A');
+      $('#modalOverview').textContent = `${c.year} ${c.make} ${c.model} • ${c.bodyType} • ${c.fuel} • ${c.transmission} transmission • ${c.color}`;
+      const seller = db.sellers.find(s => s.id === c.sellerId);
+      const sellerEl = $('#modalSeller');
+      sellerEl.innerHTML = '';
+      if (seller) {
+        const avatar = document.createElement('span');
+        avatar.className = 'avatar';
+        avatar.textContent = seller.name.charAt(0).toUpperCase();
+        sellerEl.appendChild(avatar);
+        const info = document.createElement('span');
+        info.textContent = seller.name + ' • ' + (seller.location || '');
+        sellerEl.appendChild(info);
+      }
+      $('#modalTitle').textContent = c.make + ' ' + c.model;
+      $('#modalBackdrop').classList.add('active');
+      $('#modalBackdrop').setAttribute('aria-hidden','false');
+      // focus trap start
+      document.getElementById('carModal').focus();
+    }
+
+    function closeModal(){
+      $('#modalBackdrop').classList.remove('active');
+      $('#modalBackdrop').setAttribute('aria-hidden','true');
+    }
+
+    // Seed/init at load
+    (function bootstrap(){
+      init();
+      // When pressing on document, allow ESC to close modal
+    })();
+
+  </script>
+  <!-- END OF APP -->
+  
+</body>
+</html>
