@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat Prototype – Engineering-Friendly UI</title>
+  <style>
+    :root{
+      --bg: #0f1220;
+      --surface: #141a2a;
+      --surface-2: #1e2540;
+      --text: #e9eaf7;
+      --muted: #a6a9b8;
+      --primary: #6c9cff;
+      --accent: #22d1aa;
+      --bubble-me: #4f6bd6;
+      --bubble-you: #2a2f4a;
+      --border: rgba(255,255,255,0.08);
+      --shadow: 0 6px 20px rgba(0,0,0,.25);
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    html, body, #root { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system;
+      background: radial-gradient( circle at 20% -10%, rgba(108,156,255,.15), transparent 40%), 
+                  radial-gradient(circle at 100% 0%, rgba(34,209,170,.15), transparent 40%),
+                  var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+    /* Top README-style note */
+    .readme {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(#0e1020, #11152a);
+      font-size: 12.5px;
+      color: #dbe4ff;
+    }
+    .readme code { font-family: ui-monospace,SFMono-Regular,Monaco,Consolas; background:#1e2540; padding:2px 6px; border-radius:6px; }
+    .container {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: calc(100vh - 0px);
+    }
+    @media (max-width: 900px){
+      .container { grid-template-columns: 1fr; height: 100vh; }
+      .sidebar { display: none; }
+      .chat-area { height: 100%; }
+      .mobile-header { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border); }
+    }
+
+    /* Sidebar (Chats) */
+    .sidebar {
+      border-right: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(20,26,42,.95), rgba(20,26,42,.75));
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-bottom: 8px;
+    }
+    .search {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+    }
+    .chat-list { overflow: auto; margin-top: 8px; padding-right: 4px; }
+    .chat-item {
+      display: flex; gap: 10px; align-items: center;
+      padding: 10px; border-radius: 10px; cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .chat-item:hover { background: rgba(255,255,255,.04); border-color: var(--border); }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: white; font-weight: bold;
+    }
+    .chat-info { display: flex; flex-direction: column; min-width: 0; }
+    .chat-name { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chat-last { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .unread { background: #4c5cff; color: white; padding: 2px 6px; border-radius: 999px; font-size: 11px; margin-left: auto; }
+
+    /* Chat area */
+    .chat-area {
+      display: flex; flex-direction: column; height: 100%; background: linear-gradient(180deg, rgba(20,26,42,.92), rgba(12,16,30,.92));
+    }
+    .mobile-header { display:none; }
+
+    .chat-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      background: rgba(20,26,42,.98);
+    }
+    .chat-header-title { display:flex; align-items: center; gap: 10px; }
+    .participants { font-size: 12px; color: var(--muted); }
+
+    .messages {
+      flex: 1; overflow: auto; padding: 16px; display:flex; flex-direction: column; gap: 6px;
+      scrollbar-width: thin;
+    }
+    .message {
+      max-width: 72%; padding: 8px 10px; border-radius: 12px;
+      border: 1px solid var(--border); position: relative;
+      display: inline-block; white-space: pre-wrap;
+    }
+    .message.me { align-self: flex-end; background: var(--bubble-me); color: white; border-color: rgba(255,255,255,.2); }
+    .message.you { align-self: flex-start; background: var(--bubble-you); color: white; border-color: rgba(255,255,255,.15); }
+    .message .meta { font-size: 10px; color: rgba(255,255,255,.7); margin-top: 6px; }
+    .message-actions { position: absolute; top: -8px; right: -8px; display: flex; gap: 4px; }
+    .icon-btn { background: rgba(0,0,0,.25); border: 1px solid var(--border); border-radius: 8px; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; }
+    .attachment {
+      margin-top: 6px; display: block; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
+    }
+    .attachment img { max-width: 100%; display:block; }
+    .attachment .file { padding: 6px; font-size: 12px; color: #fff; background: rgba(0,0,0,.25); text-decoration: none; display: inline-block; border-radius: 6px; }
+
+    .composer {
+      padding: 12px; border-top: 1px solid var(--border); display: grid; grid-template-columns: auto 1fr auto; gap: 8px;
+      background: rgba(12,16,30,.98);
+    }
+    .composer textarea {
+      width: 100%; min-height: 48px; max-height: 180px; resize: vertical;
+      padding: 10px; border-radius: 10px; border: 1px solid var(--border);
+      background: rgba(255,255,255,.04); color: var(--text);
+    }
+    .toolbar { display: flex; gap: 6px; align-items: center; }
+    .btn {
+      padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border);
+      background: linear-gradient(#1a2140, #151a3a); color: white; cursor: pointer;
+    }
+    .btn.primary { background: linear-gradient(#5b86ff,#4c6bff); border: none; }
+    .btn.ghost { background: rgba(255,255,255,.04); }
+    .input-sm { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: rgba(255,255,255,.04); color: var(--text); }
+
+    /* Saved view & modal */
+    .modal {
+      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,.4); padding: 20px;
+    }
+    .modal.active { display:flex; }
+    .modal-card { width: min(520px, 90%); background: #11152a; border-radius: 12px; padding: 16px; border:1px solid var(--border); }
+
+    /* Inline link previews */
+    .preview {
+      border: 1px solid var(--border); border-radius: 8px; padding: 8px; margin-top: 6px; background: rgba(255,255,255,.04);
+    }
+    .preview-img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; background: #333; }
+
+    /* Tiny toast */
+    .toast {
+      position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+      background: #11152a; border: 1px solid var(--border); padding: 10px 14px; border-radius: 999px; box-shadow: var(--shadow);
+      z-index: 9999;
+    }
+
+    /* Saved panel (sidebar-like toggle) */
+    .saved-panel { display: none; }
+    @media (min-width: 901px){
+      .saved-panel { display: block; padding: 8px 12px; border-left: 1px solid var(--border); min-height: 40px; }
+    }
+
+    /* Basic accessibility helpers */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding:0; margin:-1px; overflow: hidden; clip: rect(0,0,0,0); border:0; }
+  </style>
+</head>
+<body>
+  <!-- Top-level README-style usage note -->
+  <div class="readme" aria-label="Usage instructions">
+    <strong>Chat Prototype (No Backend)</strong> — This single-file, self-contained UI demonstrates a polished chat prototype with:
+    - Multi-tab-safe state via localStorage and BroadcastChannel
+    - Seeded data, migrations, and clear data export/reset
+    - Simulated latency, offline mode, bot responses, link previews, attachments, reactions
+    - Markdown-like formatting (bold, italic) and auto-link detection
+    - REST/socket integration points (placeholders in code)
+    - Accessibility and keyboard navigation
+    <br/>Usage tips: Use the controls on the left to switch chats, compose messages on the bottom, attach files, and toggle latency/offline states. For backend integration, plug in REST endpoints (e.g., /api/auth/login, /api/chats) and socket events (message:send, message:new, typing, presence:update, read) in the JavaScript section marked with integration points.
+  </div>
+
+  <div class="container" id="app-root">
+    <!-- Sidebar: Chats -->
+    <aside class="sidebar" aria-label="Chats">
+      <div class="sidebar-header">
+        <strong>Chats</strong>
+        <button class="btn" id="new-chat-btn" aria-label="New chat">New</button>
+      </div>
+      <input class="search" id="search-chat" placeholder="Search chats..." aria-label="Search chats" />
+      <div class="chat-list" id="chat-list" role="navigation" aria-label="Chat list">
+        <!-- Chat items inserted by JS -->
+      </div>
+    </aside>
+
+    <!-- Chat area -->
+    <section class="chat-area" aria-label="Chat window" id="chat-area">
+      <div class="mobile-header" aria-label="Chat header mobile" style="display:none;">
+        <span id="mobile-chat-name"></span>
+        <button class="btn" id="toggle-chat-list" aria-label="Show chats">Chats</button>
+      </div>
+      <div class="chat-header" id="chat-header" role="region" aria-label="Chat header">
+        <div class="chat-header-title">
+          <div class="avatar" id="chat-avatar" aria-label="Chat avatar" style="background: #556;">
+            U
+          </div>
+          <div>
+            <div id="chat-name" style="font-weight:600;"></div>
+            <div class="participants" id="chat-participants"></div>
+          </div>
+        </div>
+        <div class="toolbar" role="toolbar" aria-label="Chat actions">
+          <button class="btn" id="rename-chat" aria-label="Rename group">Rename</button>
+          <button class="btn" id="leave-chat" aria-label="Leave chat" title="Leave chat">Leave</button>
+        </div>
+      </div>
+
+      <div class="messages" id="messages" role="log" aria-label="Messages">
+        <!-- Messages render here -->
+      </div>
+
+      <!-- Attach preview area to show generated previews -->
+      <div id="global-previews" aria-live="polite" class="sr-only"></div>
+
+      <div class="composer" aria-label="Message composer">
+        <button class="btn" id="attach-btn" aria-label="Attach file">📎</button>
+        <input type="file" id="file-input" multiple style="display:none" />
+        <textarea id="message-input" placeholder="Write a message... (Enter to send, Shift+Enter for new line)" aria-label="Message input"></textarea>
+        <button class="btn primary" id="send-btn" aria-label="Send message">Send</button>
+      </div>
+    </section>
+
+    <!-- Saved panel (right) -->
+    <section class="saved-panel" aria-label="Saved messages" id="saved-panel">
+      <div style="display:flex; justify-content: space-between; align-items:center; padding-bottom:6px;">
+        <strong>Saved</strong>
+        <button class="btn" id="clear-saved" aria-label="Clear saved">Clear</button>
+      </div>
+      <div id="saved-list" style="max-height:60vh; overflow:auto; padding-right:6px;">
+        <!-- Saved messages -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal: New chat -->
+  <div class="modal" id="modal-new-chat" aria-hidden="true" role="dialog" aria-label="New chat modal">
+    <div class="modal-card">
+      <h3>New Chat</h3>
+      <div style="display:flex; gap:8px; align-items:center; margin:6px 0;">
+        <input id="new-chat-name" class="input-sm" placeholder="Chat name (for group)"/>
+        <select id="new-chat-type" class="input-sm" aria-label="Chat type">
+          <option value="direct">Direct</option>
+          <option value="group" selected>Group</option>
+        </select>
+      </div>
+      <div style="font-size:12px; color:var(--muted); margin:6px 0 12px;">
+        Tip: Direct chats auto-name with participant; Group chats require selecting participants.
+      </div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button class="btn" id="cancel-new-chat" aria-label="Cancel creating chat">Cancel</button>
+        <button class="btn primary" id="create-chat" aria-label="Create chat">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inline script: all in one file -->
+  <script>
+    // Core constants and initial migration/versioning
+    const STORAGE_KEY = "chat_prototype_v1";
+    const SCHEMA_VERSION = 1;
+
+    // Simple in-memory state, persisted to localStorage
+    let state = {
+      version: SCHEMA_VERSION,
+      currentChatId: null,
+      currentUserId: 'u_me',
+      latencyMs: 0,
+      offline: false,
+      botEnabled: true,
+      chats: [], // {id, type, title, participants: [userIds], lastActivity}
+      users: [], // {id, name, avatarColor}
+      messages: [], // {id, chatId, senderId, text, timestamp, edited, readBy: [userIds], attachments: [], saved}
+      seedVersion: 1,
+      savedMessageIds: new Set(), // set of message ids that are saved
+      onboardingShown: false
+    };
+
+    // Seed data if first load or version mismatch
+    function seedDataIfNeeded() {
+      const existing = localStorage.getItem(STORAGE_KEY);
+      if (existing) {
+        try { const parsed = JSON.parse(existing); Object.assign(state, parsed); 
+          // Convert savedMessageIds to Set if needed
+          if (state.savedMessageIds && !(state.savedMessageIds instanceof Array)) {
+            state.savedMessageIds = Array.from(state.savedMessageIds);
+          }
+          if (state.savedMessageIds && Array.isArray(state.savedMessageIds)) {
+            state.savedMessageIds = new Set(state.savedMessageIds);
+          } else {
+            state.savedMessageIds = new Set();
+          }
+          return;
+        } catch(e){/* fallthrough to seed */ }
+      }
+
+      // Seed users
+      state.users = [
+        { id: 'u_me', name: 'You', avatarColor: '#6c9cff' },
+        { id: 'u_astra', name: 'Astra', avatarColor: '#e74c3c' },
+        { id: 'u_nova', name: 'Nova', avatarColor: '#8e44ad' },
+        { id: 'u_juno', name: 'Juno', avatarColor: '#27ae60' }
+      ];
+
+      // Seed chats
+      state.chats = [
+        { id: 'c1', type: 'direct', title: 'Astra', participants: ['u_me','u_astra'], lastActivity: Date.now() - 100000 },
+        { id: 'c2', type: 'group', title: 'Frontend Team', participants: ['u_me','u_astra','u_nova','u_juno'], lastActivity: Date.now() - 50000 }
+      ];
+
+      // Seed messages
+      const now = Date.now();
+      state.messages = [
+        { id: 'm1', chatId: 'c1', senderId: 'u_astra', text: 'Hey! Welcome to the prototype. This chat supports markdown like **bold** and *italic*, and links like https://example.com.', timestamp: now - 900000, attachments: [], edited: false, readBy: ['u_astra','u_me'], saved: false },
+        { id: 'm2', chatId: 'c1', senderId: 'u_me', text: 'Nice! I\'ll try attaching an image soon.', timestamp: now - 890000, attachments: [], edited: false, readBy: ['u_me'], saved: false },
+        { id: 'm3', chatId: 'c2', senderId: 'u_nova', text: 'Welcome to the Frontend Team channel. Let\'s prototype features.', timestamp: now - 800000, attachments: [], edited: false, readBy: ['u_nova'], saved: false }
+      ];
+
+      state.seedVersion = 1;
+      state.currentChatId = 'c1';
+      state.onboardingShown = false;
+      state.latencyMs = 0;
+      state.offline = false;
+      state.botEnabled = true;
+      state.savedMessageIds = new Set();
+
+      saveState();
+    }
+
+    // Persist state
+    function saveState() {
+      // Persist Set to array
+      const toStore = {
+        version: state.version,
+        currentChatId: state.currentChatId,
+        currentUserId: state.currentUserId,
+        latencyMs: state.latencyMs,
+        offline: state.offline,
+        botEnabled: state.botEnabled,
+        seedVersion: state.seedVersion,
+        onboardingShown: state.onboardingShown,
+        chats: state.chats,
+        users: state.users,
+        messages: state.messages,
+        savedMessageIds: Array.from(state.savedMessageIds || [])
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+    }
+
+    // Helpers
+    function now() { return Date.now(); }
+
+    function timeAgo(ts){
+      const diff = Math.floor((Date.now() - ts)/1000);
+      if (diff < 60) return diff + 's';
+      if (diff < 3600) return Math.floor(diff/60) + 'm';
+      return Math.floor(diff/3600) + 'h';
+    }
+
+    function userById(id){
+      return state.users.find(u => u.id === id) || { id, name: id, avatarColor:'#555' };
+    }
+
+    function chatById(cid){
+      return state.chats.find(c => c.id === cid);
+    }
+
+    function isDirectChat(chat){
+      return chat?.type === 'direct';
+    }
+
+    // Markdown-like parsing: bold **text**, italic *text*, inline `code` and auto-links
+    function formatMarkdown(text){
+      if (!text) return '';
+      // Escape HTML first
+      let t = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      // Code
+      t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+      // Bold
+      t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      // Italic
+      t = t.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      // Links (basic)
+      t = t.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+      return t;
+    }
+
+    // Simple link preview generator (mock)
+    function generatePreviewFrom(text){
+      const urlMatch = text.match(/(https?:\/\/[^\s]+)/);
+      if (!urlMatch) return null;
+      const url = urlMatch[0];
+      const domain = (new URL(url)).hostname;
+      // naive title
+      const title = 'Preview for ' + domain;
+      // thumbnail data URI (tiny SVG)
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="320" height="120">
+          <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#6c9cff" offset="0"/>
+            <stop stop-color="#22d1aa" offset="1"/>
+          </linearGradient></defs>
+          <rect width="320" height="120" fill="url(#g)"/>
+          <text x="20" y="60" fill="#fff" font-family="Arial" font-size="14">${domain}</text>
+          <text x="20" y="78" fill="#fff" font-family="Arial" font-size="12"> ${title} </text>
+        </svg>
+      `;
+      const dataUri = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+      return { url, domain, title, thumbnail: dataUri };
+    }
+
+    // Cross-tab synchronization
+    const bc = new BroadcastChannel('chat_prototype_channel');
+    bc.onmessage = (ev) => {
+      const payload = ev.data;
+      if (!payload || !payload.type) return;
+      switch(payload.type){
+        case 'message:new':
+          if (payload.message.chatId === state.currentChatId) {
+            // same chat shown
+          }
+          // push to store and re-render chat list/messages if relevant
+          state.messages.push(payload.message);
+          // mark read if belongs to current user
+          renderMessages(state.currentChatId);
+          break;
+        case 'typing':
+          // show typing indicator for chat
+          showTypingIndicator(payload.chatId, payload.userId);
+          break;
+        case 'presence:update':
+          // placeholder for presence updates across tabs
+          renderChatsList();
+          break;
+        case 'read':
+          // mark messages as read in UI
+          const cid = payload.chatId;
+          const user = payload.userId;
+          state.messages.filter(m => m.chatId === cid && m.senderId !== user).forEach(m => {
+            if (!m.readBy.includes(user)) m.readBy.push(user);
+          });
+          renderMessages(state.currentChatId);
+          break;
+      }
+    };
+
+    function broadcast(type, payload){
+      bc.postMessage({ type, ...payload });
+    }
+
+    // Typing indicator (simple text bubble)
+    let typingTimeout;
+    function showTypingIndicator(chatId, userId){
+      const ta = document.getElementById('typing-indicator');
+      if (!ta) {
+        const el = document.createElement('div');
+        el.id = 'typing-indicator';
+        el.style.fontSize = '12px';
+        el.style.color = 'var(--muted)';
+        el.style.padding = '6px 12px';
+        const chatEl = document.getElementById('messages');
+        chatEl.parentElement.insertBefore(el, chatEl);
+      }
+      const user = userById(userId);
+      document.getElementById('typing-indicator').textContent = user.name + ' is typing...';
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        const el = document.getElementById('typing-indicator');
+        if (el) el.textContent = '';
+      }, 1500);
+    }
+
+    // UI rendering
+    function renderChatsList(){
+      const list = document.getElementById('chat-list');
+      list.innerHTML = '';
+      state.chats.forEach(chat => {
+        const lastMsg = state.messages.filter(m => m.chatId === chat.id).slice(-1)[0];
+        const boot = document.createElement('div');
+        boot.className = 'chat-item';
+        boot.dataset.chatId = chat.id;
+        boot.role = 'button';
+        boot.tabIndex = 0;
+        boot.innerHTML = `
+          <div class="avatar" style="background:${avatarColorFromChat(chat)};">${initialsFromChat(chat)}</div>
+          <div class="chat-info" style="min-width:0;">
+            <div class="chat-name" title="${chat.title}">${chat.title}</div>
+            <div class="chat-last" aria-label="Last message">
+              ${lastMsg ? truncate(lastMsg.text, 40) : 'No messages yet'}
+              ${lastMsg ? ' • ' + timeAgo(lastMsg.timestamp) : ''}
+            </div>
+          </div>
+          ${unreadCount(chat) > 0 ? `<span class="unread" aria-label="Unread messages">${unreadCount(chat)}</span>` : ''}
+        `;
+        boot.addEventListener('click', ()=> { switchChat(chat.id); });
+        boot.addEventListener('keydown', (e) => { if (e.key === 'Enter') { switchChat(chat.id); } });
+        list.appendChild(boot);
+      });
+
+      // Onboarding: if first time, auto-select the first chat
+      if (!state.currentChatId && state.chats.length > 0) {
+        switchChat(state.chats[0].id);
+      }
+    }
+
+    function vowelName(u){
+      return (state.users.find(x => x.id === u) || {name:'User'}).name;
+    }
+
+    function initialsFromChat(chat){
+      if (chat.type === 'direct') {
+        // determine other participant
+        const other = chat.participants.find(p => p !== state.currentUserId);
+        return (state.users.find(u => u.id === other) || {name:'U'}).name.charAt(0).toUpperCase();
+      }
+      const firstChar = chat.title?.charAt(0) || 'C';
+      return firstChar.toUpperCase();
+    }
+
+    function avatarColorFromChat(chat){
+      // deterministic color
+      const base = chat.title || 'Chat';
+      let hash = 0;
+      for (let i = 0; i < base.length; i++) hash = base.charCodeAt(i) + ((hash << 5) - hash);
+      const colors = ['#6c9cff', '#e67e22', '#2ecc71', '#8e44ad', '#16a085', '#e74c3c'];
+      return colors[Math.abs(hash) % colors.length];
+    }
+
+    function unreadCount(chat){
+      // count messages not read by current user
+      const msgs = state.messages.filter(m => m.chatId === chat.id);
+      let count = 0;
+      msgs.forEach(m => {
+        if (m.senderId !== state.currentUserId && (!m.readBy || !m.readBy.includes(state.currentUserId))) {
+          count++;
+        }
+      });
+      return count;
+    }
+
+    function switchChat(chatId){
+      state.currentChatId = chatId;
+      renderChatHeader();
+      renderMessages(chatId);
+      renderChatsList();
+      saveState();
+      // notify others
+      broadcast('presence:update', { chatId, userId: state.currentUserId });
+    }
+
+    function renderChatHeader(){
+      const chat = chatById(state.currentChatId);
+      const nameEl = document.getElementById('chat-name');
+      const avatarEl = document.getElementById('chat-avatar');
+      const participantsEl = document.getElementById('chat-participants');
+      if (!chat) return;
+      nameEl.textContent = chat.title || (chat.type === 'direct' ? 'Direct Chat' : 'Group');
+      avatarEl.style.background = avatarColorFromChat(chat);
+      avatarEl.textContent = initialsFromChat(chat);
+      const pNames = chat.participants.map(pid => state.users.find(u => u.id === pid)?.name).filter(Boolean);
+      participantsEl.textContent = pNames.join(', ');
+      // mobile header crumb
+      const mName = document.getElementById('mobile-chat-name');
+      if (mName) mName.textContent = chat.title || 'Chat';
+    }
+
+    function renderMessages(chatId){
+      const chat = chatById(chatId);
+      const container = document.getElementById('messages');
+      if (!chat) { container.innerHTML = ''; return; }
+      // filter messages for chat
+      const msgs = state.messages.filter(m => m.chatId === chatId).sort((a,b)=> a.timestamp - b.timestamp);
+      // render
+      container.innerHTML = '';
+      msgs.forEach(m => {
+        const me = m.senderId === state.currentUserId;
+        const sender = userById(m.senderId);
+        const bubble = document.createElement('div');
+        bubble.className = 'message ' + (me ? 'me' : 'you');
+        bubble.setAttribute('role','article');
+        bubble.setAttribute('aria-label', 'Message from '+sender.name);
+        bubble.style.alignSelf = me ? 'flex-end' : 'flex-start';
+        // message content with markdown
+        const text = document.createElement('div');
+        text.innerHTML = formatMarkdown(m.text);
+        bubble.appendChild(text);
+
+        // attachments
+        if (m.attachments && m.attachments.length > 0){
+          m.attachments.forEach(att => {
+            if (att.type.startsWith('image/')) {
+              const img = document.createElement('img');
+              img.src = att.dataUrl;
+              img.style.maxWidth = '100%';
+              img.style.borderRadius = '6px';
+              img.style.display = 'block';
+              img.style.marginTop = '6px';
+              text.appendChild(img);
+            } else {
+              const a = document.createElement('a');
+              a.href = att.dataUrl;
+              a.download = att.name;
+              a.textContent = 'Download ' + att.name;
+              a.className = 'file';
+              text.appendChild(document.createElement('br'));
+              text.appendChild(a);
+            }
+          });
+        }
+
+        // link previews (mock)
+        const preview = generatePreviewFrom(m.text);
+        if (preview){
+          const pv = document.createElement('div');
+          pv.className = 'preview';
+          pv.innerHTML = `
+            <div style="font-size:12px; color:var(--muted);">Link preview</div>
+            <img class="preview-img" src="${preview.thumbnail}" alt="Preview thumbnail" />
+            <div style="font-weight:600; font-size:12px;">${preview.domain}</div>
+            <div style="font-size:11px; color:#ddd;">${preview.title}</div>
+          `;
+          text.appendChild(pv);
+        }
+
+        // meta
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = `${sender.name} • ${timeAgo(m.timestamp)} ${m.edited ? '• edited' : ''} ${m.readBy?.includes(state.currentUserId) ? '• read' : ''}`;
+        bubble.appendChild(meta);
+
+        // actions
+        const actions = document.createElement('div');
+        actions.className = 'message-actions';
+        // edit
+        const editBtn = document.createElement('button');
+        editBtn.className = 'icon-btn';
+        editBtn.title = 'Edit';
+        editBtn.textContent = '✏️';
+        editBtn.addEventListener('click', () => editMessage(m.id));
+        actions.appendChild(editBtn);
+        // delete
+        const delBtn = document.createElement('button');
+        delBtn.className = 'icon-btn';
+        delBtn.title = 'Delete';
+        delBtn.textContent = '🗑️';
+        delBtn.addEventListener('click', () => deleteMessage(m.id));
+        actions.appendChild(delBtn);
+        // save
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'icon-btn';
+        saveBtn.title = 'Save';
+        saveBtn.textContent = m.saved || state.savedMessageIds.has(m.id) ? '★' : '☆';
+        saveBtn.addEventListener('click', () => toggleSaveMessage(m.id, saveBtn));
+        actions.appendChild(saveBtn);
+
+        bubble.appendChild(actions);
+
+        container.appendChild(bubble);
+      });
+
+      // Scroll to bottom
+      container.scrollTop = container.scrollHeight;
+      // Mark as read for current user
+      markAsRead(chatId);
+    }
+
+    function markAsRead(chatId){
+      let updated = false;
+      state.messages.forEach(m => {
+        if (m.chatId === chatId && m.senderId !== state.currentUserId && (!m.readBy || !m.readBy.includes(state.currentUserId))) {
+          m.readBy = m.readBy || [];
+          m.readBy.push(state.currentUserId);
+          updated = true;
+        }
+      });
+      if (updated) saveState();
+    }
+
+    function toggleSaveMessage(msgId, btn){
+      const m = state.messages.find(x => x.id === msgId);
+      if (!m) return;
+      const currentlySaved = m.saved || state.savedMessageIds.has(msgId);
+      if (currentlySaved){
+        m.saved = false;
+        state.savedMessageIds.delete(msgId);
+      } else {
+        m.saved = true;
+        state.savedMessageIds.add(msgId);
+      }
+      btn.textContent = m.saved || state.savedMessageIds.has(msgId) ? '★' : '☆';
+      renderSavedList();
+      saveState();
+    }
+
+    function renderSavedList(){
+      const list = document.getElementById('saved-list');
+      list.innerHTML = '';
+      const saved = state.messages.filter(m => m.saved || state.savedMessageIds.has(m.id));
+      if (saved.length === 0){
+        list.innerHTML = '<div style="font-size:12px; color:var(--muted); padding:6px;">No saved messages yet.</div>';
+        return;
+      }
+      saved.sort((a,b)=> b.timestamp - a.timestamp);
+      saved.forEach(m => {
+        const item = document.createElement('div');
+        item.style.padding = '6px 0';
+        item.style.borderBottom = '1px solid var(--border)';
+        item.style.cursor = 'pointer';
+        item.innerHTML = `<strong>${userById(m.senderId).name}</strong>: ${truncate(m.text, 60)} <span style="color:var(--muted); font-size:11px; margin-left:6px;">${timeAgo(m.timestamp)}</span>`;
+        item.addEventListener('click', ()=> {
+          switchChat(m.chatId);
+          // jump to message (simple: no anchor)
+        });
+        list.appendChild(item);
+      });
+    }
+
+    // trunc helper
+    function truncate(s, n){
+      if (!s) return '';
+      return s.length > n ? s.substring(0, n-1) + '…' : s;
+    }
+
+    // Attachments
+    function handleFileAttach(files){
+      const chat = chatById(state.currentChatId);
+      if (!chat) return;
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const isImg = file.type.startsWith('image/');
+          const m = {
+            id: 'm' + Math.random().toString(36).slice(2,7),
+            chatId: chat.id,
+            senderId: state.currentUserId,
+            text: isImg ? 'Sent an image' : 'Sent a file: ' + (file.name || 'attachment'),
+            timestamp: now(),
+            attachments: [{
+              name: file.name,
+              type: file.type,
+              dataUrl: e.target.result
+            }],
+            edited: false,
+            readBy: [state.currentUserId],
+            saved: false
+          };
+          // simulate latency
+          queueMessage(m);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Queue message (offline or latency)
+    const outbox = [];
+    function queueMessage(m){
+      if (state.offline || state.latencyMs > 0){
+        outbox.push(m);
+        // simulate delayed send
+        setTimeout(() => {
+          deliverMessage(m);
+          // broadcast as new message
+        }, state.latencyMs || 0);
+      } else {
+        deliverMessage(m);
+      }
+    }
+
+    function deliverMessage(m){
+      // add to state
+      state.messages.push(m);
+      // mark as read by current user
+      m.readBy = m.readBy || [state.currentUserId];
+      // broadcast to other tabs
+      broadcast('message:new', { message: m });
+      // render in UI
+      renderMessages(state.currentChatId);
+    }
+
+    // Bot reply helper (mock)
+    function botReply(toChatId, userText){
+      if (!state.botEnabled) return;
+      const chat = chatById(toChatId);
+      if (!chat) return;
+      // simple heuristic: if a bot participant exists, send reply
+      const botParticipants = chat.participants.filter(pid => pid !== state.currentUserId && pid.startsWith('u_') );
+      // if there is any bot (e.g., Astra) with dot name "Astra" treat as bot
+      // We'll assume Astra is a bot presence
+      const isBotChat = chat.participants.includes('u_astra');
+      if (!isBotChat) return;
+      const reply = "I’m a bot replying to: \"" + userText.slice(0, 60) + (userText.length>60?'...':'') + "\"";
+      const m = {
+        id: 'm' + Math.random().toString(36).slice(2,7),
+        chatId: toChatId,
+        senderId: 'u_astra',
+        text: reply,
+        timestamp: now() + 300 + Math.random()*200,
+        attachments: [],
+        edited: false,
+        readBy: [ 'u_astra' ],
+        saved: false
+      };
+      // simulate latency
+      setTimeout(() => {
+        state.messages.push(m);
+        broadcast('message:new', { message: m });
+        if (state.currentChatId === toChatId) renderMessages(toChatId);
+      }, (state.latencyMs || 0) + 400);
+    }
+
+    // Editing
+    function editMessage(msgId){
+      const m = state.messages.find(x => x.id === msgId);
+      if (!m) return;
+      const newText = prompt('Edit message:', m.text);
+      if (newText !== null){
+        m.text = newText;
+        m.edited = true;
+        renderMessages(m.chatId);
+        saveState();
+        // In real app, send edit event to backend
+      }
+    }
+
+    function deleteMessage(msgId){
+      const idx = state.messages.findIndex(x => x.id === msgId);
+      if (idx >= 0){
+        if (confirm('Delete this message?')){
+          const m = state.messages[idx];
+          state.messages.splice(idx,1);
+          renderMessages(m.chatId);
+          saveState();
+          // In real app, send delete event to backend
+        }
+      }
+    }
+
+    // On send
+    function sendMessageFromInput(){
+      const ta = document.getElementById('message-input');
+      let text = ta.value.trim();
+      if (!text) return;
+      const chat = chatById(state.currentChatId);
+      if (!chat) return;
+      const m = {
+        id: 'm' + Math.random().toString(36).slice(2,7),
+        chatId: chat.id,
+        senderId: state.currentUserId,
+        text: text,
+        timestamp: now(),
+        attachments: [],
+        edited: false,
+        readBy: [state.currentUserId],
+        saved: false
+      };
+      ta.value = '';
+      // immediate local render for snappiness
+      state.messages.push(m);
+      renderMessages(chat.id);
+      // simulate latency
+      if (state.offline){
+        // queue with a notice
+        queueMessage(m);
+      } else {
+        setTimeout(() => {
+          deliverMessage(m);
+          // bot reply
+          botReply(chat.id, text);
+        }, state.latencyMs || 0);
+      }
+      // cross-tab sync
+      broadcast('message:new', { message: m });
+      // also mark as typing done
+      broadcast('typing', { chatId: chat.id, userId: state.currentUserId, typing: false });
+      saveState();
+    }
+
+    // Typing indicator: mark as typing
+    let typingDebounce;
+    function onTyping(){
+      if (state.currentChatId) {
+        broadcast('typing', { chatId: state.currentChatId, userId: state.currentUserId, typing: true });
+        clearTimeout(typingDebounce);
+        typingDebounce = setTimeout(() => {
+          broadcast('typing', { chatId: state.currentChatId, userId: state.currentUserId, typing: false });
+        }, 800);
+      }
+    }
+
+    // Attach handlers
+    document.addEventListener('DOMContentLoaded', () => {
+      // Seed data
+      seedDataIfNeeded();
+      // render base lists
+      renderChatsList();
+      renderSavedList();
+      renderChatHeader();
+
+      // Events
+      document.getElementById('send-btn').addEventListener('click', sendMessageFromInput);
+      document.getElementById('message-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey){
+          e.preventDefault();
+          sendMessageFromInput();
+        } else if (e.key === 'Enter' && e.shiftKey){
+          // allow newline
+        }
+        onTyping();
+      });
+      document.getElementById('attach-btn').addEventListener('click', () => {
+        document.getElementById('file-input').click();
+      });
+      document.getElementById('file-input').addEventListener('change', (e) => {
+        const files = e.target.files;
+        if (files.length > 0){
+          handleFileAttach(files);
+          // reset input
+          e.target.value = '';
+        }
+      });
+
+      // New chat modal
+      document.getElementById('new-chat-btn').addEventListener('click', () => {
+        document.getElementById('modal-new-chat').classList.add('active');
+        document.getElementById('modal-new-chat').setAttribute('aria-hidden','false');
+      });
+      document.getElementById('cancel-new-chat').addEventListener('click', () => {
+        document.getElementById('modal-new-chat').classList.remove('active');
+        document.getElementById('modal-new-chat').setAttribute('aria-hidden','true');
+      });
+      document.getElementById('create-chat').addEventListener('click', () => {
+        const name = document.getElementById('new-chat-name').value.trim();
+        const type = document.getElementById('new-chat-type').value;
+        if (!name) {
+          alert('Please provide a chat name (for group). For direct chats, name will derive from participants.');
+          return;
+        }
+        // create chat
+        const newId = 'c' + Math.random().toString(36).slice(2,6);
+        const participants = [state.currentUserId, 'u_astra']; // example starter
+        const chat = { id: newId, type, title: name, participants, lastActivity: Date.now() };
+        state.chats.push(chat);
+        saveState();
+        document.getElementById('modal-new-chat').classList.remove('active');
+        renderChatsList();
+        switchChat(newId);
+      });
+
+      // Clear data
+      const clearDataBtn = document.createElement('button');
+      clearDataBtn.textContent = 'Clear Data';
+      clearDataBtn.className = 'btn';
+      clearDataBtn.style.position = 'fixed';
+      clearDataBtn.style.right = '12px';
+      clearDataBtn.style.bottom = '12px';
+      clearDataBtn.addEventListener('click', () => {
+        if (confirm('This will clear all local data in this prototype. Continue?')){
+          localStorage.removeItem(STORAGE_KEY);
+          location.reload();
+        }
+      });
+      document.body.appendChild(clearDataBtn);
+
+      // Latency / Offline / Bot toggles (in-page quick controls)
+      // Latency slider simulated via an input range (not visible in UI to keep it minimal)
+      // We'll add a small panel near header
+      const panel = document.createElement('div');
+      panel.style.display = 'flex';
+      panel.style.gap = '8px';
+      panel.style.alignItems = 'center';
+      panel.style.padding = '8px 12px';
+      panel.style.borderTop = '1px solid var(--border)';
+      panel.innerHTML = `
+        <label style="font-size:12px; color:var(--muted);">Latency</label>
+        <input id="latency" type="range" min="0" max="2000" step="100" value="${state.latencyMs}" />
+        <span id="latency-val" style="font-size:12px; color:var(--muted); min-width:40px; text-align:right;">${state.latencyMs} ms</span>
+        <label style="font-size:12px; color:var(--muted); margin-left:8px;">Offline</label>
+        <input id="offline" type="checkbox" ${state.offline ? 'checked' : ''} />
+        <label style="font-size:12px; color:var(--muted); margin-left:8px;">Bot</label>
+        <input id="bot" type="checkbox" ${state.botEnabled ? 'checked' : ''} />
+      `;
+      document.getElementById('chat-area').insertBefore(panel, document.getElementById('messages'));
+      document.getElementById('latency').addEventListener('input', (e) => {
+        state.latencyMs = parseInt(e.target.value, 10);
+        document.getElementById('latency-val').textContent = state.latencyMs + ' ms';
+        saveState();
+      });
+      document.getElementById('offline').addEventListener('change', (e) => {
+        state.offline = e.target.checked;
+        saveState();
+      });
+      document.getElementById('bot').addEventListener('change', (e) => {
+        state.botEnabled = e.target.checked;
+        saveState();
+      });
+
+      // onboarding overlay
+      if (!state.onboardingShown){
+        const tip = document.createElement('div');
+        tip.className = 'toast';
+        tip.style.bottom = 'auto';
+        tip.style.top = '12px';
+        tip.textContent = 'Tip: Use Enter to send, Shift+Enter for newline. This prototype runs fully in your browser.';
+        document.body.appendChild(tip);
+        setTimeout(() => tip.remove(), 4000);
+        state.onboardingShown = true;
+        saveState();
+      }
+
+      // Notifications permission (optional)
+      if ('Notification' in window){
+        if (Notification.permission === 'default'){
+          // ask permission in a friendly way
+          setTimeout(() => {
+            Notification.requestPermission().then(() => {
+              // no-op
+            });
+          }, 1000);
+        }
+      }
+    });
+
+    // Keyboard navigation for focus
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        // quick clear focus
+        document.activeElement.blur();
+      }
+    });
+
+    // Initialize avatars and saved when file loads
+    // integrate placeholders for REST/socket hooks (comments)
+    // REST endpoints (placeholders)
+    // Example: function restLogin(credentials){ /* POST /api/auth/login */ }
+
+    // Example: function fetchChatsFromBackend(){ /* GET /api/chats */ }
+
+    // Example: function sendMessageToBackend(m){ /* POST /api/chats/:id/messages */ }
+
+    // On unload, persist
+    window.addEventListener('beforeunload', saveState);
+
+  </script>
+</body>
+</html>
+
+<!-- FOLDER-SUGGESTION: chat-prototype-ui -->
