@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat Prototype - Single File</title>
+  <style>
+    :root{
+      --bg: #0f1220;
+      --surface: #141a2b;
+      --surface-2: #1e2340;
+      --text: #e6e6f0;
+      --muted: #a6a6c6;
+      --accent: #6ea8fe;
+      --green: #4cd97b;
+      --red: #ff6b6b;
+      --chip: #2b2f54;
+      --shadow: 0 6px 18px rgba(0,0,0,.25);
+      --radius: 12px;
+    }
+    html,body{height:100%}
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto;
+      background: radial-gradient(circle at 20% -10%, rgba(110,168,254,.12), transparent 40%),
+                  radial-gradient(circle at 100% 0%, rgba(173, 86, 255,.10), transparent 40%),
+                  var(--bg);
+      color: var(--text);
+      overflow:hidden;
+    }
+    /* Top README / usage note banner */
+    .readme {
+      position: sticky;
+      top:0;
+      z-index: 50;
+      padding: 10px 14px;
+      background: linear-gradient(#1a1f35, #141a2b);
+      border-bottom: 1px solid #2a2f66;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Courier New", monospace;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .readme .dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #4cd97b; display:inline-block;
+      box-shadow: 0 0 0 4px rgba(76,217,123,.15);
+    }
+    .readme strong{color:#fff}
+    .readme small{color:#cbd5e1}
+    /* Layout */
+    .container {
+      height: calc(100vh - 0px);
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+    .split {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: calc(100vh - 40px); /* adjust for readme bar height if fixed */
+    }
+    @media (max-width: 900px){
+      .split { grid-template-columns: 1fr; height: auto; }
+      .sidebar { order: 2; height: auto; }
+      .chat-area { order: 1; height: auto; }
+    }
+
+    /* Sidebar: Chats & Saved */
+    .sidebar {
+      border-right: 1px solid #2a2f66;
+      background: linear-gradient(#0e1330, #0b0f2a);
+      padding: 12px;
+      display:flex; flex-direction:column;
+    }
+    .sidebar-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:6px 8px; border-radius:8px; background:#1a1f3d; margin-bottom:8px;
+    }
+    .sidebar-header h3 { margin:0; font-size:14px; color:#e6eaff; }
+    .new-chat {
+      width:28px; height:28px; border-radius:50%; border:0; background:var(--accent);
+      color:white; font-weight:bold; cursor:pointer; box-shadow:var(--shadow);
+    }
+    .list { overflow:auto; padding:6px 0; display:flex; flex-direction:column; gap:6px; }
+    .chat-item {
+      display:flex; gap:10px; align-items: center;
+      padding:8px; border-radius:10px; cursor:pointer;
+      background: transparent;
+      border:1px solid transparent;
+    }
+    .chat-item:hover { background: rgba(255,255,255,.04); border-color:#2a2f66; }
+    .avatar {
+      width:32px; height:32px; border-radius:50%; display:grid; place-items:center;
+      color:white; font-weight:bold;
+    }
+    .chat-title { font-weight:600; font-size:13px; }
+    .chat-sub { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; }
+    .badge {
+      margin-left:auto; font-size:11px; padding:2px 6px; border-radius:999px;
+      background: #2b2f66; color:white;
+    }
+    .saved-toggle { margin-top:auto; padding:8px; border-radius:8px; background:#1a1f3d; text-align:center; }
+    .saved-toggle button { background: transparent; border:1px solid #39407a; color:#e8eaff; padding:6px 10px; border-radius:6px; cursor:pointer; }
+    .saved-toggle button.active { background:#39407a; border-color:#636bd6; }
+
+    /* Active chat window */
+    .chat-area {
+      display:flex; flex-direction:column; height:100%; background: linear-gradient(#0f1130, #0a0f23);
+    }
+    .chat-header {
+      display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:1px solid #2a2f66;
+      background: linear-gradient(#141a3a, #0f1430);
+    }
+    .chat-header .title { font-weight:700; font-size:15px; }
+    .presence { font-size:11px; color:var(--muted); }
+    .typing { font-style: italic; color:#cbd5e1; }
+
+    .messages {
+      padding: 14px; overflow:auto; flex:1; display:flex; flex-direction:column; gap:10px;
+    }
+    .message {
+      display:flex; align-items:flex-end; gap:8px;
+    }
+    .message .bubble {
+      max-width: 70ch; padding:8px 12px; border-radius:14px;
+      background: #1e254e; color:#e8eaff; position:relative;
+      border:1px solid #2a2f66;
+    }
+    .my .bubble { background: linear-gradient(135deg, #4b7fff, #2a2f66); color:white; border-color: #6ea8fe; }
+    .bubble .meta { font-size:11px; color:#cbd5e1; margin-top:6px; display:flex; gap:6px; align-items:center; }
+    .avatar.sm { width:28px; height:28px; font-size:12px; }
+
+    .attachment { margin-top:6px; display:flex; gap:6px; flex-wrap:wrap; }
+    .attachment img { max-width:180px; max-height:120px; border-radius:8px; border:1px solid #2a2f66; }
+    .attachment a { color:#d2e8ff; text-decoration: underline; }
+
+    .message-actions { display:flex; gap:6px; align-items:center; }
+    .action-btn { background: #2a2f66; color:white; border:0; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:12px; }
+    .action-btn.danger { background:#4b2a2a; }
+
+    .composer {
+      padding: 8px; border-top:1px solid #2a2f66; display:flex; flex-direction:column; gap:6px;
+      background: linear-gradient(#0d122b, #0b0f25);
+    }
+    .composer textarea {
+      width:100%; min-height:60px; resize:vertical; border-radius:8px; border:1px solid #2a2f66;
+      padding:10px; background:#0d1230; color:var(--text); outline:none;
+    }
+    .composer-controls {
+      display:flex; align-items:center; gap:8px;
+    }
+    .file-chip {
+      display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px;
+      background: var(--chip); font-size:12px;
+    }
+    .send-btn {
+      padding:10px 14px; border-radius:8px; border:0; background: #4b7fff; color:white; cursor:pointer;
+      box-shadow: 0 4px 12px rgba(75,127,255,.4);
+    }
+    .send-btn:disabled { opacity:.5; cursor:not-allowed; }
+
+    /* Toasts / onboarding */
+    .toasts { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); display:flex; flex-direction:column; gap:6px; z-index: 60; }
+    .toast { background:#1e254e; color:#e8eaff; padding:10px 14px; border-radius:8px; border:1px solid #2a2f66; min-width: 200px; text-align:left; }
+
+    .onboard {
+      position: fixed; top: 20px; right: 20px; width: 320px; max-width: calc(100% - 20px);
+      background: #0e1330; border:1px solid #2a2f66; border-radius:12px; padding:14px; z-index: 40;
+      box-shadow: var(--shadow);
+    }
+    .onboard h4 { margin:0 0 6px 0; }
+    .onboard p { margin:4px 0; font-size:13px; color:#cbd5e1; }
+    .onboard .close { margin-top:6px; padding:6px 10px; border-radius:6px; border:0; background:#2a2f66; color:white; cursor:pointer; }
+
+    /* Simple link preview style inside message */
+    .preview {
+      border:1px solid #2a2f66; border-radius:8px; padding:6px; margin-top:6px;
+      display:flex; align-items:center; gap:8px; background:#0b1130;
+    }
+    .preview img { width:40px; height:40px; object-fit:cover; border-radius:6px; }
+    .preview .title { font-weight:600; font-size:12px; }
+    .preview .domain { font-size:11px; color:var(--muted); }
+
+    /* Search highlight */
+    mark { background: yellow; color: black; padding:0 4px; border-radius:4px; }
+
+  </style>
+</head>
+<body>
+  <!-- Top README-style usage note -->
+  <div class="readme" aria-label="Usage note">
+    <span class="dot" aria-hidden="true"></span>
+    <strong>Chat Prototype (Single-File SPA)</strong> — offline-first, multi-tab presence, simulated latency, no server, easy backend integration points.
+    <span class="spacer" style="flex:1"></span>
+    <small>Seed data on first load; versioned storage key: chat_prototype_v1</small>
+  </div>
+
+  <div class="container" id="app" role="application" aria-label="Chat prototype app">
+    <div class="split">
+      <!-- Sidebar: Chats + Saved -->
+      <aside class="sidebar" aria-label="Chats list panel">
+        <div class="sidebar-header" role="banner">
+          <h3>Chats</h3>
+          <button id="newChatBtn" class="new-chat" title="New chat" aria-label="New chat">＋</button>
+        </div>
+        <div class="list" id="chatList" role="navigation" aria-label="Chat list"></div>
+        <div class="saved-toggle" role="region" aria-label="Saved messages toggle">
+          <button id="savedViewBtn" class="active" title="View saved messages" aria-pressed="false">Saved</button>
+        </div>
+      </aside>
+
+      <!-- Active Chat Window -->
+      <section class="chat-area" aria-label="Chat window">
+        <div class="chat-header" id="activeChatHeader">
+          <!-- Dynamic header content -->
+          <div class="avatar sm" id="headerActiveAvatar" aria-label="Chat avatar" style="background:#2a2f66">?</div>
+          <div>
+            <div class="title" id="headerActiveTitle">Select a chat</div>
+            <div class="presence" id="headerActivePresence">No chat selected</div>
+          </div>
+          <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+            <button id="renameGroupBtn" style="display:none" class="action-btn" title="Rename group">Rename</button>
+            <button id="leaveGroupBtn" style="display:none" class="action-btn" title="Leave group">Leave</button>
+          </div>
+        </div>
+
+        <div class="messages" id="messages" role="log" aria-label="Messages area">
+          <!-- Messages render here -->
+        </div>
+
+        <!-- Message composer -->
+        <div class="composer" aria-label="Message composer">
+          <div id="attachmentsPreview" class="attachment" aria-label="Attachment preview" style="min-height:0"></div>
+          <textarea id="messageInput" placeholder="Message (Enter to send, Shift+Enter for newline)" rows="2" aria-label="Message input"></textarea>
+          <div class="composer-controls" style="align-items:center;">
+            <label class="file-chip" style="cursor:pointer;">
+              Attach
+              <input type="file" id="fileInput" multiple accept="image/*,.pdf,.txt,.doc,.docx" style="display:none"/>
+            </label>
+            <button id="sendBtn" class="send-btn" aria-label="Send message" disabled>Send</button>
+            <span style="flex:1"></span>
+            <div class="latency" style="display:flex; align-items:center; gap:6px; color:var(--muted); font-size:12px;">
+              Latency
+              <input id="latencySlider" type="range" min="0" max="2000" step="100" value="0" />
+              <span id="latencyValue" style="min-width:40px; text-align:right;">0 ms</span>
+            </div>
+            <label class="file-chip" style="cursor:pointer;">
+              Bots
+              <input id="botToggle" type="checkbox" style="display:none" checked/>
+            </label>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Onboarding overlay -->
+  <div id="onboard" class="onboard" role="dialog" aria-label="Onboarding overlay" style="display:block;">
+    <h4>Welcome to the Chat Prototype</h4>
+    <p>This self-contained single-page app demonstrates core chat features, multi-tab presence, simulated latency, and clear integration points for REST/socket backends. Seed data is stored locally and migrations are versioned.</p>
+    <p>Try: open in two tabs, switch users, send messages, attach images, use Saved, and toggle latency to observe delivery timing.</p>
+    <button class="close" id="dismissOnboard">Got it</button>
+  </div>
+
+  <!-- Toasts container -->
+  <div id="toastContainer" class="toasts" aria-live="polite"></div>
+
+  <script>
+    // Inline, self-contained chat prototype
+    // 1) Constants and seed data
+    const STORAGE_KEY = 'chat_prototype_v1';
+    const BC_NAME = 'chat_prototype';
+    const BROADCAST = new BroadcastChannel(BC_NAME);
+
+    // Simple in-page color palette for avatars
+    const COLOR_POOL = ['#6ec1ff','#6bffd9','#f6a36c','#a07bff','#ff6ebb','#7cffb2'];
+
+    // Utility: escape HTML
+    const esc = (s) => s.replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'" :"&#39;"}[c]));
+
+    // 2) State model
+    let state = {
+      version: '1',
+      users: [],
+      chats: [], // each chat: {id, type:'direct'|'group', title, participants:[userId...], messages:[msgId], lastActivity}
+      messages: {}, // messageId -> message object
+      saved: [], // saved messages (references by messageId)
+      currentUserId: 'u-you',
+      viewMode: 'chats', // 'chats' or 'saved'
+      latency: 0,
+      online: true,
+      botOn: true,
+      pendingQueue: [], // messages queued while offline
+      focusedChatId: null,
+      onboardingSeen: false
+    };
+
+    // 3) Seed helpers
+    const makeAvatarColor = (userId) => {
+      const idx = Math.abs(hashCode(userId)) % COLOR_POOL.length;
+      return COLOR_POOL[idx];
+    };
+    function hashCode(str) { // simple string hash
+      let h = 0;
+      for (let i=0; i<str.length; i++) h = (h<<5) - h + str.charCodeAt(i);
+      return h;
+    }
+
+    function now() { return Date.now(); }
+
+    // 4) Local storage (versioned)
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed.version || parsed.version !== '1') {
+          // allow migrations here
+          return null;
+        }
+        return parsed;
+      } catch(e){
+        return null;
+      }
+    }
+    function saveState() {
+      const blob = {
+        version: '1',
+        users: state.users,
+        chats: state.chats,
+        messages: state.messages,
+        saved: state.saved,
+        currentUserId: state.currentUserId,
+        onboardingSeen: state.onboardingSeen,
+        latency: state.latency,
+        online: state.online,
+        botOn: state.botOn
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(blob));
+    }
+
+    function seedInitialData() {
+      // Seed users
+      const users = [
+        { id:'u-you', name:'You', initials:'YO', color: makeAvatarColor('u-you') },
+        { id:'u-bob', name:'Bob', initials:'BOB', color: makeAvatarColor('u-bob') },
+        { id:'u-charlie', name:'Charlie', initials:'CH', color: makeAvatarColor('u-charlie') }
+      ];
+      // Seed chats
+      const chats = [
+        { id:'c-d1', type:'direct', title:'Chat with Bob', participants:['u-you','u-bob'], messages:[], lastActivity: now() },
+        { id:'c-g1', type:'group', title:'Project Alpha', participants:['u-you','u-bob','u-charlie'], messages:[], lastActivity: now() }
+      ];
+
+      // Seed messages (id -> message)
+      const messages = {};
+
+      const addMsg = (chatId, senderId, text, attachments=[]) => {
+        const id = 'm-' + Math.random().toString(36).slice(2,9);
+        const m = {
+          id, chatId, senderId, text, attachments, timestamp: now(), edited:false, readBy:new Set([senderId]), reactions: {}, pending:false
+        };
+        messages[id] = m;
+        const chat = chats.find(c => c.id === chatId);
+        if (chat) chat.messages.push(id);
+        chat.lastActivity = m.timestamp;
+        return m;
+      };
+
+      addMsg('c-d1','u-bob','Hey! This is a quick prototype. Check the UI: bold **bold**, *italic*, and links like https://example.com');
+      addMsg('c-d1','u-you','Nice! I will test latency slider and offline mode. Also try attachments.');
+      addMsg('c-g1','u-charlie','Welcome to Project Alpha group. Let’s discuss timelines.');
+
+      // Saved example
+      // we'll push some messages into saved via later action
+
+      // Build state
+      state.users = users;
+      state.chats = chats;
+      state.messages = messages;
+      state.saved = [];
+      state.currentUserId = 'u-you';
+      state.latency = 0;
+      state.online = true;
+      state.botOn = true;
+      state.onboardingSeen = false;
+      // Persist
+      saveState();
+    }
+
+    // 5) Rendering helpers
+    function avatarFor(userId, size='32') {
+      const u = state.users.find(u => u.id === userId);
+      const initials = (u?.initials) ?? 'U';
+      return `<span class="avatar sm" style="background:${u?.color}; width:${size}px; height:${size}px; display:inline-grid; place-items:center; border-radius:50%;">${initials}</span>`;
+    }
+
+    function renderChatList() {
+      const el = document.getElementById('chatList');
+      el.innerHTML = '';
+      // Saved view toggle
+      if (state.viewMode === 'saved') {
+        // Show saved messages overview
+        const saved = state.saved.map(s => {
+          const m = state.messages[s.messageId];
+          const u = state.users.find(u => u.id === m.senderId);
+          return { id: s.id, label: (m?.text || '').slice(0, 30), user: u?.name || 'Unknown', chatId: m?.chatId };
+        });
+        if (saved.length === 0) {
+          el.innerHTML = '<div style="padding:8px; color:var(--muted); font-size:12px;">No saved messages yet.</div>';
+        } else {
+          saved.forEach(s => {
+            const li = document.createElement('div');
+            li.className = 'chat-item';
+            li.innerHTML = `
+              ${avatarFor(state.chats.find(c => c.id === s.chatId)?.participants[0] ?? 'u-you', '28')}
+              <div style="display:flex; flex-direction:column;">
+                <span class="chat-title" style="font-size:13px">Saved: ${esc(s.label)}</span>
+                <span class="chat-sub" style="max-width:200px;">From ${esc(s.user)}</span>
+              </div>
+            `;
+            li.addEventListener('click', () => {
+              // Jump to chat and highlight saved
+              state.viewMode = 'chats';
+              document.getElementById('savedViewBtn').classList.remove('active');
+              renderChatList();
+              openChat(s.chatId);
+            });
+            el.appendChild(li);
+          });
+        }
+        return;
+      }
+
+      // Normal chat list
+      state.chats.forEach(chat => {
+        const lastMsg = chat.messages.length ? state.messages[chat.messages[chat.messages.length-1]] : null;
+        const otherParticipants = chat.participants.filter(p => p !== state.currentUserId).map(p => state.users.find(u => u.id===p)?.name).join(', ');
+        const li = document.createElement('div');
+        li.className = 'chat-item';
+        li.setAttribute('role','button');
+        li.innerHTML = `
+          <span class="avatar" style="background:${makeAvatarColor(chat.id)}; color:white;">${chat.title.charAt(0)}</span>
+          <div style="display:flex; flex-direction:column; min-width:0;">
+            <span class="chat-title" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;">${esc(chat.title)}</span>
+            <span class="chat-sub" title="Participants">${esc(otherParticipants || '')}</span>
+          </div>
+          <span class="badge" aria-label="Unread messages" style="display:${0}">0</span>
+        `;
+        li.addEventListener('click', () => openChat(chat.id));
+        el.appendChild(li);
+      });
+    }
+
+    function renderActiveHeader() {
+      const headerAvatar = document.getElementById('headerActiveAvatar');
+      const headerTitle = document.getElementById('headerActiveTitle');
+      const headerPresence = document.getElementById('headerActivePresence');
+      const renameBtn = document.getElementById('renameGroupBtn');
+      const leaveBtn = document.getElementById('leaveGroupBtn');
+
+      const chat = getActiveChat();
+      if (!chat) {
+        headerAvatar.style.background = '#2a2f66';
+        headerAvatar.textContent = '?';
+        headerTitle.textContent = 'Select a chat';
+        headerPresence.textContent = 'No chat selected';
+        renameBtn.style.display='none';
+        leaveBtn.style.display='none';
+        return;
+      }
+
+      headerAvatar.style.background = '#2a2f66';
+      headerAvatar.textContent = chat.title.charAt(0).toUpperCase();
+      headerTitle.textContent = chat.title;
+      const others = chat.participants.filter(id => id !== state.currentUserId).map(id => state.users.find(u => u.id===id)?.name);
+      headerPresence.textContent = 'Participants: ' + (others.join(', ') || 'Unknown');
+      // group actions
+      if (chat.type === 'group') {
+        renameBtn.style.display = 'inline-block';
+        leaveBtn.style.display = 'inline-block';
+      } else {
+        renameBtn.style.display = 'none';
+        leaveBtn.style.display = 'none';
+      }
+    }
+
+    function renderMessages(chatId) {
+      const container = document.getElementById('messages');
+      container.innerHTML = '';
+      const chat = state.chats.find(c => c.id === chatId);
+      if (!chat) return;
+      // Render messages in order
+      chat.messages.forEach(mid => {
+        const m = state.messages[mid];
+        const sender = state.users.find(u => u.id === m.senderId);
+        const isMine = m.senderId === state.currentUserId;
+        const msgEl = document.createElement('div');
+        msgEl.className = 'message ' + (isMine ? 'my' : '');
+        // avatar + bubble
+        const avatar = document.createElement('div');
+        avatar.className = 'avatar sm';
+        avatar.style.background = sender?.color || '#444';
+        avatar.textContent = sender?.name?.charAt(0) ?? '?';
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        // parse markdown + links
+        const parsed = parseMarkdown(escapeHtml(m.text));
+        bubble.innerHTML = parsed.html;
+        // attachments
+        const attachBox = document.createElement('div');
+        attachBox.className = 'attachment';
+        if (m.attachments && m.attachments.length) {
+          m.attachments.forEach(att => {
+            if (att.type.startsWith('image/')) {
+              const img = document.createElement('img');
+              img.src = att.dataUrl;
+              attachBox.appendChild(img);
+            } else {
+              const a = document.createElement('a');
+              a.href = att.dataUrl;
+              a.download = att.name || 'attachment';
+              a.textContent = att.name || 'Attachment';
+              attachBox.appendChild(a);
+            }
+          });
+        }
+        if (attachBox.children.length) bubble.appendChild(attachBox);
+
+        // previews (link previews)
+        const links = extractLinks(m.text);
+        if (links.length) {
+          links.forEach(url => {
+            const pv = createPreviewFor(url);
+            if (pv) {
+              const pvEl = document.createElement('div');
+              pvEl.className = 'preview';
+              pvEl.innerHTML = `
+                <img src="${pv.image}" alt="preview" />
+                <div>
+                  <div class="title">${esc(pv.title)}</div>
+                  <div class="domain">${esc(pv.domain)}</div>
+                </div>
+              `;
+              bubble.appendChild(pvEl);
+            }
+          });
+        }
+
+        // meta line
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const ts = new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        meta.innerHTML = ` <span>${ts}</span>`;
+        // read receipts
+        const readStatus = document.createElement('span');
+        readStatus.style.marginLeft = 'auto';
+        const readers = Array.from(m.readBy || []);
+        const otherReads = readers.filter(r => r !== state.currentUserId);
+        if (otherReads.length > 0) {
+          readStatus.textContent = '✓' + (otherReads.length > 1 ? '✓' : '');
+        } else {
+          readStatus.textContent = '';
+        }
+        meta.appendChild(readStatus);
+
+        // actions (edit/undo)
+        const actions = document.createElement('div');
+        actions.className = 'message-actions';
+        const editBtn = document.createElement('button');
+        editBtn.className = 'action-btn';
+        editBtn.textContent = 'Edit';
+        editBtn.title = 'Edit message';
+        editBtn.style.display = isMine ? 'inline-block' : 'none';
+        editBtn.addEventListener('click', () => {
+          if (m.editing) return;
+          m.editing = true;
+          renderMessages(chatId);
+        });
+        const undoBtn = document.createElement('button');
+        undoBtn.className = 'action-btn';
+        undoBtn.textContent = 'Undo';
+        undoBtn.title = 'Undo last send';
+        undoBtn.style.display = (m.pending || false) ? 'inline-block' : 'none';
+        undoBtn.addEventListener('click', () => {
+          // simple undo: remove if pending or delete last local
+          if (m.pending) {
+            // remove from queue
+            state.pendingQueue = state.pendingQueue.filter(p => p.id !== m.id);
+            m.pending = false;
+            m.deleted = true;
+            renderMessages(chatId);
+            showToast('Message cancelled.');
+          } else {
+            // if message not pending but can undo within a small window
+            m.text = m.text + '';
+            m.edited = true;
+            renderMessages(chatId);
+          }
+        });
+        actions.appendChild(editBtn);
+        actions.appendChild(undoBtn);
+
+        bubble.appendChild(meta);
+        bubble.appendChild(actions);
+
+        msgEl.appendChild(avatar);
+        msgEl.appendChild(bubble);
+
+        // Editing inline UX (very simple)
+        if (m.editing) {
+          const editBox = document.createElement('textarea');
+          editBox.value = m.text;
+          editBox.style.width = '100%';
+          editBox.style.marginTop = '6px';
+          editBox.style.borderRadius = '6px';
+          editBox.style.border = '1px solid #2a2f66';
+          editBox.style.background = '#0b1130';
+          editBox.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              m.text = editBox.value;
+              m.editing = false;
+              m.edited = true;
+              renderMessages(chatId);
+            }
+          });
+          bubble.appendChild(editBox);
+        }
+
+        container.appendChild(msgEl);
+      });
+      // Auto scroll to bottom
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function parseMarkdown(input) {
+      // basic: escape then replace bold/italic and links
+      let html = input;
+      // bold
+      html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // italic
+      html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      // links (safe)
+      html = html.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+      // simple line breaks
+      html = html.replace(/\n/g, '<br/>');
+      return { html };
+    }
+    function escapeHtml(s) { return s ? s.replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'" :"&#39;"}[c])) : ''; }
+
+    function extractLinks(text) {
+      if (!text) return [];
+      const urls = [];
+      const rx = /(https?:\/\/[^\s]+)/g;
+      let m;
+      while ((m = rx.exec(text)) !== null) {
+        urls.push(m[0]);
+      }
+      return urls;
+    }
+
+    function createPreviewFor(url) {
+      // simple fake preview: title from domain
+      try {
+        const domain = (new URL(url)).hostname;
+        const pv = {
+          title: 'Link Preview for ' + domain,
+          domain: domain,
+          image: makePreviewImage(domain)
+        };
+        return pv;
+      } catch (e) {
+        return null;
+      }
+    }
+    function makePreviewImage(domain) {
+      // simple inline SVG data URL
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop stop-color="#6ea8fe" offset="0"/><stop stop-color="#4cd97b" offset="1"/>
+        </linearGradient></defs>
+        <rect width="100%" height="100%" fill="url(#g)"/>
+        <text x="40" y="44" font-family="Arial" font-size="10" fill="#fff" text-anchor="middle">${domain.slice(0,8)}</text>
+      </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    function escapeAndRender(text) {
+      const safe = esc(text);
+      const parsed = parseMarkdown(safe);
+      return parsed.html;
+    }
+
+    // 6) Message sending / receive
+    function getActiveChat() {
+      if (!state.focusedChatId) return null;
+      return state.chats.find(c => c.id === state.focusedChatId) || null;
+    }
+
+    function openChat(chatId) {
+      state.focusedChatId = chatId;
+      renderActiveHeader();
+      renderMessages(chatId);
+      // mark read
+      markChatRead(chatId);
+    }
+
+    function markChatRead(chatId) {
+      const chat = state.chats.find(c => c.id === chatId);
+      if (!chat) return;
+      chat.messages.forEach(mid => {
+        const m = state.messages[mid];
+        if (m) {
+          m.readBy = new Set(state.users.map(u => u.id)); // pretend everyone has read including self
+        }
+      });
+      saveState();
+      renderMessages(chatId);
+    }
+
+    function sendMessageFromInput() {
+      const ta = document.getElementById('messageInput');
+      const text = ta.value.trim();
+      if (!text) return;
+      const chat = getActiveChat();
+      if (!chat) {
+        showToast('Select a chat first.');
+        ta.value = '';
+        return;
+      }
+      const attachments = collectAttachments();
+      const m = {
+        id: 'm-' + Math.random().toString(36).slice(2,9),
+        chatId: chat.id,
+        senderId: state.currentUserId,
+        text, attachments,
+        timestamp: now(),
+        edited:false,
+        readBy: new Set([state.currentUserId]),
+        reactions: {},
+        pending: true
+      };
+      // add to state
+      state.messages[m.id] = m;
+      chat.messages.push(m.id);
+      chat.lastActivity = m.timestamp;
+      // clear input
+      ta.value = '';
+      clearAttachments();
+      renderMessages(chat.id);
+      // simulate latency / offline
+      const delay = state.latency;
+      if (!state.online) {
+        // queue
+        state.pendingQueue.push(m);
+        showToast('Message queued (offline). Will retry when online.');
+      } else {
+        setTimeout(() => {
+          m.pending = false;
+          // if bot is on and sender is user, trigger bot reply
+          broadcastMessage(m);
+          renderMessages(chat.id);
+          if (state.botOn && chat.type !== 'direct' || chat.type === 'group') {
+            simulateBotReply(chat.id);
+          }
+        }, delay);
+      }
+      // Save + notify
+      saveState();
+      // Broadcast to other tabs
+      broadcastMessage(m);
+    }
+
+    function collectAttachments() {
+      const chips = document.querySelectorAll('#attachmentsPreview .file-chip-attachment');
+      // attachments are stored on messages as part of the message object in this simplified app
+      // We'll collect from a temporary store: render file previews as we attach
+      // Instead, we'll parse from a global array if implemented; for simplicity, use a lightweight approach:
+      // We'll read an in-memory array on the page: window.tempAttachments
+      return (window.tempAttachments || []).slice();
+    }
+
+    function clearAttachments() {
+      window.tempAttachments = [];
+      const el = document.getElementById('attachmentsPreview');
+      el.innerHTML = '';
+    }
+
+    function addAttachmentToPreview(file) {
+      // read as data URL
+      const reader = new FileReader();
+      reader.onload = function(e){
+        const dataUrl = e.target.result;
+        const att = {
+          name: file.name,
+          type: file.type,
+          dataUrl
+        };
+        if (!window.tempAttachments) window.tempAttachments = [];
+        window.tempAttachments.push(att);
+        // render chip
+        const chip = document.createElement('span');
+        chip.className = 'file-chip';
+        chip.textContent = file.name;
+        // small remove
+        const rm = document.createElement('button');
+        rm.textContent = '×';
+        rm.style.marginLeft = '6px';
+        rm.style.background = 'transparent';
+        rm.style.border = '0';
+        rm.style.color = '#ff8';
+        rm.style.cursor = 'pointer';
+        rm.addEventListener('click', () => {
+          window.tempAttachments = (window.tempAttachments || []).filter(a => a.name !== file.name);
+          chip.remove();
+        });
+        chip.appendChild(rm);
+        document.getElementById('attachmentsPreview').appendChild(chip);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function broadcastMessage(m) {
+      const payload = {
+        type: 'message:new',
+        data: {
+          chatId: m.chatId,
+          message: m
+        }
+      };
+      BROADCAST.postMessage(payload);
+    }
+
+    function simulateBotReply(chatId) {
+      // Simple bot reply after some time
+      const bot = state.users.find(u => u.id === 'u-bob');
+      if (!bot) return;
+      const msg = state.chats.find(c => c.id === chatId);
+      if (!msg) return;
+      // avoid if last message already from bot recently
+      setTimeout(() => {
+        // ensure chat still exists
+        const chat = state.chats.find(c => c.id === chatId);
+        if (!chat) return;
+        // if the last message is from you and within last 10s, reply
+        const last = chat.messages.length ? state.messages[chat.messages[chat.messages.length-1]] : null;
+        if (last?.senderId === state.currentUserId) {
+          const m = {
+            id: 'm-' + Math.random().toString(36).slice(2,9),
+            chatId, senderId: bot.id,
+            text: 'Here is a quick auto-reply from Bot. Try attaching an image or paste a URL like https://example.org',
+            timestamp: now(), edited:false, readBy: new Set([bot.id]), reactions: {}, pending:false
+          };
+          state.messages[m.id] = m;
+          chat.messages.push(m.id);
+          chat.lastActivity = m.timestamp;
+          renderMessages(chatId);
+          // broadcast
+          broadcastMessage(m);
+        }
+      }, 900 + Math.random()*800);
+    }
+
+    function onReceiveMessage(data) {
+      // payload: chatId, message
+      const m = data;
+      // if message is from current user, already handled; skip
+      // ensure chat exists
+      const chat = state.chats.find(c => c.id === m.chatId);
+      if (!chat) return;
+      // store
+      state.messages[m.id] = m;
+      if (!chat.messages.includes(m.id)) chat.messages.push(m.id);
+      chat.lastActivity = m.timestamp;
+      // render if active
+      if (state.focusedChatId === chat.id) renderMessages(chat.id);
+      // show notification if not focused
+      if (document.hasFocus() === false) {
+        showToast('New message');
+        if (state.settings?.notify) spawnNotificationForMessage(m);
+      }
+    }
+
+    function spawnNotificationForMessage(m) {
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'granted') {
+        const u = state.users.find(u => u.id === m.senderId);
+        const n = new Notification(u?.name || 'New message', {
+          body: (m.text || '').slice(0, 50),
+          icon: '' // could add a favicon data URL
+        });
+        setTimeout(() => n.close(), 4000);
+      }
+    }
+
+    function showToast(text) {
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.textContent = text;
+      document.getElementById('toastContainer').appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    }
+
+    // 7) Search highlighting
+    function renderSearchHighlight(containerEl, searchQuery) {
+      // naive: re-render messages with highlight
+      // We'll re-call renderMessages for current chat
+      if (state.focusedChatId) {
+        renderMessages(state.focusedChatId);
+      }
+    }
+
+    // 8) Attachments input handler
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const files = Array.from(e.target.files || []);
+      files.forEach(f => addAttachmentToPreview(f));
+      // reset input so same file can be re-added
+      e.target.value = '';
+    });
+
+    // 9) Input events
+    const msgInput = document.getElementById('messageInput');
+    msgInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        if (!msgInput.value.trim()) return;
+        sendMessageFromInput();
+      }
+    });
+    const sendBtn = document.getElementById('sendBtn');
+    sendBtn.addEventListener('click', () => sendMessageFromInput());
+
+    // latency slider
+    const latencySlider = document.getElementById('latencySlider');
+    const latencyValue = document.getElementById('latencyValue');
+    latencySlider.addEventListener('input', () => {
+      state.latency = parseInt(latencySlider.value, 10);
+      latencyValue.textContent = state.latency + ' ms';
+    });
+
+    // bot toggle (fake presence)
+    const botToggle = document.getElementById('botToggle');
+    botToggle.addEventListener('change', () => {
+      state.botOn = botToggle.checked;
+      saveState();
+    });
+
+    // New chat modal (simple prompt)
+    document.getElementById('newChatBtn').addEventListener('click', () => {
+      const name = prompt('Create a direct chat with a name (use Bob for demo):', 'Chat with Bob');
+      if (!name) return;
+      const withUser = 'u-bob';
+      // create chat
+      const id = 'c-d' + (state.chats.length + 1);
+      const chat = { id, type:'direct', title: name, participants: [state.currentUserId, withUser], messages:[], lastActivity: now() };
+      state.chats.push(chat);
+      renderChatList();
+      openChat(id);
+      saveState();
+    });
+
+    // Saved view toggle
+    document.getElementById('savedViewBtn').addEventListener('click', () => {
+      const btn = document.getElementById('savedViewBtn');
+      state.viewMode = (state.viewMode === 'saved') ? 'chats' : 'saved';
+      btn.classList.toggle('active');
+      renderChatList();
+    });
+
+    // Onboarding dismiss
+    document.getElementById('dismissOnboard').addEventListener('click', () => {
+      document.getElementById('onboard').style.display = 'none';
+      state.onboardingSeen = true;
+      saveState();
+    });
+
+    // Rename / Leave group (placeholders)
+    document.getElementById('renameGroupBtn').addEventListener('click', () => {
+      const chat = getActiveChat();
+      if (!chat || chat.type !== 'group') return;
+      const newTitle = prompt('Rename group:', chat.title);
+      if (newTitle) {
+        chat.title = newTitle;
+        renderActiveHeader();
+        renderChatList();
+        saveState();
+      }
+    });
+    document.getElementById('leaveGroupBtn').addEventListener('click', () => {
+      const chat = getActiveChat();
+      if (!chat || chat.type !== 'group') return;
+      if (confirm('Leave this group?')) {
+        // remove current user
+        chat.participants = chat.participants.filter(p => p !== state.currentUserId);
+        renderActiveHeader();
+        renderChatList();
+        saveState();
+        showToast('You left the group.');
+      }
+    });
+
+    // Clear data
+    document.getElementById('clearDataBtn')?.addEventListener('click', () => {
+      if (confirm('Clear all local data and reseed?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        location.reload();
+      }
+    });
+
+    // 10) Broadcast channel setup
+    BROADCAST.onmessage = (event) => {
+      const data = event.data;
+      if (!data) return;
+      if (data.type === 'message:new') {
+        const m = data.data?.message;
+        // ensure chat exists
+        const chat = state.chats.find(c => c.id === data.data?.chatId);
+        if (chat) {
+          if (!chat.messages.includes(m.id)) chat.messages.push(m.id);
+          state.messages[m.id] = m;
+          chat.lastActivity = m.timestamp;
+          if (state.focusedChatId === chat.id) {
+            renderMessages(chat.id);
+          } else {
+            // show a toast for out-of-view messages
+            showToast('New message in ' + chat.title);
+          }
+        } else {
+          // unknown chat: ignore or could create
+        }
+      }
+      // presence/typing could be added similarly
+    };
+
+    // 11) Load or seed
+    function initialize() {
+      const loaded = loadState();
+      if (loaded && loaded.users?.length) {
+        Object.assign(state, loaded);
+      } else {
+        seedInitialData();
+      }
+      // UI: populate list
+      renderChatList();
+      if (state.focusedChatId) {
+        renderActiveHeader();
+        renderMessages(state.focusedChatId);
+      } else {
+        renderActiveHeader();
+      }
+
+      // request notification permission
+      if ('Notification' in window && Notification.permission === 'default') {
+        // ask on first interaction or here
+        // We'll prompt on first attempt to send
+      }
+      // onboarding
+      if (!state.onboardingSeen) {
+        document.getElementById('onboard').style.display = 'block';
+      } else {
+        document.getElementById('onboard').style.display = 'none';
+      }
+
+      // friendly focus
+      document.getElementById('messageInput').focus();
+    }
+
+    // Accessibility helpers
+    function setFocusToChat(chatId) {
+      document.getElementById('searchInput')?.focus();
+    }
+
+    // Link search input in header (dynamically add a header search in top)
+    // Not implemented for brevity; could be extended.
+
+    // 12) Initial boot
+    // Prepare some initial chat focus for demo
+    initialize();
+
+    // Expose a few helpers for testing in console (optional)
+    window._demo = {
+      openChat, renderMessages, saveState, markChatRead
+    };
+
+  </script>
+
+</body>
+</html>
