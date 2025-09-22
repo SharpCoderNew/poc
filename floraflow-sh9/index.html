@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FloraFlow Shop - Premium Flower Delivery</title>
+  <style>
+    :root{
+      --bg: #0e0b1c;
+      --card: #17142a;
+      --muted: #b8a8c8;
+      --text: #f5f3ff;
+      --accent: #a78bfa;
+      --accent2: #4c1d95;
+      --shadow: 0 6px 20px rgba(0,0,0,.25);
+      --radius: 14px;
+      --gap: 14px;
+      --grad: linear-gradient(135deg, #a78bfa 0%, #4c1d95 100%);
+      --ok: #10b981;
+      --warn: #f59e0b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:var(--text);
+      background: radial-gradient(circle at 20% -10%, rgba(167,139,250,.15), transparent 40%), 
+                  radial-gradient(circle at 90% 10%, rgba(76,29,149,.2), transparent 40%), 
+                  #0b061a;
+      background-attachment: fixed;
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-decoration:none }
+    header{ position: sticky; top:0; z-index:100; backdrop-filter: saturate(1.2) blur(6px); background: rgba(8,6,14,.72); border-bottom:1px solid rgba(255,255,255,.08);}
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding:14px 20px; max-width:1200px; margin:0 auto;}
+    .brand{ display:flex; align-items:center; gap:12px; font-family: Georgia, "Times New Roman", serif; font-size:20px; font-weight:700; letter-spacing:.5px}
+    .brand .logo{ width:34px; height:34px; border-radius:9px; background: var(--grad); display:flex; align-items:center; justify-content:center; font-size:18px}
+    nav{ display:flex; gap:14px; align-items:center; }
+    .nav-link{ padding:8px 12px; border-radius:999px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); color:#eee; font-size:14px; cursor:pointer}
+    .nav-link.active{ background: rgba(167,139,250,.25); border-color: rgba(167,139,250,.6); }
+    .lang{ margin-left:8px; padding:6px 8px; border-radius:6px; border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.04); color:#fff; }
+    .cta-btn{ background:var(--grad); border:none; color:white; padding:10px 14px; border-radius:999px; cursor:pointer; font-weight:600; box-shadow: 0 6px 14px rgba(124,58,237,.4); }
+    main{ max-width:1200px; margin:0 auto; padding:20px; }
+    .hero{ display:grid; grid-template-columns:1.2fr .8fr; gap:20px; align-items:center; padding:20px; border-radius:var(--radius); background: linear-gradient(135deg, rgba(167,139,250,.22), rgba(76,29,149,.22)); border:1px solid rgba(255,255,255,.08); margin:20px 0 10px; }
+    .hero h1{ font-family: "Georgia", serif; font-size: clamp(28px, 4vw, 48px); margin:0 0 8px; line-height:1.05 }
+    .hero p{ color: #e9d6ff; font-size: 15px; margin:0; opacity:.95 }
+    .card-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--gap); margin: 14px 0 26px; }
+    .section{ margin: 28px 0; }
+    .section h2{ font-family: serif; font-size: 22px; margin:0 0 10px; }
+    .filters{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:6px 8px; border-radius:12px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); }
+    .filters label{ font-size:12px; color:#ddd; margin-right:6px; }
+    select, input[type="range"]{ background: rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.15); padding:8px 10px; border-radius:8px; }
+    .range-row{ display:flex; align-items:center; gap:8px; }
+    .range-row input{ width:140px; }
+    .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:14px; }
+    .card{ surface-color:white; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; height:100%; box-shadow: var(--shadow); transition: transform .25s ease, box-shadow .25s ease; }
+    .card:hover{ transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,.4); }
+    .media{ position:relative; width:100%; padding-top:100%; background:#1b1030; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+    .emoji{ font-size:44px; z-index:2; position:relative; transition: opacity .4s ease; }
+    .img{ position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; opacity:0; transition: opacity .6s ease; }
+    .img.loaded{ opacity:1; }
+    .card-body{ padding:12px; display:flex; flex-direction:column; gap:6px; flex:1; }
+    .name{ font-family: serif; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .tag{ color:var(--muted); font-size:12px; height: 28px; overflow:hidden; text-overflow:ellipsis; }
+    .price{ display:flex; align-items:baseline; gap:6px; margin-top:auto; }
+    .price .now{ font-size:16px; font-weight:700; }
+    .price .old{ font-size:12px; color:#caa; text-decoration: line-through; }
+    .rating{ font-size:12px; color:#ffd166; display:flex; gap:6px; align-items:center; }
+    .card-actions{ display:flex; justify-content:space-between; gap:8px; padding:10px; border-top:1px solid rgba(255,255,255,.08); }
+    .btn{ padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.04); color:#fff; cursor:pointer; }
+    .btn.primary{ background: linear-gradient(135deg, #a78bfa, #4c1d95); border: none; }
+    .btn.ghost{ background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.25); }
+    .badge{ background: rgba(167,139,250,.25); color:#e8ddff; padding:4px 8px; border-radius:999px; font-size:11px; }
+    /* Cart Drawer */
+    .cart-drawer{ position:fixed; top:0; right:0; height:100%; width:360px; max-width:90vw; background:#0f0b1d; border-left:1px solid rgba(255,255,255,.15); transform: translateX(100%); transition: transform .25s ease; display:flex; flex-direction:column; z-index:120; }
+    .cart-drawer.open{ transform: translateX(0); }
+    .cart-header{ padding:14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,.08); }
+    .cart-items{ padding:8px 12px; overflow:auto; flex:1; display:flex; flex-direction:column; gap:8px; }
+    .cart-item{ display:flex; gap:8px; align-items:center; padding:8px; border-radius:8px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); }
+    .thumb{ width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:6px; background:#211033; font-size:20px; }
+    .cart-info{ display:flex; flex-direction:column; gap:4px; font-size:13px; }
+    .qty{ display:flex; align-items:center; gap:6px; margin-left:auto; }
+    .cart-total{ padding:12px; border-top:1px solid rgba(255,255,255,.08); }
+    .separator{ height:1px; background: rgba(255,255,255,.08); margin:6px 0; }
+    .close{ border:none; background:transparent; color:#fff; font-size:16px; cursor:pointer; }
+    .empty{ padding:40px; text-align:center; color:#ddd; }
+    /* Floating Chat */
+    .chat{ position: fixed; right:20px; bottom:20px; z-index:110; display:flex; flex-direction:column; gap:10px; }
+    .chat-bubble{ width:52px; height:52px; border-radius:50%; background: var(--grad); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 16px rgba(124,58,237,.5); }
+    .chat-window{ width:320px; max-width:90vw; height:420px; background:#121128; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,.4); padding:10px; display:flex; flex-direction:column; overflow:hidden; }
+    .chat-area{ flex:1; overflow:auto; padding:6px; display:flex; flex-direction:column; gap:8px; }
+    .msg{ max-width:78%; padding:8px 10px; border-radius:10px; background:#2a2140; color:#fff; }
+    .msg.me{ align-self:flex-end; background:#a78bfa; color:#1b0b2b; }
+    .chat-input{ display:flex; gap:6px; padding:6px; border-top:1px solid rgba(255,255,255,.08); }
+    .chat-input input{ flex:1; padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,.25); background:#fff; color:#111; }
+    .small{ font-size:11px; color:#bbb; }
+    @media (max-width: 900px){
+      .hero{ grid-template-columns:1fr; }
+      .card-grid{ grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+      .section{ padding-right:0; padding-left:0; }
+    }
+  </style>
+</head>
+<body>
+  <header role="banner" aria-label="Main header">
+    <div class="nav" aria-label="Navigation bar">
+      <div class="brand" aria-label="FloraFlow brand">
+        <div class="logo" aria-hidden="true">FF</div>
+        <div id="brand-name" data-i18n="header.brand">FloraFlow</div>
+      </div>
+      <nav role="navigation" aria-label="Site sections">
+        <button class="nav-link active" data-section="shop" id="nav-shop" data-i18n="nav.shop" aria-label="Shop section">Shop</button>
+        <button class="nav-link" data-section="occasions" id="nav-occasions" data-i18n="nav.occasions" aria-label="Occasions section">Occasions</button>
+        <button class="nav-link" data-section="bestsellers" id="nav-bestsellers" data-i18n="nav.bestsellers" aria-label="Bestsellers section">Best Sellers</button>
+        <button class="nav-link" data-section="about" id="nav-about" data-i18n="nav.about" aria-label="About section">About</button>
+        <button class="nav-link" data-section="contact" id="nav-contact" data-i18n="nav.contact" aria-label="Contact section">Contact</button>
+      </nav>
+      <div>
+        <select id="lang" class="lang" aria-label="Language switcher">
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="fr">FR</option>
+          <option value="de">DE</option>
+        </select>
+        <button class="cta-btn" id="cart-toggle" aria-label="Open cart">Cart (0)</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" aria-label="Brand hero">
+      <div>
+        <h1 data-i18n="header.title" id="hero-title">FloraFlow Premium Flowers</h1>
+        <p data-i18n="header.tagline" id="hero-tagline">Premium flower delivery with a premium experience.</p>
+        <div style="margin-top:8px;">
+          <span class="badge" aria-label="Free delivery">Free delivery over $60</span>
+          <span class="badge" aria-label="Same day delivery" style="margin-left:8px;">Same-day when possible</span>
+        </div>
+      </div>
+      <div aria-label="Hero image placeholder" class="media" style="border-radius:12px; min-height:180px; background:#1b1030;">
+        <span class="emoji" aria-hidden="true" style="font-size:72px;">💜</span>
+        <img alt="Hero flowers" class="img" src="" />
+      </div>
+    </section>
+
+    <!-- FILTERS BAR (shared across sections) -->
+    <section class="section" aria-label="Product filters">
+      <div class="filters" id="filters" role="region" aria-label="Filters">
+        <span data-i18n="filters.category" class="label">Category</span>
+        <select id="filter-category" aria-label="Filter by category">
+          <option value="">All</option>
+        </select>
+
+        <span data-i18n="filters.occasion" class="label" style="margin-left:6px;">Occasion</span>
+        <select id="filter-occasion" aria-label="Filter by occasion">
+          <option value="">All</option>
+        </select>
+
+        <span data-i18n="filters.color" class="label" style="margin-left:6px;">Color</span>
+        <select id="filter-color" aria-label="Filter by color">
+          <option value="">All</option>
+        </select>
+
+        <span data-i18n="filters.price" class="label" style="margin-left:6px;">Price</span>
+        <div class="range-row" aria-label="Price range">
+          <input type="range" id="price-min" min="20" max="120" step="1" value="20" />
+          <span id="price-min-val">$20</span>
+          <input type="range" id="price-max" min="20" max="120" step="1" value="120" />
+          <span id="price-max-val">$120</span>
+        </div>
+
+        <span data-i18n="filters.sort" class="label" style="margin-left:6px;">Sort</span>
+        <select id="filter-sort" aria-label="Sort products">
+          <option value="popularity">Popularity</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+        </select>
+
+        <button class="btn ghost" id="clear-filters" aria-label="Clear filters" data-i18n="filters.clear">Clear Filters</button>
+      </div>
+    </section>
+
+    <!-- SECTIONS -->
+    <section class="section" id="shop" aria-label="Shop section">
+      <h2 data-i18n="sections.shop" style="margin:6px 0 4px 6px;">Shop</h2>
+      <div class="grid" id="shop-grid" aria-label="Shop products grid"></div>
+    </section>
+
+    <section class="section" id="occasions" aria-label="Occasions section">
+      <h2 data-i18n="sections.occasions" style="margin:6px 0 4px 6px;">Occasions</h2>
+      <div class="grid" id="occasions-grid" aria-label="Occasions products grid"></div>
+    </section>
+
+    <section class="section" id="bestsellers" aria-label="Bestsellers section">
+      <h2 data-i18n="sections.bestsellers" style="margin:6px 0 4px 6px;">Bestsellers</h2>
+      <div class="grid" id="bestsellers-grid" aria-label="Bestsellers grid"></div>
+    </section>
+
+    <!-- About & Contact -->
+    <section class="section" id="about" aria-label="About section">
+      <h2 data-i18n="sections.about" style="margin:6px 0 6px 6px;">About FloraFlow</h2>
+      <p style="padding:0 6px 8px 6px; color:#e9d6ff; line-height:1.6;">
+        FloraFlow is a premium flower delivery brand crafting experiences in lavender-violet gradients. We combine curated florals with thoughtful packaging to elevate every moment.
+      </p>
+    </section>
+
+    <section class="section" id="contact" aria-label="Contact section">
+      <h2 data-i18n="sections.contact" style="margin:6px 0 6px 6px;">Contact</h2>
+      <form id="contact-form" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:0 6px;">
+        <input aria-label="Name" placeholder="Name" required />
+        <input aria-label="Email" placeholder="Email" type="email" required />
+        <textarea aria-label="Message" placeholder="Your message" rows="4" style="grid-column:1 / span 2;"></textarea>
+        <button class="btn primary" type="submit" style="grid-column:1 / span 2; width:150px; justify-self:end;">Send</button>
+      </form>
+      <p class="small" style="padding:6px 6px 0; color:#ddd;">We respond within 1-2 business days.</p>
+    </section>
+
+    <section class="section" aria-label="Footer" id="footer">
+      <div style="padding:8px 6px; text-align:center; color:#bbb;">© FloraFlow - All rights reserved</div>
+    </section>
+  </main>
+
+  <!-- Cart Drawer -->
+  <aside class="cart-drawer" id="cart-drawer" aria-label="Shopping cart" role="complementary" aria-hidden="true">
+    <div class="cart-header">
+      <strong>Cart</strong>
+      <button class="close" id="cart-close" aria-label="Close cart">✕</button>
+    </div>
+    <div class="cart-items" id="cart-items" aria-label="Cart items">
+      <!-- items injected -->
+    </div>
+    <div class="cart-total" aria-label="Cart total">
+      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">$0</span>
+      </div>
+      <button class="btn primary" id="checkout" aria-label="Checkout">Checkout</button>
+    </div>
+  </aside>
+
+  <!-- Floating Chat Widget -->
+  <div class="chat" aria-label="Customer chat">
+    <div class="chat-bubble" id="chat-toggle" title="Chat with FloraFlow" aria-label="Open chat">
+      💬
+    </div>
+    <div class="chat-window" id="chat-window" style="display:none;" aria-label="Chat window">
+      <div style="padding:8px; border-bottom:1px solid rgba(255,255,255,.08); display:flex; justify-content:space-between; align-items:center;">
+        <strong>FloraFlow Chat</strong>
+        <button class="close" id="chat-close" aria-label="Close chat">✕</button>
+      </div>
+      <div class="chat-area" id="chat-area" aria-live="polite">
+        <div class="msg" role="note">Hello! How can I help you today? 🌷</div>
+      </div>
+      <div class="chat-input">
+        <input id="chat-input" placeholder="Type a message..." />
+        <button class="btn" id="send-chat" aria-label="Send message">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Data: Products (>=20). Each item: id, name, tagline, rating, reviewCount, price, originalPrice, emoji, unsplashQuery, category, occasion, color, popularity, section
+    const products = [
+      {id:1, name:"Rose Garden Premium", tagline:"Classic pink-peony bouquet", rating:4.9, reviewCount: 128, price:58, originalPrice:72, emoji:"🌹", unsplashQuery:"pink roses bouquet", category:"Bouquet", occasion:"Birthday", color:"pink", popularity:98, section:"shop"},
+      {id:2, name:"Lavender Nights", tagline:"Lavender & lilac blooms", rating:4.8, reviewCount: 92, price:64, originalPrice: null, emoji:"💜", unsplashQuery:"lavender flowers bouquet", category:"Bouquet", occasion:"Anniversary", color:"purple", popularity:95, section:"shop"},
+      {id:3, name:"Sunset Symphony", tagline:"Orange-tinted glow", rating:4.7, reviewCount: 77, price:72, originalPrice: 89, emoji:"🌇", unsplashQuery:"orange sunset flowers", category:"Arrangement", occasion:"Thank You", color:"orange", popularity:90, section:"shop"},
+      {id:4, name:"Dawn & Dew", tagline:"Soft whites with greenery", rating:4.6, reviewCount: 44, price:59, originalPrice:null, emoji:"🤍", unsplashQuery:"white flowers greenery", category:"Bouquet", occasion:"Get Well", color:"white", popularity:85, section:"shop"},
+      {id:5, name:"Blush Belle", tagline:"Rosy blush tones", rating:4.7, reviewCount: 61, price:66, originalPrice: 79, emoji:"💗", unsplashQuery:"blush roses bouquet", category:"Bouquet", occasion:"Birthday", color:"pink", popularity:83, section:"shop"},
+      {id:6, name:"Indigo Dream", tagline:"Deep purples and sapphire accents", rating:4.5, reviewCount: 39, price:70, originalPrice:null, emoji:"🪬", unsplashQuery:"purple flowers bouquet", category:"Arrangement", occasion:"Anniversary", color:"purple", popularity:78, section:"shop"},
+      {id:7, name:"Citrus Charm", tagline:"Bright citrus mix", rating:4.4, reviewCount: 32, price:55, originalPrice:65, emoji:"🍋", unsplashQuery:"citrus flowers bouquet", category:"Bouquet", occasion:"Get Well", color:"yellow", popularity:72, section:"shop"},
+      {id:8, name:"Peony Promise", tagline:"Lush pink peonies", rating:4.9, reviewCount: 156, price:82, originalPrice: 95, emoji:"🌸", unsplashQuery:"peony bouquet", category:"Bouquet", occasion:"Birthday", color:"pink", popularity:97, section:"shop"},
+      {id:9, name:"Emerald Oasis", tagline:"Cool greens & whites", rating:4.3, reviewCount: 22, price:54, originalPrice:null, emoji:"🌿", unsplashQuery:"green foliage bouquet", category:"Arrangement", occasion:"Thank You", color:"green", popularity:66, section:"shop"},
+      {id:10, name:"Coral Cascade", tagline:"Vibrant coral tones", rating:4.6, reviewCount: 54, price:60, originalPrice: 72, emoji:"🌺", unsplashQuery:"coral flowers bouquet", category:"Bouquet", occasion:"Birthday", color:"orange", popularity:74, section:"shop"},
+      {id:11, name:"Celestial Lavender", tagline:"Lavender & silver accents", rating:4.5, reviewCount: 30, price:68, originalPrice: 80, emoji:"🌌", unsplashQuery:"lavender bouquet", category:"Bouquet", occasion:"Anniversary", color:"purple", popularity:71, section:"shop"},
+      {id:12, name:"Moonlight White", tagline:"Ethereal white lilies", rating:4.4, reviewCount: 28, price:57, originalPrice: null, emoji:"🌕", unsplashQuery:"white lilies bouquet", category:"Bouquet", occasion:"Get Well", color:"white", popularity:68, section:"shop"},
+
+      // Occasions (4)
+      {id:13, name:"Birthday Brights", tagline:"Celebrate with color", rating:4.6, reviewCount: 40, price:62, originalPrice: null, emoji:"🎉", unsplashQuery:"birthday flowers bouquet", category:"Bouquet", occasion:"Birthday", color:"multicolor", popularity:88, section:"occasion"},
+      {id:14, name:"Anniversary Glow", tagline:"Romantic purples", rating:4.7, reviewCount: 52, price:75, originalPrice: 85, emoji:"💑", unsplashQuery:"anniversary flowers", category:"Bouquet", occasion:"Anniversary", color:"purple", popularity:90, section:"occasion"},
+      {id:15, name:"Thank You Quiet", tagline:"Soft tones of gratitude", rating:4.5, reviewCount: 29, price: Fifty=50, originalPrice: 60, emoji:"🙏", unsplashQuery:"thank you flowers", category:"Bouquet", occasion:"Thank You", color:"pink", popularity:65, section:"occasion"},
+      {id:16, name:"Get Well Soon", tagline:"Cheerful colors to heal", rating:4.4, reviewCount: 31, price:54, originalPrice:null, emoji:"💐", unsplashQuery:"get well flowers", category:"Bouquet", occasion:"Get Well", color:"yellow", popularity:70, section:"occasion"},
+
+      // Bestsellers (4)
+      {id:17, name:"Royal Amethyst", tagline:"Lavender & plum", rating:4.8, reviewCount: 210, price:90, originalPrice: 110, emoji:"👑", unsplashQuery:"amethyst flowers", category:"Bouquet", occasion:"Anniversary", color:"purple", popularity:99, section:"bestseller"},
+      {id:18, name:"Midnight Bloom", tagline:"Dark velvety tones", rating:4.7, reviewCount: 184, price:88, originalPrice: null, emoji:"🖤", unsplashQuery:"dark flowers bouquet", category:"Arrangement", occasion:"Birthday", color:"violet", popularity:95, section:"bestseller"},
+      {id:19, name:"Dawn Chorus", tagline:"Soft sunrise hues", rating:4.6, reviewCount: 120, price:72, originalPrice: 84, emoji:"🌅", unsplashQuery:"sunrise flowers", category:"Bouquet", occasion:"Get Well", color:"orange", popularity:92, section:"bestseller"},
+      {id:20, name:"Emerald Mist", tagline:"Green & white whispers", rating:4.5, reviewCount: 98, price:66, originalPrice:null, emoji:"🟢", unsplashQuery:"green white flowers", category:"Arrangement", occasion:"Thank You", color:"green", popularity:89, section:"bestseller"}
+    ];
+
+    // i18n dictionaries (nested paths)
+    const translations = {
+      en:{
+        nav:{ shop:"Shop", occasions:"Occasions", bestsellers:"Bestsellers", about:"About", contact:"Contact" },
+        header:{ title:"FloraFlow", tagline:"Premium flower delivery" },
+        sections:{ shop:"Shop", occasions:"Occasions", bestsellers:"Bestsellers", about:"About FloraFlow", contact:"Contact" },
+        filters:{ category:"Category", occasion:"Occasion", color:"Color", price:"Price", sort:"Sort By", clear:"Clear Filters" },
+        empty:{ noResults:"No flowers match your filters.", reset:"Reset all filters" },
+        cart:{ subtotal:"Subtotal", checkout:"Checkout" },
+        footer:"© FloraFlow - All rights reserved",
+        about:"About FloraFlow"
+      },
+      es:{
+        nav:{ shop:"Tienda", occasions:"Ocasiones", bestsellers:"Más vendidos", about:"Acerca de", contact:"Contacto" },
+        header:{ title:"FloraFlujo", tagline:"Entrega premium de flores" },
+        sections:{ shop:"Tienda", occasions:"Ocasiones", bestsellers:"Más vendidos", about:"Acerca FloraFlow", contact:"Contacto" },
+        filters:{ category:"Categoría", occasion:"Ocasion", color:"Color", price:"Precio", sort:"Ordenar por", clear:"Reiniciar filtros" },
+        empty:{ noResults:"No hay flores que coincidan con tus filtros.", reset:"Restablecer filtros" },
+        cart:{ subtotal:"Subtotal", checkout:"Pagar" },
+        footer:"© FloraFlow - Todos los derechos reservados",
+        about:"Acerca de FloraFlow"
+      },
+      fr:{
+        nav:{ shop:"Boutique", occasions:"Occasions", bestsellers:"Meilleures ventes", about:"À propos", contact:"Contact" },
+        header:{ title:"FloraFlow", tagline:"Livraison premium de fleurs" },
+        sections:{ shop:"Boutique", occasions:"Occasions", bestsellers:"Meilleures ventes", about:"À propos FloraFlow", contact:"Contact" },
+        filters:{ category:"Catégorie", occasion:"Occasion", color:"Couleur", price:"Prix", sort:"Trier par", clear:"Effacer les filtres" },
+        empty:{ noResults:"Aucune fleur ne correspond à vos filtres.", reset:"Réinitialiser les filtres" },
+        cart:{ subtotal:"Sous-total", checkout:"Passer à la caisse" },
+        footer:"© FloraFlow - Tous droits réservés",
+        about:"À propos FloraFlow"
+      },
+      de:{
+        nav:{ shop:"Shop", occasions:"Anlässe", bestsellers:"Bestseller", about:"Über uns", contact:"Kontakt" },
+        header:{ title:"FloraFlow", tagline:"Premium Blumenlieferung" },
+        sections:{ shop:"Shop", occasions:"Anlässe", bestsellers:"Bestseller", about:"Über FloraFlow", contact:"Kontakt" },
+        filters:{ category:"Kategorie", occasion:"Anlass", color:"Farbe", price:"Preis", sort:"Sortieren nach", clear:"Filter löschen" },
+        empty:{ noResults:"Keine Blumen entsprechen Ihren Filtern.", reset:"Filter zurücksetzen" },
+        cart:{ subtotal:"Zwischensumme", checkout:"Kasse" },
+        footer:"© FloraFlow - Alle Rechte vorbehalten",
+        about:"Über FloraFlow"
+      }
+    };
+
+    // Helpers
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    // State
+    let currentLang = 'en';
+    const state = {
+      filters: {
+        category: '',
+        occasion: '',
+        color: '',
+        priceMin: 20,
+        priceMax: 120,
+        sort: 'popularity'
+      },
+      cart: {}
+    };
+
+    // Initialize dynamic selects and sections
+    function initFilters(){
+      // categories from dataset
+      const categories = Array.from(new Set(products.map(p => p.category))).sort();
+      const categorySel = document.getElementById('filter-category');
+      categories.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        categorySel.appendChild(opt);
+      });
+
+      // occasions
+      const occasions = Array.from(new Set(products.map(p => p.occasion))).sort();
+      const occSel = document.getElementById('filter-occasion');
+      occasions.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o;
+        opt.textContent = o;
+        occSel.appendChild(opt);
+      });
+
+      // colors
+      const colors = Array.from(new Set(products.map(p => p.color).filter(c => c)).sort());
+      const colorSel = document.getElementById('filter-color');
+      colors.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        colorSel.appendChild(opt);
+      });
+
+      // price display
+      const min = document.getElementById('price-min');
+      const max = document.getElementById('price-max');
+      const minVal = document.getElementById('price-min-val');
+      const maxVal = document.getElementById('price-max-val');
+      min.addEventListener('input', ()=> {
+        state.filters.priceMin = Number(min.value);
+        minVal.textContent = `$${min.value}`;
+        renderAll();
+      });
+      max.addEventListener('input', ()=> {
+        state.filters.priceMax = Number(max.value);
+        maxVal.textContent = `$${max.value}`;
+        renderAll();
+      });
+      minVal.textContent = `$${min.value}`;
+      maxVal.textContent = `$${max.value}`;
+    }
+
+    // Translate all i18n elements
+    function tPath(path){
+      const langObj = translations[currentLang] || translations['en'];
+      const parts = path.split('.');
+      let cur = langObj;
+      for(const p of parts){
+        if(cur && typeof cur === 'object' && p in cur){
+          cur = cur[p];
+        }else{
+          // fallback to English
+          const enObj = translations['en'];
+          cur = enObj;
+          for(const q of parts){
+            if(cur && typeof cur === 'object' && q in cur){
+              cur = cur[q];
+            } else {
+              return path;
+            }
+          }
+          return (typeof cur === 'string') ? cur : path;
+        }
+      }
+      return (typeof cur === 'string') ? cur : path;
+    }
+
+    function translateAll(){
+      const all = document.querySelectorAll('[data-i18n]');
+      all.forEach(el => {
+        const path = el.getAttribute('data-i18n');
+        const val = tPath(path);
+        if(val){ el.textContent = val; }
+      });
+      // ensure some elements with data-i18n-attr in future can be handled
+    }
+
+    // Build grid cards
+    function createCard(item){
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.setAttribute('role','article');
+      // media
+      const media = document.createElement('div');
+      media.className = 'media';
+      const emoji = document.createElement('span');
+      emoji.className = 'emoji';
+      emoji.textContent = item.emoji;
+      media.appendChild(emoji);
+      const img = document.createElement('img');
+      img.alt = item.name;
+      // load unsplash image
+      const imgSrc = `https://source.unsplash.com/400x400/?${encodeURIComponent(item.unsplashQuery)}`;
+      img.src = imgSrc;
+      img.className = 'img';
+      img.loading = 'lazy';
+      img.addEventListener('load', () => {
+        img.classList.add('loaded');
+        emoji.style.opacity = '0';
+      });
+      img.addEventListener('error', () => {
+        // keep emoji visible
+        img.style.display = 'none';
+      });
+      media.appendChild(img);
+
+      // body
+      const body = document.createElement('div');
+      body.className = 'card-body';
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = item.name;
+      name.title = item.name;
+      const tagline = document.createElement('div');
+      tagline.className = 'tag';
+      tagline.textContent = item.tagline;
+      const rating = document.createElement('div');
+      rating.className = 'rating';
+      rating.innerHTML = `⭐ ${item.rating.toFixed(1)} <span style="opacity:.8;">(${item.reviewCount})</span>`;
+
+      // price
+      const priceEl = document.createElement('div');
+      priceEl.className = 'price';
+      const now = document.createElement('span');
+      now.className = 'now';
+      now.textContent = `$${item.price}`;
+      priceEl.appendChild(now);
+      if(item.originalPrice){
+        const old = document.createElement('span');
+        old.className = 'old';
+        old.textContent = `$${item.originalPrice}`;
+        priceEl.appendChild(old);
+      }
+
+      // actions
+      const actions = document.createElement('div');
+      actions.className = 'card-actions';
+      const addBtn = document.createElement('button');
+      addBtn.className = 'btn primary';
+      addBtn.textContent = 'Add to Cart';
+      addBtn.setAttribute('aria-label', 'Add to cart');
+      addBtn.addEventListener('click', () => addToCart(item, 1));
+      const quickView = document.createElement('button');
+      quickView.className = 'btn';
+      quickView.textContent = 'View';
+      quickView.setAttribute('aria-label','View details');
+      // simple quick view: scroll to top
+      quickView.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+
+      actions.appendChild(addBtn);
+      actions.appendChild(quickView);
+
+      body.appendChild(name);
+      body.appendChild(tagline);
+      body.appendChild(rating);
+      body.appendChild(priceEl);
+      body.appendChild(actions);
+
+      card.appendChild(media);
+      card.appendChild(body);
+      return card;
+    }
+
+    // Rendering
+    function renderAll(){
+      // Determine filtered dataset
+      const allFiltered = products.filter(p => {
+        // price range
+        const inPrice = p.price >= state.filters.priceMin && p.price <= state.filters.priceMax;
+        const inCat = !state.filters.category || p.category === state.filters.category;
+        const inOcc = !state.filters.occasion || p.occasion === state.filters.occasion;
+        const inColor = !state.filters.color || p.color === state.filters.color;
+        return inPrice && inCat && inOcc && inColor;
+      }).sort((a,b)=>{
+        // sort by chosen key
+        const k = state.filters.sort;
+        if(k==='popularity') return b.popularity - a.popularity;
+        if(k==='price-asc') return a.price - b.price;
+        if(k==='price-desc') return b.price - a.price;
+        return 0;
+      });
+
+      // Helper: render section grid
+      const renderSection = (sectionKey, gridEl) => {
+        // clear
+        gridEl.innerHTML = '';
+        // items for this section
+        const sectionItems = allFiltered.filter(p => p.section === sectionKey);
+        if(sectionItems.length === 0){
+          const empty = document.createElement('div');
+          empty.className = 'empty';
+          empty.setAttribute('role','note');
+          empty.setAttribute('aria-live','polite');
+          empty.textContent = tPath('empty.noResults');
+          gridEl.appendChild(empty);
+          return;
+        }
+        sectionItems.forEach(it => gridEl.appendChild(createCard(it)));
+      };
+
+      renderSection('shop', document.getElementById('shop-grid'));
+      renderSection('occasion', document.getElementById('occasions-grid')); // not used directly
+      // For Occasions: items with section 'occasion'
+      renderSection('occasion', document.getElementById('occasions-grid'));
+      renderSection('bestseller', document.getElementById('bestsellers-grid'));
+
+      // Update cart button label
+      const totalQty = Object.values(state.cart).reduce((acc,i)=>acc+i.qty,0);
+      document.getElementById('cart-toggle').textContent = `Cart (${totalQty})`;
+      // Translate updated texts in case language changed
+      translateAll();
+    }
+
+    // Filters handlers
+    function setupFilters(){
+      document.getElementById('filter-category').addEventListener('change', (e)=>{ state.filters.category = e.target.value; renderAll(); });
+      document.getElementById('filter-occasion').addEventListener('change', (e)=>{ state.filters.occasion = e.target.value; renderAll(); });
+      document.getElementById('filter-color').addEventListener('change', (e)=>{ state.filters.color = e.target.value; renderAll(); });
+      document.getElementById('filter-sort').addEventListener('change', (e)=>{ state.filters.sort = e.target.value; renderAll(); });
+      document.getElementById('clear-filters').addEventListener('click', ()=> {
+        state.filters = { category:'', occasion:'', color:'', priceMin:20, priceMax:120, sort:'popularity' };
+        // reset UI controls
+        $$('select').forEach(s => s.value = '');
+        $('#price-min').value = 20; $('#price-min-val').textContent = '$20';
+        $('#price-max').value = 120; $('#price-max-val').textContent = '$120';
+        renderAll();
+      });
+      // language switch
+      $('#lang').addEventListener('change', (e)=> {
+        setLanguage(e.target.value);
+      });
+    }
+
+    // Cart logic
+    function addToCart(item, qty){
+      const key = String(item.id);
+      if(state.cart[key]){
+        state.cart[key].qty += qty;
+      } else {
+        state.cart[key] = { item, qty };
+      }
+      renderCart();
+    }
+    function renderCart(){
+      const list = document.getElementById('cart-items');
+      list.innerHTML = '';
+      const items = Object.values(state.cart);
+      if(items.length===0){
+        list.innerHTML = `<div class="empty" aria-label="Empty cart" style="padding:20px;">Your cart is empty</div>`;
+        document.getElementById('cart-subtotal').textContent = '$0';
+        return;
+      }
+      let subtotal = 0;
+      items.forEach(ci=>{
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        const thumb = document.createElement('div');
+        thumb.className = 'thumb';
+        thumb.textContent = ci.item.emoji;
+        const info = document.createElement('div');
+        info.className = 'cart-info';
+        const title = document.createElement('div');
+        title.textContent = ci.item.name;
+        const price = document.createElement('div');
+        price.style.fontSize='12px';
+        price.style.color='#ddd';
+        price.textContent = `$${ci.item.price} x ${ci.qty}`;
+        const totalLine = document.createElement('div');
+        totalLine.style.fontWeight='700';
+        totalLine.textContent = `=$${ci.item.price * ci.qty}`;
+        const actions = document.createElement('div');
+        actions.style.display='flex';
+        actions.style.gap='6px';
+        const minus = document.createElement('button');
+        minus.className='btn';
+        minus.textContent='-';
+        minus.setAttribute('aria-label','Decrease quantity');
+        minus.addEventListener('click', ()=>{ if(ci.qty>1){ ci.qty--; renderCart(); }});
+        const plus = document.createElement('button');
+        plus.className='btn';
+        plus.textContent='+';
+        plus.setAttribute('aria-label','Increase quantity');
+        plus.addEventListener('click', ()=>{ ci.qty++; renderCart();});
+        const remove = document.createElement('button');
+        remove.className='btn';
+        remove.textContent='Remove';
+        remove.addEventListener('click', ()=>{ delete state.cart[String(ci.item.id)]; renderCart();});
+        actions.appendChild(minus); actions.appendChild(plus); actions.appendChild(remove);
+
+        info.appendChild(title);
+        info.appendChild(price);
+        info.appendChild(totalLine);
+        row.appendChild(thumb);
+        row.appendChild(info);
+        row.appendChild(actions);
+        list.appendChild(row);
+
+        subtotal += ci.item.price * ci.qty;
+      });
+      document.getElementById('cart-subtotal').textContent = `$${subtotal}`;
+    }
+
+    // Cart drawer toggling
+    function setupCartDrawer(){
+      const drawer = document.getElementById('cart-drawer');
+      const toggle = document.getElementById('cart-toggle');
+      const closeBtn = document.getElementById('cart-close');
+      toggle.addEventListener('click', ()=> {
+        drawer.classList.add('open');
+        drawer.setAttribute('aria-hidden','false');
+        renderCart();
+      });
+      closeBtn.addEventListener('click', ()=> {
+        drawer.classList.remove('open');
+        drawer.setAttribute('aria-hidden','true');
+      });
+      document.getElementById('checkout').addEventListener('click', ()=> {
+        alert('Checkout flow is stubbed in this demo.');
+      });
+    }
+
+    // Simple chat
+    function setupChat(){
+      const t = document.getElementById('chat-toggle');
+      const win = document.getElementById('chat-window');
+      t.addEventListener('click', ()=> { win.style.display = 'flex'; });
+      document.getElementById('chat-close').addEventListener('click', ()=> { win.style.display = 'none'; });
+      document.getElementById('send-chat').addEventListener('click', ()=> {
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        if(!text) return;
+        appendChatMessage(text, true);
+        input.value = '';
+        setTimeout(()=> {
+          const reply = generateReply(text);
+          appendChatMessage(reply, false);
+        }, 800);
+      });
+    }
+    function appendChatMessage(text, me){
+      const area = document.getElementById('chat-area');
+      const m = document.createElement('div');
+      m.className = 'msg' + (me ? ' me' : '');
+      m.textContent = text;
+      area.appendChild(m);
+      area.scrollTop = area.scrollHeight;
+    }
+    function generateReply(input){
+      input = input.toLowerCase();
+      if(input.includes('delivery')) return 'We offer same-day delivery where available. 🌷';
+      if(input.includes('price')) return 'Prices reflect your selected bouquet and size. Want a discount? Ask me!';
+      if(input.includes('flower') || input.includes('flowers')) return 'We have a wide selection of premium florals. Tell me your color or vibe!';
+      return 'Thanks for reaching out! Our florists are excited to create magic for you. ✨';
+    }
+
+    // Language
+    function setLanguage(lang){
+      if(!translations[lang]) lang = 'en';
+      currentLang = lang;
+      // Update language select value
+      document.getElementById('lang').value = lang;
+      translateAll();
+      // Also refresh UI texts
+      renderAll();
+    }
+
+    // Utility: lightweight $ helper
+    function $(sel){
+      return document.querySelector(sel);
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', ()=> {
+      // Build UI driven by data
+      initFilters();
+      setupFilters();
+      setupCartDrawer();
+      setupChat();
+
+      // Build static hero image load attempt
+      const heroImg = document.querySelector('.hero .img');
+      const heroEmoji = document.querySelector('.hero .emoji');
+      const imgSrc = 'https://source.unsplash.com/800x800/?flowers';
+      heroImg.src = imgSrc;
+      heroImg.addEventListener('load', ()=> {
+        heroImg.classList.add('loaded');
+        heroEmoji.style.opacity = '0';
+      });
+      heroImg.addEventListener('error', ()=> {
+        heroImg.style.display = 'none';
+      });
+
+      // initial render
+      renderAll();
+    });
+
+  </script>
+
+  
+  </html>
+</body>
