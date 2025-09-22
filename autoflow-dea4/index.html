@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AutoFlow Dealer Showroom</title>
+  <style>
+    :root {
+      --bg: #0b072d;
+      --panel: #141428;
+      --card: #1f1a32;
+      --accent: #7c3aed; /* purple-600 */
+      --accent-soft: rgba(124, 58, 237, 0.25);
+      --text: #e9e2f9;
+      --muted: #c7bde0;
+      --chip: #2a1746;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --surface: rgba(255,255,255,0.04);
+      --shadow: 0 6px 18px rgba(0,0,0,.25);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;
+      color: var(--text);
+      background: radial-gradient(circle at 20% -10%, rgba(124,58,237,.25), transparent 40%), 
+                  radial-gradient(circle at 100% 0%, rgba(124,58,237,.25), transparent 30%),
+                  linear-gradient(135deg, #0b0740 0%, #0a042a 60%, #0b072d 100%);
+    }
+    header.appbar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, rgba(40,0,60,.95), rgba(12,8,40,.95));
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 6px 16px rgba(0,0,0,.25);
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; letter-spacing: .3px;
+    }
+    .brand .logo {
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #7c3aed, #4c1d95);
+      box-shadow: inset 0 0 8px rgba(255,255,255,.25);
+    }
+    .brand .title {
+      font-size: 1.05rem;
+    }
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none; border-radius: 8px;
+      padding: 10px 14px; cursor: pointer;
+      font-weight: 600;
+    }
+    .btn.secondary {
+      background: transparent; color: var(--text);
+      border: 1px solid rgba(124,58,237,.6);
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 16px;
+      padding: 18px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    aside.filters {
+      background: rgba(20,20,40,.7);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      padding: 14px;
+      position: sticky; top: 84px; height: calc(100vh - 96px);
+      overflow: auto;
+    }
+
+    section.catalog {
+      min-height: 60vh;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      min-height: 320px;
+      box-shadow: var(--shadow);
+    }
+    .photo {
+      height: 170px;
+      position: relative;
+      background: #111;
+      display: grid; place-items: center;
+      overflow: hidden;
+    }
+    .photo img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
+      transition: opacity .4s ease;
+    }
+    .emoji {
+      font-size: 52px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.5));
+      transition: opacity .3s ease;
+    }
+    .card-body { padding: 12px 12px 14px; display: grid; gap: 6px; }
+    .car-title { font-weight: 700; font-size: 1.05rem; display: flex; align-items: center; justify-content: space-between; }
+    .muted { color: var(--muted); font-size: 0.92rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 2px 0; }
+    .chip {
+      padding: 6px 9px; border-radius: 999px; background: var(--chip);
+      font-size: 12px; color: #e9e0f8;
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .price { font-weight: 800; font-size: 1.05rem; color: #e9d5ff; }
+    .tag { font-size: 11px; padding: 4px 6px; border-radius: 6px; background: rgba(124,58,237,.25); color: #eae0ff; }
+    .card-actions { display: flex; justify-content: space-between; padding: 8px 12px 12px; gap: 8px; }
+
+    /* Skeletons */
+    .skeleton {
+      background: linear-gradient(-90deg, rgba(255,255,255,.08) 25%, rgba(255,255,255,.18) 50%, rgba(255,255,255,.08) 75%);
+      background-size: 200% 100%;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
+    /* Modals */
+    .modal {
+      position: fixed; inset: 0;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,.5); z-index: 60;
+    }
+    .modal.open { display: flex; }
+    .modal-content {
+      width: min(640px, 92vw);
+      background: #1a1430; border: 1px solid rgba(255,255,255,.15);
+      border-radius: 12px; padding: 16px;
+      max-height: 80vh; overflow: auto;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .modal-body { padding: 8px 0; display: grid; gap: 10px; }
+    label { font-size: 12px; color: var(--muted); }
+    input, select, textarea {
+      width: 100%; padding: 10px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.2);
+      background: rgba(0,0,0,.25); color: #fff;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .help { font-size: 11px; color: var(--muted); }
+
+    /* Responsive */
+    @media (max-width: 980px) {
+      .container { grid-template-columns: 1fr; padding: 12px; }
+      aside.filters { position: relative; height: auto; top: auto; }
+    }
+
+    /* Tiny utilities */
+    .row { display: flex; gap: 8px; align-items: center; }
+    .center { display: grid; place-items: center; padding: 20px; }
+    .empty { text-align: center; color: var(--muted); padding: 40px 10px; }
+  </style>
+</head>
+<body>
+  <!-- Header / App Bar -->
+  <header class="appbar" aria-label="Main header">
+    <div class="brand" aria-label="Brand">
+      <div class="logo" aria-label="Logo emoji">🚗</div>
+      <div class="title">AutoFlow Dealer Showroom</div>
+    </div>
+    <div class="row" aria-label="Actions">
+      <button id="btnNewCar" class="btn" title="Create car">+ New Car</button>
+      <button id="btnNewSeller" class="btn secondary" title="Create seller">+ Seller</button>
+    </div>
+  </header>
+
+  <!-- Main layout -->
+  <main class="container" role="main">
+    <!-- Filters (left) -->
+    <aside class="filters" aria-label="Filters and quick actions">
+      <h3 style="margin:0 0 8px 0;">Filters</h3>
+
+      <div class="row" style="gap:8px; align-items:center; margin-bottom:8px;">
+        <input id="search" type="search" placeholder="Search by make, model, color…" aria-label="Global search" style="flex:1; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.2); background: rgba(0,0,0,.25); color:#fff;">
+      </div>
+
+      <div>
+        <label>Sort by</label>
+        <select id="sort" aria-label="Sort cars">
+          <option value="popular">Popular</option>
+          <option value="price_low">Price: Low to High</option>
+          <option value="price_high">Price: High to Low</option>
+          <option value="year_new">Year: Newest</option>
+          <option value="mileage_low">Mileage: Low to High</option>
+        </select>
+      </div>
+
+      <hr style="border:0; border-top:1px solid rgba(255,255,255,.08); margin:12px 0;">
+
+      <div>
+        <label>Price range</label>
+        <div class="grid-2" style="grid-template-columns: 1fr 1fr; gap:6px;">
+          <input id="minPrice" type="number" placeholder="Min" min="0" step="100" aria-label="Min price">
+          <input id="maxPrice" type="number" placeholder="Max" min="0" step="100" aria-label="Max price">
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:8px;">
+        <div>
+          <label>Year range</label>
+          <div class="grid-2" style="grid-template-columns:1fr 1fr; gap:6px;">
+            <input id="minYear" type="number" placeholder="Min year" aria-label="Min year">
+            <input id="maxYear" type="number" placeholder="Max year" aria-label="Max year">
+          </div>
+        </div>
+        <div>
+          <label>Mileage max</label>
+          <input id="maxMileage" type="number" placeholder="Max mileage" aria-label="Max mileage">
+        </div>
+      </div>
+
+      <hr style="border:0; border-top:1px solid rgba(255,255,255,.08); margin:12px 0;">
+
+      <div>
+        <label>Available Makes</label>
+        <div id="chips-makes" class="chips" aria-label="Filter by makes"></div>
+      </div>
+
+      <div>
+        <label>Body Types</label>
+        <div id="chips-body" class="chips" aria-label="Filter by body type"></div>
+      </div>
+
+      <div>
+        <label>Fuels</label>
+        <div id="chips-fuel" class="chips" aria-label="Filter by fuel type"></div>
+      </div>
+
+      <div>
+        <label>Transmissions</label>
+        <div id="chips-trans" class="chips" aria-label="Filter by transmission"></div>
+      </div>
+
+      <div>
+        <label>Colors</label>
+        <div id="chips-color" class="chips" aria-label="Filter by color"></div>
+      </div>
+
+      <hr style="border:0; border-top:1px solid rgba(255,255,255,.08); margin:12px 0;">
+      <button id="btnClearFilters" class="btn secondary" style="width:100%">Clear filters</button>
+    </aside>
+
+    <!-- Catalog (right) -->
+    <section class="catalog" aria-label="Car catalog" id="catalog">
+      <!-- Cards will render here -->
+      <div id="catalog-root" class="grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:14px;">
+        <!-- Dynamic cards -->
+      </div>
+      <div id="loading" class="center" style="display:none;">
+        <div class="skeleton" style="width:60px; height:60px; border-radius:50%;"></div>
+        <div class="skeleton" style="width:140px; height:14px; border-radius:6px; margin-top:6px;"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modals -->
+  <div id="modalSeller" class="modal" aria-hidden="true" role="dialog" aria-label="Seller form modal">
+    <div class="modal-content" role="document">
+      <div class="modal-header">
+        <strong>Seller</strong>
+        <button class="btn secondary" onclick="closeModal('modalSeller')">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="grid-2" style="grid-template-columns:1fr 1fr;">
+          <div>
+            <label for="sellerName">Name</label>
+            <input id="sellerName" type="text" placeholder="Seller name" />
+          </div>
+          <div>
+            <label for="sellerEmail">Email</label>
+            <input id="sellerEmail" type="email" placeholder="Seller email" />
+          </div>
+        </div>
+        <div class="help" id="sellerHelp">Enter a unique email. You can edit later.</div>
+        <div class="row" style="justify-content:flex-end; margin-top:6px;">
+          <button class="btn" onclick="saveSeller()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalCar" class="modal" aria-hidden="true" role="dialog" aria-label="Car form modal">
+    <div class="modal-content" role="document">
+      <div class="modal-header">
+        <strong>Car</strong>
+        <button class="btn secondary" onclick="closeModal('modalCar')">Close</button>
+      </div>
+      <div class="modal-body">
+        <form id="carForm" onsubmit="return false;">
+          <div class="grid-2" style="grid-template-columns:1fr 1fr;">
+            <div>
+              <label for="carSeller">Seller</label>
+              <select id="carSeller" required></select>
+            </div>
+            <div>
+              <label for="carMake">Make</label>
+              <input id="carMake" placeholder="e.g., Toyota" required />
+            </div>
+          </div>
+          <div class="grid-2" style="grid-template-columns:1fr 1fr; margin-top:6px;">
+            <div>
+              <label for="carModel">Model</label>
+              <input id="carModel" placeholder="e.g., Camry" required />
+            </div>
+            <div>
+              <label for="carYear">Year</label>
+              <input id="carYear" type="number" min="1980" max="2100" required />
+            </div>
+          </div>
+          <div class="grid-2" style="grid-template-columns:1fr 1fr; margin-top:6px;">
+            <div>
+              <label for="carPrice">Price</label>
+              <input id="carPrice" type="number" min="0" step="1" required />
+            </div>
+            <div>
+              <label for="carMileage">Mileage</label>
+              <input id="carMileage" type="number" min="0" step="1" required />
+            </div>
+          </div>
+          <div class="grid-2" style="grid-template-columns:1fr 1fr; margin-top:6px;">
+            <div>
+              <label for="carBody">Body Type</label>
+              <input id="carBody" placeholder="e.g., SUV" required />
+            </div>
+            <div>
+              <label for="carFuel">Fuel</label>
+              <input id="carFuel" placeholder="Electric / Gasoline" required />
+            </div>
+          </div>
+          <div class="grid-2" style="grid-template-columns:1fr 1fr; margin-top:6px;">
+            <div>
+              <label for="carTrans">Transmission</label>
+              <input id="carTrans" placeholder="Automatic / Manual" required />
+            </div>
+            <div>
+              <label for="carColor">Color</label>
+              <input id="carColor" placeholder="Color" required />
+            </div>
+          </div>
+          <div class="grid-2" style="grid-template-columns:1fr 1fr; margin-top:6px;">
+            <div>
+              <label for="carEmoji">Emoji</label>
+              <input id="carEmoji" placeholder="e.g., 🚗" />
+            </div>
+            <div>
+              <label for="carQuery">Unsplash Query</label>
+              <input id="carQuery" placeholder="e.g., sports car" />
+            </div>
+          </div>
+          <div class="grid-2" style="grid-template-columns:1fr 1fr; margin-top:6px;">
+            <div>
+              <label for="carVin">VIN (optional)</label>
+              <input id="carVin" placeholder="VIN" />
+            </div>
+            <div>
+              <label>Location meta (optional)</label>
+              <input id="carMeta" placeholder="e.g., showroom A" />
+            </div>
+          </div>
+          <div class="row" style="justify-content:flex-end; margin-top:8px;">
+            <button class="btn" id="carSaveBtn" onclick="saveCar()">Save Car</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Minimal, self-contained SPA utilizing localStorage as a JSON DB substitute.
+    // Core data models: Sellers and Cars. Cars reference sellers by sellerId.
+
+    // Helpers
+    function id() {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+      return 'id-' + Math.random().toString(36).slice(2);
+    }
+
+    const STORAGE_KEY = 'autoflow_db_v1';
+    let db = { meta: {}, sellers: [], cars: [] };
+
+    function nowIso() { return new Date().toISOString(); }
+
+    // Seed data (used on first run)
+    function seedDB() {
+      const s1 = { id: 'sel-aurora', name: 'Aurora Auto', email: 'hello@aurora.auto' };
+      const s2 = { id: 'sel-velox', name: 'Velox Motors', email: 'support@velox.motors' };
+      const sellers = [s1, s2];
+
+      const t = Date.now();
+      const cars = [
+        { id: id(), sellerId: s1.id, make: 'Tesla', model: 'Model S', year: 2023, price: 89999, mileage: 3200, bodyType: 'Sedan', fuel: 'Electric', transmission: 'Automatic', color: 'White', emoji: '⚡', unsplashQuery: 'tesla car', vin: 'VIN-TSLA-001', createdAt: t, updatedAt: t },
+        { id: id(), sellerId: s1.id, make: 'Toyota', model: 'RAV4', year: 2020, price: 28999, mileage: 21000, bodyType: 'SUV', fuel: 'Gasoline', transmission: 'Automatic', color: 'Blue', emoji: '🚙', unsplashQuery: 'toyota rav4', vin: 'VIN-TOY-042', createdAt: t, updatedAt: t },
+        { id: id(), sellerId: s2.id, make: 'Ford', model: 'Mustang', year: 2018, price: 23999, mileage: 45000, bodyType: 'Coupe', fuel: 'Gasoline', transmission: 'Manual', color: 'Red', emoji: '🏎️', unsplashQuery: 'mustang', vin: 'VIN-FORD-003', createdAt: t, updatedAt: t },
+        { id: id(), sellerId: s2.id, make: 'Honda', model: 'Civic', year: 2021, price: 19999, mileage: 15000, bodyType: 'Sedan', fuel: 'Gasoline', transmission: 'Automatic', color: 'Black', emoji: '🚗', unsplashQuery: 'honda civic', vin: 'VIN-HON-777', createdAt: t, updatedAt: t },
+        { id: id(), sellerId: s1.id, make: 'BMW', model: 'i4', year: 2022, price: 55999, mileage: 8000, bodyType: 'Sedan', fuel: 'Electric', transmission: 'Automatic', color: 'Purple', emoji: '🚘', unsplashQuery: 'bmw i4', vin: 'VIN-BMW-100', createdAt: t, updatedAt: t },
+        { id: id(), sellerId: s1.id, make: 'Porsche', model: '911', year: 2019, price: 99000, mileage: 22000, bodyType: 'Coupe', fuel: 'Gasoline', transmission: 'Automatic', color: 'Yellow', emoji: '🏁', unsplashQuery: 'porsche 911', vin: 'VIN-POR-911', createdAt: t, updatedAt: t },
+        { id: id(), sellerId: s2.id, make: 'Nissan', model: 'LEAF', year: 2020, price: 14999, mileage: 34000, bodyType: 'Hatchback', fuel: 'Electric', transmission: 'Automatic', color: 'Silver', emoji: '🔋', unsplashQuery: 'nissan leaf', vin: 'VIN-NIS-LEAF', createdAt: t, updatedAt: t },
+        { id: id(), sellerId: s2.id, make: 'Audi', model: 'A4', year: 2021, price: 28999, mileage: 12000, bodyType: 'Sedan', fuel: 'Gasoline', transmission: 'Automatic', color: 'Gray', emoji: '💫', unsplashQuery: 'audi a4', vin: 'VIN-AUD-A4', createdAt: t, updatedAt: t },
+        { id: id(), sellerId: s1.id, make: 'Chevrolet', model: 'Bolt', year: 2022, price: 18999, mileage: 9000, bodyType: 'Hatchback', fuel: 'Electric', transmission: 'Automatic', color: 'Green', emoji: '⚡', unsplashQuery: 'chevrolet bolt', vin: 'VIN-CHE-BO', createdAt: t, updatedAt: t },
+        { id: id(), sellerId: s2.id, make: 'Hyundai', model: 'Elantra', year: 2020, price: 12999, mileage: 26000, bodyType: 'Sedan', fuel: 'Gasoline', transmission: 'Automatic', color: 'White', emoji: '🚗', unsplashQuery: 'hyundai elantra', vin: 'VIN-HYU-EL', createdAt: t, updatedAt: t },
+      ];
+
+      db = {
+        meta: { lastUpdated: Date.now() },
+        sellers,
+        cars
+      };
+      saveDB();
+    }
+
+    function saveDB() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+        db.meta = db.meta || {};
+        db.meta.lastUpdated = Date.now();
+      } catch (e) {
+        console.error('Failed to save local DB', e);
+      }
+    }
+
+    function loadDB() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        seedDB();
+        return;
+      }
+      try {
+        db = JSON.parse(raw);
+      } catch (e) {
+        console.error('Failed to parse DB, reseeding', e);
+        seedDB();
+      }
+    }
+
+    // Rendering helpers
+    function renderSellersInModal() {
+      const sel = document.getElementById('carSeller');
+      sel.innerHTML = '';
+      db.sellers.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = `${s.name} (${s.email})`;
+        sel.appendChild(opt);
+      });
+    }
+
+    // Chips builder
+    function gatherUnique(field) {
+      const s = new Set();
+      db.cars.forEach(c => s.add((c[field] || '').toString()));
+      return Array.from(s).filter(x => x && x.trim() !== '');
+    }
+
+    function renderChips(containerId, items, onClick) {
+      const el = document.getElementById(containerId);
+      el.innerHTML = '';
+      items.forEach(v => {
+        const c = document.createElement('span');
+        c.className = 'chip';
+        c.textContent = v;
+        c.style.cursor = 'pointer';
+        c.addEventListener('click', () => {
+          // toggle filter tag
+          const tagActive = c.dataset.active === 'true';
+          c.dataset.active = (!tagActive).toString();
+          if (!tagActive) {
+            c.style.outline = '2px solid #fff';
+            c.style.outlineOffset = '2px';
+            c.style.background = '#4c1d95';
+          } else {
+            c.style.outline = 'none';
+            c.style.background = '';
+          }
+          onClick(v, !tagActive);
+        });
+        el.appendChild(c);
+      });
+    }
+
+    // Debounce global search
+    let searchTimeout = null;
+    function debounce(fn, delay = 250) {
+      return function(...args) {
+        if (searchTimeout) clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => fn.apply(null, args), delay);
+      };
+    }
+
+    // Filtering state (persisted in memory for this session)
+    const state = {
+      q: '',
+      sellerId: null,
+      minPrice: null, maxPrice: null,
+      minYear: null, maxYear: null,
+      maxMileage: null,
+      sort: 'popular',
+      chips: {
+        makes: new Set(),
+        body: new Set(),
+        fuel: new Set(),
+        trans: new Set(),
+        color: new Set(),
+      },
+      page: 1,
+      pageSize: 20,
+    };
+
+    // Apply filters to cars
+    function filteredCars() {
+      let list = db.cars.slice();
+
+      // global search
+      if (state.q && state.q.trim()) {
+        const q = state.q.toLowerCase();
+        list = list.filter(c =>
+          [c.make, c.model, c.color, c.bodyType, c.fuel, c.transmission].some(v =>
+            String(v || '').toLowerCase().includes(q)
+          )
+        );
+      }
+
+      // seller filter (if any)
+      if (state.sellerId) {
+        list = list.filter(c => c.sellerId === state.sellerId);
+      }
+
+      // specific chips
+      const any = (arr) => arr && arr.length > 0;
+      if (state.chips.makes.size) {
+        list = list.filter(c => state.chips.makes.has(c.make));
+      }
+      if (state.chips.body.size) {
+        list = list.filter(c => state.chips.body.has(c.bodyType));
+      }
+      if (state.chips.fuel.size) {
+        list = list.filter(c => state.chips.fuel.has(c.fuel));
+      }
+      if (state.chips.trans.size) {
+        list = list.filter(c => state.chips.trans.has(c.transmission));
+      }
+      if (state.chips.color.size) {
+        list = list.filter(c => state.chips.color.has(c.color));
+      }
+
+      // numeric ranges
+      if (state.minPrice != null) list = list.filter(c => c.price >= Number(state.minPrice));
+      if (state.maxPrice != null) list = list.filter(c => c.price <= Number(state.maxPrice));
+      if (state.minYear != null) list = list.filter(c => c.year >= Number(state.minYear));
+      if (state.maxYear != null) list = list.filter(c => c.year <= Number(state.maxYear));
+      if (state.maxMileage != null) list = list.filter(c => c.mileage <= Number(state.maxMileage));
+
+      // Sorting
+      switch(state.sort) {
+        case 'price_low': list.sort((a,b)=> a.price - b.price); break;
+        case 'price_high': list.sort((a,b)=> b.price - a.price); break;
+        case 'year_new': list.sort((a,b)=> b.year - a.year); break;
+        case 'mileage_low': list.sort((a,b)=> a.mileage - b.mileage); break;
+        default: // popular - simple by updatedAt desc
+          list.sort((a,b)=> (b.updatedAt||0) - (a.updatedAt||0));
+      }
+
+      // Pagination
+      const total = list.length;
+      const pageSize = Math.max(1, Math.min(state.pageSize, 50));
+      const page = Math.max(1, state.page);
+      const start = (page - 1) * pageSize;
+      list = list.slice(start, start + pageSize);
+
+      return { items: list, total, page, pageSize };
+    }
+
+    function renderCatalog() {
+      const root = document.getElementById('catalog-root');
+      root.innerHTML = '';
+
+      const { items, total, page, pageSize } = filteredCars();
+
+      // Show empty state if none
+      if (items.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.style.gridColumn = '1 / -1';
+        empty.innerHTML = '<div style="font-size:28px; opacity:.8">No cars match your filters.</div><div style="margin-top:6px">Try resetting filters or adding new cars.</div>';
+        root.appendChild(empty);
+      }
+
+      items.forEach(car => {
+        const seller = db.sellers.find(s => s.id === car.sellerId) || { name: 'Unknown', email: '' };
+
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.setAttribute('aria-label', `${car.make} ${car.model} (${car.year})`);
+
+        // Photo area with emoji-first visual
+        const photo = document.createElement('div');
+        photo.className = 'photo';
+        const emojiEl = document.createElement('div');
+        emojiEl.className = 'emoji';
+        emojiEl.textContent = car.emoji || '🚗';
+        photo.appendChild(emojiEl);
+
+        const img = document.createElement('img');
+        img.alt = `${car.make} ${car.model} photo`;
+        img.style.opacity = '0';
+        photo.appendChild(img);
+
+        // Attempt to swap to Unsplash image on load if possible
+        const query = encodeURIComponent(car.unsplashQuery || `${car.make} ${car.model}`);
+        const remoteUrl = `https://source.unsplash.com/800x600/?${query}`;
+        // Start loading image in background, on success reveal image
+        img.onload = () => { img.style.opacity = '1'; emojiEl.style.opacity = '0'; };
+        img.onerror = () => { img.style.display = 'none'; emojiEl.style.opacity = '1'; };
+        // Try to load after a short delay to allow DOM to render
+        setTimeout(() => {
+          // Only attempt if network-like
+          img.src = remoteUrl;
+        }, 100);
+
+        card.appendChild(photo);
+
+        // Body
+        const body = document.createElement('div');
+        body.className = 'card-body';
+        const titleRow = document.createElement('div');
+        titleRow.className = 'car-title';
+        const title = document.createElement('span');
+        title.textContent = `${car.year} ${car.make} ${car.model}`;
+        const meta = document.createElement('span');
+        meta.className = 'tag';
+        meta.textContent = `${car.fuel} • ${car.transmission}`;
+        titleRow.appendChild(title);
+        titleRow.appendChild(meta);
+        body.appendChild(titleRow);
+
+        const price = document.createElement('div');
+        price.className = 'price';
+        price.textContent = `$${car.price.toLocaleString()}`;
+        body.appendChild(price);
+
+        const sellerInfo = document.createElement('div');
+        sellerInfo.className = 'muted';
+        sellerInfo.style.fontSize = '12px';
+        sellerInfo.innerHTML = `Seller: ${seller.name}`;
+        body.appendChild(sellerInfo);
+
+        const chips = document.createElement('div');
+        chips.className = 'chips';
+        const c1 = document.createElement('span'); c1.className='chip'; c1.textContent = car.bodyType;
+        const c2 = document.createElement('span'); c2.className='chip'; c2.textContent = car.color;
+        chips.appendChild(c1); chips.appendChild(c2);
+        body.appendChild(chips);
+
+        card.appendChild(body);
+
+        // Actions
+        const actions = document.createElement('div');
+        actions.className = 'card-actions';
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn secondary';
+        editBtn.textContent = 'Edit';
+        editBtn.onclick = () => editCar(car.id);
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn';
+        delBtn.textContent = 'Delete';
+        delBtn.onclick = () => deleteCar(car.id);
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+        card.appendChild(actions);
+
+        root.appendChild(card);
+      });
+
+      // Pagination hint
+      const info = document.createElement('div');
+      info.style.gridColumn = '1 / -1';
+      info.style.textAlign = 'center';
+      const totalPages = Math.ceil(total / Math.max(1, pageSize));
+      info.textContent = `Showing ${items.length} of ${total} cars — Page ${page} of ${totalPages}`;
+      root.appendChild(info);
+    }
+
+    // CRUD: Sellers
+    function openModalSeller() {
+      document.getElementById('modalSeller').classList.add('open');
+      document.getElementById('sellerName').value = '';
+      document.getElementById('sellerEmail').value = '';
+      document.getElementById('sellerHelp').textContent = 'Add a new seller. Emails must be unique.';
+      document.getElementById('modalSeller').setAttribute('aria-hidden', 'false');
+    }
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      if (m) {
+        m.classList.remove('open');
+        m.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    function saveSeller() {
+      const name = document.getElementById('sellerName').value.trim();
+      const email = document.getElementById('sellerEmail').value.trim().toLowerCase();
+
+      if (!name || !email) {
+        alert('Please provide name and email.');
+        return;
+      }
+      // ensure unique email
+      const exists = db.sellers.find(s => s.email.toLowerCase() === email);
+      if (exists) {
+        alert('Email already exists for another seller.');
+        return;
+      }
+
+      const s = { id: id(), name, email };
+      db.sellers.push(s);
+      saveDB();
+      closeModal('modalSeller');
+      // refresh seller dropdowns
+      renderSellersInCarForm();
+      renderCatalog();
+      // update chips (make sure new seller is visible in UI if needed)
+      renderChipsForAll();
+    }
+
+    // Car CRUD
+    function openModalCar(edit = null) {
+      // populate
+      renderSellersInModal();
+      if (edit) {
+        // fill form with existing
+        document.getElementById('carSeller').value = edit.sellerId;
+        document.getElementById('carMake').value = edit.make;
+        document.getElementById('carModel').value = edit.model;
+        document.getElementById('carYear').value = edit.year;
+        document.getElementById('carPrice').value = edit.price;
+        document.getElementById('carMileage').value = edit.mileage;
+        document.getElementById('carBody').value = edit.bodyType;
+        document.getElementById('carFuel').value = edit.fuel;
+        document.getElementById('carTrans').value = edit.transmission;
+        document.getElementById('carColor').value = edit.color;
+        document.getElementById('carEmoji').value = edit.emoji;
+        document.getElementById('carQuery').value = edit.unsplashQuery;
+        document.getElementById('carVin').value = edit.vin || '';
+        document.getElementById('carMeta').value = edit.meta || '';
+        // mark
+        document.getElementById('carSaveBtn').dataset.editId = edit.id;
+      } else {
+        // clear
+        document.getElementById('carSeller').value = '';
+        document.getElementById('carMake').value = '';
+        document.getElementById('carModel').value = '';
+        document.getElementById('carYear').value = '';
+        document.getElementById('carPrice').value = '';
+        document.getElementById('carMileage').value = '';
+        document.getElementById('carBody').value = '';
+        document.getElementById('carFuel').value = '';
+        document.getElementById('carTrans').value = '';
+        document.getElementById('carColor').value = '';
+        document.getElementById('carEmoji').value = '';
+        document.getElementById('carQuery').value = '';
+        document.getElementById('carVin').value = '';
+        document.getElementById('carMeta').value = '';
+        delete document.getElementById('carSaveBtn').dataset.editId;
+      }
+      document.getElementById('modalCar').classList.add('open');
+      document.getElementById('modalCar').setAttribute('aria-hidden', 'false');
+    }
+    function editCar(carId) {
+      const c = db.cars.find(x => x.id === carId);
+      if (!c) return;
+      openModalCar(c);
+    }
+    function deleteCar(carId) {
+      const idx = db.cars.findIndex(c => c.id === carId);
+      if (idx < 0) return;
+      // soft-check: ensure seller still exists
+      const car = db.cars[idx];
+      const sellerExists = db.sellers.find(s => s.id === car.sellerId);
+      if (!sellerExists) {
+        // allow delete
+      }
+      // Deletion is allowed; confirm
+      const ok = confirm('Delete this car? This action cannot be undone.');
+      if (!ok) return;
+      db.cars.splice(idx, 1);
+      saveDB();
+      renderCatalog();
+    }
+    function saveCar() {
+      const sellerId = document.getElementById('carSeller').value;
+      const make = document.getElementById('carMake').value.trim();
+      const model = document.getElementById('carModel').value.trim();
+      const year = Number(document.getElementById('carYear').value);
+      const price = Number(document.getElementById('carPrice').value);
+      const mileage = Number(document.getElementById('carMileage').value);
+      const bodyType = document.getElementById('carBody').value.trim();
+      const fuel = document.getElementById('carFuel').value.trim();
+      const transmission = document.getElementById('carTrans').value.trim();
+      const color = document.getElementById('carColor').value.trim();
+      const emoji = document.getElementById('carEmoji').value.trim() || '🚗';
+      const unsplashQuery = document.getElementById('carQuery').value.trim() || `${make} ${model}`;
+      const vin = document.getElementById('carVin').value.trim() || null;
+      const meta = document.getElementById('carMeta').value.trim() || '';
+
+      if (!sellerId || !make || !model || !year || !price || !mileage || !bodyType || !fuel || !transmission || !color) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+
+      // if editing
+      const editId = document.getElementById('carSaveBtn').dataset.editId;
+      if (editId) {
+        const c = db.cars.find(x => x.id === editId);
+        if (c) {
+          // FK: seller must exist
+          if (!db.sellers.find(s => s.id === sellerId)) {
+            alert('Selected seller not found.');
+            return;
+          }
+          c.sellerId = sellerId;
+          c.make = make;
+          c.model = model;
+          c.year = year;
+          c.price = price;
+          c.mileage = mileage;
+          c.bodyType = bodyType;
+          c.fuel = fuel;
+          c.transmission = transmission;
+          c.color = color;
+          c.emoji = emoji;
+          c.unsplashQuery = unsplashQuery;
+          c.vin = vin;
+          c.meta = meta;
+          c.updatedAt = Date.now();
+        }
+      } else {
+        // new car
+        if (!db.sellers.find(s => s.id === sellerId)) {
+          alert('Selected seller not found.');
+          return;
+        }
+        const newCar = {
+          id: id(),
+          sellerId,
+          make, model, year, price, mileage, bodyType, fuel, transmission, color,
+          emoji,
+          unsplashQuery,
+          vin, meta,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        };
+        db.cars.push(newCar);
+      }
+
+      saveDB();
+      closeModal('modalCar');
+      renderCatalog();
+      // refresh chips
+      renderChipsForAll();
+    }
+
+    // Helpers to refresh UI facets
+    function renderSellersInCarForm() {
+      // ensure car form dropdown exists
+      renderSellersInModal();
+    }
+
+    function renderChipsForAll() {
+      // rebuild chip categories
+      const makes = gatherUnique('make');
+      renderChips('chips-makes', makes, (val) => {
+        if (state.chips.makes.has(val)) state.chips.makes.delete(val);
+        else state.chips.makes.add(val);
+        renderCatalog();
+      });
+
+      const bodies = gatherUnique('bodyType');
+      renderChips('chips-body', bodies, (val) => {
+        if (state.chips.body.has(val)) state.chips.body.delete(val);
+        else state.chips.body.add(val);
+        renderCatalog();
+      });
+
+      const fuels = gatherUnique('fuel');
+      renderChips('chips-fuel', fuels, (val) => {
+        if (state.chips.fuel.has(val)) state.chips.fuel.delete(val);
+        else state.chips.fuel.add(val);
+        renderCatalog();
+      });
+
+      const trans = gatherUnique('transmission');
+      renderChips('chips-trans', trans, (val) => {
+        if (state.chips.trans.has(val)) state.chips.trans.delete(val);
+        else state.chips.trans.add(val);
+        renderCatalog();
+      });
+
+      const colors = gatherUnique('color');
+      renderChips('chips-color', colors, (val) => {
+        if (state.chips.color.has(val)) state.chips.color.delete(val);
+        else state.chips.color.add(val);
+        renderCatalog();
+      });
+    }
+
+    // Init
+    function initUI() {
+      // Bind global search
+      const searchInput = document.getElementById('search');
+      searchInput.addEventListener('input', (e) => {
+        state.q = e.target.value;
+        state.page = 1;
+        renderCatalog();
+      });
+
+      // Sort
+      document.getElementById('sort').addEventListener('change', (e) => {
+        state.sort = e.target.value;
+        renderCatalog();
+      });
+
+      // Filters
+      document.getElementById('minPrice').addEventListener('input', (e) => {
+        state.minPrice = e.target.value ? Number(e.target.value) : null;
+        state.page = 1;
+        renderCatalog();
+      });
+      document.getElementById('maxPrice').addEventListener('input', (e) => {
+        state.maxPrice = e.target.value ? Number(e.target.value) : null;
+        state.page = 1;
+        renderCatalog();
+      });
+      document.getElementById('minYear').addEventListener('input', (e) => {
+        state.minYear = e.target.value ? Number(e.target.value) : null;
+        state.page = 1;
+        renderCatalog();
+      });
+      document.getElementById('maxYear').addEventListener('input', (e) => {
+        state.maxYear = e.target.value ? Number(e.target.value) : null;
+        state.page = 1;
+        renderCatalog();
+      });
+      document.getElementById('maxMileage').addEventListener('input', (e) => {
+        state.maxMileage = e.target.value ? Number(e.target.value) : null;
+        state.page = 1;
+        renderCatalog();
+      });
+
+      // Clear
+      document.getElementById('btnClearFilters').addEventListener('click', () => {
+        state.q = '';
+        state.sellerId = null;
+        state.minPrice = null; state.maxPrice = null;
+        state.minYear = null; state.maxYear = null;
+        state.maxMileage = null;
+        state.sort = 'popular';
+        state.page = 1;
+        state.chips.makes.clear(); state.chips.body.clear(); state.chips.fuel.clear();
+        state.chips.trans.clear(); state.chips.color.clear();
+        document.getElementById('search').value = '';
+        document.getElementById('sort').value = 'popular';
+        renderCatalog();
+        renderChipsForAll();
+      });
+
+      // New modals
+      document.getElementById('btnNewSeller').addEventListener('click', () => {
+        openModalSender();
+      });
+      document.getElementById('btnNewCar').addEventListener('click', () => {
+        // open car modal with empty values
+        openModalCar();
+      });
+
+      // Car modal save button (exists in modal)
+      // We wire via inline handler saveCar above
+    }
+
+    // Seller quick modal opener
+    function openModalSender() {
+      document.getElementById('modalSeller').classList.add('open');
+      document.getElementById('sellerName').value = '';
+      document.getElementById('sellerEmail').value = '';
+      document.getElementById('sellerHelp').textContent = 'Create a new seller. Emails must be unique.';
+      document.getElementById('modalSeller').setAttribute('aria-hidden', 'false');
+    }
+
+    // Car form helper: refresh seller dropdown in modal forms
+    function renderSellersInCarForm() {
+      renderSellersInModal(); // for car modal
+    }
+
+    // Global initialization
+    window.addEventListener('load', () => {
+      loadDB();
+      // UI seed
+      renderChipsForAll();
+      renderCatalog();
+      initUI();
+      // Bind modal close on backdrop click
+      document.querySelectorAll('.modal').forEach(m => {
+        m.addEventListener('click', (e) => {
+          if (e.target === m) closeModal(m.id);
+        });
+      });
+      // Pre-populate seller select in car modal
+      renderSellersInCarForm();
+      // Focus management
+      document.getElementById('btnNewCar').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') openModalCar();
+      });
+    });
+  </script>
+
+  <!-- Inline helper to trigger add/edit flow externally if needed -->
+  <script>
+    // Expose small API for potential integration
+    function openEditCar(carId) { editCar(carId); }
+  </script>
+
+  <!-- END OF APP - Extendable hooks: add more features here -->
+  <!--
+    Extension points:
+    - Connect to real API at /api with db.json, implement authentication.
+    - Replace localStorage seed with server-backed persistence.
+    - Add more detailed validation and backups for writes.
+  -->
+</body>
+</html>
