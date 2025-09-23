@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chat Prototype - Frontend</title>
+  <style>
+    /* ===================== Basic Reset ===================== */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color: #1f2937;
+      background: #f7f7fb;
+    }
+
+    /* ===================== Top README Notice ===================== */
+    .readme {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #111827;
+      color: #e5e7eb;
+      padding: 12px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid #374151;
+    }
+    .readme .mini {
+      opacity: .9;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: calc(100vh - 48px);
+    }
+    @media (max-width: 980px) {
+      .container { grid-template-columns: 1fr; height: auto; }
+      .sidebar { position: relative; height: auto; }
+      .sidebar.hide { display: none; }
+    }
+
+    /* ===================== Sidebar (Chats) ===================== */
+    .sidebar {
+      border-right: 1px solid #e5e7eb;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      min-width: 0;
+    }
+    .sidebar header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 4px 12px;
+    }
+    .sidebar h2 { font-size: 16px; margin: 6px 0; }
+    .search {
+      display: flex; gap: 6px; align-items: center;
+      border: 1px solid #e5e7eb; padding: 6px 8px; border-radius: 8px;
+      background: #fff;
+    }
+    .search input {
+      border: none; outline: none; width: 100%;
+    }
+    .chat-list {
+      overflow: auto; flex: 1; padding-right: 4px;
+    }
+    .chat-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px; border-radius: 8px; cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .chat-item:hover { background: #f8fafc; }
+    .chat-item.active {
+      background: #eef2ff;
+      border-color: #dbeafe;
+    }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; color: #fff;
+    }
+    .chat-meta { display: flex; flex-direction: column; min-width: 0; }
+    .chat-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chat-preview { font-size: 12px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chat-time { font-size: 11px; color: #6b7280; white-space: nowrap; }
+
+    /* ===================== Chat Area ===================== */
+    .chat-area {
+      display: flex; flex-direction: column; height: 100%; background: #f9fafb;
+    }
+    .chat-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px; border-bottom: 1px solid #e5e7eb; background: #fff;
+      position: sticky; top: 0; z-index: 5;
+    }
+    .chat-title { display: flex; align-items: center; gap: 10px; }
+    .chat-title .avatar-lg { width: 40px; height: 40px; font-size: 18px; }
+    .toolbar { display: flex; gap: 8px; align-items: center; }
+
+    .btn {
+      border: 1px solid #d1d5db; background: #fff; padding: 6px 10px;
+      border-radius: 6px; cursor: pointer; font-size: 13px;
+    }
+    .btn.primary { background: #3b82f6; color: white; border-color: #3b82f6; }
+    .btn.small { padding: 4px 8px; font-size: 12px; }
+
+    .messages {
+      padding: 14px; overflow: auto; flex: 1; display: flex; flex-direction: column;
+      gap: 8px;
+    }
+    .message {
+      max-width: 70%; display: inline-flex; flex-direction: column; gap: 4px;
+      padding: 8px 10px; border-radius: 12px; line-height: 1.4;
+      word-wrap: break-word; white-space: normal;
+    }
+    .message.you { align-self: flex-end; background: #e0f2fe; border-top-right-radius: 3px; }
+    .message.them { align-self: flex-start; background: #ffffff; border: 1px solid #e5e7eb; }
+    .message .meta { font-size: 11px; color: #6b7280; }
+    .message .text { white-space: pre-wrap; }
+    .message .attachments { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .attachment { border: 1px solid #e5e7eb; border-radius: 6px; padding: 6px; background: #fff; max-width: 260px; }
+    .attachment img { max-width: 100%; border-radius: 4px; display: block; }
+    .link-preview { border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; background: #fff; display: flex; gap: 8px; align-items: center; }
+    .link-thumb { width: 48px; height: 48px; border-radius: 6px; background: #ddd; display: inline-block; flex-shrink: 0; }
+    .link-title { font-weight: 600; }
+    .link-domain { font-size: 12px; color: #6b7280; }
+    .reactions { display: flex; gap: 4px; align-items: center; }
+    .reaction { font-size: 14px; cursor: pointer; padding: 2px 6px; border-radius: 6px; border: 1px solid #e5e7eb; background: #fff; }
+    .message-actions { display: inline-flex; gap: 6px; align-items: center; }
+    .read { font-size: 11px; color: #6b7280; margin-left: 6px; }
+
+    /* ===================== Composer ===================== */
+    .composer {
+      padding: 8px 12px; border-top: 1px solid #e5e7eb; background: #fff;
+      display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: end;
+    }
+    .composer textarea {
+      width: 100%; min-height: 48px; max-height: 180px; resize: vertical;
+      padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; font-family: inherit;
+      font-size: 14px; background: #fff;
+    }
+    .composer .attach { padding: 6px 0; }
+    .saved-banner { padding: 8px 12px; font-size: 13px; color: #374151; background: #f8fafc; border-bottom: 1px solid #e5e7eb; }
+
+    /* ===================== Saved View ===================== */
+    .saved-view { padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px; background: #fff; display: flex; flex-direction: column; gap: 8px; }
+    .card .title { font-weight: 600; font-size: 14px; }
+    .card .snippet { font-size: 12px; color: #6b7280; }
+    .card button { align-self: flex-start; }
+
+    /* ===================== Tiny UI Helpers ===================== */
+    .hidden { display: none; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+  </style>
+</head>
+<body>
+  <!-- Top-level README-style usage note -->
+  <div class="readme" aria-label="Usage note">
+    <strong>Chat Prototype</strong> — a self-contained, frontend-only chat UI with seed data, multi-tab sync via BroadcastChannel, simulated latency/offline behavior, and clear extension points for REST/socket backends. Inline documentation is scattered in the source; look for sections labeled // integration points.
+    <span class="mini" style="float:right; opacity:.8;">Double-click index.html to run locally</span>
+  </div>
+
+  <div class="container" id="app" aria-label="Chat prototype app">
+    <!-- Sidebar: Chats -->
+    <aside class="sidebar" aria-label="Chats sidebar">
+      <header>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <strong>Chats</strong>
+          <span aria-label="Unread count" id="unreadCount" style="font-size:11px; color:#6b7280;"></span>
+        </div>
+        <button class="btn small" id="newChatBtn" title="Create a new chat">New Chat</button>
+      </header>
+
+      <div class="search" role="search">
+        <span aria-hidden="true">🔎</span>
+        <input id="searchChat" placeholder="Search chats..." />
+      </div>
+
+      <nav class="chat-list" id="chatList" aria-label="Chat list">
+        <!-- dynamically filled -->
+      </nav>
+    </aside>
+
+    <!-- Chat area -->
+    <section class="chat-area" aria-label="Chat window">
+      <div class="chat-header" id="chatHeader" role="banner">
+        <div class="chat-title" aria-label="Active chat title">
+          <div class="avatar avatar-lg" id="activeAvatar" style="width:40px; height:40px; border-radius:50%; display:grid; place-items:center; color:white; background:#111;">
+            ?
+          </div>
+          <div>
+            <div id="activeChatName" style="font-weight:700;">Select a chat</div>
+            <div id="activeChatSubtitle" style="font-size:12px; color:#6b7280;">No messages yet</div>
+          </div>
+        </div>
+        <div class="toolbar" aria-label="Chat actions">
+          <button class="btn" id="toggleSidebar" title="Show/hide chats (responsive)">Chats</button>
+          <button class="btn" id="saveViewBtn" title="View saved messages">Saved</button>
+          <div class="dropdown" aria-label="Chat options" style="position:relative;">
+            <button class="btn" id="chatOptionsBtn" aria-expanded="false" title="Chat options">⋯</button>
+            <!-- placeholder for future options -->
+          </div>
+        </div>
+      </div>
+
+      <!-- messages -->
+      <div class="messages" id="messages" aria-live="polite">
+        <!-- messages render here -->
+      </div>
+
+      <!-- composer -->
+      <div class="composer" aria-label="Message composer" id="composer">
+        <div style="display:flex; flex-direction:column; align-items: center; gap:4px;">
+          <label class="sr-only" for="attachmentInput">Attach file</label>
+          <input type="file" id="attachmentInput" accept="image/*,.pdf,.txt,.doc,.docx" style="display:none;" />
+          <button class="btn" id="attachBtn" title="Attach file">Attach</button>
+        </div>
+        <textarea id="messageInput" placeholder="Write a message... (Enter to send, Shift+Enter for newline)"></textarea>
+        <button class="btn primary" id="sendBtn" title="Send message">Send</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Saved messages view (toggleable) -->
+  <section id="savedView" class="saved-view hidden" aria-label="Saved messages view">
+    <!-- Saved cards fill here -->
+  </section>
+
+  <!-- Minimal in-app notification area (toast) -->
+  <div id="toast" class="sr-only" aria-live="polite" style="position:fixed; bottom:12px; left:50%; transform:translateX(-50%); background:#111; color:#fff; padding:8px 12px; border-radius:6px; opacity:0; transition:opacity .3s; z-index:9999;"></div>
+
+  <!-- Inline Script: All state and UI logic -->
+  <script>
+    // ===================== Core Constants =====================
+    const STORAGE_KEY = 'chat_prototype_v1';
+    const CHANNEL_NAME = 'chat_proto'; // cross-tab sync
+    const MAX_VIEW_MESSAGES = 1000;
+
+    // Demo seed data (will be migrated/augmented in first run)
+    const seededUsers = [
+      { id: 'u_me', name: 'You', initials: 'YOU', color: '#3b82f6', avatar: '🟦' },
+      { id: 'u_alice', name: 'Alice', initials: 'AL', color: '#f59e0b', avatar: '🟠' },
+      { id: 'u_bob', name: 'Bob', initials: 'BO', color: '#10b981', avatar: '🟢' },
+      { id: 'u_carol', name: 'Carol', initials: 'CA', color: '#8b5cf6', avatar: '🟣' }
+    ];
+
+    // Seed chats (will be created on first launch)
+    const seedChats = [
+      {
+        id: 'c_direct_alice',
+        type: 'direct',
+        name: 'Chat with Alice',
+        participants: ['u_me', 'u_alice'],
+        lastActive: Date.now() - 1000 * 60 * 60,
+      },
+      {
+        id: 'c_group_dev',
+        type: 'group',
+        name: 'Dev Team',
+        participants: ['u_me', 'u_alice', 'u_bob', 'u_carol'],
+        lastActive: Date.now() - 1000 * 60 * 60 * 2,
+      }
+    ];
+
+    // Initial messages seed (per chat)
+    const seedMessages = [
+      { id: 'm1', chatId: 'c_direct_alice', senderId: 'u_alice', text: 'Hey! Welcome to the prototype. Try sending a message. **Bold** and *Italic* work. Check http://example.com', timestamp: Date.now() - 1000 * 60 * 20, status: 'read', attachments: [], edited: false },
+      { id: 'm2', chatId: 'c_direct_alice', senderId: 'u_me', text: 'Hi Alice! Looks good. I will add a link preview for URLs like https://openai.com', timestamp: Date.now() - 1000 * 60 * 18, status: 'read', attachments: [], edited: false },
+      { id: 'm3', chatId: 'c_group_dev',  senderId: 'u_bob',  text: 'Code review this afternoon? Attaching a sample.png', timestamp: Date.now() - 1000 * 60 * 60, status: 'delivered', attachments: [{ type: 'image', dataURL: '', name: 'sample.png', size: 102400 }], edited: false },
+    ];
+
+    // ===================== State =====================
+    const state = {
+      version: 1,
+      users: seededUsers,
+      chats: seedChats.map(c => Object.assign({}, c)),
+      messages: seedMessages.map(m => Object.assign({}, m)),
+      currentChatId: null,
+      settings: {
+        latencyMs: 350,
+        online: true,
+        botReplies: true,
+        sound: false
+      },
+      view: {
+        tab: 'chats' // or 'saved'
+      }
+    };
+
+    // In-memory queue for offline sending
+    let offlineQueue = [];
+
+    // Broadcast channel for cross-tab sync
+    let bc;
+
+    // Helper: current user
+    const currentUser = () => state.users.find(u => u.id === 'u_me');
+
+    // ===================== Storage Helpers =====================
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return false;
+        const parsed = JSON.parse(raw);
+        // Basic sanity check
+        if (!parsed.version) return false;
+        Object.assign(state, parsed);
+        return true;
+      } catch (e) {
+        console.warn('Failed to load state', e);
+        return false;
+      }
+    }
+
+    function migrateIfNeeded() {
+      // Simple migration example: ensure messages field shapes exist
+      if (!state.messages) state.messages = [];
+      if (!state.chats) state.chats = [];
+      if (!state.users || state.users.length === 0) {
+        state.users = seededUsers;
+      }
+      // future migrations can be appended here
+      state.version = 1;
+    }
+
+    // ===================== UI Helpers =====================
+    function formatTime(ts) {
+      const d = new Date(ts);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function escapeHtml(s) {
+      return s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    // Very tiny markdown-ish formatter: bold **text**, italic *text*
+    function markdownToHtml(text) {
+      let t = escapeHtml(text);
+      t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      t = t.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      // link detection
+      t = t.replace(/(https?:\/\/[^\s]+)/g, function(url){
+        const safe = url.replace(/"/g, '&quot;');
+        return `<a href="${safe}" target="_blank" rel="noreferrer" style="color:#3b82f6; text-decoration: none;">${safe}</a>`;
+      });
+      return t;
+    }
+
+    // Simple link preview generator (mock)
+    function generateLinkPreview(url) {
+      try {
+        const domain = (new URL(url)).host.replace('www.','');
+        return {
+          url: url,
+          title: 'Preview: ' + domain,
+          domain: domain,
+          thumbnail: ''
+        };
+      } catch {
+        return null;
+      }
+    }
+
+    function renderLinkPreviewForMessage(text) {
+      const urls = [];
+      const re = /(https?:\/\/[^\s]+)/g;
+      let m;
+      while ((m = re.exec(text)) !== null) {
+        urls.push(m[0]);
+      }
+      return urls.map(u => generateLinkPreview(u)).filter(x => x);
+    }
+
+    // ===================== Rendering =====================
+
+    function renderChatList() {
+      const listEl = document.getElementById('chatList');
+      listEl.innerHTML = '';
+      const chats = state.chats.sort((a,b) => (b.lastActive||0) - (a.lastActive||0));
+      // unread count mock (just count messages after last read in each chat)
+      chats.forEach(chat => {
+        const last = state.messages.filter(m => m.chatId === chat.id).slice(-1)[0];
+        const isActive = state.currentChatId === chat.id;
+        const item = document.createElement('div');
+        item.className = 'chat-item' + (isActive ? ' active' : '');
+        item.tabIndex = 0;
+        item.setAttribute('role','button');
+        item.setAttribute('aria-label', chat.name);
+        item.onclick = () => selectChat(chat.id);
+
+        const avatarImg = document.createElement('div');
+        avatarImg.className = 'avatar';
+        const color = chat.type === 'group' ? '#a21caf' : '#3b82f6';
+        avatarImg.style.background = color;
+        avatarImg.textContent = chat.type === 'group' ? '👥' : '💬';
+        avatarImg.style.width = '36px';
+        avatarImg.style.height = '36px';
+        avatarImg.style.borderRadius = '50%';
+        avatarImg.style.display = 'inline-flex';
+        avatarImg.style.alignItems = 'center';
+        avatarImg.style.justifyContent = 'center';
+        avatarImg.style.fontSize = '18px';
+
+        const meta = document.createElement('div');
+        meta.className = 'chat-meta';
+        const name = document.createElement('div');
+        name.className = 'chat-name';
+        name.textContent = chat.name;
+        const preview = document.createElement('div');
+        preview.className = 'chat-preview';
+        const lastText = last ? (last.text.length > 40 ? last.text.slice(0, 40) + '…' : last.text) : 'No messages yet';
+        preview.textContent = lastText;
+
+        const time = document.createElement('div');
+        time.className = 'chat-time';
+        time.textContent = last ? formatTime(last.timestamp) : '';
+
+        meta.appendChild(name);
+        meta.appendChild(preview);
+
+        item.appendChild(avatarImg);
+        item.appendChild(meta);
+        item.appendChild(time);
+
+        listEl.appendChild(item);
+      });
+      updateUnreadCount();
+    }
+
+    function updateUnreadCount() {
+      // Simple demo: count messages not from current user in active chats
+      const unread = state.messages.filter(m => m.chatId && m.senderId !== 'u_me' && m.timestamp > (Date.now() - 1000 * 60 * 60 * 24)).length;
+      document.getElementById('unreadCount').textContent = unread > 0 ? ` • ${unread}` : '';
+    }
+
+    function selectChat(chatId) {
+      state.currentChatId = chatId;
+      renderChatHeader(chatId);
+      renderMessages(chatId);
+      renderChatList();
+    }
+
+    function renderChatHeader(chatId) {
+      const chat = state.chats.find(c => c.id === chatId);
+      const headerName = document.getElementById('activeChatName');
+      const headerSubtitle = document.getElementById('activeChatSubtitle');
+      const avatar = document.getElementById('activeAvatar');
+      if (!chat) {
+        headerName.textContent = 'Select a chat';
+        headerSubtitle.textContent = 'No messages yet';
+        avatar.textContent = '?';
+        avatar.style.background = '#111';
+        return;
+      }
+      headerName.textContent = chat.name;
+      headerSubtitle.textContent = chat.type === 'group' ? 'Group chat' : 'Direct chat';
+      avatar.textContent = chat.type === 'group' ? '👥' : '💬';
+      avatar.style.background = chat.type === 'group' ? '#8b5cf6' : '#3b82f6';
+    }
+
+    function renderMessages(chatId) {
+      const container = document.getElementById('messages');
+      container.innerHTML = '';
+      const msgs = state.messages.filter(m => m.chatId === chatId).sort((a,b)=> a.timestamp - b.timestamp);
+      msgs.forEach(msg => {
+        const isYou = msg.senderId === 'u_me';
+        const msgEl = document.createElement('div');
+        msgEl.className = 'message ' + (isYou ? 'you' : 'them');
+        msgEl.setAttribute('role','article');
+        // content
+        const textEl = document.createElement('div');
+        textEl.className = 'text';
+        textEl.innerHTML = markdownToHtml(msg.text);
+        // add attachments if any
+        const attachmentsEl = document.createElement('div');
+        attachmentsEl.className = 'attachments';
+        if (msg.attachments && msg.attachments.length) {
+          msg.attachments.forEach(att => {
+            if (att.type === 'image' && att.dataURL) {
+              const img = document.createElement('img');
+              img.src = att.dataURL;
+              img.style.maxWidth = '180px';
+              attachmentsEl.appendChild(img);
+            } else {
+              const a = document.createElement('a');
+              a.href = att.dataURL || '#';
+              a.download = att.name || 'file';
+              a.textContent = att.name || 'file';
+              a.className = 'attachment';
+              attachmentsEl.appendChild(a);
+            }
+          });
+        }
+        // link previews
+        const previews = renderLinkPreviewForMessage(msg.text);
+        const previewContainer = document.createElement('div');
+        previewContainer.style.display = 'flex';
+        previewContainer.style.flexDirection = 'column';
+        previews.forEach(p => {
+          const lp = document.createElement('div');
+          lp.className = 'link-preview';
+          if (p.thumbnail) {
+            const thumb = document.createElement('img');
+            thumb.src = p.thumbnail;
+            thumb.className = 'link-thumb';
+            lp.appendChild(thumb);
+          } else {
+            const thumb = document.createElement('div');
+            thumb.className = 'link-thumb';
+            thumb.style.background = '#ddd';
+            lp.appendChild(thumb);
+          }
+          const info = document.createElement('div');
+          info.style.display = 'flex'; info.style.flexDirection = 'column';
+          const t = document.createElement('div');
+          t.className = 'link-title';
+          t.textContent = p.title;
+          const d = document.createElement('div');
+          d.className = 'link-domain';
+          d.textContent = p.domain;
+          info.appendChild(t); info.appendChild(d);
+          lp.appendChild(info);
+          previewContainer.appendChild(lp);
+        });
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = formatTime(msg.timestamp) + (msg.edited ? ' • edited' : '');
+        const actions = document.createElement('div');
+        actions.className = 'message-actions';
+        // simple edit/undo UI
+        const star = document.createElement('span');
+        star.textContent = '⭐';
+        star.style.cursor = 'pointer';
+        star.title = 'Save message';
+        star.onclick = () => toggleSaveMessage(msg.id);
+        const edit = document.createElement('span');
+        edit.textContent = '✏️';
+        edit.style.cursor = 'pointer';
+        edit.title = 'Edit (demo)';
+        edit.onclick = () => demoEditMessage(msg.id);
+        const del = document.createElement('span');
+        del.textContent = '🗑️';
+        del.style.cursor = 'pointer';
+        del.title = 'Delete (demo)';
+        del.onclick = () => deleteMessage(msg.id);
+
+        actions.appendChild(star);
+        actions.appendChild(edit);
+        actions.appendChild(del);
+
+        msgEl.appendChild(textEl);
+        if (attachmentsEl.childNodes.length) msgEl.appendChild(attachmentsEl);
+        if (previews.length) msgEl.appendChild(previewContainer);
+        msgEl.appendChild(meta);
+        msgEl.appendChild(actions);
+
+        container.appendChild(msgEl);
+      });
+
+      // Scroll to bottom
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function renderSavedView() {
+      const savedEl = document.getElementById('savedView');
+      savedEl.innerHTML = '';
+      const savedIds = loadSavedList();
+      if (!savedIds.length) {
+        savedEl.innerHTML = '<div style="padding:12px; color:#6b7280;">No saved messages yet.</div>';
+        return;
+      }
+      savedIds.forEach(id => {
+        const m = state.messages.find(x => x.id === id);
+        if (!m) return;
+        const card = document.createElement('div');
+        card.className = 'card';
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.textContent = 'Saved: ' + (m.chatId ? (state.chats.find(c => c.id === m.chatId)?.name || 'Chat') : 'Message');
+        const body = document.createElement('div');
+        body.textContent = m.text;
+        const btn = document.createElement('button');
+        btn.textContent = 'Open';
+        btn.className = 'btn';
+        btn.onclick = () => {
+          selectChat(m.chatId);
+          // scroll to message
+          location.hash = 'msg-' + m.id;
+        };
+        card.appendChild(title);
+        card.appendChild(body);
+        card.appendChild(btn);
+        savedEl.appendChild(card);
+      });
+    }
+
+    // Very tiny per-chat saved messages storage (in localStorage for simplicity)
+    function loadSavedList() {
+      const raw = localStorage.getItem('chat_saved_v1');
+      try {
+        const arr = raw ? JSON.parse(raw) : [];
+        return arr;
+      } catch { return []; }
+    }
+
+    function saveToSaved(msgId) {
+      const list = loadSavedList();
+      if (!list.includes(msgId)) {
+        list.push(msgId);
+        localStorage.setItem('chat_saved_v1', JSON.stringify(list));
+      }
+    }
+
+    function removeFromSaved(msgId) {
+      const list = loadSavedList();
+      const idx = list.indexOf(msgId);
+      if (idx >= 0) {
+        list.splice(idx, 1);
+        localStorage.setItem('chat_saved_v1', JSON.stringify(list));
+      }
+    }
+
+    function toggleSaveMessage(msgId) {
+      const list = loadSavedList();
+      if (list.includes(msgId)) {
+        removeFromSaved(msgId);
+        showToast('Removed from saved');
+      } else {
+        saveToSaved(msgId);
+        showToast('Saved message');
+      }
+      renderSavedView();
+    }
+
+    function demoEditMessage(msgId) {
+      const m = state.messages.find(x => x.id === msgId);
+      if (!m) return;
+      m.text = m.text + ' [edited]';
+      m.edited = true;
+      renderMessages(m.chatId);
+      showToast('Message edited (demo)');
+    }
+
+    function deleteMessage(msgId) {
+      const idx = state.messages.findIndex(x => x.id === msgId);
+      if (idx >= 0) {
+        const chatId = state.messages[idx].chatId;
+        state.messages.splice(idx, 1);
+        renderMessages(chatId);
+        showToast('Message deleted (demo)');
+      }
+    }
+
+    // Toast helper
+    function showToast(text) {
+      const t = document.getElementById('toast');
+      t.textContent = text;
+      t.classList.remove('sr-only');
+      t.style.opacity = '1';
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.classList.add('sr-only'), 300); }, 1500);
+    }
+
+    // ===================== Messaging =====================
+
+    function sendMessage(chatId, text, attachments=[]) {
+      if (!chatId) return;
+      const msg = {
+        id: 'm' + Math.random().toString(36).slice(2,9),
+        chatId: chatId,
+        senderId: currentUser().id,
+        text: text,
+        timestamp: Date.now(),
+        status: state.settings.online ? 'sending' : 'queued',
+        attachments: attachments,
+        edited: false
+      };
+      // push immediately for optimistic UI
+      state.messages.push(msg);
+      renderMessages(chatId);
+      // simulate latency + online/offline behavior
+      const latency = state.settings.latency;
+      const deliver = () => {
+        msg.timestamp = Date.now(); // update time
+        msg.status = 'sent';
+        // cross-tab: broadcast
+        broadcastEvent('message:new', { chatId, message: msg });
+        renderMessages(chatId);
+      };
+      if (state.settings.online) {
+        // deliver after latency
+        setTimeout(deliver, latency);
+      } else {
+        // queue for later
+        offlineQueue.push({ chatId, message: msg, latency });
+        showToast('Message queued (offline)');
+      }
+      // integration point: REST/socket hooks here
+      // REST: POST /api/chats/{chatId}/messages
+      // Socket: emit message:send
+    }
+
+    function handleIncomingMessage(data) {
+      // data: { chatId, message }
+      const chatId = data.chatId;
+      const msg = data.message;
+      // If it's our own message, ignore
+      if (msg.senderId === currentUser().id) return;
+      state.messages.push(msg);
+      // Update lastActive
+      const chat = state.chats.find(c => c.id === chatId);
+      if (chat) chat.lastActive = Date.now();
+      renderMessages(chatId);
+      renderChatList();
+      // Toast notification if not in chat
+      if (state.currentChatId !== chatId) {
+        showToast('New message');
+      }
+    }
+
+    function processOfflineQueue() {
+      if (!state.settings.online) return;
+      const queue = offlineQueue.slice();
+      offlineQueue = [];
+      queue.forEach(item => {
+        // simulate sending
+        const msg = item.message;
+        msg.status = 'sent';
+        // broadcast as if delivered
+        broadcastEvent('message:new', { chatId: item.chatId, message: msg });
+      });
+      if (queue.length) renderMessages(state.currentChatId);
+    }
+
+    function broadcastEvent(type, payload) {
+      if (bc) bc.postMessage({ type, payload });
+    }
+
+    function setupBroadcastChannel() {
+      bc = new BroadcastChannel(CHANNEL_NAME);
+      bc.onmessage = (ev) => {
+        const data = ev.data;
+        if (!data || !data.type) return;
+        switch (data.type) {
+          case 'message:new':
+            handleIncomingMessage(data.payload);
+            break;
+          case 'typing':
+            // could show presence typing indicators here
+            break;
+          case 'presence:update':
+            // presence across tabs
+            break;
+          case 'read':
+            // mark read receipts
+            break;
+        }
+      };
+    }
+
+    // ===================== Attachments =====================
+    function handleAttachmentFiles(files) {
+      // returns a promise resolving to an array of attachments
+      const promises = Array.from(files).slice(0, 4).map(file => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const isImage = file.type.startsWith('image/');
+            resolve({ type: isImage ? 'image' : 'file', dataURL: reader.result, name: file.name, size: file.size });
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+      return Promise.all(promises);
+    }
+
+    // ===================== UI Wiring =====================
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize
+      if (!loadState()) {
+        migrateIfNeeded();
+        saveState();
+      }
+
+      // Apply a small styling tweak for the "unread" badge
+      renderChatList();
+      renderSavedView();
+
+      // Setup broadcasting
+      setupBroadcastChannel();
+
+      // Event: New Chat button
+      document.getElementById('newChatBtn').addEventListener('click', () => {
+        openNewChatModal();
+      });
+
+      // Search chats
+      document.getElementById('searchChat').addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase();
+        const items = document.querySelectorAll('.chat-item');
+        items.forEach((it) => {
+          const name = it.querySelector('.chat-name')?.textContent?.toLowerCase() || '';
+          it.style.display = name.includes(q) ? 'flex' : 'none';
+        });
+      });
+
+      // Send message
+      document.getElementById('sendBtn').addEventListener('click', () => {
+        const chatId = state.currentChatId;
+        const input = document.getElementById('messageInput');
+        const text = input.value.trim();
+        if (!chatId || !text) return;
+        const inputText = applyInlinePreview(text);
+        sendMessage(chatId, inputText);
+        input.value = '';
+        input.focus();
+      });
+
+      // Enter to send, Shift+Enter for newline
+      const textArea = document.getElementById('messageInput');
+      textArea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          document.getElementById('sendBtn').click();
+        }
+      });
+
+      // Attachments
+      document.getElementById('attachBtn').addEventListener('click', () => {
+        document.getElementById('attachmentInput').click();
+      });
+
+      document.getElementById('attachmentInput').addEventListener('change', async (e) => {
+        const files = e.target.files;
+        if (!files || !files.length) return;
+        const attachments = await handleAttachmentFiles(files);
+        // Attachments will be sent as a separate message when user presses Send
+        // For demo, we create a message with attachments only
+        const chatId = state.currentChatId;
+        if (!chatId) return;
+        sendMessage(chatId, 'Attachment(s) added', attachments);
+        e.target.value = '';
+      });
+
+      // Saved view toggle
+      document.getElementById('saveViewBtn').addEventListener('click', () => {
+        const v = document.getElementById('savedView');
+        if (v.classList.contains('hidden')) {
+          v.classList.remove('hidden');
+          document.querySelector('.chat-area').classList.add('hidden');
+          renderSavedView();
+        } else {
+          v.classList.add('hidden');
+          document.querySelector('.chat-area').classList.remove('hidden');
+        }
+      });
+
+      // Chat options placeholder
+      document.getElementById('chatOptionsBtn').addEventListener('click', () => {
+        alert('Chat options: rename group, manage participants (demo placeholder).');
+      });
+
+      // Go offline/online toggles (in header or settings)
+      // Placeholder: you can extend with a small panel to adjust latency and offline state
+      // Integration points: persist to state.settings and trigger re-render as needed
+
+      // Periodic processing for offline queue (simulate resending)
+      setInterval(() => {
+        if (state.settings.online) processOfflineQueue();
+      }, 1000);
+
+      // On load, ensure active chat exists
+      if (state.currentChatId) {
+        renderChatHeader(state.currentChatId);
+        renderMessages(state.currentChatId);
+      }
+    });
+
+    // Simple content sanitizer for plain UI
+    function applyInlinePreview(text) {
+      // naive: detect URL and ensure it's wrapped with a safe preview
+      // For demonstration, we simply return text
+      return text;
+    }
+
+    // Modal: New Chat (very lightweight)
+    function openNewChatModal() {
+      // For brevity, we'll implement a tiny prompt-based creation of a direct chat with Alice
+      const others = state.users.filter(u => u.id !== 'u_me');
+      const target = others.find(u => u.name.includes('Alice')) || others[0];
+      const chatId = 'c_direct_' + (target?.id || 'alice');
+      // Check if exists
+      if (!state.chats.find(c => c.id === chatId)) {
+        state.chats.push({ id: chatId, type: 'direct', name: 'Chat with ' + target.name, participants: ['u_me', target.id], lastActive: Date.now() });
+      }
+      state.currentChatId = chatId;
+      saveState();
+      renderChatList();
+      renderChatHeader(chatId);
+      renderMessages(chatId);
+      showToast('New direct chat created with ' + target.name);
+    }
+
+    // Initial latency index (for slider in settings, demonstration only: not rendering UI)
+    Object.defineProperty(state.settings, 'latency', {
+      get() { return this.latencyMs; },
+      set(v) { this.latencyMs = v; }
+    });
+
+  </script>
+
+  <!-- Tiny UI: Latency / offline controls (inline in code comments to extend) -->
+  <!-- The prototype includes placeholders for: 
+       - REST endpoints (e.g., /api/auth/login, /api/chats, /api/chats/{id}/messages, /api/uploads)
+       - Socket events (e.g., message:send, message:new, typing, presence:update, message:read)
+       - real-time presence, read receipts, and media uploads
+     Extend by wiring fetch()/WebSocket() calls to replace the simulated queues
+  -->
+</body>
+</html>
