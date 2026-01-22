@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KitchenSync — Intelligent Meal Planning</title>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('kitchensync-theme') || 
+                (window.matchMedia('(prefers-color-scheme: dark').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        :root {
+            /* Light Theme Tokens */
+            --bg: #ffffff;
+            --bg-alt: #f8faff;
+            --bg-accent-1: #f0f7ff;
+            --bg-accent-2: #fdfcf0;
+            --bg-accent-3: #f0fff4;
+            --text: #1a1a1a;
+            --muted: #595959;
+            --border-faint: #e5e5e5;
+            --primary: #0056b3;
+            --primary-hover: #004494;
+            --on-primary: #ffffff;
+            --success: #1e7e34;
+            --danger: #d93025;
+            --focus: #0056b3;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 16px;
+            --space-4: 24px;
+            --space-5: 32px;
+            --space-6: 64px;
+            --font-size-1: 12px;
+            --font-size-2: 14px;
+            --font-size-3: 16px;
+            --font-size-4: 20px;
+            --font-size-5: 28px;
+            --font-size-6: 40px;
+            --radius-btn: 3px;
+        }
+
+        [data-theme="dark"] {
+            --bg: #121212;
+            --bg-alt: #1a1a1a;
+            --bg-accent-1: #1e2530;
+            --bg-accent-2: #25251e;
+            --bg-accent-3: #1e2a21;
+            --text: #e0e0e0;
+            --muted: #a0a0a0;
+            --border-faint: #333333;
+            --primary: #4a90e2;
+            --primary-hover: #357abd;
+            --on-primary: #ffffff;
+            --success: #34a853;
+            --danger: #ea4335;
+            --focus: #4a90e2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Layout */
+        .app-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+
+        header {
+            padding: var(--space-5) 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: var(--space-5);
+            right: 0;
+            background: none;
+            border: 1px solid var(--border-faint);
+            color: var(--text);
+            padding: var(--space-2) var(--space-3);
+            cursor: pointer;
+            font-size: var(--font-size-2);
+            border-radius: var(--radius-btn);
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--bg-alt);
+        }
+
+        h1 {
+            font-size: var(--font-size-6);
+            font-weight: 700;
+            margin-bottom: var(--space-1);
+            color: var(--primary);
+        }
+
+        .subtitle {
+            font-size: var(--font-size-3);
+            color: var(--muted);
+            margin-bottom: var(--space-4);
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+            flex-wrap: wrap;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: var(--font-size-3);
+            font-weight: 600;
+            cursor: pointer;
+            padding: var(--space-2) 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        nav button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Sections */
+        section {
+            padding: var(--space-6) 0;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+        }
+
+        .section-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+
+        .band-1 { background-color: var(--bg-accent-1); }
+        .band-2 { background-color: var(--bg-accent-2); }
+        .band-3 { background-color: var(--bg-accent-3); }
+
+        /* Typography */
+        h2 {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-4);
+        }
+
+        h3 {
+            font-size: var(--font-size-4);
+            margin-bottom: var(--space-2);
+        }
+
+        p {
+            margin-bottom: var(--space-3);
+        }
+
+        /* Components */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            font-size: var(--font-size-2);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            border-radius: var(--radius-btn);
+            transition: background-color 0.2s;
+            height: 44px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-ghost {
+            background: none;
+            color: var(--muted);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            font-size: var(--font-size-3);
+            border: 1px solid var(--border-faint);
+            background-color: var(--bg);
+            color: var(--text);
+            border-radius: 0;
+            margin-bottom: var(--space-3);
+        }
+
+        input:focus {
+            outline: 2px solid var(--focus);
+            outline-offset: -2px;
+        }
+
+        /* Recipe List */
+        .recipe-item {
+            margin-bottom: var(--space-6);
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            margin-bottom: var(--space-3);
+            display: block;
+        }
+
+        .recipe-meta {
+            color: var(--muted);
+            font-size: var(--font-size-2);
+            margin-bottom: var(--space-2);
+        }
+
+        /* Meal Plan */
+        .day-row {
+            padding: var(--space-4) 0;
+            border-bottom: 1px solid var(--border-faint);
+        }
+
+        .day-name {
+            font-weight: 700;
+            font-size: var(--font-size-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .planned-recipe {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-2) 0;
+        }
+
+        /* Grocery List */
+        .grocery-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-2) 0;
+        }
+
+        .grocery-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        .grocery-item.purchased span {
+            text-decoration: line-through;
+            color: var(--muted);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 5vh;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: var(--bg);
+            width: 100%;
+            max-width: 800px;
+            padding: var(--space-5);
+            position: relative;
+            margin-bottom: 5vh;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-4);
+            right: var(--space-4);
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        /* Toasts */
+        .toast-container {
+            position: fixed;
+            bottom: var(--space-4);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+        }
+
+        .toast {
+            background-color: var(--text);
+            color: var(--bg);
+            padding: var(--space-3) var(--space-5);
+            margin-top: var(--space-2);
+            font-size: var(--font-size-2);
+            font-weight: 600;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .recipe-image { height: 250px; }
+            h1 { font-size: var(--font-size-5); }
+            .theme-toggle { position: static; display: block; margin: 0 auto var(--space-4); }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">Toggle Theme</button>
+            <h1>KitchenSync</h1>
+            <p class="subtitle">Your personal culinary orchestrator</p>
+            <nav id="main-nav">
+                <button data-view="library" class="active">Recipe Library</button>
+                <button data-view="plan">Weekly Plan</button>
+                <button data-view="grocery">Grocery List</button>
+                <button data-view="favorites">Favorites</button>
+            </nav>
+        </header>
+
+        <main id="app-root">
+            <!-- Content injected by JS -->
+        </main>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content" id="modal-inner">
+            <button class="modal-close" id="modal-close" aria-label="Close modal">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script>
+        const recipes = [
+            {
+                id: 1,
+                name: "Creamy Tomato Basil Soup",
+                category: "Vegetarian",
+                time: "30 mins",
+                image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=1200&q=80",
+                ingredients: ["800g Canned Tomatoes", "1 Onion", "3 cloves Garlic", "500ml Vegetable Stock", "100ml Heavy Cream", "Fresh Basil", "Olive Oil"],
+                steps: ["Sauté diced onion and garlic in olive oil until soft.", "Add tomatoes and stock, simmer for 20 minutes.", "Blend until smooth.", "Stir in cream and chopped basil.", "Season with salt and pepper."],
+                nutrition: { calories: 240, protein: "4g", carbs: "18g", fat: "16g" },
+                servings: 4
+            },
+            {
+                id: 2,
+                name: "Grilled Lemon Herb Salmon",
+                category: "Seafood",
+                time: "20 mins",
+                image: "https://images.unsplash.com/photo-1485921325833-c519f76c4927?auto=format&fit=crop&w=1200&q=80",
+                ingredients: ["2 Salmon Fillets", "1 Lemon", "2 tbsp Olive Oil", "1 tsp Dried Oregano", "1 tsp Garlic Powder", "Fresh Parsley"],
+                steps: ["Whisk oil, lemon juice, and herbs.", "Marinate salmon for 10 minutes.", "Grill for 4-5 minutes per side.", "Garnish with fresh parsley."],
+                nutrition: { calories: 380, protein: "34g", carbs: "2g", fat: "24g" },
+                servings: 2
+            },
+            {
+                id: 3,
+                name: "Quinoa Buddha Bowl",
+                category: "Vegan",
+                time: "25 mins",
+                image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80",
+                ingredients: ["1 cup Quinoa", "1 Sweet Potato", "1 cup Chickpeas", "1 Avocado", "Handful of Spinach", "Tahini Dressing"],
+                steps: ["Cook quinoa according to package.", "Roast cubed sweet potato and chickpeas at 200°C for 20 mins.", "Assemble bowl with spinach, quinoa, and roasted veg.", "Top with sliced avocado and tahini."],
+                nutrition: { calories: 450, protein: "15g", carbs: "65g", fat: "18g" },
+                servings: 2
+            },
+            {
+                id: 4,
+                name: "Classic Beef Tacos",
+                category: "Meat",
+                time: "15 mins",
+                image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=1200&q=80",
+                ingredients: ["500g Ground Beef", "8 Taco Shells", "1 head Lettuce", "100g Shredded Cheese", "1 Tomato", "Taco Seasoning"],
+                steps: ["Brown beef in a skillet.", "Add seasoning and a splash of water, simmer.", "Warm taco shells.", "Fill shells with beef and toppings."],
+                nutrition: { calories: 320, protein: "22g", carbs: "20g", fat: "18g" },
+                servings: 4
+            },
+            {
+                id: 5,
+                name: "Garlic Butter Shrimp Pasta",
+                category: "Seafood",
+                time: "20 mins",
+                image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1200&q=80",
+                ingredients: ["250g Linguine", "300g Shrimp", "4 tbsp Butter", "4 cloves Garlic", "Red Pepper Flakes", "Lemon Juice"],
+                steps: ["Cook pasta in salted water.", "Sauté garlic and red pepper in butter.", "Add shrimp until pink.", "Toss with pasta and lemon juice."],
+                nutrition: { calories: 510, protein: "28g", carbs: "55g", fat: "22g" },
+                servings: 2
+            },
+            {
+                id: 6,
+                name: "Roasted Vegetable Frittata",
+                category: "Vegetarian",
+                time: "35 mins",
+                image: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=1200&q=80",
+                ingredients: ["6 Eggs", "1 Bell Pepper", "1 Zucchini", "50g Feta Cheese", "50ml Milk", "Fresh Chives"],
+                steps: ["Sauté chopped vegetables until tender.", "Whisk eggs, milk, and chives.", "Pour over vegetables in an oven-safe pan.", "Top with feta and bake at 180°C for 15 mins."],
+                nutrition: { calories: 210, protein: "14g", carbs: "8g", fat: "14g" },
+                servings: 3
+            },
+            {
+                id: 7,
+                name: "Thai Green Curry",
+                category: "Meat",
+                time: "40 mins",
+                image: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=1200&q=80",
+                ingredients: ["2 Chicken Breasts", "400ml Coconut Milk", "2 tbsp Green Curry Paste", "1 Bamboo Shoot tin", "Fish Sauce", "Jasmine Rice"],
+                steps: ["Fry curry paste in a little oil.", "Add sliced chicken and brown.", "Pour in coconut milk and bamboo shoots.", "Simmer until chicken is cooked. Serve with rice."],
+                nutrition: { calories: 580, protein: "32g", carbs: "45g", fat: "30g" },
+                servings: 4
+            },
+            {
+                id: 8,
+                name: "Mushroom Risotto",
+                category: "Vegetarian",
+                time: "45 mins",
+                image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=1200&q=80",
+                ingredients: ["300g Arborio Rice", "500g Mushrooms", "1L Vegetable Stock", "1 Onion", "50g Parmesan", "White Wine"],
+                steps: ["Sauté onion and mushrooms.", "Add rice and toast slightly.", "Add wine and cook off.", "Add stock ladle by ladle, stirring constantly until absorbed."],
+                nutrition: { calories: 420, protein: "12g", carbs: "68g", fat: "10g" },
+                servings: 4
+            },
+            {
+                id: 9,
+                name: "Chickpea Curry",
+                category: "Vegan",
+                time: "30 mins",
+                image: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=1200&q=80",
+                ingredients: ["2 tins Chickpeas", "1 tin Coconut Milk", "1 Onion", "2 tbsp Curry Powder", "Spinach", "Rice"],
+                steps: ["Sauté onion and spices.", "Add chickpeas and coconut milk.", "Simmer for 15 mins.", "Stir in spinach at the end."],
+                nutrition: { calories: 390, protein: "14g", carbs: "52g", fat: "16g" },
+                servings: 4
+            },
+            {
+                id: 10,
+                name: "Blueberry Almond Oatmeal",
+                category: "Vegan",
+                time: "10 mins",
+                image: "https://images.unsplash.com/photo-1517673400267-0251440c45dc?auto=format&fit=crop&w=1200&q=80",
+                ingredients: ["1 cup Rolled Oats", "2 cups Almond Milk", "Fresh Blueberries", "Sliced Almonds", "Maple Syrup"],
+                steps: ["Simmer oats and milk until creamy.", "Top with berries and almonds.", "Drizzle with syrup."],
+                nutrition: { calories: 310, protein: "9g", carbs: "48g", fat: "11g" },
+                servings: 1
+            }
+        ];
+
+        let state = {
+            view: 'library',
+            search: '',
+            filter: 'All',
+            favorites: JSON.parse(localStorage.getItem('ks-favs')) || [],
+            mealPlan: JSON.parse(localStorage.getItem('ks-plan')) || {
+                "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": [], "Sunday": []
+            },
+            groceryList: JSON.parse(localStorage.getItem('ks-grocery')) || [],
+            purchasedItems: JSON.parse(localStorage.getItem('ks-purchased')) || []
+        };
+
+        const root = document.getElementById('app-root');
+        const navButtons = document.querySelectorAll('#main-nav button');
+        const modal = document.getElementById('modal-overlay');
+        const modalBody = document.getElementById('modal-body');
+        const modalClose = document.getElementById('modal-close');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        // Initialization
+        function init() {
+            render();
+            setupEventListeners();
+        }
+
+        function saveState() {
+            localStorage.setItem('ks-favs', JSON.stringify(state.favorites));
+            localStorage.setItem('ks-plan', JSON.stringify(state.mealPlan));
+            localStorage.setItem('ks-grocery', JSON.stringify(state.groceryList));
+            localStorage.setItem('ks-purchased', JSON.stringify(state.purchasedItems));
+        }
+
+        function render() {
+            root.innerHTML = '';
+            navButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === state.view);
+            });
+
+            if (state.view === 'library') renderLibrary();
+            else if (state.view === 'plan') renderPlan();
+            else if (state.view === 'grocery') renderGrocery();
+            else if (state.view === 'favorites') renderFavorites();
+        }
+
+        // Views
+        function renderLibrary() {
+            const filtered = recipes.filter(r => {
+                const matchesSearch = r.name.toLowerCase().includes(state.search.toLowerCase());
+                const matchesFilter = state.filter === 'All' || r.category === state.filter;
+                return matchesSearch && matchesFilter;
+            });
+
+            const html = `
+                <section class="band-1">
+                    <div class="section-content">
+                        <h2>Recipe Library</h2>
+                        <input type="text" id="recipe-search" placeholder="Search recipes..." value="${state.search}">
+                        <select id="recipe-filter">
+                            <option value="All">All Categories</option>
+                            <option value="Vegetarian" ${state.filter === 'Vegetarian' ? 'selected' : ''}>Vegetarian</option>
+                            <option value="Vegan" ${state.filter === 'Vegan' ? 'selected' : ''}>Vegan</option>
+                            <option value="Meat" ${state.filter === 'Meat' ? 'selected' : ''}>Meat</option>
+                            <option value="Seafood" ${state.filter === 'Seafood' ? 'selected' : ''}>Seafood</option>
+                        </select>
+                        <div style="margin-top: var(--space-4)">
+                            <button class="btn btn-outline" onclick="showImportModal()">Import from URL</button>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <div class="section-content">
+                        ${filtered.length ? filtered.map(r => `
+                            <div class="recipe-item">
+                                <img src="${r.image}" alt="${r.name}" class="recipe-image">
+                                <div class="recipe-meta">${r.category} • ${r.time}</div>
+                                <h3>${r.name}</h3>
+                                <div style="display: flex; gap: var(--space-2);">
+                                    <button class="btn btn-primary" onclick="viewRecipe(${r.id})">View Recipe</button>
+                                    <button class="btn btn-outline" onclick="addToPlanMenu(${r.id})">Add to Plan</button>
+                                    <button class="btn btn-ghost" onclick="toggleFavorite(${r.id})">
+                                        ${state.favorites.includes(r.id) ? '★ Favorite' : '☆ Favorite'}
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('') : '<p>No recipes found matching your criteria.</p>'}
+                    </div>
+                </section>
+            `;
+            root.innerHTML = html;
+
+            document.getElementById('recipe-search').addEventListener('input', (e) => {
+                state.search = e.target.value;
+                render();
+            });
+            document.getElementById('recipe-filter').addEventListener('change', (e) => {
+                state.filter = e.target.value;
+                render();
+            });
+        }
+
+        function renderPlan() {
+            const html = `
+                <section class="band-2">
+                    <div class="section-content">
+                        <h2>Weekly Meal Plan</h2>
+                        <p>Organize your meals for the week ahead.</p>
+                        <button class="btn btn-danger" onclick="confirmClearPlan()">Clear Entire Plan</button>
+                    </div>
+                </section>
+                <section>
+                    <div class="section-content">
+                        ${Object.keys(state.mealPlan).map(day => {
+                            const dayRecipes = state.mealPlan[day].map(id => recipes.find(r => r.id === id)).filter(Boolean);
+                            return `
+                                <div class="day-row">
+                                    <div class="day-name">${day}</div>
+                                    ${dayRecipes.length ? dayRecipes.map((r, idx) => `
+                                        <div class="planned-recipe">
+                                            <span>${r.name}</span>
+                                            <div style="display: flex; gap: var(--space-2);">
+                                                <button class="btn btn-ghost" onclick="moveRecipe('${day}', ${idx}, -1)" aria-label="Move up">↑</button>
+                                                <button class="btn btn-ghost" onclick="moveRecipe('${day}', ${idx}, 1)" aria-label="Move down">↓</button>
+                                                <button class="btn btn-ghost" style="color: var(--danger)" onclick="removeFromPlan('${day}', ${idx})">Remove</button>
+                                            </div>
+                                        </div>
+                                    `).join('') : '<p style="color: var(--muted); font-size: var(--font-size-2);">No meals planned.</p>'}
+                                    <button class="btn btn-outline" style="margin-top: var(--space-2); padding: 4px 12px; height: 32px;" onclick="state.view='library'; render();">Add Recipe</button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </section>
+            `;
+            root.innerHTML = html;
+        }
+
+        function renderGrocery() {
+            // Aggregate ingredients
+            const needed = [];
+            Object.values(state.mealPlan).forEach(dayList => {
+                dayList.forEach(id => {
+                    const r = recipes.find(rec => rec.id === id);
+                    if (r) needed.push(...r.ingredients);
+                });
+            });
+
+            // Unique list with counts
+            const counts = {};
+            needed.forEach(item => counts[item] = (counts[item] || 0) + 1);
+            
+            const list = Object.keys(counts).map(name => ({
+                name,
+                count: counts[name]
+            }));
+
+            const html = `
+                <section class="band-3">
+                    <div class="section-content">
+                        <h2>Grocery List</h2>
+                        <p>Automatically generated from your meal plan.</p>
+                        <button class="btn btn-primary" onclick="generateList()">Refresh List</button>
+                        <button class="btn btn-outline" onclick="confirmClearGrocery()">Clear Purchased</button>
+                    </div>
+                </section>
+                <section>
+                    <div class="section-content">
+                        ${list.length ? list.map(item => `
+                            <div class="grocery-item ${state.purchasedItems.includes(item.name) ? 'purchased' : ''}">
+                                <input type="checkbox" ${state.purchasedItems.includes(item.name) ? 'checked' : ''} 
+                                    onchange="togglePurchased('${item.name}')">
+                                <span>${item.name} ${item.count > 1 ? `(x${item.count})` : ''}</span>
+                            </div>
+                        `).join('') : '<p>Your grocery list is empty. Add recipes to your meal plan to see ingredients here.</p>'}
+                    </div>
+                </section>
+            `;
+            root.innerHTML = html;
+        }
+
+        function renderFavorites() {
+            const favs = recipes.filter(r => state.favorites.includes(r.id));
+            const html = `
+                <section class="band-1">
+                    <div class="section-content">
+                        <h2>Your Favorites</h2>
+                        <p>Quick access to the meals you love.</p>
+                    </div>
+                </section>
+                <section>
+                    <div class="section-content">
+                        ${favs.length ? favs.map(r => `
+                            <div class="recipe-item">
+                                <img src="${r.image}" alt="${r.name}" class="recipe-image">
+                                <h3>${r.name}</h3>
+                                <div style="display: flex; gap: var(--space-2);">
+                                    <button class="btn btn-primary" onclick="viewRecipe(${r.id})">View Recipe</button>
+                                    <button class="btn btn-ghost" onclick="toggleFavorite(${r.id})">Remove from Favorites</button>
+                                </div>
+                            </div>
+                        `).join('') : '<p>You haven\'t favorited any recipes yet.</p>'}
+                    </div>
+                </section>
+            `;
+            root.innerHTML = html;
+        }
+
+        // Actions
+        function viewRecipe(id) {
+            const r = recipes.find(rec => rec.id === id);
+            if (!r) return;
+
+            const content = `
+                <h2 id="modal-title">${r.name}</h2>
+                <img src="${r.image}" alt="${r.name}" style="width: 100%; height: 300px; object-fit: cover; margin-bottom: var(--space-4);">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4);">
+                    <div>
+                        <h3>Ingredients</h3>
+                        <ul style="padding-left: var(--space-4)">
+                            ${r.ingredients.map(i => `<li>${i}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Nutrition (per serving)</h3>
+                        <p>Calories: ${r.nutrition.calories}</p>
+                        <p>Protein: ${r.nutrition.protein}</p>
+                        <p>Carbs: ${r.nutrition.carbs}</p>
+                        <p>Fat: ${r.nutrition.fat}</p>
+                    </div>
+                </div>
+                <h3>Instructions</h3>
+                <ol style="padding-left: var(--space-4); margin-bottom: var(--space-4);">
+                    ${r.steps.map(s => `<li>${s}</li>`).join('')}
+                </ol>
+                <div style="display: flex; gap: var(--space-2);">
+                    <button class="btn btn-primary" onclick="addToPlanMenu(${r.id})">Add to Plan</button>
+                    <button class="btn btn-outline" onclick="closeModal()">Close</button>
+                </div>
+            `;
+            openModal(content);
+        }
+
+        function addToPlanMenu(id) {
+            const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            const content = `
+                <h2 id="modal-title">Add to Weekly Plan</h2>
+                <p>Select a day to add this recipe:</p>
+                <div style="display: flex; flex-direction: column; gap: var(--space-2); margin: var(--space-4) 0;">
+                    ${days.map(day => `<button class="btn btn-outline" onclick="executeAddToPlan(${id}, '${day}')">${day}</button>`).join('')}
+                </div>
+                <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+            `;
+            openModal(content);
+        }
+
+        function executeAddToPlan(id, day) {
+            state.mealPlan[day].push(id);
+            saveState();
+            closeModal();
+            showToast(`Added to ${day}`);
+            if (state.view === 'plan') render();
+        }
+
+        function removeFromPlan(day, index) {
+            state.mealPlan[day].splice(index, 1);
+            saveState();
+            render();
+            showToast(`Removed from ${day}`);
+        }
+
+        function moveRecipe(day, index, direction) {
+            const list = state.mealPlan[day];
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= list.length) return;
+            const item = list.splice(index, 1)[0];
+            list.splice(newIndex, 0, item);
+            saveState();
+            render();
+        }
+
+        function confirmClearPlan() {
+            showConfirm("Clear Weekly Plan?", "This will remove all recipes from your current schedule.", () => {
+                state.mealPlan = { "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": [], "Sunday": [] };
+                saveState();
+                render();
+            });
+        }
+
+        function toggleFavorite(id) {
+            const index = state.favorites.indexOf(id);
+            if (index > -1) {
+                state.favorites.splice(index, 1);
+                showToast("Removed from favorites");
+            } else {
+                state.favorites.push(id);
+                showToast("Added to favorites");
+            }
+            saveState();
+            render();
+        }
+
+        function togglePurchased(name) {
+            const index = state.purchasedItems.indexOf(name);
+            if (index > -1) state.purchasedItems.splice(index, 1);
+            else state.purchasedItems.push(name);
+            saveState();
+            render();
+        }
+
+        function confirmClearGrocery() {
+            showConfirm("Clear Purchased Items?", "This will remove all items you've marked as purchased.", () => {
+                state.purchasedItems = [];
+                saveState();
+                render();
+            });
+        }
+
+        function showImportModal() {
+            const content = `
+                <h2 id="modal-title">Import Recipe</h2>
+                <p>Paste a recipe URL to import it into your library.</p>
+                <input type="text" id="import-url" placeholder="https://cooking-site.com/recipe-name">
+                <div style="display: flex; gap: var(--space-2); margin-top: var(--space-4);">
+                    <button class="btn btn-primary" onclick="mockImport()">Import Recipe</button>
+                    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+                </div>
+            `;
+            openModal(content);
+        }
+
+        function mockImport() {
+            const url = document.getElementById('import-url').value;
+            if (!url) return;
+            showToast("Importing recipe...");
+            setTimeout(() => {
+                closeModal();
+                showToast("Imported: Mediterranean Salad Bowl");
+            }, 1500);
+        }
+
+        // Modal System
+        function openModal(content) {
+            modalBody.innerHTML = content;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            modalClose.focus();
+            
+            // Focus Trap
+            modal.addEventListener('keydown', handleFocusTrap);
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            modal.removeEventListener('keydown', handleFocusTrap);
+        }
+
+        function handleFocusTrap(e) {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'Tab') {
+                const focusables = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                const first = focusables[0];
+                const last = focusables[focusables.length - 1];
+                if (e.shiftKey && document.activeElement === first) {
+                    last.focus(); e.preventDefault();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    first.focus(); e.preventDefault();
+                }
+            }
+        }
+
+        function showConfirm(title, message, onConfirm) {
+            const content = `
+                <h2 id="modal-title">${title}</h2>
+                <p>${message}</p>
+                <div style="display: flex; gap: var(--space-2); margin-top: var(--space-4);">
+                    <button class="btn btn-danger" id="confirm-yes">Confirm</button>
+                    <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+                </div>
+            `;
+            openModal(content);
+            document.getElementById('confirm-yes').onclick = () => {
+                onConfirm();
+                closeModal();
+            };
+        }
+
+        // Toast System
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.view = btn.dataset.view;
+                    render();
+                });
+            });
+
+            modalClose.onclick = closeModal;
+            modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+
+            themeToggle.onclick = () => {
+                const current = document.documentElement.getAttribute('data-theme');
+                const next = current === 'light' ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('kitchensync-theme', next);
+            };
+        }
+
+        init();
+    </script>
+</body>
+</html>
