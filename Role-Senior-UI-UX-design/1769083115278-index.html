@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Essentials | Curated Home Wellness</title>
+    <style>
+        :root {
+            /* Design Tokens */
+            --bg: #ffffff;
+            --bg-alt: #f0f4f8;
+            --bg-alt-2: #f9fafb;
+            --text: #1a1a1a;
+            --text-muted: #4a4a4a;
+            --primary: #0056b3;
+            --primary-hover: #004494;
+            --on-primary: #ffffff;
+            --border: #d1d1d1;
+            --focus: #0056b3;
+            --danger: #c92a2a;
+            --success: #2b8a3e;
+            
+            /* Spacing */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 16px;
+            --space-4: 24px;
+            --space-5: 48px;
+            --space-6: 80px;
+
+            /* Typography */
+            --font-size-1: 12px;
+            --font-size-2: 14px;
+            --font-size-3: 16px;
+            --font-size-4: 20px;
+            --font-size-5: 32px;
+            --font-size-6: 48px;
+
+            --max-width: 800px;
+            --radius-btn: 3px;
+        }
+
+        [data-theme="dark"] {
+            --bg: #121212;
+            --bg-alt: #1a1a1a;
+            --bg-alt-2: #222222;
+            --text: #f8f9fa;
+            --text-muted: #adb5bd;
+            --primary: #4dabf7;
+            --primary-hover: #74c0fc;
+            --on-primary: #050505;
+            --border: #333333;
+            --focus: #4dabf7;
+        }
+
+        /* Reset & Base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        h1, h2, h3 {
+            line-height: 1.2;
+            font-weight: 700;
+            margin-bottom: var(--space-3);
+        }
+
+        h1 { font-size: var(--font-size-6); }
+        h2 { font-size: var(--font-size-5); }
+        h3 { font-size: var(--font-size-4); }
+
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0;
+        }
+
+        button {
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+            border: none;
+            border-radius: var(--radius-btn);
+            padding: var(--space-2) var(--space-4);
+            font-size: var(--font-size-3);
+            transition: background-color 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-text {
+            background: transparent;
+            color: var(--text);
+            padding: var(--space-1) var(--space-2);
+        }
+
+        /* Layout */
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+
+        section {
+            padding: var(--space-6) 0;
+            width: 100%;
+        }
+
+        .bg-alt { background-color: var(--bg-alt); }
+        .bg-alt-2 { background-color: var(--bg-alt-2); }
+
+        /* Header */
+        header {
+            padding: var(--space-4) 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: var(--font-size-4);
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: var(--space-3);
+            align-items: center;
+        }
+
+        /* Hero */
+        .hero-content {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Lists (Categories & Products) */
+        .list-stack {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-5);
+        }
+
+        .category-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .category-item {
+            font-size: var(--font-size-4);
+            padding: var(--space-2) 0;
+            border-bottom: 1px solid transparent;
+            width: fit-content;
+        }
+
+        .product-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        /* Cart Section */
+        #cart-section {
+            display: none;
+            padding: var(--space-4) 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        #cart-section.is-open {
+            display: block;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3) 0;
+        }
+
+        .cart-summary {
+            margin-top: var(--space-4);
+            text-align: right;
+            border-top: 1px solid var(--border);
+            padding-top: var(--space-3);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: var(--space-4);
+        }
+
+        .modal-content {
+            background: var(--bg);
+            width: 100%;
+            max-width: 500px;
+            padding: var(--space-5);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            font-size: var(--font-size-4);
+            background: none;
+            color: var(--text);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        input[type="email"], input[type="text"] {
+            width: 100%;
+            padding: var(--space-3);
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            border-radius: 0;
+            font-size: var(--font-size-3);
+        }
+
+        input:focus {
+            outline: 2px solid var(--focus);
+            outline-offset: -2px;
+        }
+
+        /* Testimonials */
+        .testimonial-item {
+            margin-bottom: var(--space-5);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            font-size: var(--font-size-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .testimonial-author {
+            color: var(--text-muted);
+            font-size: var(--font-size-2);
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-5) 0;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: var(--font-size-2);
+        }
+
+        /* Utilities */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <a href="#" class="brand">Aura Essentials</a>
+            <div class="nav-actions">
+                <button id="theme-toggle" aria-label="Toggle dark mode" class="btn-text">
+                    <span id="theme-icon">◐</span>
+                </button>
+                <button id="cart-toggle" class="btn-text" aria-label="View shopping cart">
+                    Cart (<span id="cart-count">0</span>)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Cart Section (Flat, full-width) -->
+        <section id="cart-section" class="bg-alt-2">
+            <div class="container">
+                <h3>Your Shopping Cart</h3>
+                <div id="cart-items-container">
+                    <p>Your cart is currently empty.</p>
+                </div>
+                <div id="cart-summary-container" style="display: none;">
+                    <div class="cart-summary">
+                        <p>Subtotal: <span id="cart-subtotal">$0.00</span></p>
+                        <button class="btn-primary" style="margin-top: var(--space-3)" onclick="handleCheckout()">Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hero -->
+        <section>
+            <div class="container hero-content">
+                <h1>Objects for a calm home.</h1>
+                <p style="font-size: var(--font-size-4); margin-bottom: var(--space-4); color: var(--text-muted);">
+                    Thoughtfully designed essentials to elevate your daily rituals and create a sanctuary within your space.
+                </p>
+                <button class="btn-primary" onclick="document.getElementById('products-heading').scrollIntoView({behavior: 'smooth'})">
+                    Shop Collection
+                </button>
+            </div>
+        </section>
+
+        <!-- Categories -->
+        <section class="bg-alt">
+            <div class="container">
+                <h2>Browse by Category</h2>
+                <ul class="category-list">
+                    <li><button class="category-item btn-text" onclick="filterProducts('all')">All Essentials</button></li>
+                    <li><button class="category-item btn-text" onclick="filterProducts('Home')">Home & Living</button></li>
+                    <li><button class="category-item btn-text" onclick="filterProducts('Wellness')">Wellness & Ritual</button></li>
+                    <li><button class="category-item btn-text" onclick="filterProducts('Kitchen')">Kitchen & Dining</button></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Products -->
+        <section>
+            <div class="container">
+                <h2 id="products-heading">Featured Collection</h2>
+                <div id="product-list" class="list-stack">
+                    <!-- Products injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="bg-alt">
+            <div class="container">
+                <h2>Voices from the Sanctuary</h2>
+                <div class="testimonial-item">
+                    <p class="testimonial-text">"The ceramic diffuser is not just functional; it's a piece of art that has completely changed the atmosphere of my living room."</p>
+                    <p class="testimonial-author">— Elena R., San Francisco</p>
+                </div>
+                <div class="testimonial-item">
+                    <p class="testimonial-text">"I've never felt a blanket so soft yet durable. The organic cotton throw is my new favorite companion for quiet evenings."</p>
+                    <p class="testimonial-author">— Marcus T., London</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter -->
+        <section class="bg-alt-2">
+            <div class="container">
+                <h2>Stay Connected</h2>
+                <p style="margin-bottom: var(--space-4);">Join our community for slow living tips and early access to new collections.</p>
+                <form id="newsletter-form" onsubmit="handleNewsletter(event)">
+                    <div class="form-group">
+                        <label for="email" class="sr-only">Email Address</label>
+                        <input type="email" id="email" placeholder="Email Address" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Subscribe</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Aura Essentials. All rights reserved.</p>
+            <p style="margin-top: var(--space-2)">Shipping & Returns &bull; Privacy Policy &bull; Sustainability Commitment</p>
+        </div>
+    </footer>
+
+    <!-- Modal Root -->
+    <div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content" id="modal-content">
+            <button class="modal-close" onclick="closeModal()" aria-label="Close modal">&times;</button>
+            <div id="modal-body">
+                <!-- Modal content injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Product Data
+        const products = [
+            {
+                id: 1,
+                name: "Ceramic Essential Oil Diffuser",
+                category: "Wellness",
+                price: 85.00,
+                description: "A minimalist stone-ceramic diffuser that uses ultrasonic vibrations to scent your space. Features a quiet operation and automatic shut-off.",
+                image: "https://images.unsplash.com/photo-1602928321679-560bb453f190?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 2,
+                name: "Organic Cotton Throw Blanket",
+                category: "Home",
+                price: 120.00,
+                description: "Heavyweight, breathable organic cotton in a soft waffle weave. Perfect for layering on your bed or sofa.",
+                image: "https://images.unsplash.com/photo-1580302200322-22081c16b123?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 3,
+                name: "Sandalwood Soy Candle",
+                category: "Wellness",
+                price: 32.00,
+                description: "Hand-poured soy wax infused with pure sandalwood oil. 50-hour burn time in a reusable glass vessel.",
+                image: "https://images.unsplash.com/photo-1602874801007-bd458bb1b8b6?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 4,
+                name: "Minimalist Bamboo Bath Tray",
+                category: "Home",
+                price: 55.00,
+                description: "Water-resistant bamboo tray designed to hold your book, candle, and glass while you soak.",
+                image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 5,
+                name: "Linen Bedding Set",
+                category: "Home",
+                price: 240.00,
+                description: "Premium French linen that gets softer with every wash. Includes one duvet cover and two pillowcases.",
+                image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 6,
+                name: "Matte Black Watering Can",
+                category: "Home",
+                price: 45.00,
+                description: "A slender, long-spout watering can for precise indoor plant care. Made from powder-coated stainless steel.",
+                image: "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 7,
+                name: "Woven Seagrass Basket",
+                category: "Home",
+                price: 38.00,
+                description: "Hand-woven from natural seagrass. A versatile storage solution for blankets, toys, or plants.",
+                image: "https://images.unsplash.com/photo-1590736969955-71cc94828152?auto=format&fit=crop&w=800&q=80"
+            },
+            {
+                id: 8,
+                name: "Recycled Glass Carafe Set",
+                category: "Kitchen",
+                price: 64.00,
+                description: "Hand-blown from recycled glass. Includes a 1L carafe and two matching tumblers with a subtle green tint.",
+                image: "https://images.unsplash.com/photo-1516594701414-769b17466b8c?auto=format&fit=crop&w=800&q=80"
+            }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('aura_cart')) || [];
+        let currentCategory = 'all';
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            updateCartUI();
+            initTheme();
+            
+            // Close modal on ESC
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            // Close modal on outside click
+            document.getElementById('modal-overlay').addEventListener('click', (e) => {
+                if (e.target.id === 'modal-overlay') closeModal();
+            });
+        });
+
+        // Theme Logic
+        function initTheme() {
+            const savedTheme = localStorage.getItem('aura_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('aura_theme', next);
+            updateThemeIcon(next);
+        });
+
+        function updateThemeIcon(theme) {
+            document.getElementById('theme-icon').textContent = theme === 'light' ? '◐' : '◑';
+        }
+
+        // Product Rendering
+        function renderProducts() {
+            const container = document.getElementById('product-list');
+            const filtered = currentCategory === 'all' 
+                ? products 
+                : products.filter(p => p.category === currentCategory);
+
+            container.innerHTML = filtered.map(p => `
+                <div class="product-item">
+                    <img src="${p.image}" alt="${p.name}" onclick="showProductDetails(${p.id})" style="cursor: pointer;">
+                    <div class="product-info">
+                        <div class="product-meta">
+                            <h3 onclick="showProductDetails(${p.id})" style="cursor: pointer; margin: 0;">${p.name}</h3>
+                            <span style="font-weight: bold;">$${p.price.toFixed(2)}</span>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: var(--font-size-2);">${p.category}</p>
+                        <button class="btn-outline" onclick="addToCart(${p.id})">Add to Cart</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterProducts(cat) {
+            currentCategory = cat;
+            renderProducts();
+            document.getElementById('products-heading').scrollIntoView({behavior: 'smooth'});
+        }
+
+        // Cart Logic
+        document.getElementById('cart-toggle').addEventListener('click', () => {
+            const section = document.getElementById('cart-section');
+            section.classList.toggle('is-open');
+        });
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+            
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            
+            saveCart();
+            updateCartUI();
+            showModal(`
+                <h3 id="modal-title">Added to Cart</h3>
+                <p>${product.name} has been added to your shopping cart.</p>
+                <div style="margin-top: var(--space-4); display: flex; gap: var(--space-2);">
+                    <button class="btn-primary" onclick="closeModal()">Continue Shopping</button>
+                    <button class="btn-outline" onclick="closeModal(); document.getElementById('cart-section').classList.add('is-open'); document.getElementById('cart-section').scrollIntoView({behavior: 'smooth'});">View Cart</button>
+                </div>
+            `);
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            saveCart();
+            updateCartUI();
+        }
+
+        function updateQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    removeFromCart(id);
+                } else {
+                    saveCart();
+                    updateCartUI();
+                }
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem('aura_cart', JSON.stringify(cart));
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const countEl = document.getElementById('cart-count');
+            const summary = document.getElementById('cart-summary-container');
+            const subtotalEl = document.getElementById('cart-subtotal');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            countEl.textContent = totalItems;
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p>Your cart is currently empty.</p>';
+                summary.style.display = 'none';
+            } else {
+                summary.style.display = 'block';
+                let subtotal = 0;
+                container.innerHTML = cart.map(item => {
+                    subtotal += item.price * item.qty;
+                    return `
+                        <div class="cart-item">
+                            <div>
+                                <p style="font-weight: bold;">${item.name}</p>
+                                <p style="font-size: var(--font-size-2); color: var(--text-muted);">$${item.price.toFixed(2)} each</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                                    <button class="btn-text" onclick="updateQty(${item.id}, -1)" aria-label="Decrease quantity">-</button>
+                                    <span>${item.qty}</span>
+                                    <button class="btn-text" onclick="updateQty(${item.id}, 1)" aria-label="Increase quantity">+</button>
+                                </div>
+                                <button class="btn-text" style="color: var(--danger)" onclick="removeFromCart(${item.id})">Remove</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+            }
+        }
+
+        // Modal Logic
+        let lastFocusedElement;
+
+        function showModal(html) {
+            lastFocusedElement = document.activeElement;
+            const overlay = document.getElementById('modal-overlay');
+            const body = document.getElementById('modal-body');
+            body.innerHTML = html;
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Focus trap
+            const focusable = body.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if (focusable.length) focusable[0].focus();
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.body.style.overflow = '';
+            if (lastFocusedElement) lastFocusedElement.focus();
+        }
+
+        function showProductDetails(id) {
+            const p = products.find(item => item.id === id);
+            showModal(`
+                <img src="${p.image}" alt="${p.name}" style="width: 100%; margin-bottom: var(--space-4);">
+                <h3 id="modal-title">${p.name}</h3>
+                <p style="font-weight: bold; margin-bottom: var(--space-2);">$${p.price.toFixed(2)}</p>
+                <p style="color: var(--text-muted); margin-bottom: var(--space-4);">${p.description}</p>
+                <div style="border-top: 1px solid var(--border); padding-top: var(--space-4);">
+                    <p style="font-size: var(--font-size-2); margin-bottom: var(--space-3);">
+                        <strong>Shipping:</strong> Free carbon-neutral shipping on orders over $150.<br>
+                        <strong>Returns:</strong> 30-day window for unused items in original packaging.
+                    </p>
+                    <button class="btn-primary" onclick="addToCart(${p.id}); closeModal();">Add to Cart</button>
+                </div>
+            `);
+        }
+
+        function handleCheckout() {
+            showModal(`
+                <h3 id="modal-title">Checkout</h3>
+                <p>This is a demonstration of the Aura Essentials checkout flow. In a live environment, you would proceed to secure payment.</p>
+                <div style="margin-top: var(--space-4);">
+                    <button class="btn-primary" onclick="cart = []; saveCart(); updateCartUI(); closeModal(); showModal('<h3>Order Confirmed</h3><p>Thank you for your purchase. A confirmation email will be sent shortly.</p><button class=\'btn-primary\' style=\'margin-top: var(--space-3)\' onclick=\'closeModal()\'>Close</button>')">Complete Purchase</button>
+                </div>
+            `);
+        }
+
+        function handleNewsletter(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            showModal(`
+                <h3 id="modal-title">Welcome to the Community</h3>
+                <p>Thank you for subscribing with <strong>${email}</strong>. You'll receive our next newsletter shortly.</p>
+                <button class="btn-primary" style="margin-top: var(--space-4)" onclick="closeModal()">Close</button>
+            `);
+            e.target.reset();
+        }
+    </script>
+</body>
+</html>
