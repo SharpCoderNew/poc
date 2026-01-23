@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agents Conference 2026 | Virtual Event</title>
+    <meta name="description" content="The premier virtual event for AI agents and agentic AI platforms.">
+    <meta name="theme-color" content="#0a0c10">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            base: '#0a0c10',
+                            teal: 'hsl(175, 80%, 50%)',
+                            'teal-hover': 'hsl(175, 80%, 45%)',
+                            'teal-glow': 'hsl(175, 80%, 50%, 0.4)',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Orbitron', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'btn': '3px',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --accent: hsl(175, 80%, 50%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        .light {
+            --glass-bg: rgba(0, 0, 0, 0.03);
+            --glass-border: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .star-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(ellipse at center, hsl(175 80% 50% / 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        .drifting-orb {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, hsl(175 80% 50% / 0.1) 0%, transparent 70%);
+            filter: blur(40px);
+            z-index: -1;
+            animation: drift 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes drift {
+            from { transform: translate(-10%, -10%); }
+            to { transform: translate(10%, 10%); }
+        }
+
+        .focus-ring:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: #000;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 15px var(--brand-teal-glow);
+            background-color: hsl(175, 80%, 45%);
+        }
+
+        .btn-secondary {
+            background: rgba(20, 184, 166, 0.05);
+            border: 2px solid rgba(20, 184, 166, 0.3);
+            color: var(--accent);
+            transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background: rgba(20, 184, 166, 0.1);
+            border-color: var(--accent);
+        }
+
+        /* Hide scrollbar for agenda tabs */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-[#0a0c10] text-gray-100 dark:bg-[#0a0c10] dark:text-gray-100 light:bg-gray-50 light:text-gray-900 transition-colors duration-300 font-sans">
+
+    <!-- Background Elements -->
+    <div class="star-field" id="starField"></div>
+    <div class="drifting-orb top-20 left-1/4"></div>
+    <div class="drifting-orb bottom-40 right-1/4" style="animation-delay: -5s;"></div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 glass border-b border-white/10 dark:border-white/10 light:border-black/5">
+        <div class="max-w-6xl mx-auto px-4 h-20 flex items-center justify-between">
+            <a href="#" class="font-heading font-bold text-xl tracking-tight text-brand-teal">
+                AI Agents Conference 2026
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#about" class="text-sm font-medium hover:text-brand-teal transition-colors focus-ring">About</a>
+                <a href="#agenda" class="text-sm font-medium hover:text-brand-teal transition-colors focus-ring">Agenda</a>
+                <a href="#speakers" class="text-sm font-medium hover:text-brand-teal transition-colors focus-ring">Speakers</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleTheme()" id="themeToggle" class="p-2 glass rounded-btn focus-ring flex items-center space-x-2 text-xs font-medium" aria-label="Toggle theme">
+                    <span id="themeIcon">
+                        <!-- Moon Icon -->
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </span>
+                    <span id="themeText">Dark mode</span>
+                </button>
+                
+                <button onclick="openModal('sponsorModal')" class="hidden sm:flex items-center space-x-2 px-4 py-2 btn-secondary rounded-btn text-sm font-semibold focus-ring">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span>Become a sponsor</span>
+                </button>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="md:hidden p-2 glass rounded-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Nav -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-white/10 dark:border-white/10 light:border-black/5 glass px-4 py-4 space-y-4">
+            <a href="#about" class="block text-lg font-medium focus-ring" onclick="toggleMobileMenu()">About</a>
+            <a href="#agenda" class="block text-lg font-medium focus-ring" onclick="toggleMobileMenu()">Agenda</a>
+            <a href="#speakers" class="block text-lg font-medium focus-ring" onclick="toggleMobileMenu()">Speakers</a>
+            <button onclick="openModal('sponsorModal'); toggleMobileMenu();" class="w-full flex justify-center items-center space-x-2 px-4 py-3 btn-secondary rounded-btn text-sm font-semibold">
+                <span>Become a sponsor</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="pt-8 md:pt-16">
+        
+        <!-- Hero Section -->
+        <section class="max-w-6xl mx-auto px-4 text-center mb-24 relative">
+            <div class="absolute inset-0 -z-10 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=2000" alt="Futuristic AI nodes background" class="w-full h-full object-cover opacity-10 dark:opacity-20 light:opacity-5">
+            </div>
+            
+            <p class="font-heading text-brand-teal text-sm md:text-base tracking-[0.2em] mb-4">
+                March 23 - 27, 2026 • Live virtual conference
+            </p>
+            <h1 class="font-heading text-4xl md:text-6xl lg:text-7xl font-extrabold mb-8 leading-tight">
+                The Future of <br>Agentic Intelligence
+            </h1>
+            <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 dark:text-gray-400 light:text-gray-600 mb-12 leading-relaxed">
+                Where the world’s leading minds converge to explore AI agents and agentic AI platforms, from autonomous systems and multi-agent architectures to production-ready agentic solutions.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+                <button onclick="openModal('registerModal')" class="w-full sm:w-auto px-8 py-4 btn-primary rounded-btn font-bold text-lg focus-ring">
+                    Register now
+                </button>
+                <button onclick="openModal('sponsorModal')" class="w-full sm:w-auto px-8 py-4 btn-secondary rounded-btn font-bold text-lg focus-ring">
+                    Become a sponsor
+                </button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+                <div class="glass p-8 rounded-btn">
+                    <div class="font-heading text-3xl text-brand-teal mb-1">80+</div>
+                    <div class="text-sm text-gray-400">Expert speakers</div>
+                </div>
+                <div class="glass p-8 rounded-btn">
+                    <div class="font-heading text-3xl text-brand-teal mb-1">50K+</div>
+                    <div class="text-sm text-gray-400">Virtual attendees</div>
+                </div>
+                <div class="glass p-8 rounded-btn">
+                    <div class="font-heading text-3xl text-brand-teal mb-1">60+</div>
+                    <div class="text-sm text-gray-400">Hours of live streaming</div>
+                </div>
+                <div class="glass p-8 rounded-btn">
+                    <div class="font-heading text-3xl text-brand-teal mb-1">40</div>
+                    <div class="text-sm text-gray-400">Hours of content</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="max-w-5xl mx-auto px-4 py-24 border-t border-white/5">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="font-heading text-3xl mb-6">About the conference</h2>
+                    <p class="text-brand-teal font-medium mb-4">The premier virtual event bringing together the brightest minds in AI agents and agentic AI development.</p>
+                    <p class="text-gray-400 dark:text-gray-400 light:text-gray-600 mb-8 leading-relaxed">
+                        Join us for a deep dive into the next evolution of artificial intelligence. We focus on the practical orchestration, rigorous evaluation, and safe deployment of autonomous agents in real-world enterprise environments.
+                    </p>
+                    <ul class="space-y-4 mb-10">
+                        <li class="flex items-start space-x-3">
+                            <svg class="w-6 h-6 text-brand-teal shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span>World-class speakers from top AI labs and enterprises.</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <svg class="w-6 h-6 text-brand-teal shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span>Global community with partners like C# Corner and HackIndia.</span>
+                        </li>
+                        <li class="flex items-start space-x-3">
+                            <svg class="w-6 h-6 text-brand-teal shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span>Cutting-edge insights into multi-agent systems and safety.</span>
+                        </li>
+                    </ul>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="openModal('registerModal')" class="px-6 py-3 btn-primary rounded-btn font-semibold focus-ring">Register now</button>
+                        <button onclick="openModal('newsletterModal')" class="px-6 py-3 btn-secondary rounded-btn font-semibold focus-ring">Join the community</button>
+                    </div>
+                </div>
+                <div class="glass p-2 rounded-btn">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1000" alt="Cybersecurity and AI visualization" class="w-full h-auto rounded-btn opacity-80">
+                </div>
+            </div>
+        </section>
+
+        <!-- Topics Section -->
+        <section class="max-w-6xl mx-auto px-4 py-24">
+            <h2 class="font-heading text-3xl text-center mb-16">What you will learn</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Topic 1 -->
+                <div class="glass p-8 rounded-btn hover:border-brand-teal transition-colors group">
+                    <div class="w-12 h-12 bg-brand-teal/10 rounded-btn flex items-center justify-center text-brand-teal mb-6 group-hover:bg-brand-teal group-hover:text-black transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="font-heading text-xl mb-3">Autonomous workflows</h3>
+                    <p class="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">Master the design of self-correcting loops and long-running autonomous processes in production.</p>
+                </div>
+                <!-- Topic 2 -->
+                <div class="glass p-8 rounded-btn hover:border-brand-teal transition-colors group">
+                    <div class="w-12 h-12 bg-brand-teal/10 rounded-btn flex items-center justify-center text-brand-teal mb-6 group-hover:bg-brand-teal group-hover:text-black transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <h3 class="font-heading text-xl mb-3">Multi-agent systems</h3>
+                    <p class="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">Explore complex orchestration where specialized agents collaborate to solve high-stakes problems.</p>
+                </div>
+                <!-- Topic 3 -->
+                <div class="glass p-8 rounded-btn hover:border-brand-teal transition-colors group">
+                    <div class="w-12 h-12 bg-brand-teal/10 rounded-btn flex items-center justify-center text-brand-teal mb-6 group-hover:bg-brand-teal group-hover:text-black transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                    <h3 class="font-heading text-xl mb-3">LLM orchestration</h3>
+                    <p class="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">Deep dive into memory management, context window optimization, and stateful agent interactions.</p>
+                </div>
+                <!-- Topic 4 -->
+                <div class="glass p-8 rounded-btn hover:border-brand-teal transition-colors group">
+                    <div class="w-12 h-12 bg-brand-teal/10 rounded-btn flex items-center justify-center text-brand-teal mb-6 group-hover:bg-brand-teal group-hover:text-black transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.040L3 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622l-.382-3.016z"></path></svg>
+                    </div>
+                    <h3 class="font-heading text-xl mb-3">Production-grade agents</h3>
+                    <p class="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">Moving from prototype to scale: latency, reliability, and cost-effective agent deployments.</p>
+                </div>
+                <!-- Topic 5 -->
+                <div class="glass p-8 rounded-btn hover:border-brand-teal transition-colors group">
+                    <div class="w-12 h-12 bg-brand-teal/10 rounded-btn flex items-center justify-center text-brand-teal mb-6 group-hover:bg-brand-teal group-hover:text-black transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h3 class="font-heading text-xl mb-3">Evaluation and safety</h3>
+                    <p class="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">Frameworks for testing agent behavior, ensuring alignment, and preventing unintended actions.</p>
+                </div>
+                <!-- Topic 6 -->
+                <div class="glass p-8 rounded-btn hover:border-brand-teal transition-colors group">
+                    <div class="w-12 h-12 bg-brand-teal/10 rounded-btn flex items-center justify-center text-brand-teal mb-6 group-hover:bg-brand-teal group-hover:text-black transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                    <h3 class="font-heading text-xl mb-3">Tooling and infrastructure</h3>
+                    <p class="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">The modern stack for AI agents, including vector databases, monitoring tools, and SDKs.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agenda Section -->
+        <section id="agenda" class="max-w-5xl mx-auto px-4 py-24 border-t border-white/5">
+            <div class="text-center mb-12">
+                <h2 class="font-heading text-3xl mb-4">Conference agenda</h2>
+                <p class="text-gray-400">Five days of insights, innovation, and networking with AI agent experts.</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex overflow-x-auto no-scrollbar glass rounded-btn p-1 mb-8 max-w-2xl mx-auto">
+                <button onclick="switchTab(1)" id="tab-1" class="flex-1 px-4 py-3 text-sm font-semibold rounded-btn transition-all aria-selected:bg-brand-teal aria-selected:text-black" aria-selected="true" aria-controls="panel-1">Day 1</button>
+                <button onclick="switchTab(2)" id="tab-2" class="flex-1 px-4 py-3 text-sm font-semibold rounded-btn transition-all aria-selected:bg-brand-teal aria-selected:text-black" aria-selected="false" aria-controls="panel-2">Day 2</button>
+                <button onclick="switchTab(3)" id="tab-3" class="flex-1 px-4 py-3 text-sm font-semibold rounded-btn transition-all aria-selected:bg-brand-teal aria-selected:text-black" aria-selected="false" aria-controls="panel-3">Day 3</button>
+                <button onclick="switchTab(4)" id="tab-4" class="flex-1 px-4 py-3 text-sm font-semibold rounded-btn transition-all aria-selected:bg-brand-teal aria-selected:text-black" aria-selected="false" aria-controls="panel-4">Day 4</button>
+                <button onclick="switchTab(5)" id="tab-5" class="flex-1 px-4 py-3 text-sm font-semibold rounded-btn transition-all aria-selected:bg-brand-teal aria-selected:text-black" aria-selected="false" aria-controls="panel-5">Day 5</button>
+            </div>
+
+            <!-- Panels -->
+            <div id="agendaPanels" class="glass rounded-btn p-6 md:p-10">
+                <!-- Day 1 Panel -->
+                <div id="panel-1" class="space-y-8" role="tabpanel">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-6 mb-6">
+                        <div>
+                            <h3 class="font-heading text-xl mb-1">Day 1 - March 23, 2026</h3>
+                            <p class="text-sm text-brand-teal">8:00 am - 1:45 pm EST • 10 Sessions</p>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2 md:mt-0">All times in Eastern Standard Time (EST)</p>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4">
+                            <span class="text-sm font-mono text-gray-400">08:00 am</span>
+                            <div>
+                                <h4 class="font-bold mb-1">Welcome and opening keynote</h4>
+                                <p class="text-sm text-gray-400">Mahesh Chand • 45 mins</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4">
+                            <span class="text-sm font-mono text-gray-400">08:50 am</span>
+                            <div>
+                                <h4 class="font-bold mb-1">Building agentic research assistants</h4>
+                                <p class="text-sm text-gray-400">Frank Boucher • 30 mins</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4">
+                            <span class="text-sm font-mono text-gray-400">09:25 am</span>
+                            <div>
+                                <h4 class="font-bold mb-1">Agents, assemble! unleashing agentic RAGs</h4>
+                                <p class="text-sm text-gray-400">Siddhant Agarwal • 30 mins</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4">
+                            <span class="text-sm font-mono text-gray-400">10:00 am</span>
+                            <div>
+                                <h4 class="font-bold mb-1">The AI-powered program manager</h4>
+                                <p class="text-sm text-gray-400">Sarah Abdelhady • 30 mins</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4">
+                            <span class="text-sm font-mono text-gray-400">10:35 am</span>
+                            <div>
+                                <h4 class="font-bold mb-1">Welcome to the museum of AI hallucinations</h4>
+                                <p class="text-sm text-gray-400">Maria Piterberg • 30 mins</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4">
+                            <span class="text-sm font-mono text-gray-400">11:10 am</span>
+                            <div>
+                                <h4 class="font-bold mb-1">Designing empathetic AI agents</h4>
+                                <p class="text-sm text-gray-400">Rohan Mitra • 30 mins</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4">
+                            <span class="text-sm font-mono text-gray-400">11:45 am</span>
+                            <div>
+                                <h4 class="font-bold mb-1">Retrieval-augmented AI agents at scale</h4>
+                                <p class="text-sm text-gray-400">Sergey Polyashov • 30 mins</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4">
+                            <span class="text-sm font-mono text-gray-400">12:20 pm</span>
+                            <div>
+                                <h4 class="font-bold mb-1">SharpCoder - future of enterprise coding</h4>
+                                <p class="text-sm text-gray-400">John Godel • 30 mins</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4">
+                            <span class="text-sm font-mono text-gray-400">12:55 pm</span>
+                            <div>
+                                <h4 class="font-bold mb-1">AI agents in product development</h4>
+                                <p class="text-sm text-gray-400">Alexandra Tsoy • 30 mins</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4">
+                            <span class="text-sm font-mono text-gray-400">01:30 pm</span>
+                            <div>
+                                <h4 class="font-bold mb-1">Day 1 wrap-up and Q&A</h4>
+                                <p class="text-sm text-gray-400">Conference Team • 15 mins</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 2-5 Panels (Believable placeholders) -->
+                <div id="panel-2" class="hidden space-y-8" role="tabpanel">
+                    <h3 class="font-heading text-xl">Day 2 - Multi-Agent Orchestration</h3>
+                    <div class="space-y-4 text-gray-400">
+                        <p>Focusing on how multiple specialized agents interact and solve complex tasks.</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>Hierarchical Agent Structures - Michal Bil</li>
+                            <li>Communication Protocols for Agents - Avraam Tolmidis</li>
+                            <li>Conflict Resolution in Multi-Agent Systems</li>
+                            <li>Case Study: Autonomous Software Engineering Teams</li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="panel-3" class="hidden space-y-8" role="tabpanel">
+                    <h3 class="font-heading text-xl">Day 3 - Reliability and Safety</h3>
+                    <div class="space-y-4 text-gray-400">
+                        <p>Ensuring AI agents behave predictably and safely in production environments.</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>Safety Guardrails for Autonomous Agents</li>
+                            <li>Evaluating Agentic Hallucinations - Maria Piterberg</li>
+                            <li>Human-in-the-loop: Best Practices</li>
+                            <li>Ethical Considerations in Agent Deployment</li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="panel-4" class="hidden space-y-8" role="tabpanel">
+                    <h3 class="font-heading text-xl">Day 4 - Infrastructure and Scale</h3>
+                    <div class="space-y-4 text-gray-400">
+                        <p>The hardware and software stack required to run agents at enterprise scale.</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>Optimizing Latency for Real-time Agents</li>
+                            <li>Vector Databases for Long-term Agent Memory</li>
+                            <li>Cloud Architecture for Agentic Workloads</li>
+                            <li>Monitoring and Observability for Agents</li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="panel-5" class="hidden space-y-8" role="tabpanel">
+                    <h3 class="font-heading text-xl">Day 5 - The Future of Agentic AI</h3>
+                    <div class="space-y-4 text-gray-400">
+                        <p>Closing keynotes and future-looking sessions on the next decade of AI.</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li>AGI vs. Agentic Intelligence</li>
+                            <li>The Economic Impact of Autonomous Agents</li>
+                            <li>Panel Discussion: What's Next for 2027?</li>
+                            <li>Closing Ceremony and Awards</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="text-sm text-gray-500 space-y-1">
+                        <p>• Five-minute breaks between sessions.</p>
+                        <p>• All sessions will be recorded for registered attendees.</p>
+                    </div>
+                    <button onclick="openModal('agendaModal')" class="btn-secondary px-6 py-2 rounded-btn text-sm font-semibold">View full agenda</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Speakers Section -->
+        <section id="speakers" class="max-w-6xl mx-auto px-4 py-24">
+            <div class="text-center mb-16">
+                <h2 class="font-heading text-3xl mb-4">Featured speakers</h2>
+                <p class="text-gray-400">Learn from the visionaries shaping the future of agentic AI.</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Speaker 1 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">JG</div>
+                    <h4 class="font-bold text-lg">John Godel</h4>
+                    <p class="text-xs text-brand-teal mb-2">President and CEO</p>
+                    <p class="text-xs text-gray-500">AlpineGate AI Technologies</p>
+                </div>
+                <!-- Speaker 2 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">MC</div>
+                    <h4 class="font-bold text-lg">Mahesh Chand</h4>
+                    <p class="text-xs text-brand-teal mb-2">Founder and CEO</p>
+                    <p class="text-xs text-gray-500">C# Corner</p>
+                </div>
+                <!-- Speaker 3 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">FB</div>
+                    <h4 class="font-bold text-lg">Frank Boucher</h4>
+                    <p class="text-xs text-brand-teal mb-2">Developer Advocate</p>
+                    <p class="text-xs text-gray-500">Reka AI</p>
+                </div>
+                <!-- Speaker 4 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">MB</div>
+                    <h4 class="font-bold text-lg">Michal Bil</h4>
+                    <p class="text-xs text-brand-teal mb-2">Co-founder and CTO</p>
+                    <p class="text-xs text-gray-500">Swarm</p>
+                </div>
+                <!-- Speaker 5 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">AT</div>
+                    <h4 class="font-bold text-lg">Alexandra Tsoy</h4>
+                    <p class="text-xs text-brand-teal mb-2">Head of Product</p>
+                    <p class="text-xs text-gray-500">Paysend</p>
+                </div>
+                <!-- Speaker 6 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">SA</div>
+                    <h4 class="font-bold text-lg">Siddhant Agarwal</h4>
+                    <p class="text-xs text-brand-teal mb-2">DevRel Lead</p>
+                    <p class="text-xs text-gray-500">Neo4j</p>
+                </div>
+                <!-- Speaker 7 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">SP</div>
+                    <h4 class="font-bold text-lg">Sergey Polyashov</h4>
+                    <p class="text-xs text-brand-teal mb-2">Principal Engineering Manager</p>
+                    <p class="text-xs text-gray-500">Microsoft AI</p>
+                </div>
+                <!-- Speaker 8 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">MP</div>
+                    <h4 class="font-bold text-lg">Maria Piterberg</h4>
+                    <p class="text-xs text-brand-teal mb-2">Team Lead</p>
+                    <p class="text-xs text-gray-500">Habana Labs (Intel)</p>
+                </div>
+                <!-- Speaker 9 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">SA</div>
+                    <h4 class="font-bold text-lg">Sarah Abdelhady</h4>
+                    <p class="text-xs text-brand-teal mb-2">AI Strategy Lead</p>
+                    <p class="text-xs text-gray-500">BigTech</p>
+                </div>
+                <!-- Speaker 10 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">RM</div>
+                    <h4 class="font-bold text-lg">Rohan Mitra</h4>
+                    <p class="text-xs text-brand-teal mb-2">Product Leader</p>
+                    <p class="text-xs text-gray-500">PhonePe (Walmart)</p>
+                </div>
+                <!-- Speaker 11 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">DB</div>
+                    <h4 class="font-bold text-lg">Dmitry Bobolev</h4>
+                    <p class="text-xs text-brand-teal mb-2">Founder</p>
+                    <p class="text-xs text-gray-500">Froxy Labs</p>
+                </div>
+                <!-- Speaker 12 -->
+                <div class="glass p-6 rounded-btn text-center group">
+                    <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-brand-teal/20 flex items-center justify-center text-brand-teal font-heading text-2xl border-2 border-brand-teal/30 group-hover:border-brand-teal transition-colors">AT</div>
+                    <h4 class="font-bold text-lg">Avraam Tolmidis</h4>
+                    <p class="text-xs text-brand-teal mb-2">Engineering Manager</p>
+                    <p class="text-xs text-gray-500">Meta</p>
+                </div>
+            </div>
+            
+            <p class="text-center mt-12 text-gray-500 italic">More speakers to be announced soon.</p>
+        </section>
+
+        <!-- Participating Companies -->
+        <section class="max-w-6xl mx-auto px-4 py-24 border-t border-white/5">
+            <h3 class="text-center text-sm font-heading text-gray-500 tracking-[0.3em] mb-12">Participating Organizations</h3>
+            <div class="flex flex-wrap justify-center gap-x-12 gap-y-8 text-gray-400 font-bold opacity-60">
+                <span>NVIDIA</span><span>OpenAI</span><span>Meta</span><span>Google</span><span>Microsoft</span>
+                <span>Amazon</span><span>Anthropic</span><span>IBM</span><span>Intel</span><span>AMD</span>
+                <span>Apple</span><span>Tesla</span><span>Salesforce</span><span>Oracle</span><span>SAP</span>
+                <span>Hugging Face</span><span>Databricks</span><span>Snowflake</span><span>Palantir</span><span>Adobe</span>
+            </div>
+            <p class="text-center mt-8 text-xs text-gray-600">Representatives from these organizations are expected to participate in sessions and panels.</p>
+        </section>
+
+        <!-- Sponsor Section -->
+        <section class="max-w-5xl mx-auto px-4 py-24">
+            <div class="glass p-12 rounded-btn text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-brand-teal/5 rounded-full -mr-32 -mt-32"></div>
+                <h2 class="font-heading text-3xl mb-6">Partner with us</h2>
+                <p class="max-w-2xl mx-auto text-gray-400 mb-10 leading-relaxed">
+                    Gain visibility among 50,000+ AI professionals, developers, and decision-makers. Showcase your agentic platforms and generate high-quality leads from a global audience.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button onclick="openModal('sponsorModal')" class="w-full sm:w-auto px-8 py-4 btn-primary rounded-btn font-bold flex items-center justify-center space-x-2 focus-ring">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span>Become a sponsor</span>
+                    </button>
+                    <button onclick="openModal('prospectusModal')" class="w-full sm:w-auto px-8 py-4 btn-secondary rounded-btn font-bold focus-ring">Download prospectus</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registration Section -->
+        <section class="max-w-4xl mx-auto px-4 py-24 text-center">
+            <h2 class="font-heading text-4xl mb-6">Ready to join us?</h2>
+            <p class="text-gray-400 mb-12">Secure your virtual seat today and be part of the agentic revolution.</p>
+            
+            <div class="glass p-10 rounded-btn border-brand-teal/20">
+                <h3 class="font-heading text-xl mb-6">Virtual Pass Benefits</h3>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left mb-10 max-w-2xl mx-auto">
+                    <li class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-brand-teal" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <span>Live access to all 80+ sessions</span>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-brand-teal" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <span>Interactive Q&A with speakers</span>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-brand-teal" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <span>On-demand recordings for 1 year</span>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-brand-teal" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        <span>Virtual networking lounge access</span>
+                    </li>
+                </ul>
+                <button onclick="openModal('registerModal')" class="w-full py-4 btn-primary rounded-btn font-bold text-xl mb-4 focus-ring">Register now</button>
+                <p class="text-xs text-gray-500">By registering, you agree to our Terms of Service and Privacy Policy.</p>
+            </div>
+
+            <div class="mt-16 p-8 glass rounded-btn flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="text-left">
+                    <h4 class="font-bold text-lg">Want to share your expertise?</h4>
+                    <p class="text-sm text-gray-400">Our call for speakers is currently open for technical tracks.</p>
+                </div>
+                <button onclick="openModal('speakerApplyModal')" class="btn-secondary px-6 py-3 rounded-btn font-semibold focus-ring">Apply to speak</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass border-t border-white/10 py-16">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-2 md:col-span-1">
+                    <div class="font-heading font-bold text-brand-teal mb-6">AI Agents 2026</div>
+                    <p class="text-sm text-gray-500 leading-relaxed">The world's leading event for the agentic AI community.</p>
+                </div>
+                <div>
+                    <h5 class="font-bold text-sm mb-6">Event</h5>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#about" class="hover:text-brand-teal transition-colors">About</a></li>
+                        <li><a href="#agenda" class="hover:text-brand-teal transition-colors">Agenda</a></li>
+                        <li><a href="#speakers" class="hover:text-brand-teal transition-colors">Speakers</a></li>
+                        <li><a href="#" onclick="openModal('sponsorModal')" class="hover:text-brand-teal transition-colors">Sponsors</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-sm mb-6">Resources</h5>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#" onclick="openModal('faqModal')" class="hover:text-brand-teal transition-colors">FAQ</a></li>
+                        <li><a href="#" onclick="openModal('cocModal')" class="hover:text-brand-teal transition-colors">Code of conduct</a></li>
+                        <li><a href="#" onclick="openModal('speakerApplyModal')" class="hover:text-brand-teal transition-colors">Apply to speak</a></li>
+                        <li><a href="#" class="hover:text-brand-teal transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold text-sm mb-6">Legal</h5>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-teal transition-colors">Privacy policy</a></li>
+                        <li><a href="#" class="hover:text-brand-teal transition-colors">Terms of service</a></li>
+                    </ul>
+                    <div class="flex space-x-4 mt-8">
+                        <a href="#" class="text-gray-500 hover:text-brand-teal transition-colors" aria-label="LinkedIn">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1
