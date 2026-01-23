@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina Culinary | Modern Meal Planning</title>
+    <script>
+        // Theme initialization to prevent flash
+        (function() {
+            const savedTheme = localStorage.getItem('lumina-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        :root {
+            /* Design Tokens */
+            --primary: #0056b3;
+            --primary-hover: #004494;
+            --on-primary: #ffffff;
+            
+            --bg: #ffffff;
+            --bg-alt: #f7f9fc;
+            --bg-accent: #eef2f7;
+            
+            --text: #1a1a1a;
+            --text-muted: #595959;
+            --border: transparent; /* Strictly no visible borders per requirements */
+            
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --focus: #0056b3;
+
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 16px;
+            --space-4: 24px;
+            --space-5: 32px;
+            --space-6: 48px;
+            --space-7: 64px;
+
+            --font-size-1: 12px;
+            --font-size-2: 14px;
+            --font-size-3: 16px;
+            --font-size-4: 20px;
+            --font-size-5: 28px;
+            --font-size-6: 36px;
+
+            --radius-btn: 3px;
+            --max-width: 1000px;
+            --transition: 0.2s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary: #4dabf7;
+            --primary-hover: #74c0fc;
+            --on-primary: #051b2d;
+            
+            --bg: #121212;
+            --bg-alt: #1a1e23;
+            --bg-accent: #252a31;
+            
+            --text: #e0e0e0;
+            --text-muted: #a0a0a0;
+            
+            --success: #51cf66;
+            --danger: #ff6b6b;
+            --warning: #fcc419;
+            --focus: #4dabf7;
+        }
+
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color var(--transition), color var(--transition);
+        }
+
+        h1, h2, h3, h4 {
+            line-height: 1.2;
+            font-weight: 700;
+            margin-bottom: var(--space-3);
+        }
+
+        button {
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+            border: none;
+            border-radius: var(--radius-btn);
+            padding: var(--space-2) var(--space-4);
+            font-size: var(--font-size-2);
+            font-weight: 600;
+            transition: background var(--transition), transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-accent);
+        }
+
+        .btn-danger {
+            background: transparent;
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        input, select {
+            font-family: Arial, sans-serif;
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--font-size-3);
+            background: var(--bg-alt);
+            color: var(--text);
+            border: none;
+            width: 100%;
+            height: 44px;
+        }
+
+        input:focus {
+            outline: 2px solid var(--focus);
+        }
+
+        /* Layout */
+        .app-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+
+        .full-width-band {
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            padding: var(--space-6) 0;
+        }
+
+        .band-alt { background-color: var(--bg-alt); }
+        .band-accent { background-color: var(--bg-accent); }
+
+        /* Header & Nav */
+        header {
+            padding: var(--space-4) 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .header-top {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: var(--font-size-5);
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: var(--space-2);
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding: var(--space-2) var(--space-4);
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            color: var(--text);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Recipe Grid (List Style) */
+        .recipe-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+            margin-top: var(--space-5);
+        }
+
+        .recipe-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+            padding-bottom: var(--space-6);
+        }
+
+        @media (min-width: 768px) {
+            .recipe-item {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        .recipe-img-container {
+            flex-shrink: 0;
+            width: 100%;
+            aspect-ratio: 16/9;
+        }
+
+        @media (min-width: 768px) {
+            .recipe-img-container {
+                width: 300px;
+            }
+        }
+
+        .recipe-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .recipe-content {
+            flex-grow: 1;
+        }
+
+        .recipe-meta {
+            font-size: var(--font-size-2);
+            color: var(--text-muted);
+            margin-bottom: var(--space-2);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Meal Plan */
+        .meal-plan-grid {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .day-row {
+            padding: var(--space-4);
+            background: var(--bg-alt);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-name {
+            font-weight: 700;
+            font-size: var(--font-size-3);
+        }
+
+        .planned-recipe {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg);
+            padding: var(--space-3);
+        }
+
+        /* Grocery List */
+        .grocery-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) 0;
+        }
+
+        .grocery-item.purchased span {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: flex-start;
+            padding: var(--space-5) var(--space-3);
+            z-index: 1000;
+            overflow-y: auto;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: var(--bg);
+            width: 100%;
+            max-width: 700px;
+            padding: var(--space-5);
+            position: relative;
+            animation: modalSlide 0.3s ease-out;
+        }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            font-size: 24px;
+            background: none;
+            color: var(--text-muted);
+            padding: var(--space-2);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: var(--space-4);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .toast {
+            background: var(--text);
+            color: var(--bg);
+            padding: var(--space-3) var(--space-5);
+            font-size: var(--font-size-2);
+            font-weight: 600;
+            animation: toastIn 0.3s ease-out;
+        }
+
+        @keyframes toastIn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* States */
+        .hidden { display: none !important; }
+
+        /* Utility */
+        .text-center { text-align: center; }
+        .mb-4 { margin-bottom: var(--space-4); }
+        .mt-4 { margin-top: var(--space-4); }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: var(--space-2); }
+        .w-full { width: 100%; }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="app-container">
+        <div class="header-top">
+            <a href="#" class="brand" onclick="navigateTo('library')">Lumina Culinary</a>
+            <button id="theme-toggle" class="btn-ghost" aria-label="Toggle dark mode">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-sun"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </button>
+        </div>
+        <nav>
+            <a href="#" class="nav-link active" data-view="library" onclick="navigateTo('library')">Library</a>
+            <a href="#" class="nav-link" data-view="plan" onclick="navigateTo('plan')">Meal Plan</a>
+            <a href="#" class="nav-link" data-view="grocery" onclick="navigateTo('grocery')">Grocery List</a>
+            <a href="#" class="nav-link" data-view="favorites" onclick="navigateTo('favorites')">Favorites</a>
+        </nav>
+    </header>
+
+    <main class="app-container">
+        
+        <!-- Library View -->
+        <section id="view-library">
+            <div class="full-width-band band-alt">
+                <div class="app-container">
+                    <h2 class="text-center">Discover Your Next Meal</h2>
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="search-input" placeholder="Search recipes (e.g. Salmon, Pasta)..." aria-label="Search recipes">
+                        <button class="btn-primary" onclick="handleImportModal()">Import</button>
+                    </div>
+                    <div class="flex gap-2 justify-center flex-wrap">
+                        <button class="btn-ghost filter-btn active" onclick="filterRecipes('All')">All</button>
+                        <button class="btn-ghost filter-btn" onclick="filterRecipes('Breakfast')">Breakfast</button>
+                        <button class="btn-ghost filter-btn" onclick="filterRecipes('Main')">Main Course</button>
+                        <button class="btn-ghost filter-btn" onclick="filterRecipes('Vegetarian')">Vegetarian</button>
+                        <button class="btn-ghost filter-btn" onclick="filterRecipes('Quick')">Under 30m</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="recipe-list" class="recipe-list">
+                <!-- Recipes injected here -->
+            </div>
+        </section>
+
+        <!-- Meal Plan View -->
+        <section id="view-plan" class="hidden">
+            <div class="full-width-band band-accent">
+                <div class="app-container">
+                    <h2 class="text-center">Weekly Schedule</h2>
+                    <p class="text-center text-muted">Organize your cooking for the week ahead.</p>
+                </div>
+            </div>
+            <div class="meal-plan-grid mt-4" id="meal-plan-container">
+                <!-- Days injected here -->
+            </div>
+            <div class="text-center mt-4 mb-4">
+                <button class="btn-danger" onclick="confirmClearPlan()">Clear Full Week</button>
+            </div>
+        </section>
+
+        <!-- Grocery View -->
+        <section id="view-grocery" class="hidden">
+            <div class="full-width-band band-alt">
+                <div class="app-container">
+                    <h2 class="text-center">Grocery List</h2>
+                    <p class="text-center text-muted">Aggregated ingredients from your meal plan.</p>
+                </div>
+            </div>
+            <div id="grocery-list-content" class="mt-4">
+                <!-- Groceries injected here -->
+            </div>
+        </section>
+
+        <!-- Favorites View -->
+        <section id="view-favorites" class="hidden">
+            <div class="full-width-band band-accent">
+                <div class="app-container">
+                    <h2 class="text-center">Your Favorites</h2>
+                    <p class="text-center text-muted">Recipes you've saved for later.</p>
+                </div>
+            </div>
+            <div id="favorites-list" class="recipe-list">
+                <!-- Favorite recipes injected here -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Overlay -->
+    <div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true">
+        <div class="modal-content" id="modal-content">
+            <button class="modal-close" onclick="closeModal()" aria-label="Close modal">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script>
+        // --- Data ---
+        const recipes = [
+            { id: 1, name: "Lemon Herb Roasted Salmon", category: "Main", tags: ["Quick", "Seafood"], time: "25m", calories: 450, image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=800&q=80", ingredients: ["Salmon fillet", "Lemon", "Fresh dill", "Olive oil", "Garlic", "Asparagus"], steps: ["Preheat oven to 400°F.", "Place salmon and asparagus on a tray.", "Drizzle with oil, lemon juice, and herbs.", "Roast for 15-18 minutes until flaky."], servings: 2 },
+            { id: 2, name: "Mediterranean Quinoa Bowl", category: "Vegetarian", tags: ["Quick", "Healthy"], time: "20m", calories: 380, image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80", ingredients: ["Quinoa", "Cucumber", "Cherry tomatoes", "Feta cheese", "Kalamata olives", "Hummus"], steps: ["Cook quinoa according to package.", "Chop vegetables into bite-sized pieces.", "Assemble bowls with quinoa base.", "Top with veggies, feta, and a dollop of hummus."], servings: 1 },
+            { id: 3, name: "Classic Beef Bolognese", category: "Main", tags: ["Comfort"], time: "50m", calories: 620, image: "https://images.unsplash.com/photo-1622973536968-3ead9e780960?auto=format&fit=crop&w=800&q=80", ingredients: ["Ground beef", "Pappardelle pasta", "Canned tomatoes", "Onion", "Carrot", "Celery", "Parmesan"], steps: ["Sauté onion, carrot, and celery until soft.", "Add beef and brown thoroughly.", "Stir in tomatoes and simmer for 30 mins.", "Serve over al dente pasta with cheese."], servings: 4 },
+            { id: 4, name: "Avocado Toast with Poached Egg", category: "Breakfast", tags: ["Quick", "Vegetarian"], time: "15m", calories: 310, image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=80", ingredients: ["Sourdough bread", "Ripe avocado", "Eggs", "Chili flakes", "Lemon juice"], steps: ["Toast the bread slices.", "Mash avocado with lemon juice and salt.", "Poach eggs in simmering water for 3 mins.", "Spread avocado on toast and top with egg."], servings: 2 },
+            { id: 5, name: "Thai Green Curry", category: "Main", tags: ["Spicy"], time: "35m", calories: 540, image: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?auto=format&fit=crop&w=800&q=80", ingredients: ["Chicken breast", "Coconut milk", "Green curry paste", "Bamboo shoots", "Thai basil", "Jasmine rice"], steps: ["Sauté curry paste in a little coconut milk.", "Add chicken and cook until opaque.", "Pour in remaining milk and bamboo shoots.", "Simmer until tender, garnish with basil."], servings: 3 },
+            { id: 6, name: "Berry Spinach Smoothie Bowl", category: "Breakfast", tags: ["Quick", "Vegetarian"], time: "10m", calories: 290, image: "https://images.unsplash.com/photo-1494597564530-871f2b93ac55?auto=format&fit=crop&w=800&q=80", ingredients: ["Spinach", "Frozen berries", "Banana", "Almond milk", "Chia seeds", "Granola"], steps: ["Blend spinach, berries, banana, and milk.", "Pour into a bowl.", "Top with seeds and granola."], servings: 1 },
+            { id: 7, name: "Garlic Butter Shrimp Pasta", category: "Main", tags: ["Quick", "Seafood"], time: "20m", calories: 580, image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80", ingredients: ["Shrimp", "Linguine", "Butter", "Garlic", "Parsley", "White wine"], steps: ["Boil pasta until al dente.", "Sauté garlic and shrimp in butter.", "Deglaze with wine and add pasta water.", "Toss pasta in sauce and garnish."], servings: 2 },
+            { id: 8, name: "Sweet Potato & Black Bean Tacos", category: "Vegetarian", tags: ["Healthy"], time: "30m", calories: 420, image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=800&q=80", ingredients: ["Sweet potatoes", "Black beans", "Corn tortillas", "Lime", "Cilantro", "Red cabbage"], steps: ["Roast cubed sweet potatoes until tender.", "Warm black beans with cumin.", "Assemble tacos with potatoes, beans, and slaw.", "Squeeze fresh lime over the top."], servings: 3 },
+            { id: 9, name: "Mushroom Risotto", category: "Vegetarian", tags: ["Comfort"], time: "45m", calories: 490, image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=800&q=80", ingredients: ["Arborio rice", "Mixed mushrooms", "Vegetable broth", "Shallots", "White wine", "Parmesan"], steps: ["Sauté mushrooms and shallots.", "Add rice and toast slightly.", "Add broth one ladle at a time, stirring.", "Stir in cheese and butter at the end."], servings: 4 },
+            { id: 10, name: "Grilled Chicken Caesar Salad", category: "Main", tags: ["Quick", "Healthy"], time: "25m", calories: 410, image: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=800&q=80", ingredients: ["Chicken breast", "Romaine lettuce", "Croutons", "Caesar dressing", "Parmesan"], steps: ["Grill chicken until cooked through.", "Chop lettuce and toss with dressing.", "Slice chicken and place on top.", "Add croutons and parmesan."], servings: 2 },
+            { id: 11, name: "Lentil Soup", category: "Vegetarian", tags: ["Healthy", "Comfort"], time: "40m", calories: 320, image: "https://images.unsplash.com/photo-1547592110-803653efaa59?auto=format&fit=crop&w=800&q=80", ingredients: ["Brown lentils", "Carrots", "Onion", "Vegetable stock", "Spinach", "Cumin"], steps: ["Sauté onion and carrots.", "Add lentils, stock, and spices.", "Simmer for 30 mins until lentils are soft.", "Stir in spinach before serving."], servings: 4 },
+            { id: 12, name: "Pesto Caprese Sandwich", category: "Vegetarian", tags: ["Quick"], time: "10m", calories: 460, image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80", ingredients: ["Ciabatta bread", "Fresh mozzarella", "Tomato", "Basil pesto", "Balsamic glaze"], steps: ["Slice bread and spread with pesto.", "Layer mozzarella and tomato slices.", "Drizzle with balsamic glaze.", "Toast if desired."], servings: 1 }
+        ];
+
+        let mealPlan = JSON.parse(localStorage.getItem('lumina-plan')) || {
+            "Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": [], "Saturday": [], "Sunday": []
+        };
+
+        let favorites = JSON.parse(localStorage.getItem('lumina-favs')) || [];
+        let groceryPurchased = JSON.parse(localStorage.getItem('lumina-purchased')) || [];
+
+        // --- Core Logic ---
+
+        function init() {
+            renderRecipes(recipes);
+            setupTheme();
+            updateNav();
+            
+            // Close modal on click outside
+            document.getElementById('modal-overlay').addEventListener('click', (e) => {
+                if(e.target.id === 'modal-overlay') closeModal();
+            });
+
+            // Close modal on ESC
+            document.addEventListener('keydown', (e) => {
+                if(e.key === 'Escape') closeModal();
+            });
+        }
+
+        function setupTheme() {
+            const toggle = document.getElementById('theme-toggle');
+            toggle.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme');
+                const next = current === 'light' ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('lumina-theme', next);
+            });
+        }
+
+        function navigateTo(view) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`view-${view}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-link').forEach(l => {
+                l.classList.toggle('active', l.dataset.view === view);
+            });
+
+            if(view === 'plan') renderMealPlan();
+            if(view === 'grocery') renderGroceries();
+            if(view === 'favorites') renderFavorites();
+            
+            window.scrollTo(0, 0);
+        }
+
+        function renderRecipes(list, containerId = 'recipe-list') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = list.length ? '' : '<p class="text-center text-muted">No recipes found.</p>';
+            
+            list.forEach(recipe => {
+                const isFav = favorites.includes(recipe.id);
+                const el = document.createElement('div');
+                el.className = 'recipe-item';
+                el.innerHTML = `
+                    <div class="recipe-img-container">
+                        <img src="${recipe.image}" alt="${recipe.name}" class="recipe-img" loading="lazy">
+                    </div>
+                    <div class="recipe-content">
+                        <div class="recipe-meta">${recipe.category} &bull; ${recipe.time} &bull; ${recipe.calories} kcal</div>
+                        <h3>${recipe.name}</h3>
+                        <div class="flex gap-2">
+                            <button class="btn-primary" onclick="openRecipeDetail(${recipe.id})">View Recipe</button>
+                            <button class="btn-ghost" onclick="toggleFavorite(${recipe.id})" aria-label="Favorite">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                </svg>
+                            </button>
+                            <button class="btn-ghost" onclick="showAddToPlan(${recipe.id})">Add to Plan</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function filterRecipes(category) {
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.toggle('active', b.innerText === category);
+            });
+
+            let filtered = recipes;
+            if (category !== 'All') {
+                if (category === 'Quick') {
+                    filtered = recipes.filter(r => r.tags.includes('Quick'));
+                } else {
+                    filtered = recipes.filter(r => r.category === category || r.tags.includes(category));
+                }
+            }
+            renderRecipes(filtered);
+        }
+
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = recipes.filter(r => 
+                r.name.toLowerCase().includes(val) || 
+                r.ingredients.some(i => i.toLowerCase().includes(val))
+            );
+            renderRecipes(filtered);
+        });
+
+        // --- Modals ---
+
+        function openModal(contentHtml) {
+            const overlay = document.getElementById('modal-overlay');
+            const body = document.getElementById('modal-body');
+            body.innerHTML = contentHtml;
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Focus trap - basic
+            const focusable = body.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            if(focusable.length) focusable[0].focus();
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function openRecipeDetail(id) {
+            const recipe = recipes.find(r => r.id === id);
+            const html = `
+                <div class="full-width-band band-alt" style="margin-top: -var(--space-5); padding: var(--space-4) 0;">
+                    <div class="app-container">
+                        <h2>${recipe.name}</h2>
+                        <div class="recipe-meta">${recipe.category} &bull; ${recipe.time} &bull; ${recipe.calories} kcal</div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <img src="${recipe.image}" alt="${recipe.name}" style="width: 100%; height: 300px; object-fit: cover; margin-bottom: var(--space-4);">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3>Ingredients</h3>
+                        <span class="text-muted">Serves ${recipe.servings}</span>
+                    </div>
+                    <ul style="list-style: none; margin-bottom: var(--space-5);">
+                        ${recipe.ingredients.map(i => `<li style="padding: var(--space-1) 0; border-bottom: 1px solid var(--bg-accent);">${i}</li>`).join('')}
+                    </ul>
+                    <h3>Instructions</h3>
+                    <ol style="padding-left: var(--space-4); margin-bottom: var(--space-5);">
+                        ${recipe.steps.map(s => `<li style="margin-bottom: var(--space-2);">${s}</li>`).join('')}
+                    </ol>
+                    <button class="btn-primary w-full" onclick="showAddToPlan(${recipe.id})">Add to Weekly Plan</button>
+                </div>
+            `;
+            openModal(html);
+        }
+
+        function showAddToPlan(id) {
+            const recipe = recipes.find(r => r.id === id);
+            const days = Object.keys(mealPlan);
+            const html = `
+                <h3>Add to Plan</h3>
+                <p class="mb-4">Select a day to add <strong>${recipe.name}</strong>:</p>
+                <div class="flex flex-direction-column gap-2">
+                    ${days.map(day => `
+                        <button class="btn-ghost w-full justify-between" onclick="addToPlan(${id}, '${day}')">
+                            ${day} <span>+</span>
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+            openModal(html);
+        }
+
+        function handleImportModal() {
+            const html = `
+                <h3>Import Recipe</h3>
+                <p class="mb-4 text-muted">Paste a URL from any major recipe site to add it to your library.</p>
+                <input type="url" id="import-url" placeholder="https://example.com/recipe" class="mb-4">
+                <div class="flex gap-2">
+                    <button class="btn-primary" onclick="mockImport()">Import Recipe</button>
+                    <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+                </div>
+            `;
+            openModal(html);
+        }
+
+        function mockImport() {
+            const url = document.getElementById('import-url').value;
+            if(!url) return showToast("Please enter a valid URL", "error");
+            
+            showToast("Recipe imported successfully!", "success");
+            closeModal();
+        }
+
+        // --- Meal Plan Logic ---
+
+        function addToPlan(id, day) {
+            mealPlan[day].push(id);
+            savePlan();
+            showToast(`Added to ${day}`, "success");
+            closeModal();
+            if(!document.getElementById('view-plan').classList.contains('hidden')) renderMealPlan();
+        }
+
+        function renderMealPlan() {
+            const container = document.getElementById('meal-plan-container');
+            container.innerHTML = '';
+            
+            Object.keys(mealPlan).forEach(day => {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'day-row';
+                
+                const dayRecipes = mealPlan[day].map((rid, idx) => {
+                    const r = recipes.find(x => x.id === rid);
+                    return `
+                        <div class="planned-recipe">
+                            <div>
+                                <strong>${r.name}</strong>
+                                <div class="recipe-meta" style="margin:0">${r.time}</div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="btn-ghost" onclick="moveRecipe('${day}', ${idx}, -1)" aria-label="Move Up" ${idx === 0 ? 'disabled' : ''}>&uarr;</button>
+                                <button class="btn-ghost" onclick="moveRecipe('${day}', ${idx}, 1)" aria-label="Move Down" ${idx === mealPlan[day].length - 1 ? 'disabled' : ''}>&darr;</button>
+                                <button class="btn-danger" onclick="confirmRemoveFromPlan('${day}', ${idx})" aria-label="Remove">&times;</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                dayEl.innerHTML = `
+                    <div class="day-header">
+                        <span class="day-name">${day}</span>
+                        <span class="text-muted">${mealPlan[day].length} meals</span>
+                    </div>
+                    ${dayRecipes || '<p class="text-muted" style="font-size: var(--font-size-2)">No meals planned.</p>'}
+                `;
+                container.appendChild(dayEl);
+            });
+        }
+
+        function moveRecipe(day, index, direction) {
+            const arr = mealPlan[day];
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= arr.length) return;
+            [arr[index], arr[newIndex]] = [arr[newIndex], arr[index]];
+            savePlan();
+            renderMealPlan();
+        }
+
+        function confirmRemoveFromPlan(day, index) {
+            const r = recipes.find(x => x.id === mealPlan[day][index]);
+            const html = `
+                <h3>Remove Meal?</h3>
+                <p class="mb-4">Are you sure you want to remove <strong>${r.name}</strong> from ${day}?</p>
+                <div class="flex gap-2">
+                    <button class="btn-primary" onclick="removeFromPlan('${day}', ${index})">Yes, Remove</button>
+                    <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+                </div>
+            `;
+            openModal(html);
+        }
+
+        function removeFromPlan(day, index) {
+            mealPlan[day].splice(index, 1);
+            savePlan();
+            renderMealPlan();
+            closeModal();
+            showToast("Removed from plan", "success");
+        }
+
+        function confirmClearPlan() {
+            const html = `
+                <h3>Clear Entire Week?</h3>
+                <p class="mb-4">This will remove all planned meals for the week. This action cannot be undone.</p>
+                <div class="flex gap-2">
+                    <button class="btn-danger" style="background: var(--danger); color: white;" onclick="clearFullPlan()">Clear Everything</button>
+                    <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+                </div>
+            `;
+            openModal(html);
+        }
+
+        function clearFullPlan() {
+            Object.keys(mealPlan).forEach(d => mealPlan[d] = []);
+            savePlan();
+            renderMealPlan();
+            closeModal();
+            showToast("Weekly plan cleared", "success");
+        }
+
+        function savePlan() {
+            localStorage.setItem('lumina-plan', JSON.stringify(mealPlan));
+        }
+
+        // --- Grocery Logic ---
+
+        function renderGroceries() {
+            const container = document.getElementById('grocery-list-content');
+            const allIngredients = [];
+            
+            Object.values(mealPlan).flat().forEach(rid => {
+                const r = recipes.find(x => x.id === rid);
+                allIngredients.push(...r.ingredients);
+            });
+
+            // Unique ingredients
+            const unique = [...new Set(allIngredients)];
+            
+            if(!unique.length) {
+                container.innerHTML = '<p class="text-center text-muted mt-4">Your grocery list is empty. Add recipes to your meal plan first.</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h3>Items to Buy (${unique.length})</h3>
+                    <button class="btn-ghost" onclick="clearPurchased()">Clear Checked</button>
+                </div>
+                ${unique.map(item => `
+                    <div class="grocery-item ${groceryPurchased.includes(item) ? 'purchased' : ''}">
+                        <input type="checkbox" class="checkbox" ${groceryPurchased.includes(item) ? 'checked' : ''} onchange="togglePurchased('${item.replace(/'/g, "\\'")}')">
+                        <span>${item}</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function togglePurchased(item) {
+            if(groceryPurchased.includes(item)) {
+                groceryPurchased = groceryPurchased.filter(i => i !== item);
+            } else {
+                groceryPurchased.push(item);
+            }
+            localStorage.setItem('lumina-purchased', JSON.stringify(groceryPurchased));
+            renderGroceries();
+        }
+
+        function clearPurchased() {
+            groceryPurchased = [];
+            localStorage.setItem('lumina-purchased', JSON.stringify(groceryPurchased));
+            renderGroceries();
+            showToast("Checked items cleared", "success");
+        }
+
+        // --- Favorites ---
+
+        function toggleFavorite(id) {
+            if(favorites.includes(id)) {
+                favorites = favorites.filter(f => f !== id);
+                showToast("Removed from favorites", "success");
+            } else {
+                favorites.push(id);
+                showToast("Added to favorites", "success");
+            }
+            localStorage.setItem('lumina-favs', JSON.stringify(favorites));
+            
+            // Re-render current view if needed
+            const activeView = document.querySelector('.nav-link.active').dataset.view;
+            if(activeView === 'library') renderRecipes(recipes);
+            if(activeView === 'favorites') renderFavorites();
+        }
+
+        function renderFavorites() {
+            const favRecipes = recipes.filter(r => favorites.includes(r.id));
+            renderRecipes(favRecipes, 'favorites-list');
+        }
+
+        // --- Notifications ---
+
+        function showToast(msg, type = "success") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            if(type === 'error') toast.style.background = 'var(--danger)';
+            toast.innerText = msg;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function updateNav() {
+            // Placeholder for any dynamic nav updates
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
