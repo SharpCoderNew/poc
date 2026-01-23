@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elias Vance | Product Strategist & Interface Designer</title>
+    <meta name="description" content="Portfolio of Elias Vance, a Senior Product Strategist and Interface Designer specializing in high-growth SaaS and FinTech solutions.">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        :root {
+            /* Design Tokens */
+            --primary: #2563eb;
+            --primary-2: #1d4ed8;
+            --on-primary: #ffffff;
+            
+            --bg: #ffffff;
+            --bg-2: #f8fafc;
+            --surface: #ffffff;
+            --surface-2: #f1f5f9;
+            
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: transparent; /* Explicitly no borders per spec */
+            --focus: #3b82f6;
+            
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 1rem;
+            --space-4: 1.5rem;
+            --space-5: 3rem;
+            --space-6: 6rem;
+
+            --font-size-1: 0.875rem;
+            --font-size-2: 1rem;
+            --font-size-3: 1.25rem;
+            --font-size-4: 1.5rem;
+            --font-size-5: 2.25rem;
+            --font-size-6: 3.5rem;
+
+            --radius-btn: 3px;
+            --max-width: 1040px;
+            
+            --transition: 200ms ease;
+        }
+
+        [data-theme="dark"] {
+            --primary: #3b82f6;
+            --primary-2: #60a5fa;
+            --on-primary: #0f172a;
+            
+            --bg: #0f172a;
+            --bg-2: #1e293b;
+            --surface: #0f172a;
+            --surface-2: #1e293b;
+            
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --focus: #60a5fa;
+        }
+
+        /* Base Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Layout */
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+            width: 100%;
+        }
+
+        section {
+            padding: var(--space-6) 0;
+        }
+
+        .bg-band {
+            background-color: var(--bg-2);
+            width: 100%;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: var(--space-3);
+        }
+
+        h1 { font-size: var(--font-size-6); letter-spacing: -0.02em; }
+        h2 { font-size: var(--font-size-5); letter-spacing: -0.01em; }
+        h3 { font-size: var(--font-size-4); }
+
+        p {
+            margin-bottom: var(--space-3);
+            font-size: var(--font-size-3);
+            color: var(--muted);
+            max-width: 700px;
+        }
+
+        .text-small { font-size: var(--font-size-1); }
+        .text-large { font-size: var(--font-size-3); }
+
+        /* Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: rgba(var(--bg), 0.8);
+            backdrop-filter: blur(8px);
+            padding: var(--space-4) 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-4);
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            font-size: var(--font-size-1);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-size: var(--font-size-2);
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-2);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-ghost {
+            background-color: transparent;
+            color: var(--primary);
+            padding: 0.5rem 0;
+        }
+
+        .btn-ghost:hover {
+            background-color: transparent;
+            color: var(--primary-2);
+            text-decoration: underline;
+            transform: none;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            padding: var(--space-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-btn);
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--surface-2);
+        }
+
+        /* Hero */
+        .hero {
+            padding: var(--space-6) 0;
+            text-align: left;
+        }
+
+        .hero-summary {
+            margin-top: var(--space-4);
+        }
+
+        /* Work List */
+        .work-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+
+        .work-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .work-image {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            border-radius: 0; /* Strict 0px radius */
+        }
+
+        .work-meta {
+            display: flex;
+            gap: var(--space-4);
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: none; /* No all-caps */
+            margin-bottom: var(--space-2);
+        }
+
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-5);
+        }
+
+        .skill-group h3 {
+            margin-bottom: var(--space-3);
+            color: var(--text);
+        }
+
+        .skill-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-3);
+        }
+
+        .skill-list li {
+            color: var(--muted);
+            font-size: var(--font-size-2);
+        }
+
+        .skill-list li::after {
+            content: "•";
+            margin-left: var(--space-3);
+            color: var(--primary);
+        }
+
+        .skill-list li:last-child::after {
+            content: "";
+        }
+
+        /* Testimonials */
+        .testimonial {
+            margin-bottom: var(--space-5);
+        }
+
+        .testimonial-quote {
+            font-size: var(--font-size-4);
+            font-style: italic;
+            color: var(--text);
+            margin-bottom: var(--space-3);
+        }
+
+        .testimonial-author {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Contact Form */
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+            max-width: 600px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+
+        label {
+            font-weight: 600;
+            font-size: var(--font-size-1);
+        }
+
+        input, textarea {
+            padding: var(--space-3);
+            border: none;
+            background-color: var(--surface-2);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+            font-size: var(--font-size-2);
+            border-radius: 0;
+            transition: var(--transition);
+        }
+
+        input:focus, textarea:focus {
+            outline: 2px solid var(--focus);
+            outline-offset: -2px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: var(--space-4);
+        }
+
+        .modal-content {
+            background-color: var(--bg);
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            padding: var(--space-5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-4);
+            right: var(--space-4);
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            z-index: 1100;
+        }
+
+        .toast {
+            background-color: var(--text);
+            color: var(--bg);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-btn);
+            margin-top: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-5) 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: var(--font-size-1);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-3);
+        }
+
+        .social-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: var(--font-size-5); }
+            h2 { font-size: var(--font-size-4); }
+            section { padding: var(--space-5) 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" style="text-decoration: none; color: var(--text); font-weight: 800; font-size: var(--font-size-3);">Elias Vance</a>
+                <div style="display: flex; align-items: center; gap: var(--space-4);">
+                    <ul class="nav-links">
+                        <li><a href="#work">Work</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                        <svg class="sun-icon" style="display: none;" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>
+                        <svg class="moon-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>Crafting high-impact digital products for the next generation of SaaS.</h1>
+                <p class="hero-summary">I am a Senior Product Strategist and Interface Designer. I help technology companies transform complex workflows into intuitive, human-centered experiences that drive conversion and user retention.</p>
+                <div style="margin-top: var(--space-4);">
+                    <a href="#work" class="btn">View Selected Work</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Selected Work -->
+        <section id="work" class="bg-band">
+            <div class="container">
+                <h2 style="margin-bottom: var(--space-5);">Selected Work</h2>
+                <div class="work-list">
+                    <!-- Project 1 -->
+                    <div class="work-item">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200" alt="Data visualization dashboard for Lumina Health" class="work-image">
+                        <div class="work-content">
+                            <div class="work-meta">
+                                <span>Lumina Health</span>
+                                <span>•</span>
+                                <span>Telemedicine Platform</span>
+                            </div>
+                            <h3>Reimagining patient care through data clarity.</h3>
+                            <p>Reduced clinician charting time by 40% through a streamlined interface that prioritizes critical patient vitals and historical trends.</p>
+                            <button class="btn btn-ghost" onclick="openProject('lumina')">Read Case Study</button>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="work-item">
+                        <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1200" alt="Logistics tracking interface for Nexus" class="work-image">
+                        <div class="work-content">
+                            <div class="work-meta">
+                                <span>Nexus Logistics</span>
+                                <span>•</span>
+                                <span>Supply Chain SaaS</span>
+                            </div>
+                            <h3>Optimizing global freight with real-time intelligence.</h3>
+                            <p>Designed a predictive tracking dashboard that helped Nexus scale to 500+ enterprise clients, resulting in a 25% increase in logistics efficiency.</p>
+                            <button class="btn btn-ghost" onclick="openProject('nexus')">Read Case Study</button>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="work-item">
+                        <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200" alt="Fintech mobile application interface" class="work-image">
+                        <div class="work-content">
+                            <div class="work-meta">
+                                <span>Aura FinTech</span>
+                                <span>•</span>
+                                <span>Consumer Banking</span>
+                            </div>
+                            <h3>Building trust through transparent financial design.</h3>
+                            <p>Led the end-to-end design of a mobile banking app that reached #1 in the App Store finance category within three months of launch.</p>
+                            <button class="btn btn-ghost" onclick="openProject('aura')">Read Case Study</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about">
+            <div class="container">
+                <div style="display: flex; flex-direction: column; gap: var(--space-5);">
+                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800" alt="Elias Vance portrait" style="width: 100%; max-width: 400px; border-radius: 0;">
+                    <div>
+                        <h2>About Elias</h2>
+                        <p>With over a decade of experience in product design and strategy, I bridge the gap between business objectives and user needs. My approach is rooted in research, rapid prototyping, and a relentless focus on simplicity.</p>
+                        <p>Currently based in Seattle, I collaborate with remote-first teams globally to build products that matter.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section class="bg-band">
+            <div class="container">
+                <div class="skills-grid">
+                    <div class="skill-group">
+                        <h3>Design Strategy</h3>
+                        <ul class="skill-list">
+                            <li>User Research</li>
+                            <li>Product Roadmapping</li>
+                            <li>Information Architecture</li>
+                            <li>Usability Testing</li>
+                            <li>Design Systems</li>
+                        </ul>
+                    </div>
+                    <div class="skill-group">
+                        <h3>Interface Engineering</h3>
+                        <ul class="skill-list">
+                            <li>Interaction Design</li>
+                            <li>Responsive Web</li>
+                            <li>Mobile Native</li>
+                            <li>Prototyping</li>
+                            <li>Accessibility (WCAG)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section>
+            <div class="container">
+                <div class="testimonial">
+                    <p class="testimonial-quote">"Elias has a rare ability to take highly technical concepts and turn them into elegant, usable products. He didn't just design our app; he helped define our entire product strategy."</p>
+                    <p class="testimonial-author">Sarah Chen, CTO at Lumina Health</p>
+                </div>
+                <div class="testimonial">
+                    <p class="testimonial-quote">"The level of detail and thoughtfulness Elias brings to every project is unmatched. Our conversion rates improved by 30% within weeks of implementing his designs."</p>
+                    <p class="testimonial-author">Mark Thompson, VP of Product at Nexus</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="bg-band">
+            <div class="container">
+                <h2>Let's build something together.</h2>
+                <p>Currently accepting new projects for Q3 2024. Reach out to discuss your product goals.</p>
+                
+                <form class="contact-form" id="contact-form">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required placeholder="Jane Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required placeholder="jane@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" required placeholder="Tell me about your project..."></textarea>
+                    </div>
+                    <button type="submit" class="btn" id="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="#">LinkedIn</a>
+                <a href="#">Dribbble</a>
+                <a href="#">Twitter</a>
+                <a href="#">GitHub</a>
+            </div>
+            <p>&copy; 2024 Elias Vance. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Project Modal -->
+    <div class="modal-overlay" id="project-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <button class="modal-close" id="close-modal" aria-label="Close modal">&times;</button>
+            <div id="modal-body">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        // Theme Management
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = themeToggle.querySelector('.sun-icon');
+        const moonIcon = themeToggle.querySelector('.moon-icon');
+
+        function updateThemeIcons(theme) {
+            if (theme === 'dark') {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            } else {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            }
+        }
+
+        updateThemeIcons(document.documentElement.getAttribute('data-theme'));
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcons(newTheme);
+        });
+
+        // Modal Logic
+        const modal = document.getElementById('project-modal');
+        const modalBody = document.getElementById('modal-body');
+        const closeModal = document.getElementById('close-modal');
+        let lastFocusedElement;
+
+        const projectData = {
+            lumina: {
+                title: "Lumina Health Case Study",
+                content: `
+                    <h3>The Challenge</h3>
+                    <p>Clinicians were overwhelmed by fragmented data across multiple legacy systems, leading to burnout and potential errors in patient care.</p>
+                    <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1200" alt="Lumina Health Interface" style="width:100%; margin: 1.5rem 0;">
+                    <h3>The Solution</h3>
+                    <p>We developed a unified 'Patient Pulse' dashboard that aggregates real-time data into a single, high-contrast view. We focused on reducing cognitive load through progressive disclosure.</p>
+                    <h3>The Outcome</h3>
+                    <p>40% reduction in charting time and a 15% increase in patient satisfaction scores within the first six months.</p>
+                `
+            },
+            nexus: {
+                title: "Nexus Logistics Case Study",
+                content: `
+                    <h3>The Challenge</h3>
+                    <p>Global supply chain disruptions required a more proactive way for logistics managers to identify and mitigate risks before they impacted delivery.</p>
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200" alt="Nexus Dashboard" style="width:100%; margin: 1.5rem 0;">
+                    <h3>The Solution</h3>
+                    <p>A predictive analytics engine paired with a map-based interface that highlights 'at-risk' shipments using business blue for focus and subtle amber for warnings.</p>
+                    <h3>The Outcome</h3>
+                    <p>Nexus secured its Series B funding shortly after the redesign, citing the platform's usability as a key competitive advantage.</p>
+                `
+            },
+            aura: {
+                title: "Aura FinTech Case Study",
+                content: `
+                    <h3>The Challenge</h3>
+                    <p>Younger users were intimidated by traditional banking apps. Aura needed a friendly yet secure interface that encouraged financial literacy.</p>
+                    <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=1200" alt="Aura App Design" style="width:100%; margin: 1.5rem 0;">
+                    <h3>The Solution</h3>
+                    <p>A gesture-based mobile experience that uses conversational UI to guide users through savings goals and investment options.</p>
+                    <h3>The Outcome</h3>
+                    <p>Acquired 1 million users in the first year with a 4.9-star rating on the App Store.</p>
+                `
+            }
+        };
+
+        function openProject(id) {
+            const data = projectData[id];
+            if (!data) return;
+
+            lastFocusedElement = document.activeElement;
+            modalBody.innerHTML = `<h2 id="modal-title">${data.title}</h2>${data.content}`;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            closeModal.focus();
+
+            // Focus Trap
+            modal.addEventListener('keydown', trapFocus);
+        }
+
+        function closeProjectModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            if (lastFocusedElement) lastFocusedElement.focus();
+            modal.removeEventListener('keydown', trapFocus);
+        }
+
+        closeModal.addEventListener('click', closeProjectModal);
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) closeProjectModal();
+        });
+
+        function trapFocus(e) {
+            const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            if (e.key === 'Tab') {
+                if (e.shiftKey) {
+                    if (document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+            }
+            if (e.key === 'Escape') closeProjectModal();
+        }
+
+        // Form Handling
+        const contactForm = document.getElementById('contact-form');
+        const toastContainer = document.getElementById('toast-container');
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.backgroundColor = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            toast.innerHTML = `<span>${message}</span>`;
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = '0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            const originalText = submitBtn.innerText;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Sending...';
+
+            // Simulate API call
+            setTimeout(() => {
+                showToast('Message sent successfully! Elias will get back to you soon.');
+                contactForm.reset();
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+            }, 1500);
+        });
+
+        // Smooth Scroll Offset Adjustment
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerHeight = document.querySelector('header').offsetHeight;
+                    window.scrollTo({
+                        top: target.offsetTop - headerHeight,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
