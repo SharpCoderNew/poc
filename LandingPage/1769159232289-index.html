@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Table | Modern Mediterranean Dining</title>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --primary-2: #004494;
+            --on-primary: #ffffff;
+            --bg: #ffffff;
+            --bg-alt: #f4f8fb;
+            --text: #1a1a1a;
+            --muted: #595959;
+            --border: transparent;
+            --focus: #0056b3;
+            --success: #28a745;
+            --danger: #dc3545;
+            
+            --radius-btn: 3px;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 16px;
+            --space-4: 24px;
+            --space-5: 48px;
+            --space-6: 80px;
+
+            --font-size-1: 12px;
+            --font-size-2: 14px;
+            --font-size-3: 16px;
+            --font-size-4: 20px;
+            --font-size-5: 32px;
+            --font-size-6: 48px;
+
+            --container-width: 800px;
+        }
+
+        [data-theme="dark"] {
+            --bg: #121212;
+            --bg-alt: #1a1e22;
+            --text: #e0e0e0;
+            --muted: #a0a0a0;
+            --primary: #3391ff;
+            --primary-2: #1a75ff;
+            --on-primary: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Layout */
+        .section-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .section-wrapper.alt {
+            background-color: var(--bg-alt);
+        }
+
+        .container {
+            width: 100%;
+            max-width: var(--container-width);
+            padding: var(--space-5) var(--space-3);
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--bg);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: var(--space-3);
+        }
+
+        .logo {
+            font-size: var(--font-size-4);
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        nav a {
+            margin-left: var(--space-3);
+            text-decoration: none;
+            color: var(--text);
+            font-size: var(--font-size-2);
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        /* Typography */
+        h1 { font-size: var(--font-size-6); line-height: 1.1; margin-bottom: var(--space-3); }
+        h2 { font-size: var(--font-size-5); margin-bottom: var(--space-4); color: var(--primary); }
+        h3 { font-size: var(--font-size-4); margin-bottom: var(--space-2); }
+        p { margin-bottom: var(--space-3); }
+        .muted { color: var(--muted); font-size: var(--font-size-2); }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: var(--font-size-3);
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            border-radius: var(--radius-btn);
+            transition: background-color 0.2s;
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn:hover { background-color: var(--primary-2); }
+        .btn:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .btn-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-1);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hero */
+        .hero-img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            margin-bottom: var(--space-4);
+            border-radius: 0;
+        }
+
+        /* Lists & Menu */
+        .dish-list, .menu-grid {
+            list-style: none;
+        }
+
+        .dish-item {
+            margin-bottom: var(--space-5);
+        }
+
+        .dish-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            margin-bottom: var(--space-3);
+            border-radius: 0;
+        }
+
+        .menu-category {
+            margin-bottom: var(--space-5);
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: var(--space-2);
+        }
+
+        .menu-item-info { flex: 1; }
+        .menu-item-price { font-weight: bold; margin-left: var(--space-3); }
+        .dietary { font-size: var(--font-size-1); text-transform: lowercase; color: var(--muted); }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        label {
+            display: block;
+            margin-bottom: var(--space-1);
+            font-size: var(--font-size-2);
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--muted);
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+            font-size: var(--font-size-3);
+            border-radius: 0;
+        }
+
+        input:focus { outline: 2px solid var(--focus); border-color: transparent; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: var(--space-3);
+        }
+
+        .modal-content {
+            background: var(--bg);
+            width: 100%;
+            max-width: 500px;
+            padding: var(--space-5);
+            position: relative;
+            border-radius: 0;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        /* Toasts */
+        #toast-container {
+            position: fixed;
+            bottom: var(--space-4);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1100;
+        }
+
+        .toast {
+            background: var(--text);
+            color: var(--bg);
+            padding: 12px 24px;
+            margin-top: var(--space-2);
+            font-size: var(--font-size-2);
+            border-radius: var(--radius-btn);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: var(--font-size-5); }
+            h2 { font-size: var(--font-size-4); }
+            .header-content { flex-direction: column; gap: var(--space-2); }
+            nav a { margin: 0 var(--space-2); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <a href="#" class="logo">Azure Table</a>
+            <nav>
+                <a href="#menu">Menu</a>
+                <a href="#reservations">Reservations</a>
+                <a href="#location">Location</a>
+                <button id="theme-toggle" class="btn-toggle" aria-label="Toggle dark mode">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="section-wrapper">
+            <div class="container">
+                <img src="https://images.unsplash.com/photo-1544124499-58912cbddaad?auto=format&fit=crop&w=1200&q=80" alt="A beautifully set Mediterranean dining table with fresh bread, olives, and wine" class="hero-img">
+                <h1>Coastal Flavors, Modern Soul.</h1>
+                <p>Azure Table brings the vibrant, sun-drenched flavors of the Mediterranean coast to your plate. We believe in simple ingredients, traditional techniques, and the joy of a shared meal.</p>
+                <a href="#reservations" class="btn">Book a Table</a>
+            </div>
+        </section>
+
+        <!-- Signature Dishes -->
+        <section class="section-wrapper alt">
+            <div class="container">
+                <h2>Signature Dishes</h2>
+                <ul class="dish-list">
+                    <li class="dish-item">
+                        <img src="https://images.unsplash.com/photo-1594041680534-e8c8cdebd679?auto=format&fit=crop&w=800&q=80" alt="Charred octopus with lemon and herbs">
+                        <h3>Charred Coastal Octopus</h3>
+                        <p>Slow-braised then flame-grilled, served with smoked paprika oil, lemon-infused fingerling potatoes, and a bright salsa verde.</p>
+                    </li>
+                    <li class="dish-item">
+                        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80" alt="Braised lamb with couscous">
+                        <h3>Heritage Lamb Tagine</h3>
+                        <p>Tender grass-fed lamb shoulder simmered with apricots, toasted almonds, and aromatic spices. Served over fluffy saffron couscous.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Menu Section -->
+        <section id="menu" class="section-wrapper">
+            <div class="container">
+                <h2>The Menu</h2>
+                
+                <div class="menu-category">
+                    <h3>Small Plates</h3>
+                    <div class="menu-item">
+                        <div class="menu-item-info">
+                            <div>Whipped Feta & Honey</div>
+                            <div class="dietary">Vegetarian, Gluten-Free available</div>
+                        </div>
+                        <div class="menu-item-price">$14</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-info">
+                            <div>Crispy Calamari with Harissa Mayo</div>
+                            <div class="dietary">Dairy-Free</div>
+                        </div>
+                        <div class="menu-item-price">$16</div>
+                    </div>
+                </div>
+
+                <div class="menu-category">
+                    <h3>Mains</h3>
+                    <div class="menu-item">
+                        <div class="menu-item-info">
+                            <div>Pan-Seared Sea Bass</div>
+                            <div class="dietary">Gluten-Free</div>
+                        </div>
+                        <div class="menu-item-price">$32</div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-info">
+                            <div>Roasted Eggplant Moussaka</div>
+                            <div class="dietary">Vegetarian</div>
+                        </div>
+                        <div class="menu-item-price">$26</div>
+                    </div>
+                </div>
+
+                <div class="menu-category">
+                    <h3>Desserts</h3>
+                    <div class="menu-item">
+                        <div class="menu-item-info">
+                            <div>Pistachio Baklava Cheesecake</div>
+                            <div class="dietary">Contains Nuts</div>
+                        </div>
+                        <div class="menu-item-price">$12</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews -->
+        <section class="section-wrapper alt">
+            <div class="container">
+                <h2>Guest Experiences</h2>
+                <div style="margin-bottom: var(--space-4);">
+                    <p>"The atmosphere is serene and the food is nothing short of spectacular. The octopus is a must-try."</p>
+                    <p class="muted">— Elena R., Food Critic</p>
+                </div>
+                <div>
+                    <p>"Finally, a Mediterranean spot that understands the balance of spice and freshness. We will be back every month."</p>
+                    <p class="muted">— Marcus T., Local Resident</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reservations -->
+        <section id="reservations" class="section-wrapper">
+            <div class="container">
+                <h2>Reservations</h2>
+                <p>Join us for lunch or dinner. For parties larger than 8, please call us directly.</p>
+                <form id="reservation-form">
+                    <div class="form-group">
+                        <label for="res-name">Full Name</label>
+                        <input type="text" id="res-name" required placeholder="John Doe">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+                        <div class="form-group">
+                            <label for="res-date">Date</label>
+                            <input type="date" id="res-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="res-time">Time</label>
+                            <select id="res-time" required>
+                                <option value="">Select time</option>
+                                <option>5:00 PM</option>
+                                <option>6:00 PM</option>
+                                <option>7:00 PM</option>
+                                <option>8:00 PM</option>
+                                <option>9:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-guests">Number of Guests</label>
+                        <input type="number" id="res-guests" min="1" max="8" value="2" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Confirm Availability</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Location -->
+        <section id="location" class="section-wrapper alt">
+            <div class="container">
+                <h2>Find Us</h2>
+                <div style="margin-bottom: var(--space-4);">
+                    <h3>Address</h3>
+                    <p>122 Harbor View Way<br>Coastal District, CA 90210</p>
+                </div>
+                <div style="margin-bottom: var(--space-4);">
+                    <h3>Hours</h3>
+                    <p>Monday — Thursday: 5:00 PM – 10:00 PM<br>
+                    Friday — Sunday: 12:00 PM – 11:00 PM</p>
+                </div>
+                <div>
+                    <h3>Contact</h3>
+                    <p>hello@azuretable.com<br>(555) 123-4567</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="section-wrapper">
+        <div class="container" style="text-align: center; border-top: 1px solid rgba(0,0,0,0.05);">
+            <p class="muted">&copy; 2024 Azure Table. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div id="modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content" id="modal-focus-trap">
+            <button class="modal-close" id="modal-close" aria-label="Close modal">&times;</button>
+            <h2 id="modal-title">Reservation Confirmed</h2>
+            <div id="modal-body">
+                <!-- Content injected via JS -->
+            </div>
+            <button class="btn" id="modal-ok" style="margin-top: var(--space-4); width: 100%;">Great, see you then!</button>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // Theme Management
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Toast System
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Modal System
+        const modal = document.getElementById('modal');
+        const modalBody = document.getElementById('modal-body');
+        const modalClose = document.getElementById('modal-close');
+        const modalOk = document.getElementById('modal-ok');
+        let lastFocusedElement;
+
+        function openModal(content) {
+            lastFocusedElement = document.activeElement;
+            modalBody.innerHTML = content;
+            modal.style.display = 'flex';
+            modalClose.focus();
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            if (lastFocusedElement) lastFocusedElement.focus();
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalOk.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
+        });
+
+        // Form Handling
+        const resForm = document.getElementById('reservation-form');
+        resForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const submitBtn = resForm.querySelector('button');
+            const originalText = submitBtn.textContent;
+            
+            // Loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Checking tables...';
+
+            setTimeout(() => {
+                const name = document.getElementById('res-name').value;
+                const date = document.getElementById('res-date').value;
+                const time = document.getElementById('res-time').value;
+                const guests = document.getElementById('res-guests').value;
+
+                openModal(`
+                    <p>Thank you, <strong>${name}</strong>!</p>
+                    <p>We've secured a table for <strong>${guests} guests</strong> on <strong>${date}</strong> at <strong>${time}</strong>.</p>
+                    <p class="muted" style="margin-top: 16px;">A confirmation email has been sent to your inbox.</p>
+                `);
+
+                resForm.reset();
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }, 1200);
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
