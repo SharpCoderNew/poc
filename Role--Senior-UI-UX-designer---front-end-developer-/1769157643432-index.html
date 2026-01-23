@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meridian Health Partners | Patient Portal</title>
+    <style>
+        :root {
+            /* Design Tokens */
+            --primary: #0056b3;
+            --primary-2: #004494;
+            --on-primary: #ffffff;
+            --bg: #ffffff;
+            --bg-2: #f4f7fa;
+            --surface: #ffffff;
+            --text: #1a202c;
+            --muted: #5a67d8; /* Using a slightly colored muted for trust */
+            --muted-text: #4a5568;
+            --border: transparent; /* Explicitly no borders per requirements */
+            --success: #2f855a;
+            --danger: #c53030;
+            --warning: #b7791f;
+            --focus: #4299e1;
+            
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 16px;
+            --space-4: 24px;
+            --space-5: 32px;
+            --space-6: 64px;
+
+            --font-size-1: 12px;
+            --font-size-2: 14px;
+            --font-size-3: 16px;
+            --font-size-4: 20px;
+            --font-size-5: 28px;
+            --font-size-6: 36px;
+
+            --radius-btn: 3px;
+            --shadow-soft: none;
+            
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary: #4299e1;
+            --primary-2: #63b3ed;
+            --on-primary: #1a202c;
+            --bg: #1a202c;
+            --bg-2: #2d3748;
+            --surface: #1a202c;
+            --text: #f7fafc;
+            --muted-text: #a0aec0;
+            --muted: #4a5568;
+            --success: #48bb78;
+            --danger: #fc8181;
+            --warning: #f6ad55;
+            --focus: #63b3ed;
+        }
+
+        /* Base Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Layout */
+        .app-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+
+        header {
+            padding: var(--space-5) 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand h1 {
+            font-size: var(--font-size-4);
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: none;
+        }
+
+        .brand p {
+            font-size: var(--font-size-2);
+            color: var(--muted-text);
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin-bottom: var(--space-5);
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            gap: var(--space-4);
+            overflow-x: auto;
+            padding: var(--space-3) 0;
+            scrollbar-width: none;
+        }
+
+        .nav-list::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--muted-text);
+            font-size: var(--font-size-2);
+            font-weight: 600;
+            white-space: nowrap;
+            padding: var(--space-2) 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Sections */
+        section {
+            display: none;
+            padding: var(--space-6) 0;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            margin-bottom: var(--space-5);
+        }
+
+        .section-header h2 {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-2);
+        }
+
+        /* Full-width Background Bands */
+        .band-alt {
+            background-color: var(--bg-2);
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            padding: var(--space-6) 0;
+        }
+
+        /* Typography */
+        h3 { font-size: var(--font-size-4); margin-bottom: var(--space-3); }
+        p { margin-bottom: var(--space-3); }
+        .small-note { font-size: var(--font-size-2); color: var(--muted-text); }
+
+        /* Components */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 var(--space-4);
+            height: 44px;
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            border-radius: var(--radius-btn);
+            font-size: var(--font-size-2);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: inherit;
+            text-decoration: none;
+        }
+
+        .btn:hover { background-color: var(--primary-2); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-outline:hover { background: var(--bg-2); }
+
+        .form-group { margin-bottom: var(--space-4); }
+        label { display: block; font-size: var(--font-size-2); font-weight: 600; margin-bottom: var(--space-1); }
+        input, select, textarea {
+            width: 100%;
+            padding: var(--space-3);
+            font-size: var(--font-size-3);
+            background-color: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--muted-text);
+            border-radius: 0;
+            font-family: inherit;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .list-item {
+            padding: var(--space-4) 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-item-content h4 { font-size: var(--font-size-3); margin-bottom: var(--space-1); }
+        .list-item-content p { font-size: var(--font-size-2); color: var(--muted-text); margin: 0; }
+
+        /* Images */
+        .hero-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 0;
+            margin-bottom: var(--space-5);
+        }
+
+        .provider-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 0;
+            margin-bottom: var(--space-3);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: var(--space-4);
+        }
+
+        .modal-content {
+            background: var(--bg);
+            width: 100%;
+            max-width: 500px;
+            padding: var(--space-5);
+            border-radius: 0;
+            position: relative;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: var(--space-4);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+        }
+
+        .toast {
+            background: var(--primary);
+            color: var(--on-primary);
+            padding: var(--space-3) var(--space-5);
+            border-radius: var(--radius-btn);
+            font-size: var(--font-size-2);
+            margin-bottom: var(--space-2);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text);
+            padding: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--font-size-2);
+            font-family: inherit;
+        }
+
+        .emergency-banner {
+            background-color: var(--danger);
+            color: white;
+            padding: var(--space-3);
+            text-align: center;
+            font-size: var(--font-size-2);
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .hero-image { height: 250px; }
+            .list-item { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+        }
+    </style>
+</head>
+<body>
+    <div class="emergency-banner">
+        If you are experiencing a medical emergency, please call 911 immediately.
+    </div>
+
+    <div class="app-container">
+        <header>
+            <div class="brand">
+                <h1>Meridian Health Partners</h1>
+                <p>Your health journey, simplified.</p>
+            </div>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                <span id="theme-icon">🌙</span>
+                <span id="theme-text">Dark Mode</span>
+            </button>
+        </header>
+
+        <nav>
+            <div class="nav-list" role="tablist">
+                <button class="nav-link active" data-target="appointments" role="tab">Appointments</button>
+                <button class="nav-link" data-target="records" role="tab">Records</button>
+                <button class="nav-link" data-target="prescriptions" role="tab">Prescriptions</button>
+                <button class="nav-link" data-target="messages" role="tab">Messages</button>
+                <button class="nav-link" data-target="billing" role="tab">Billing</button>
+            </div>
+        </nav>
+
+        <main>
+            <!-- Appointments Section -->
+            <section id="appointments" class="active">
+                <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1200" alt="Modern clean clinic reception area" class="hero-image">
+                <div class="section-header">
+                    <h2>Your Appointments</h2>
+                    <p>Manage upcoming visits and schedule new consultations.</p>
+                </div>
+
+                <div id="appointment-list">
+                    <!-- Dynamic Content -->
+                </div>
+
+                <div class="band-alt">
+                    <div class="app-container">
+                        <h3>Request a New Appointment</h3>
+                        <form id="appointment-form">
+                            <div class="form-group">
+                                <label for="provider">Select Provider</label>
+                                <select id="provider" required>
+                                    <option value="">Choose a specialist...</option>
+                                    <option value="dr-smith">Dr. Elena Smith - Family Medicine</option>
+                                    <option value="dr-jones">Dr. Marcus Jones - Cardiology</option>
+                                    <option value="dr-lee">Dr. Sarah Lee - Pediatrics</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="date">Preferred Date</label>
+                                <input type="date" id="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reason">Reason for Visit</label>
+                                <textarea id="reason" rows="3" placeholder="Briefly describe your symptoms or needs..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn">Submit Request</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Records Section -->
+            <section id="records">
+                <div class="section-header">
+                    <h2>Medical Records</h2>
+                    <p>Access your lab results, immunization history, and visit summaries.</p>
+                </div>
+                <div id="records-list">
+                    <!-- Dynamic Content -->
+                </div>
+                <div class="band-alt">
+                    <div class="app-container">
+                        <p class="small-note">All medical records are encrypted and handled in accordance with HIPAA regulations. If you need a certified physical copy, please contact our office directly.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Prescriptions Section -->
+            <section id="prescriptions">
+                <div class="section-header">
+                    <h2>Active Prescriptions</h2>
+                    <p>View current medications and request refills from your pharmacy.</p>
+                </div>
+                <div id="prescription-list">
+                    <!-- Dynamic Content -->
+                </div>
+                <div class="band-alt">
+                    <div class="app-container">
+                        <h3>Request a Refill</h3>
+                        <form id="refill-form">
+                            <div class="form-group">
+                                <label for="medication">Select Medication</label>
+                                <select id="medication" required>
+                                    <option value="">Choose medication...</option>
+                                    <option value="lisinopril">Lisinopril 10mg</option>
+                                    <option value="atorvastatin">Atorvastatin 20mg</option>
+                                    <option value="metformin">Metformin 500mg</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pharmacy">Preferred Pharmacy</label>
+                                <input type="text" id="pharmacy" placeholder="e.g. CVS on Main St." required>
+                            </div>
+                            <button type="submit" class="btn">Request Refill</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Messages Section -->
+            <section id="messages">
+                <div class="section-header">
+                    <h2>Secure Messages</h2>
+                    <p>Communicate directly with your care team.</p>
+                </div>
+                <div id="message-list">
+                    <!-- Dynamic Content -->
+                </div>
+                <div class="band-alt">
+                    <div class="app-container">
+                        <h3>Compose New Message</h3>
+                        <form id="message-form">
+                            <div class="form-group">
+                                <label for="msg-recipient">To</label>
+                                <select id="msg-recipient" required>
+                                    <option value="dr-smith">Dr. Elena Smith</option>
+                                    <option value="nursing">Nursing Staff</option>
+                                    <option value="billing">Billing Department</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="msg-subject">Subject</label>
+                                <input type="text" id="msg-subject" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="msg-body">Message</label>
+                                <textarea id="msg-body" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn">Send Secure Message</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Billing Section -->
+            <section id="billing">
+                <div class="section-header">
+                    <h2>Billing & Insurance</h2>
+                    <p>View your current balance and manage payment methods.</p>
+                </div>
+                <div class="band-alt">
+                    <div class="app-container">
+                        <div style="margin-bottom: var(--space-5);">
+                            <p class="small-note">Current Balance</p>
+                            <h3 style="font-size: var(--font-size-6); margin: 0;">$45.00</h3>
+                            <p class="small-note">Due by June 30, 2024</p>
+                            <button class="btn" onclick="showModal('Payment Processed', 'Your payment of $45.00 has been successfully scheduled.')">Pay Balance Now</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: var(--space-5) 0;">
+                    <h3>Recent Transactions</h3>
+                    <div id="billing-list">
+                        <!-- Dynamic Content -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer style="padding: var(--space-6) 0; text-align: center;">
+            <p class="small-note">&copy; 2024 Meridian Health Partners. All rights reserved.</p>
+            <p class="small-note">Privacy Policy | Terms of Service | HIPAA Compliance</p>
+        </footer>
+    </div>
+
+    <!-- Custom Modal -->
+    <div id="modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <h3 id="modal-title">Notification</h3>
+            <p id="modal-body"></p>
+            <div style="text-align: right; margin-top: var(--space-4);">
+                <button class="btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script>
+        // Data
+        const data = {
+            appointments: [
+                { id: 1, title: 'Annual Wellness Exam', provider: 'Dr. Elena Smith', date: 'June 15, 2024', time: '10:00 AM' },
+                { id: 2, title: 'Dental Cleaning', provider: 'Dr. Marcus Jones', date: 'July 20, 2024', time: '2:30 PM' }
+            ],
+            records: [
+                { id: 1, title: 'Blood Work Results', date: 'May 12, 2024', type: 'PDF' },
+                { id: 2, title: 'Immunization Record', date: 'April 05, 2024', type: 'PDF' },
+                { id: 3, title: 'Visit Summary - Annual Exam', date: 'June 15, 2023', type: 'PDF' }
+            ],
+            prescriptions: [
+                { id: 1, name: 'Lisinopril 10mg', instructions: 'Take 1 tablet daily by mouth', refills: 2 },
+                { id: 2, name: 'Atorvastatin 20mg', instructions: 'Take 1 tablet at bedtime', refills: 0 }
+            ],
+            messages: [
+                { id: 1, from: 'Dr. Elena Smith', subject: 'Follow-up on recent labs', date: 'May 14, 2024', snippet: 'Hello, I have reviewed your blood work results and...' },
+                { id: 2, from: 'Billing Dept', subject: 'Your statement is ready', date: 'May 01, 2024', snippet: 'Your monthly statement for April is now available for viewing...' }
+            ],
+            billing: [
+                { id: 1, title: 'Office Visit Co-pay', date: 'May 12, 2024', amount: '$25.00' },
+                { id: 2, title: 'Lab Processing Fee', date: 'May 14, 2024', amount: '$20.00' }
+            ]
+        };
+
+        // Theme Management
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        const html = document.documentElement;
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('portal-theme', theme);
+            themeIcon.textContent = theme === 'light' ? '🌙' : '☀️';
+            themeText.textContent = theme === 'light' ? 'Dark Mode' : 'Light Mode';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            setTheme(current === 'light' ? 'dark' : 'light');
+        });
+
+        // Initialize Theme
+        const savedTheme = localStorage.getItem('portal-theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        setTheme(savedTheme);
+
+        // Navigation
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('section');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const target = link.getAttribute('data-target');
+                
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                sections.forEach(s => {
+                    s.classList.remove('active');
+                    if (s.id === target) s.classList.add('active');
+                });
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Rendering Functions
+        function renderAppointments() {
+            const container = document.getElementById('appointment-list');
+            container.innerHTML = data.appointments.map(app => `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>${app.title}</h4>
+                        <p>${app.provider} • ${app.date} at ${app.time}</p>
+                    </div>
+                    <button class="btn btn-outline" onclick="showToast('Appointment details sent to your email.')">Details</button>
+                </div>
+            `).join('');
+        }
+
+        function renderRecords() {
+            const container = document.getElementById('records-list');
+            container.innerHTML = data.records.map(rec => `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>${rec.title}</h4>
+                        <p>Released: ${rec.date}</p>
+                    </div>
+                    <button class="btn btn-outline" onclick="showModal('Download Started', 'Your record &quot;${rec.title}&quot; is being prepared for secure download.')">Download</button>
+                </div>
+            `).join('');
+        }
+
+        function renderPrescriptions() {
+            const container = document.getElementById('prescription-list');
+            container.innerHTML = data.prescriptions.map(rx => `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>${rx.name}</h4>
+                        <p>${rx.instructions} • ${rx.refills} refills remaining</p>
+                    </div>
+                    <button class="btn btn-outline" onclick="showToast('Refill request sent to pharmacy.')">Refill</button>
+                </div>
+            `).join('');
+        }
+
+        function renderMessages() {
+            const container = document.getElementById('message-list');
+            container.innerHTML = data.messages.map(msg => `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>${msg.subject}</h4>
+                        <p>From: ${msg.from} • ${msg.date}</p>
+                        <p class="small-note">${msg.snippet}</p>
+                    </div>
+                    <button class="btn btn-outline" onclick="showModal('Message Content', 'Secure message content would appear here in a full implementation.')">View</button>
+                </div>
+            `).join('');
+        }
+
+        function renderBilling() {
+            const container = document.getElementById('billing-list');
+            container.innerHTML = data.billing.map(bill => `
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>${bill.title}</h4>
+                        <p>${bill.date}</p>
+                    </div>
+                    <p style="font-weight: bold;">${bill.amount}</p>
+                </div>
+            `).join('');
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+
+        function showModal(title, body) {
+            modalTitle.textContent = title;
+            modalBody.textContent = body;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Focus Trap
+            const closeBtn = modal.querySelector('button');
+            closeBtn.focus();
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        window.onclick = (event) => {
+            if (event.target == modal) closeModal();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Toast Logic
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Form Handlers
+        document.getElementById('appointment-form').onsubmit = (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+            setTimeout(() => {
+                showModal('Request Received', 'Your appointment request has been sent. A coordinator will contact you within 24 business hours to confirm.');
+                e.target.reset();
+                btn.disabled = false;
+                btn.textContent = 'Submit Request';
+            }, 1000);
+        };
+
+        document.getElementById('refill-form').onsubmit = (e) => {
+            e.preventDefault();
+            showToast('Refill request submitted successfully.');
+            e.target.reset();
+        };
+
+        document.getElementById('message-form').onsubmit = (e) => {
+            e.preventDefault();
+            showModal('Message Sent', 'Your secure message has been delivered to the care team.');
+            e.target.reset();
+        };
+
+        // Initial Render
+        renderAppointments();
+        renderRecords();
+        renderPrescriptions();
+        renderMessages();
+        renderBilling();
+    </script>
+</body>
+</html>
