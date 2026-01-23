@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurelian Books — Curated Literature for the Discerning Reader</title>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('aurelian-theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --bg-2: #f8f9fa;
+            --bg-pastel-blue: #f0f4f8;
+            --bg-pastel-green: #f1f8f6;
+            --bg-pastel-amber: #fff9f2;
+            --surface: #ffffff;
+            --text: #1a1a1a;
+            --muted: #666666;
+            --border: transparent;
+            --primary: #0056b3;
+            --primary-2: #004494;
+            --on-primary: #ffffff;
+            --accent: #008080;
+            --on-accent: #ffffff;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --focus: #0056b3;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 16px;
+            --space-4: 24px;
+            --space-5: 32px;
+            --space-6: 64px;
+            --font-size-1: 12px;
+            --font-size-2: 14px;
+            --font-size-3: 16px;
+            --font-size-4: 20px;
+            --font-size-5: 32px;
+            --font-size-6: 48px;
+            --hero-size: 96px;
+            --radius-btn: 3px;
+            --max-width: 1100px;
+            --transition: 200ms ease;
+        }
+
+        [data-theme="dark"] {
+            --bg: #121212;
+            --bg-2: #1a1a1a;
+            --bg-pastel-blue: #1e2530;
+            --bg-pastel-green: #1e2824;
+            --bg-pastel-amber: #2a241e;
+            --surface: #121212;
+            --text: #eeeeee;
+            --muted: #aaaaaa;
+            --primary: #4dabf7;
+            --primary-2: #339af0;
+            --on-primary: #051b2d;
+            --accent: #66d9e8;
+            --focus: #4dabf7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color var(--transition), color var(--transition);
+        }
+
+        /* Layout */
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+
+        .section-band {
+            width: 100%;
+            padding: var(--space-6) 0;
+        }
+
+        .band-blue { background-color: var(--bg-pastel-blue); }
+        .band-green { background-color: var(--bg-pastel-green); }
+        .band-amber { background-color: var(--bg-pastel-amber); }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            line-height: 1.1;
+            font-weight: 700;
+            margin-bottom: var(--space-3);
+        }
+
+        .hero-title {
+            font-size: var(--hero-size);
+            letter-spacing: -0.04em;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 56px; }
+        }
+
+        /* Header */
+        header {
+            padding: var(--space-4) 0;
+            background: var(--bg);
+        }
+
+        .nav-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .brand-name {
+            font-size: var(--font-size-4);
+            font-weight: 700;
+            display: block;
+        }
+
+        .brand-tagline {
+            font-size: var(--font-size-1);
+            color: var(--muted);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: var(--space-4);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text);
+            font-size: var(--font-size-2);
+            font-weight: 500;
+        }
+
+        nav a:hover { color: var(--primary); }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        /* Buttons */
+        button, .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            font-size: var(--font-size-2);
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-primary:hover { background-color: var(--primary-2); }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text);
+            box-shadow: inset 0 0 0 1px var(--text);
+        }
+
+        .btn-ghost {
+            background-color: transparent;
+            color: var(--text);
+        }
+
+        .btn-ghost:hover { background-color: rgba(0,0,0,0.05); }
+        [data-theme="dark"] .btn-ghost:hover { background-color: rgba(255,255,255,0.05); }
+
+        .btn-sm { padding: 8px 16px; font-size: var(--font-size-1); }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text);
+            padding: var(--space-2);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Cart Section */
+        #cart-section {
+            display: none;
+            padding: var(--space-5) 0;
+            border-top: 1px solid var(--muted);
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto auto;
+            align-items: center;
+            gap: var(--space-4);
+            padding: var(--space-3) 0;
+        }
+
+        .cart-img {
+            width: 80px;
+            height: 110px;
+            object-fit: cover;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        /* Catalog */
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-3);
+            margin-bottom: var(--space-5);
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+
+        .filter-group label {
+            font-size: var(--font-size-1);
+            font-weight: 700;
+            color: var(--muted);
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid var(--muted);
+            background: var(--bg);
+            color: var(--text);
+            border-radius: var(--radius-btn);
+            font-family: Arial, sans-serif;
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: var(--space-5);
+        }
+
+        .book-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .book-cover-wrapper {
+            width: 100%;
+            aspect-ratio: 2/3;
+            overflow: hidden;
+            margin-bottom: var(--space-2);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .book-item:hover .book-cover {
+            transform: scale(1.03);
+        }
+
+        .book-category {
+            font-size: var(--font-size-1);
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .book-title {
+            font-size: var(--font-size-3);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .book-author {
+            font-size: var(--font-size-2);
+            color: var(--muted);
+        }
+
+        .book-price {
+            font-size: var(--font-size-3);
+            font-weight: 700;
+            margin-top: auto;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: var(--space-4);
+        }
+
+        .modal-content {
+            background: var(--bg);
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            padding: var(--space-6);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-4);
+            right: var(--space-4);
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .book-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: var(--space-5);
+        }
+
+        @media (max-width: 600px) {
+            .book-detail-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Toasts */
+        #toast-container {
+            position: fixed;
+            bottom: var(--space-4);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .toast {
+            background: var(--text);
+            color: var(--bg);
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            font-size: var(--font-size-2);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-6) 0;
+            border-top: 1px solid var(--muted);
+            margin-top: var(--space-6);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: var(--space-5);
+        }
+
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: var(--font-size-2);
+        }
+
+        .footer-links a:hover { color: var(--text); }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
+        }
+
+        /* Focus States */
+        :focus-visible {
+            outline: 2px solid var(--focus);
+            outline-offset: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-wrapper">
+            <a href="#" class="brand">
+                <span class="brand-name">Aurelian Books</span>
+                <span class="brand-tagline">Curated for the Discerning Reader</span>
+            </a>
+            <nav>
+                <ul id="main-nav">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#catalog">Catalog</a></li>
+                    <li><a href="#categories">Categories</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="btn-ghost" id="cart-toggle" aria-label="Open shopping cart">
+                    Cart (<span id="cart-count">0</span>)
+                </button>
+                <button class="theme-toggle" id="theme-switcher" aria-label="Toggle dark/light mode">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Cart Section -->
+        <section id="cart-section">
+            <div class="container">
+                <h2>Your Shopping Cart</h2>
+                <div id="cart-items-container">
+                    <!-- Cart items injected here -->
+                </div>
+                <div id="cart-empty-msg" style="display: none; padding: var(--space-5) 0;">
+                    <p>Your cart is currently empty.</p>
+                </div>
+                <div id="cart-summary" style="margin-top: var(--space-4); text-align: right;">
+                    <p style="font-size: var(--font-size-4); font-weight: 700;">Total: <span id="cart-total">$0.00</span></p>
+                    <div style="margin-top: var(--space-3); display: flex; justify-content: flex-end; gap: var(--space-3);">
+                        <button class="btn-outline" onclick="clearCartRequest()">Clear Cart</button>
+                        <button class="btn-primary" onclick="showToast('Checkout is currently disabled in this preview.')">Proceed to Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hero -->
+        <section class="section-band band-blue">
+            <div class="container">
+                <h1 class="hero-title">Discover Your Next Great Story.</h1>
+                <p style="font-size: var(--font-size-4); max-width: 600px; margin-bottom: var(--space-5);">
+                    Aurelian Books offers a hand-picked collection of timeless classics and modern masterpieces, curated for readers who value depth and design.
+                </p>
+                <a href="#catalog" class="btn btn-primary" style="font-size: var(--font-size-3);">Explore the Catalog</a>
+            </div>
+        </section>
+
+        <!-- Catalog -->
+        <section id="catalog" class="section-band">
+            <div class="container">
+                <div class="controls-bar">
+                    <div class="filter-group" style="flex: 1; min-width: 200px;">
+                        <label for="search-input">Search</label>
+                        <input type="text" id="search-input" placeholder="Title, author, or keyword...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="genre-filter">Category</label>
+                        <select id="genre-filter">
+                            <option value="all">All Categories</option>
+                            <option value="Fiction">Fiction</option>
+                            <option value="Non-Fiction">Non-Fiction</option>
+                            <option value="Philosophy">Philosophy</option>
+                            <option value="Science">Science</option>
+                            <option value="Classic">Classic</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sort-select">Sort By</label>
+                        <select id="sort-select">
+                            <option value="featured">Featured</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="rating">Top Rated</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="catalog-grid" class="catalog-grid">
+                    <!-- Books injected here -->
+                </div>
+
+                <div id="no-results" style="display: none; padding: var(--space-6) 0; text-align: center;">
+                    <p style="font-size: var(--font-size-4); color: var(--muted);">No books match your current filters.</p>
+                    <button class="btn-ghost" onclick="resetFilters()" style="margin-top: var(--space-3);">Reset Filters</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-band band-amber">
+            <div class="container">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); align-items: center;">
+                    <div>
+                        <h2 style="font-size: var(--font-size-5);">The Aurelian Membership</h2>
+                        <p style="margin-bottom: var(--space-4);">Join our community of bibliophiles. Members receive monthly curated recommendations, early access to signed editions, and invitations to private author dialogues.</p>
+                        <button class="btn-primary">Learn More</button>
+                    </div>
+                    <div style="background: var(--bg); padding: var(--space-5);">
+                        <p style="font-style: italic; font-size: var(--font-size-4);">"Aurelian Books isn't just a store; it's a sanctuary for those who still believe in the magic of a physical book."</p>
+                        <p style="margin-top: var(--space-3); font-weight: 700;">— Julian Vane, Literary Critic</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <span class="brand-name">Aurelian Books</span>
+                    <p style="margin-top: var(--space-3); color: var(--muted); max-width: 300px;">Curating the world's finest literature since 2024. Quality over quantity, always.</p>
+                </div>
+                <div>
+                    <h4 style="font-size: var(--font-size-2);">Explore</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">New Arrivals</a></li>
+                        <li><a href="#">Best Sellers</a></li>
+                        <li><a href="#">Gift Cards</a></li>
+                        <li><a href="#">Events</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="font-size: var(--font-size-2);">Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Returns & Exchanges</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--muted); font-size: var(--font-size-1); color: var(--muted);">
+                &copy; 2024 Aurelian Books. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true">
+        <div class="modal-content" id="modal-inner">
+            <button class="modal-close" id="modal-close" aria-label="Close modal">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" aria-live="polite"></div>
+
+    <script>
+        // --- Data Model ---
+        const books = [
+            {
+                id: 1,
+                title: "The Midnight Library",
+                author: "Matt Haig",
+                category: "Fiction",
+                price: 24.99,
+                rating: 4.8,
+                reviews: 1240,
+                isbn: "978-0525559474",
+                stock: 12,
+                tags: ["Bestseller", "Contemporary", "Hopeful"],
+                formats: ["Hardcover", "Paperback", "E-book"],
+                coverUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800",
+                description: "Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived. To see how things would be if you had made other choices... would you have done anything different, if you had the chance to undo your regrets?"
+            },
+            {
+                id: 2,
+                title: "Atomic Habits",
+                author: "James Clear",
+                category: "Non-Fiction",
+                price: 27.00,
+                rating: 4.9,
+                reviews: 3500,
+                isbn: "978-0735211292",
+                stock: 45,
+                tags: ["Self-Help", "Productivity", "Essential"],
+                formats: ["Hardcover", "Audiobook"],
+                coverUrl: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800",
+                description: "No matter your goals, Atomic Habits offers a proven framework for improving—every day. James Clear, one of the world's leading experts on habit formation, reveals practical strategies that will teach you exactly how to form good habits, break bad ones, and master the tiny behaviors that lead to remarkable results."
+            },
+            {
+                id: 3,
+                title: "Dune",
+                author: "Frank Herbert",
+                category: "Science",
+                price: 30.00,
+                rating: 4.7,
+                reviews: 890,
+                isbn: "978-0441172719",
+                stock: 8,
+                tags: ["Classic", "Sci-Fi", "Epic"],
+                formats: ["Deluxe Hardcover", "Paperback"],
+                coverUrl: "https://images.unsplash.com/photo-1592492159418-39f319320569?auto=format&fit=crop&q=80&w=800",
+                description: "Set on the desert planet Arrakis, Dune is the story of the boy Paul Atreides, heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the 'spice' melange, a drug capable of extending life and enhancing consciousness."
+            },
+            {
+                id: 4,
+                title: "The Great Gatsby",
+                author: "F. Scott Fitzgerald",
+                category: "Classic",
+                price: 18.50,
+                rating: 4.5,
+                reviews: 2100,
+                isbn: "978-0743273565",
+                stock: 20,
+                tags: ["Literature", "American", "Tragedy"],
+                formats: ["Paperback", "Hardcover"],
+                coverUrl: "https://images.unsplash.com/photo-1543005187-a1973d2df15f?auto=format&fit=crop&q=80&w=800",
+                description: "The Great Gatsby, F. Scott Fitzgerald's third book, stands as the supreme achievement of his career. This exemplary novel of the Jazz Age has been acclaimed by generations of readers. The story of the fabulously wealthy Jay Gatsby and his love for the beautiful Daisy Buchanan."
+            },
+            {
+                id: 5,
+                title: "Thinking, Fast and Slow",
+                author: "Daniel Kahneman",
+                category: "Philosophy",
+                price: 22.00,
+                rating: 4.6,
+                reviews: 1560,
+                isbn: "978-0374533557",
+                stock: 15,
+                tags: ["Psychology", "Logic", "Award Winner"],
+                formats: ["Paperback", "E-book"],
+                coverUrl: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=800",
+                description: "In the international bestseller, Thinking, Fast and Slow, Daniel Kahneman, the renowned psychologist and winner of the Nobel Prize in Economics, takes us on a groundbreaking tour of the mind and explains the two systems that drive the way we think."
+            },
+            {
+                id: 6,
+                title: "The Alchemist",
+                author: "Paulo Coelho",
+                category: "Fiction",
+                price: 16.99,
+                rating: 4.8,
+                reviews: 4200,
+                isbn: "978-0062315007",
+                stock: 30,
+                tags: ["Inspirational", "Adventure", "Bestseller"],
+                formats: ["Paperback", "Hardcover", "Audiobook"],
+                coverUrl: "https://images.unsplash.com/photo-1629992101753-56d196c8aced?auto=format&fit=crop&q=80&w=800",
+                description: "Combining magic, mysticism, wisdom and wonder into an inspiring tale of self-discovery, The Alchemist has become a modern classic, selling millions of copies around the world and transforming the lives of countless readers across generations."
+            }
+        ];
+
+        // --- State ---
+        let cart = JSON.parse(localStorage.getItem('aurelian-cart')) || [];
+        let activeFilters = { search: '', category: 'all', sort: 'featured' };
+
+        // --- Core Functions ---
+        function init() {
+            renderCatalog();
+            updateCartUI();
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Theme
+            document.getElementById('theme-switcher').addEventListener('click', toggleTheme);
+
+            // Search & Filters
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                activeFilters.search = e.target.value.toLowerCase();
+                renderCatalog();
+            });
+
+            document.getElementById('genre-filter').addEventListener('change', (e) => {
+                activeFilters.category = e.target.value;
+                renderCatalog();
+            });
+
+            document.getElementById('sort-select').addEventListener('change', (e) => {
+                activeFilters.sort = e.target.value;
+                renderCatalog();
+            });
+
+            // Cart Toggle
+            document.getElementById('cart-toggle').addEventListener('click', () => {
+                const cartSec = document.getElementById('cart-section');
+                const isVisible = cartSec.style.display === 'block';
+                cartSec.style.display = isVisible ? 'none' : 'block';
+                if (!isVisible) cartSec.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Modal Close
+            document.getElementById('modal-close').addEventListener('click', closeModal);
+            document.getElementById('modal-overlay').addEventListener('click', (e) => {
+                if (e.target.id === 'modal-overlay') closeModal();
+            });
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('aurelian-theme', next);
+        }
+
+        function renderCatalog() {
+            const grid = document.getElementById('catalog-grid');
+            const noResults = document.getElementById('no-results');
+            
+            let filtered = books.filter(book => {
+                const matchesSearch = book.title.toLowerCase().includes(activeFilters.search) || 
+                                     book.author.toLowerCase().includes(activeFilters.search);
+                const matchesCat = activeFilters.category === 'all' || book.category === activeFilters.category;
+                return matchesSearch && matchesCat;
+            });
+
+            if (activeFilters.sort === 'price-low') filtered.sort((a,b) => a.price - b.price);
+            if (activeFilters.sort === 'price-high') filtered.sort((a,b) => b.price - a.price);
+            if (activeFilters.sort === 'rating') filtered.sort((a,b) => b.rating - a.rating);
+
+            grid.innerHTML = '';
+            if (filtered.length === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+                filtered.forEach(book => {
+                    const el = document.createElement('div');
+                    el.className = 'book-item';
+                    el.innerHTML = `
+                        <div class="book-cover-wrapper">
+                            <img src="${book.coverUrl}" alt="Cover of ${book.title}" class="book-cover">
+                        </div>
+                        <span class="book-category">${book.category}</span>
+                        <h3 class="book-title">${book.title}</h3>
+                        <span class="book-author">${book.author}</span>
+                        <div class="book-price">$${book.price.toFixed(2)}</div>
+                        <div style="display: flex; gap: var(--space-2); margin-top: var(--space-2);">
+                            <button class="btn-primary btn-sm" onclick="addToCart(${book.id})">Add to Cart</button>
+                            <button class="btn-ghost btn-sm" onclick="viewDetails(${book.id})">Details</button>
+                        </div>
+                    `;
+                    grid.appendChild(el);
+                });
+            }
+        }
+
+        function resetFilters() {
+            activeFilters = { search: '', category: 'all', sort: 'featured' };
+            document.getElementById('search-input').value = '';
+            document.getElementById('genre-filter').value = 'all';
+            document.getElementById('sort-select').value = 'featured';
+            renderCatalog();
+        }
+
+        // --- Cart Logic ---
+        function addToCart(bookId, format = null) {
+            const book = books.find(b => b.id === bookId);
+            const selectedFormat = format || book.formats[0];
+            
+            const existing = cart.find(item => item.id === bookId && item.format === selectedFormat);
+            
+            if (existing) {
+                if (existing.qty < book.stock) {
+                    existing.qty++;
+                    showToast(`Added another copy of ${book.title} to cart.`);
+                } else {
+                    showToast(`Sorry, only ${book.stock} copies available.`, 'warning');
+                }
+            } else {
+                cart.push({ ...book, qty: 1, format: selectedFormat });
+                showToast(`${book.title} added to cart.`);
+            }
+            
+            saveCart();
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const countEl = document.getElementById('cart-count');
+            const totalEl = document.getElementById('cart-total');
+            const emptyMsg = document.getElementById('cart-empty-msg');
+            const summary = document.getElementById('cart-summary');
+
+            countEl.innerText = cart.reduce((acc, item) => acc + item.qty, 0);
+            
+            if (cart.length === 0) {
+                container.innerHTML = '';
+                emptyMsg.style.display = 'block';
+                summary.style.display = 'none';
+            } else {
+                emptyMsg.style.display = 'none';
+                summary.style.display = 'block';
+                container.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <img src="${item.coverUrl}" class="cart-img" alt="${item.title}">
+                        <div>
+                            <p style="font-weight: 700;">${item.title}</p>
+                            <p style="font-size: var(--font-size-1); color: var(--muted);">${item.format}</p>
+                        </div>
+                        <div class="quantity-controls">
+                            <button class="btn-ghost btn-sm" onclick="updateQty(${item.id}, '${item.format}', -1)">-</button>
+                            <span>${item.qty}</span>
+                            <button class="btn-ghost btn-sm" onclick="updateQty(${item.id}, '${item.format}', 1)">+</button>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="font-weight: 700;">$${(item.price * item.qty).toFixed(2)}</p>
+                            <button class="btn-ghost btn-sm" style="color: var(--danger);" onclick="removeFromCartRequest(${item.id}, '${item.format}')">Remove</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+                totalEl.innerText = `$${total.toFixed(2)}`;
+            }
+        }
+
+        function updateQty(id, format, change) {
+            const item = cart.find(i => i.id === id && i.format === format);
+            const book = books.find(b => b.id === id);
+            
+            if (item) {
+                const newQty = item.qty + change;
+                if (newQty > 0 && newQty <= book.stock) {
+                    item.qty = newQty;
+                } else if (newQty > book.stock) {
+                    showToast(`Maximum stock reached for this item.`, 'warning');
+                }
+                saveCart();
+                updateCartUI();
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem('aurelian-cart', JSON.stringify(cart));
+        }
+
+        // --- Modals & Dialogs ---
+        function viewDetails(bookId) {
+            const book = books.find(b => b.id === bookId);
+            const body = document.getElementById('modal-body');
+            
+            body.innerHTML = `
+                <div class="book-detail-grid">
+                    <div>
+                        <img src="${book.coverUrl}" alt="Cover of ${book.title}" style="width: 100%; aspect-ratio: 2/3; object-fit: cover;">
+                    </div>
+                    <div>
+                        <span class="book-category">${book.category}</span>
+                        <h2 style="font-size: var(--font-size-5); margin-top: var(--space-2);">${book.title}</h2>
+                        <p style="font-size: var(--font-size-4); color: var(--muted); margin-bottom: var(--space-4);">${book.author}</p>
+                        
+                        <div style="display: flex; gap: var(--space-2); margin-bottom: var(--space-4);">
+                            ${book.tags.map(t => `<span style="background: var(--bg-2); padding: 4px 12px; font-size: var(--font-size-1); border-radius: 3px;">${t}</span>`).join('')}
+                        </div>
+
+                        <p style="margin-bottom: var(--space-4);">${book.description}</p>
+                        
+                        <div style="margin-bottom: var(--space-4);">
+                            <p style="font-size: var(--font-size-1); font-weight: 700; color: var(--muted);">ISBN: ${book.isbn}</p>
+                            <p style="font-size: var(--font-size-1); font-weight: 700; color: var(--muted);">Stock: ${book.stock > 0 ? book.stock + ' available' : 'Out of stock'}</p>
+                        </div>
+
+                        <div style="margin-bottom: var(--space-4);">
+                            <label style="display: block; font-size: var(--font-size-1); font-weight: 700; margin-bottom: 4px;">Select Format</label>
+                            <select id="detail-format" style="width: 100%;">
+                                ${book.formats.map(f => `<option value="${f}">${f}</option>`).join('')}
+                            </select>
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--muted); padding-top: var(--space-4);">
+                            <span style="font-size: var(--font-size-5); font-weight: 700;">$${book.price.toFixed(2)}</span>
+                            <button class="btn-primary" onclick="addToCartFromDetail(${book.id})">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            openModal();
+        }
+
+        function addToCartFromDetail(id) {
+            const format = document.getElementById('detail-format').value;
+            addToCart(id, format);
+            closeModal();
+        }
+
+        function clearCartRequest() {
+            showConfirmationModal(
+                "Clear Shopping Cart?",
+                "Are you sure you want to remove all items from your cart? This action cannot be undone.",
+                () => {
+                    cart = [];
+                    saveCart();
+                    updateCartUI();
+                    closeModal();
+                    showToast("Cart cleared.");
+                }
+            );
+        }
+
+        function removeFromCartRequest(id, format) {
+            const item = cart.find(i => i.id === id && i.format === format);
+            showConfirmationModal(
+                "Remove Item?",
+                `Remove "${item.title}" (${item.format}) from your cart?`,
+                () => {
+                    cart = cart.filter(i => !(i.id === id && i.format === format));
+                    saveCart();
+                    updateCartUI();
+                    closeModal();
+                    showToast("Item removed.");
+                }
+            );
+        }
+
+        function showConfirmationModal(title, message, onConfirm) {
+            const body = document.getElementById('modal-body');
+            body.innerHTML = `
+                <div style="text-align: center; padding: var(--space-4) 0;">
+                    <h2 style="font-size: var(--font-size-5);">${title}</h2>
+                    <p style="margin-bottom: var(--space-5);">${message}</p>
+                    <div style="display: flex; justify-content: center; gap: var(--space-3);">
+                        <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+                        <button class="btn-primary" id="confirm-action-btn" style="background-color: var(--danger);">Confirm</button>
+                    </div>
+                </div>
+            `;
+            openModal();
+            document.getElementById('confirm-action-btn').onclick = onConfirm;
+        }
+
+        function openModal() {
+            const modal = document.getElementById('modal-overlay');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            // Simple focus trap
+            setTimeout(() => {
+                const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                if (focusable.length) focusable[0].focus();
+            }, 50);
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function showToast(msg, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            if (type === 'warning') toast.style.background = 'var(--warning)';
+            if (type === 'warning') toast.style.color = '#000';
+            toast.innerText = msg;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- Initialization ---
+        window.addEventListener('DOMContentLoaded', init);
+
+        /* 
+        MAINTAINER NOTES:
+        - Data: The 'books' array at the top of the script is the single source of truth for the catalog.
+        - Categories: To add a new category, update the 'genre-filter' select in the HTML and ensure the book objects use the same string.
+        - Tokens: All styling is driven by CSS variables in :root. Update these for global theme changes.
+        - Persistence: The cart and theme preference are stored in localStorage under 'aurelian-cart' and 'aurelian-theme'.
+        - Accessibility: Modals use role="dialog" and aria-modal="true". Focus is managed during open/close.
+        */
+    </script>
+</body>
+</html>
