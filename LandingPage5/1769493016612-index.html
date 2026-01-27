@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Conference 2026 | The Future of Generative Systems</title>
+    <meta name="description" content="Join the world's leading minds to explore generative AI, large language models, and creative synthesis.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Orbitron', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'btn': '3px',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --on-primary: #ffffff;
+            --focus: #3b82f6;
+            --radius-btn: 3px;
+            --transition: 200ms ease-in-out;
+        }
+
+        [data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f8fafc;
+            --surface: #ffffff;
+            --surface-2: #f1f5f9;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(226, 232, 240, 0.5);
+            --bg-image-opacity: 0.05;
+        }
+
+        [data-theme="dark"] {
+            --bg: #020617;
+            --bg-2: #0f172a;
+            --surface: #0f172a;
+            --surface-2: #1e293b;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: #334155;
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --glass-bg: rgba(15, 23, 42, 0.8);
+            --glass-border: rgba(51, 65, 85, 0.5);
+            --bg-image-opacity: 0.15;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            transition: background-color var(--transition), color var(--transition);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Anime Background Layer */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: url('https://images.unsplash.com/photo-1578632292335-df3abbb0d586?q=80&w=1974&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            opacity: var(--bg-image-opacity);
+            pointer-events: none;
+            transition: opacity var(--transition);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .container-custom {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            transition: background-color var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-primary:focus-visible {
+            outline: 2px solid var(--focus);
+            outline-offset: 2px;
+        }
+
+        .nav-link {
+            color: var(--muted);
+            transition: color var(--transition);
+            font-weight: 500;
+            font-size: 0.9375rem;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .tab-active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .divider {
+            height: 1px;
+            background-color: var(--border);
+            width: 100%;
+        }
+
+        /* Modal Focus Trap & Overlay */
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        #modal-content {
+            max-width: 500px;
+            width: 100%;
+            border-radius: 0;
+        }
+
+        /* Hide scrollbar for tabs */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .input-field {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: var(--radius-btn);
+            padding: 0.75rem 1rem;
+            width: 100%;
+            transition: border-color var(--transition);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        .speaker-card img {
+            filter: grayscale(20%);
+            transition: filter var(--transition);
+        }
+
+        .speaker-card:hover img {
+            filter: grayscale(0%);
+        }
+
+        .section-padding {
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+    </style>
+
+    <script>
+        // Early theme initialization
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            if (savedTheme === 'dark') document.documentElement.classList.add('dark');
+        })();
+    </script>
+</head>
+<body>
+
+    <!-- Sticky Header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-[var(--border)]">
+        <div class="container-custom h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <svg class="w-8 h-8 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span class="font-heading text-lg tracking-wider">GenAI 2026</span>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="#about" class="nav-link">About</a>
+                <a href="#agenda" class="nav-link">Agenda</a>
+                <a href="#speakers" class="nav-link">Speakers</a>
+                <a href="#sponsors" class="nav-link">Sponsors</a>
+                <a href="#register" class="nav-link">Register</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-[var(--surface-2)] transition-colors" aria-label="Toggle Theme">
+                    <svg id="sun-icon" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707.707m12.728 0l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" /></svg>
+                    <svg id="moon-icon" class="hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                </button>
+                <a href="#register" class="btn-primary text-sm px-4 py-2 hidden sm:flex">Join Now</a>
+                <button class="md:hidden p-2" aria-label="Menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="section-padding flex flex-col items-center text-center">
+            <div class="container-custom">
+                <div class="inline-block px-4 py-1 mb-6 border border-[var(--primary)] text-[var(--primary)] text-sm font-semibold tracking-widest font-heading">
+                    March 23 - 27, 2026 • Live Virtual Conference
+                </div>
+                <h1 class="text-4xl md:text-6xl lg:text-7xl mb-8 leading-tight">
+                    GenAI Conference 2026
+                </h1>
+                <p class="text-lg md:text-xl text-[var(--muted)] max-w-3xl mx-auto mb-10">
+                    Where the world’s leading minds converge to explore generative AI and the next frontier of creative intelligence, from large language models and diffusion systems to production-ready generative solutions.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4 mb-16">
+                    <a href="#register" class="btn-primary text-lg px-8 py-4">Secure Your Virtual Pass</a>
+                    <a href="#agenda" class="px-8 py-4 border border-[var(--border)] font-semibold hover:bg-[var(--surface-2)] transition-colors rounded-[var(--radius-btn)]">View Schedule</a>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 border-t border-b border-[var(--border)] py-12">
+                    <div>
+                        <div class="text-3xl font-heading mb-1">80+</div>
+                        <div class="text-sm text-[var(--muted)]">Expert Speakers</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-heading mb-1">50K+</div>
+                        <div class="text-sm text-[var(--muted)]">Virtual Attendees</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-heading mb-1">60+</div>
+                        <div class="text-sm text-[var(--muted)]">Live Streaming</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-heading mb-1">40</div>
+                        <div class="text-sm text-[var(--muted)]">Hours of GenAI Content</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section-padding bg-[var(--bg-2)]">
+            <div class="container-custom">
+                <div class="max-w-3xl mx-auto text-center">
+                    <h2 class="text-3xl mb-6">The Era of Generative Synthesis</h2>
+                    <p class="text-lg text-[var(--muted)] mb-8">
+                        The GenAI Conference is the premier global event dedicated to the next evolution of generative artificial intelligence. We move beyond simple text generation to complex multimodal systems that create, synthesize, and innovate across the digital landscape.
+                    </p>
+                    <div class="grid md:grid-cols-2 gap-8 text-left mt-12">
+                        <div class="p-6 border border-[var(--border)] bg-[var(--surface)]">
+                            <h3 class="text-xl mb-3">Our Mission</h3>
+                            <p class="text-[var(--muted)]">To bridge the gap between generative research and practical, scalable enterprise implementation of synthetic media and reasoning.</p>
+                        </div>
+                        <div class="p-6 border border-[var(--border)] bg-[var(--surface)]">
+                            <h3 class="text-xl mb-3">Who Should Attend</h3>
+                            <p class="text-[var(--muted)]">ML Engineers, Creative Directors, Research Scientists, and CTOs building the next generation of generative software.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Topics Section -->
+        <section class="section-padding">
+            <div class="container-custom">
+                <h2 class="text-3xl text-center mb-12">Key Tracks & Topics</h2>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Topic 1 -->
+                    <div class="p-8 border border-[var(--border)] hover:border-[var(--primary)] transition-colors">
+                        <div class="w-12 h-12 bg-[var(--primary)] bg-opacity-10 text-[var(--primary)] flex items-center justify-center mb-6">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                        </div>
+                        <h3 class="text-xl mb-3">LLM Architectures</h3>
+                        <p class="text-[var(--muted)]">Exploring the next generation of transformer models, state-space models, and efficient inference techniques.</p>
+                    </div>
+                    <!-- Topic 2 -->
+                    <div class="p-8 border border-[var(--border)] hover:border-[var(--primary)] transition-colors">
+                        <div class="w-12 h-12 bg-[var(--primary)] bg-opacity-10 text-[var(--primary)] flex items-center justify-center mb-6">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        </div>
+                        <h3 class="text-xl mb-3">Multimodal Synthesis</h3>
+                        <p class="text-[var(--muted)]">Advancements in cross-modal generation including text-to-video, audio synthesis, and 3D asset creation.</p>
+                    </div>
+                    <!-- Topic 3 -->
+                    <div class="p-8 border border-[var(--border)] hover:border-[var(--primary)] transition-colors">
+                        <div class="w-12 h-12 bg-[var(--primary)] bg-opacity-10 text-[var(--primary)] flex items-center justify-center mb-6">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                        </div>
+                        <h3 class="text-xl mb-3">Enterprise Fine-tuning</h3>
+                        <p class="text-[var(--muted)]">Practical strategies for training domain-specific models while maintaining data privacy and security.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agenda Section -->
+        <section id="agenda" class="section-padding bg-[var(--bg-2)]">
+            <div class="container-custom">
+                <h2 class="text-3xl text-center mb-12">Conference Agenda</h2>
+                
+                <!-- Tabs -->
+                <div class="flex overflow-x-auto no-scrollbar border-b border-[var(--border)] mb-10 justify-center">
+                    <button class="agenda-tab px-6 py-4 font-heading text-sm whitespace-nowrap tab-active" data-day="1">Day 01</button>
+                    <button class="agenda-tab px-6 py-4 font-heading text-sm whitespace-nowrap" data-day="2">Day 02</button>
+                    <button class="agenda-tab px-6 py-4 font-heading text-sm whitespace-nowrap" data-day="3">Day 03</button>
+                    <button class="agenda-tab px-6 py-4 font-heading text-sm whitespace-nowrap" data-day="4">Day 04</button>
+                    <button class="agenda-tab px-6 py-4 font-heading text-sm whitespace-nowrap" data-day="5">Day 05</button>
+                </div>
+
+                <!-- Agenda Content -->
+                <div id="agenda-content" class="space-y-4 max-w-4xl mx-auto">
+                    <!-- Day 1 Content (Default) -->
+                    <div class="agenda-day" id="day-1">
+                        <div class="flex flex-col md:flex-row gap-4 p-6 bg-[var(--surface)] border border-[var(--border)]">
+                            <div class="md:w-32 font-heading text-[var(--primary)]">09:00 AM</div>
+                            <div class="flex-1">
+                                <h4 class="text-lg mb-1">Opening Keynote: The State of Generative AI</h4>
+                                <p class="text-sm text-[var(--muted)]">Dr. Elena Vance, Lead Researcher at NeuralPath</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-4 p-6 bg-[var(--surface)] border border-[var(--border)] mt-4">
+                            <div class="md:w-32 font-heading text-[var(--primary)]">11:00 AM</div>
+                            <div class="flex-1">
+                                <h4 class="text-lg mb-1">Large Language Model Architectures</h4>
+                                <p class="text-sm text-[var(--muted)]">Panel Discussion with OpenAI and DeepMind Engineers</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Speakers Section -->
+        <section id="speakers" class="section-padding">
+            <div class="container-custom">
+                <h2 class="text-3xl text-center mb-12">Featured Speakers</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Speaker 1 -->
+                    <div class="speaker-card group">
+                        <div class="aspect-square bg-[var(--surface-2)] mb-4 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400&h=400" alt="Dr. Elena Vance" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="text-lg mb-1">Dr. Elena Vance</h4>
+                        <p class="text-sm text-[var(--primary)] font-semibold mb-2">Chief Scientist, NeuralPath</p>
+                        <p class="text-xs text-[var(--muted)]">Pioneer in generative adversarial networks and large-scale synthesis.</p>
+                    </div>
+                    <!-- Speaker 2 -->
+                    <div class="speaker-card group">
+                        <div class="aspect-square bg-[var(--surface-2)] mb-4 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400&h=400" alt="Marcus Chen" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="text-lg mb-1">Marcus Chen</h4>
+                        <p class="text-sm text-[var(--primary)] font-semibold mb-2">VP of Engineering, GenFlow</p>
+                        <p class="text-xs text-[var(--muted)]">Specialist in deploying generative models at global enterprise scale.</p>
+                    </div>
+                    <!-- Speaker 3 -->
+                    <div class="speaker-card group">
+                        <div class="aspect-square bg-[var(--surface-2)] mb-4 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400&h=400" alt="Sarah Jenkins" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="text-lg mb-1">Sarah Jenkins</h4>
+                        <p class="text-sm text-[var(--primary)] font-semibold mb-2">Ethics Lead, Global AI Alliance</p>
+                        <p class="text-xs text-[var(--muted)]">Focusing on copyright and governance frameworks for synthetic media.</p>
+                    </div>
+                    <!-- Speaker 4 -->
+                    <div class="speaker-card group">
+                        <div class="aspect-square bg-[var(--surface-2)] mb-4 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400&h=400" alt="David Thorne" class="w-full h-full object-cover">
+                        </div>
+                        <h4 class="text-lg mb-1">David Thorne</h4>
+                        <p class="text-sm text-[var(--primary)] font-semibold mb-2">Founder, Syntho</p>
+                        <p class="text-xs text-[var(--muted)]">Architect of the first real-time multimodal generative engine.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Participating Companies / Logos -->
+        <section class="py-12 border-t border-b border-[var(--border)]">
+            <div class="container-custom">
+                <p class="text-center text-xs font-heading tracking-widest text-[var(--muted)] mb-8">Leading Organizations Participating</p>
+                <div class="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                    <span class="font-heading text-xl">NeuroSys</span>
+                    <span class="font-heading text-xl">CloudGen</span>
+                    <span class="font-heading text-xl">DeepLogic</span>
+                    <span class="font-heading text-xl">OmniAI</span>
+                    <span class="font-heading text-xl">Vertex</span>
+                    <span class="font-heading text-xl">Synapse</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sponsors Section -->
+        <section id="sponsors" class="section-padding bg-[var(--bg-2)]">
+            <div class="container-custom text-center">
+                <h2 class="text-3xl mb-12">Our Sponsors</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="p-10 border border-[var(--border)] bg-[var(--surface)] flex items-center justify-center">
+                        <span class="font-heading text-2xl text-[var(--muted)]">Platinum Sponsor</span>
+                    </div>
+                    <div class="p-10 border border-[var(--border)] bg-[var(--surface)] flex items-center justify-center">
+                        <span class="font-heading text-2xl text-[var(--muted)]">Gold Sponsor</span>
+                    </div>
+                    <div class="p-10 border border-[var(--border)] bg-[var(--surface)] flex items-center justify-center">
+                        <span class="font-heading text-2xl text-[var(--muted)]">Silver Sponsor</span>
+                    </div>
+                </div>
+                <div class="mt-12">
+                    <button onclick="openSponsorModal()" class="text-[var(--primary)] font-semibold hover:underline">Interested in Sponsoring? Download Prospectus</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registration Section -->
+        <section id="register" class="section-padding">
+            <div class="container-custom">
+                <div class="max-w-2xl mx-auto glass-panel p-8 md:p-12 border border-[var(--border)]">
+                    <h2 class="text-3xl text-center mb-4">Register for 2026</h2>
+                    <p class="text-center text-[var(--muted)] mb-10">Join 50,000+ professionals for the ultimate GenAI experience.</p>
+                    
+                    <form id="registration-form" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2" for="first-name">First Name</label>
+                                <input type="text" id="first-name" class="input-field" placeholder="Jane" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2" for="last-name">Last Name</label>
+                                <input type="text" id="last-name" class="input-field" placeholder="Doe" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2" for="email">Work Email</label>
+                            <input type="email" id="email" class="input-field" placeholder="jane.doe@company.com" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2" for="role">Primary Role</label>
+                            <select id="role" class="input-field">
+                                <option>ML Engineer / Developer</option>
+                                <option>Product Manager</option>
+                                <option>Research Scientist</option>
+                                <option>Executive / Leadership</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary w-full py-4 text-lg">
+                            <span id="btn-text">Complete Registration</span>
+                            <span id="btn-loader" class="hidden ml-2">
+                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </span>
+                        </button>
+                        <p class="text-center text-xs text-[var(--muted)]">
+                            By registering, you agree to our Terms of Service and Privacy Policy.
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[var(--bg-2)] border-t border-[var(--border)] py-12">
+        <div class="container-custom">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="flex items-center gap-2">
+                    <svg class="w-6 h-6 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span class="font-heading text-md tracking-wider">GenAI 2026</span>
+                </div>
+                <div class="flex gap-6 text-sm text-[var(--muted)]">
+                    <a href="#" class="hover:text-[var(--text)]">Privacy Policy</a>
+                    <a href="#" class="hover:text-[var(--text)]">Code of Conduct</a>
+                    <a href="#" class="hover:text-[var(--text)]">Contact Support</a>
+                </div>
+                <div class="text-sm text-[var(--muted)]">
+                    © 2026 GenAI Conference. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Overlay -->
+    <div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div id="modal-content" class="glass-panel p-8 relative">
+            <button id="modal-close" class="absolute top-4 right-4 text-[var(--muted)] hover:text-[var(--text)]" aria-label="Close Modal">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <h3 id="modal-title" class="text-2xl mb-4">Notification</h3>
+            <div id="modal-body" class="text-[var(--muted)] mb-8">
+                <!-- Content injected by JS -->
+            </div>
+            <button id="modal-action" class="btn-primary w-full">Acknowledge</button>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        function updateIcons(theme) {
+            if (theme === 'dark') {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', newTheme);
+            updateIcons(newTheme);
+        });
+
+        // Initialize Icons
+        updateIcons(localStorage.getItem('theme') || 'dark');
+
+        // Agenda Tab Switching
+        const tabs = document.querySelectorAll('.agenda-tab');
+        const agendaContainer = document.getElementById('day-1');
+
+        const agendaData = {
+            1: [
+                { time: '09:00 AM', title: 'Opening Keynote: The State of Generative AI', speaker: 'Dr. Elena Vance, Lead Researcher at NeuralPath' },
+                { time: '11:00 AM', title: 'Large Language Model Architectures', speaker: 'Panel Discussion with OpenAI and DeepMind Engineers' },
+                { time: '02:00 PM', title: 'Efficiency in Foundation Models', speaker: 'David Thorne, Founder of Syntho' }
+            ],
+            2: [
+                { time: '09:30 AM', title: 'Diffusion Models and Creative Synthesis', speaker: 'Sarah Jenkins, Ethics Lead' },
+                { time: '01:00 PM', title: 'Workshop: Fine-tuning Open Source Models', speaker: 'Marcus Chen, VP Engineering' },
+                { time: '03:30 PM', title: 'The Future of Human-AI Creativity', speaker: 'Dr. Aris Thorne' }
+            ],
+            3: [
+                { time: '10:00 AM', title: 'Multimodal GenAI: Audio, Video, and Beyond', speaker: 'GenFlow Engineering Team' },
+                { time: '01:30 PM', title: 'Enterprise GenAI Security & Privacy', speaker: 'CloudGen Security Task Force' },
+                { time: '04:00 PM', title: 'Ethics of Synthetic Media', speaker: 'Sarah Jenkins' }
+            ],
+            4: [
+                { time: '09:00 AM', title: 'Research Track: Synthetic Data Generation', speaker: 'University of Stanford AI Lab' },
+                { time: '12:00 PM', title: 'The Future of Prompt Engineering', speaker: 'Vertex Systems' },
+                { time: '03:00 PM', title: 'GenAI in Scientific Discovery', speaker: 'Global Research Institute' }
+            ],
+            5: [
+                { time: '10:00 AM', title: 'Grand Finale: The 2030 GenAI Roadmap', speaker: 'Visionary Panel' },
+                { time: '01:00 PM', title: 'Generative Art Showcase & Awards', speaker: 'Conference Committee' },
+                { time: '03:00 PM', title: 'Closing Remarks & Networking', speaker: 'Event Organizers' }
+            ]
+        };
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const day = tab.getAttribute('data-day');
+                
+                // Update tabs UI
+                tabs.forEach(t => t.classList.remove('tab-active'));
+                tab.classList.add('tab-active');
+
+                // Update content
+                const sessions = agendaData[day];
+                agendaContainer.innerHTML = sessions.map(s => `
+                    <div class="flex flex-col md:flex-row gap-4 p-6 bg-[var(--surface)] border border-[var(--border)] mt-4">
+                        <div class="md:w-32 font-heading text-[var(--primary)]">${s.time}</div>
+                        <div class="flex-1">
+                            <h4 class="text-lg mb-1">${s.title}</h4>
+                            <p class="text-sm text-[var(--muted)]">${s.speaker}</p>
+                        </div>
+                    </div>
+                `).join('');
+            });
+        });
+
+        // Modal System
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const modalClose = document.getElementById('modal-close');
+        const modalAction = document.getElementById('modal-action');
+
+        function showModal(title, body) {
+            modalTitle.innerText = title;
+            modalBody.innerHTML = body;
+            modalOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            modalAction.focus();
+        }
+
+        function closeModal() {
+            modalOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalAction.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModal();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        function openSponsorModal() {
+            showModal('Sponsorship Inquiry', 'Thank you for your interest in sponsoring GenAI 2026. Our 2026 prospectus has been sent to your browser for download. Our partnerships team will reach out if you provide your details in the registration form.');
+        }
+
+        // Registration Form
+        const regForm = document.getElementById('registration-form');
+        const btnText = document.getElementById('btn-text');
+        const btnLoader = document.getElementById('btn-loader');
+
+        regForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Show loading state
+            btnText.innerText = 'Processing...';
+            btnLoader.classList.remove('hidden');
+            regForm.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+
+            // Simulate API call
+            setTimeout(() => {
+                btnText.innerText = 'Complete Registration';
+                btnLoader.classList.add('hidden');
+                regForm.querySelectorAll('input, select, button').forEach(el => el.disabled = false);
+                
+                const firstName = document.getElementById('first-name').value;
+                showModal('Registration Successful', `Welcome to the future, ${firstName}! Your virtual pass for GenAI Conference 2026 has been confirmed. Check your email for the calendar invite and pre-conference networking access.`);
+                regForm.reset();
+            }, 1500);
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
