@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potansiyel Müşteri Hesap Kartı | CRM</title>
+    <style>
+        :root {
+            /* Design Tokens - Light Theme */
+            --bg: #f8f9fa;
+            --bg-2: #ffffff;
+            --surface: #ffffff;
+            --surface-2: #f1f3f5;
+            --text: #1a1a1a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #0052cc;
+            --primary-2: #0747a6;
+            --on-primary: #ffffff;
+            --accent: #00b8d9;
+            --on-accent: #ffffff;
+            --success: #36b37e;
+            --warning: #ffab00;
+            --danger: #ff5630;
+            --focus: rgba(0, 82, 204, 0.25);
+            --shadow-soft: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            
+            --radius-btn: 3px;
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 24px;
+            --space-6: 32px;
+
+            --font-size-1: 12px;
+            --font-size-2: 14px;
+            --font-size-3: 16px;
+            --font-size-4: 18px;
+            --font-size-5: 24px;
+            --font-size-6: 32px;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --bg-2: #1e293b;
+            --surface: #1e293b;
+            --surface-2: #334155;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --border: #334155;
+            --primary: #3b82f6;
+            --primary-2: #2563eb;
+            --on-primary: #ffffff;
+            --accent: #22d3ee;
+            --focus: rgba(59, 130, 246, 0.4);
+            --shadow-soft: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            transition: background-color 0.2s, color 0.2s;
+            padding-bottom: var(--space-6);
+        }
+
+        /* Layout */
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+
+        header {
+            padding: var(--space-5) 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: var(--space-5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title h1 {
+            font-size: var(--font-size-5);
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .header-title p {
+            font-size: var(--font-size-2);
+            color: var(--muted);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-3);
+            align-items: center;
+        }
+
+        /* Grid Layout for CRM Card */
+        .crm-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-5);
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        section {
+            background: var(--surface);
+            padding: var(--space-5);
+            border: 1px solid var(--border);
+            border-radius: 0; /* Strict 0px requirement */
+            margin-bottom: var(--space-4);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header h2 {
+            font-size: var(--font-size-3);
+            font-weight: 600;
+            text-transform: none;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        label {
+            display: block;
+            font-size: var(--font-size-1);
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+            color: var(--muted);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--font-size-2);
+            background-color: var(--bg-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 0;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--focus);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-3);
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: var(--space-3);
+        }
+
+        /* Table */
+        .data-table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--font-size-2);
+        }
+
+        th {
+            text-align: left;
+            padding: var(--space-2) var(--space-3);
+            background-color: var(--surface-2);
+            color: var(--muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: var(--space-2) var(--space-3);
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 var(--space-4);
+            height: 40px;
+            font-size: var(--font-size-2);
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            border-radius: var(--radius-btn);
+            transition: all 0.2s;
+            text-decoration: none;
+            gap: var(--space-2);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-2);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--surface-2);
+        }
+
+        .btn-sm {
+            height: 32px;
+            padding: 0 var(--space-2);
+            font-size: var(--font-size-1);
+        }
+
+        /* Tags/Badges */
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-top: var(--space-2);
+        }
+
+        .tag {
+            background-color: var(--surface-2);
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--font-size-1);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        /* Theme Switcher */
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-btn);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Toast */
+        #toast-container {
+            position: fixed;
+            bottom: var(--space-5);
+            right: var(--space-5);
+            z-index: 1000;
+        }
+
+        .toast {
+            background: var(--surface);
+            border-left: 4px solid var(--primary);
+            padding: var(--space-3) var(--space-4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: var(--space-2);
+            font-size: var(--font-size-2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 250px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Audit Footer */
+        .audit-footer {
+            margin-top: var(--space-5);
+            padding: var(--space-3);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--font-size-1);
+            color: var(--muted);
+        }
+
+        /* SQL View Modal */
+        #sql-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            padding: var(--space-6);
+        }
+
+        .modal-content {
+            background: var(--surface);
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow: auto;
+            padding: var(--space-4);
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            white-space: pre;
+        }
+
+        @media (max-width: 768px) {
+            .crm-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+            .form-row, .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn.is-loading .loading-spinner {
+            display: inline-block;
+        }
+        .btn.is-loading span {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <div class="app-container">
+        <header>
+            <div class="header-title">
+                <h1>Potansiyel Müşteri Hesap Kartı</h1>
+                <p>Müşteri adaylarını yönetin, yetkilileri takip edin ve satış sürecini başlatın.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="toggleSqlModal()">
+                    <span>SQL Şemasını Gör</span>
+                </button>
+                <button class="theme-toggle" id="theme-switcher" aria-label="Temayı Değiştir">
+                    <svg id="sun-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display: block;"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M17.66 6.34l1.42-1.42"></path></svg>
+                    <svg id="moon-icon" style="display:none" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+                <button class="btn btn-primary" onclick="simulateSave(this)">
+                    <div class="loading-spinner"></div>
+                    <span>Değişiklikleri Kaydet</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="crm-grid">
+            
+            <!-- A) Potansiyel Müşteri Bilgileri -->
+            <section>
+                <div class="section-header">
+                    <h2>Müşteri Bilgileri</h2>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Hitap</label>
+                        <select>
+                            <option>Seçiniz...</option>
+                            <option>Sayın</option>
+                            <option>Bay</option>
+                            <option>Bayan</option>
+                            <option>Dr.</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Adı Soyadı</label>
+                        <input type="text" placeholder="Örn: Ahmet Yılmaz">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Firma Adı</label>
+                    <input type="text" placeholder="Şirket Tam Ünvanı">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Görevi / Title</label>
+                        <input type="text" placeholder="Örn: Satın Alma Müdürü">
+                    </div>
+                    <div class="form-group">
+                        <label>Web Sitesi</label>
+                        <input type="url" placeholder="www.example.com">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>E-Posta</label>
+                        <input type="email" placeholder="ornek@firma.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefon</label>
+                        <input type="tel" placeholder="+90 (___) ___ __ __">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Ülke</label>
+                    <select>
+                        <option>Türkiye</option>
+                        <option>Azerbaycan</option>
+                        <option>Almanya</option>
+                        <option>ABD</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Adres</label>
+                    <textarea rows="3" placeholder="Mahalle, Sokak, No, İlçe/İl"></textarea>
+                </div>
+            </section>
+
+            <!-- C) Sağ Panel: Yetkililer Grid -->
+            <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+                <section style="flex: 1; margin-bottom: 0;">
+                    <div class="section-header">
+                        <h2>Yetkililer</h2>
+                        <button class="btn btn-outline btn-sm">+ Yeni Yetkili</button>
+                    </div>
+                    <div class="data-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ad Soyad</th>
+                                    <th>Görevi</th>
+                                    <th>Telefon</th>
+                                    <th>E-Posta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Mehmet Öz</td>
+                                    <td>Genel Müdür</td>
+                                    <td>0532 111 22 33</td>
+                                    <td>m.oz@firma.com</td>
+                                </tr>
+                                <tr>
+                                    <td>Ayşe Demir</td>
+                                    <td>IT Sorumlusu</td>
+                                    <td>0533 444 55 66</td>
+                                    <td>a.demir@firma.com</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- C) Sağ Panel: Sorumlular ve Durum -->
+                <section style="margin-bottom: 0;">
+                    <div class="section-header">
+                        <h2>Sorumlular ve Durum</h2>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Müşteri Temsilcisi</label>
+                            <select>
+                                <option>Caner Erkin</option>
+                                <option>Selin Yılmaz</option>
+                                <option>Mert Günok</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Takip Sorumlusu</label>
+                            <select>
+                                <option>Selin Yılmaz</option>
+                                <option>Caner Erkin</option>
+                                <option>Mert Günok</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Mevcut Durum</label>
+                        <select style="border-left: 4px solid var(--warning);">
+                            <option>Yeni</option>
+                            <option selected="">İletişim Kuruldu</option>
+                            <option>Teklif Hazırlanıyor</option>
+                            <option>Kazanıldı</option>
+                            <option>Kaybedildi</option>
+                        </select>
+                    </div>
+                </section>
+            </div>
+
+            <!-- B) İşletmenin -->
+            <section>
+                <div class="section-header">
+                    <h2>İşletme Detayları</h2>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Personel Sayısı</label>
+                        <input type="number" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Yıllık Gelir (Tahmini)</label>
+                        <input type="text" placeholder="0.00 TL">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Müşteri Kaynağı</label>
+                        <select>
+                            <option>Web Form</option>
+                            <option>LinkedIn</option>
+                            <option>Referans</option>
+                            <option>Fuar</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sektör</label>
+                        <select>
+                            <option>Sağlık</option>
+                            <option>Üretim</option>
+                            <option>Perakende</option>
+                            <option>Finans</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Talep Edilen Belgeler</label>
+                    <div class="tag-container">
+                        <span class="tag">Fiyat Listesi <span class="tag-remove">×</span></span>
+                        <span class="tag">Teknik Şartname <span class="tag-remove">×</span></span>
+                        <button class="btn btn-outline btn-sm" style="border-style: dashed;">+ Ekle</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- D) Grup -->
+            <section>
+                <div class="section-header">
+                    <h2>Grup ve Sınıflandırma</h2>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Faaliyet Alanı</label>
+                        <select>
+                            <option>Kurumsal Yönetim</option>
+                            <option>İK &amp; Bordro</option>
+                            <option>CRM &amp; Satış</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>İlgilendiği Ürün Grubu</label>
+                        <select>
+                            <option>REM Smart - CRM</option>
+                            <option>WesDent</option>
+                            <option>RBordro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label>Geliş Amacı</label>
+                        <select>
+                            <option>Demo Talebi</option>
+                            <option>Fiyat Talebi</option>
+                            <option>Bilgi Alma</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Hedef Pazar</label>
+                        <select>
+                            <option>Türkiye</option>
+                            <option>Avrupa</option>
+                            <option>Ortadoğu</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Takip Türü</label>
+                        <select>
+                            <option>Telefon</option>
+                            <option>E-Posta</option>
+                            <option>Online Toplantı</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="audit-footer">
+            <div>
+                <strong>Oluşturan:</strong> Sistem Yöneticisi | <strong>Tarih:</strong> 14.05.2024 10:30
+            </div>
+            <div>
+                <strong>Son Güncelleyen:</strong> Caner Erkin | <strong>Tarih:</strong> 15.05.2024 14:15
+            </div>
+        </footer>
+    </div>
+
+    <!-- SQL Modal -->
+    <div id="sql-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>SQL Server Veritabanı Şeması</h3>
+                <button class="btn btn-outline btn-sm" onclick="toggleSqlModal()">Kapat</button>
+            </div>
+            <div class="modal-body" id="sql-code-block">
+/* 0) Varsayılanlar */
+SET NOCOUNT ON;
+GO
+
+/* 1) DROP (FK sırasına göre) */
+IF OBJECT_ID('dbo.Crm_Customers_Documents', 'U') IS NOT NULL DROP TABLE dbo.Crm_Customers_Documents;
+IF OBJECT_ID('dbo.Crm_Customers_Users', 'U') IS NOT NULL DROP TABLE dbo.Crm_Customers_Users;
+IF OBJECT_ID('dbo.Crm_Customers', 'U') IS NOT NULL DROP TABLE dbo.Crm_Customers;
+
+IF OBJECT_ID('dbo.Crm_Lkp_FollowType', 'U') IS NOT NULL DROP TABLE dbo.Crm_Lkp_FollowType;
+IF OBJECT_ID('dbo.Crm_Lkp_Market', 'U') IS NOT NULL DROP TABLE dbo.Crm_Lkp_Market;
+IF OBJECT_ID('dbo.Crm_Lkp_ProductGroup', 'U') IS NOT NULL DROP TABLE dbo.Crm_Lkp_ProductGroup;
+IF OBJECT_ID('dbo.Crm_Lkp_Purpose', 'U') IS NOT NULL DROP TABLE dbo.Crm_Lkp_Purpose;
+IF OBJECT_ID('dbo.Crm_Lkp_ActivityArea', 'U') IS NOT NULL DROP TABLE dbo.Crm_Lkp_ActivityArea;
+
+IF OBJECT_ID('dbo.Crm_Lkp_DocumentType', 'U') IS NOT NULL DROP TABLE dbo.Crm_Lkp_DocumentType;
+IF OBJECT_ID('dbo.Crm_Lkp_Sector', 'U') IS NOT NULL DROP TABLE dbo.Crm_Lkp_Sector;
+IF OBJECT_ID('dbo.Crm_Lkp_LeadSource', 'U') IS NOT NULL DROP TABLE dbo.Crm_Lkp_LeadSource;
+
+IF OBJECT_ID('dbo.Crm_Lkp_CustomerStatus', 'U') IS NOT NULL DROP TABLE dbo.Crm_Lkp_CustomerStatus;
+IF OBJECT_ID('dbo.Crm_Lkp_Country', 'U') IS NOT NULL DROP TABLE dbo.Crm_Lkp_Country;
+IF OBJECT_ID('dbo.Crm_Lkp_Salutation', 'U') IS NOT NULL DROP TABLE dbo.Crm_Lkp_Salutation;
+GO
+
+/* 2) LOOKUP TABLOLARI */
+
+CREATE TABLE dbo.Crm_Lkp_Salutation(
+  SalutationId INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Lkp_Salutation PRIMARY KEY,
+  Name NVARCHAR(50) NOT NULL,
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Lkp_Salutation_IsActive DEFAULT(1),
+  SortOrder INT NOT NULL CONSTRAINT DF_Crm_Lkp_Salutation_Sort DEFAULT(0)
+);
+GO
+
+CREATE TABLE dbo.Crm_Lkp_Country(
+  CountryId INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Lkp_Country PRIMARY KEY,
+  Name NVARCHAR(100) NOT NULL,
+  Iso2 CHAR(2) NULL,
+  PhoneCode NVARCHAR(10) NULL,
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Lkp_Country_IsActive DEFAULT(1),
+  SortOrder INT NOT NULL CONSTRAINT DF_Crm_Lkp_Country_Sort DEFAULT(0)
+);
+GO
+
+CREATE TABLE dbo.Crm_Lkp_CustomerStatus(
+  CustomerStatusId INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Lkp_CustomerStatus PRIMARY KEY,
+  Name NVARCHAR(80) NOT NULL,
+  IsClosed BIT NOT NULL CONSTRAINT DF_Crm_Lkp_CustomerStatus_IsClosed DEFAULT(0),
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Lkp_CustomerStatus_IsActive DEFAULT(1),
+  SortOrder INT NOT NULL CONSTRAINT DF_Crm_Lkp_CustomerStatus_Sort DEFAULT(0)
+);
+GO
+
+CREATE TABLE dbo.Crm_Lkp_LeadSource(
+  LeadSourceId INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Lkp_LeadSource PRIMARY KEY,
+  Name NVARCHAR(120) NOT NULL,
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Lkp_LeadSource_IsActive DEFAULT(1),
+  SortOrder INT NOT NULL CONSTRAINT DF_Crm_Lkp_LeadSource_Sort DEFAULT(0)
+);
+GO
+
+CREATE TABLE dbo.Crm_Lkp_Sector(
+  SectorId INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Lkp_Sector PRIMARY KEY,
+  Name NVARCHAR(120) NOT NULL,
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Lkp_Sector_IsActive DEFAULT(1),
+  SortOrder INT NOT NULL CONSTRAINT DF_Crm_Lkp_Sector_Sort DEFAULT(0)
+);
+GO
+
+CREATE TABLE dbo.Crm_Lkp_DocumentType(
+  DocumentTypeId INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Lkp_DocumentType PRIMARY KEY,
+  Name NVARCHAR(150) NOT NULL,
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Lkp_DocumentType_IsActive DEFAULT(1),
+  SortOrder INT NOT NULL CONSTRAINT DF_Crm_Lkp_DocumentType_Sort DEFAULT(0)
+);
+GO
+
+CREATE TABLE dbo.Crm_Lkp_ActivityArea(
+  ActivityAreaId INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Lkp_ActivityArea PRIMARY KEY,
+  Name NVARCHAR(150) NOT NULL,
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Lkp_ActivityArea_IsActive DEFAULT(1),
+  SortOrder INT NOT NULL CONSTRAINT DF_Crm_Lkp_ActivityArea_Sort DEFAULT(0)
+);
+GO
+
+CREATE TABLE dbo.Crm_Lkp_Purpose(
+  PurposeId INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Lkp_Purpose PRIMARY KEY,
+  Name NVARCHAR(150) NOT NULL,
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Lkp_Purpose_IsActive DEFAULT(1),
+  SortOrder INT NOT NULL CONSTRAINT DF_Crm_Lkp_Purpose_Sort DEFAULT(0)
+);
+GO
+
+CREATE TABLE dbo.Crm_Lkp_ProductGroup(
+  ProductGroupId INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Lkp_ProductGroup PRIMARY KEY,
+  Name NVARCHAR(150) NOT NULL,
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Lkp_ProductGroup_IsActive DEFAULT(1),
+  SortOrder INT NOT NULL CONSTRAINT DF_Crm_Lkp_ProductGroup_Sort DEFAULT(0)
+);
+GO
+
+CREATE TABLE dbo.Crm_Lkp_Market(
+  MarketId INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Lkp_Market PRIMARY KEY,
+  Name NVARCHAR(150) NOT NULL,
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Lkp_Market_IsActive DEFAULT(1),
+  SortOrder INT NOT NULL CONSTRAINT DF_Crm_Lkp_Market_Sort DEFAULT(0)
+);
+GO
+
+CREATE TABLE dbo.Crm_Lkp_FollowType(
+  FollowTypeId INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Lkp_FollowType PRIMARY KEY,
+  Name NVARCHAR(150) NOT NULL,
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Lkp_FollowType_IsActive DEFAULT(1),
+  SortOrder INT NOT NULL CONSTRAINT DF_Crm_Lkp_FollowType_Sort DEFAULT(0)
+);
+GO
+
+/* 3) ANA TABLO: Crm_Customers */
+
+CREATE TABLE dbo.Crm_Customers(
+  CustomerId BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Customers PRIMARY KEY,
+
+  -- Potansiyel Müşteri Bilgileri
+  SalutationId INT NULL,
+  FullName NVARCHAR(150) NULL,          -- Ad Soyad
+  CompanyName NVARCHAR(200) NULL,       -- Firma Adı
+  Title NVARCHAR(120) NULL,             -- Görevi/Title
+  Website NVARCHAR(250) NULL,
+  Email NVARCHAR(200) NULL,
+  Phone NVARCHAR(30) NULL,
+  Address NVARCHAR(500) NULL,
+  CountryId INT NULL,
+
+  -- İşletmenin
+  PersonnelCount INT NULL,
+  AnnualRevenue DECIMAL(18,2) NULL,
+  LeadSourceId INT NULL,
+  SectorId INT NULL,
+
+  -- Sağ panel
+  CustomerRepresentativeUserId INT NULL, -- Sys_Users FK
+  FollowOwnerUserId INT NULL,            -- Sys_Users FK
+  CustomerStatusId INT NOT NULL,
+
+  -- Grup
+  ActivityAreaId INT NULL,
+  PurposeId INT NULL,
+  ProductGroupId INT NULL,
+  MarketId INT NULL,
+  FollowTypeId INT NULL,
+
+  -- Diğer
+  Notes NVARCHAR(1000) NULL,
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Customers_IsActive DEFAULT(1),
+
+  -- Audit
+  CreatedByUserId INT NOT NULL,
+  CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_Crm_Customers_CreatedAt DEFAULT(SYSDATETIME()),
+  UpdatedByUserId INT NULL,
+  UpdatedAt DATETIME2(0) NULL,
+
+  CONSTRAINT CK_Crm_Customers_NameOrCompany CHECK (
+    (FullName IS NOT NULL AND LTRIM(RTRIM(FullName)) &lt;&gt; '')
+    OR
+    (CompanyName IS NOT NULL AND LTRIM(RTRIM(CompanyName)) &lt;&gt; '')
+  )
+);
+GO
+
+/* 4) Yetkililer: Crm_Customers_Users (Grid) */
+CREATE TABLE dbo.Crm_Customers_Users(
+  CustomerUserId BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Crm_Customers_Users PRIMARY KEY,
+  CustomerId BIGINT NOT NULL,
+  FullName NVARCHAR(150) NOT NULL,  -- Yetkili Ad Soyad
+  RoleTitle NVARCHAR(120) NULL,     -- Görevi
+  Email NVARCHAR(200) NULL,         -- E-Posta
+  Phone NVARCHAR(30) NULL,          -- Telefon
+  IsPrimary BIT NOT NULL CONSTRAINT DF_Crm_Customers_Users_IsPrimary DEFAULT(0),
+  IsActive BIT NOT NULL CONSTRAINT DF_Crm_Customers_Users_IsActive DEFAULT(1),
+
+  -- Audit
+  CreatedByUserId INT NOT NULL,
+  CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_Crm_Customers_Users_CreatedAt DEFAULT(SYSDATETIME()),
+  UpdatedByUserId INT NULL,
+  UpdatedAt DATETIME2(0) NULL,
+
+  CONSTRAINT FK_Crm_Customers_Users_Customer
+    FOREIGN KEY(CustomerId) REFERENCES dbo.Crm_Customers(CustomerId) ON DELETE CASCADE
+);
+GO
+
+/* 5) Talep Edilen Belgeler (Çoklu seçim): ilişki tablosu */
+CREATE TABLE dbo.Crm_Customers_Documents(
+  CustomerId BIGINT NOT NULL,
+  DocumentTypeId INT NOT NULL,
+  CreatedByUserId INT NOT NULL,
+  CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_Crm_Customers_Documents_CreatedAt DEFAULT(SYSDATETIME()),
+  CONSTRAINT PK_Crm_Customers_Documents PRIMARY KEY(CustomerId, DocumentTypeId),
+  CONSTRAINT FK_Crm_Customers_Documents_Customer FOREIGN KEY(CustomerId)
+    REFERENCES dbo.Crm_Customers(CustomerId) ON DELETE CASCADE,
+  CONSTRAINT FK_Crm_Customers_Documents_DocType FOREIGN KEY(DocumentTypeId)
+    REFERENCES dbo.Crm_Lkp_DocumentType(DocumentTypeId)
+);
+GO
+
+/* 6) FK’ler (lookup) */
+ALTER TABLE dbo.Crm_Customers ADD CONSTRAINT FK_Crm_Customers_Salutation
+  FOREIGN KEY(SalutationId) REFERENCES dbo.Crm_Lkp_Salutation(SalutationId);
+
+ALTER TABLE dbo.Crm_Customers ADD CONSTRAINT FK_Crm_Customers_Country
+  FOREIGN KEY(CountryId) REFERENCES dbo.Crm_Lkp_Country(CountryId);
+
+ALTER TABLE dbo.Crm_Customers ADD CONSTRAINT FK_Crm_Customers_Status
+  FOREIGN KEY(CustomerStatusId) REFERENCES dbo.Crm_Lkp_CustomerStatus(CustomerStatusId);
+
+ALTER TABLE dbo.Crm_Customers ADD CONSTRAINT FK_Crm_Customers_LeadSource
+  FOREIGN KEY(LeadSourceId) REFERENCES dbo.Crm_Lkp_LeadSource(LeadSourceId);
+
+ALTER TABLE dbo.Crm_Customers ADD CONSTRAINT FK_Crm_Customers_Sector
+  FOREIGN KEY(SectorId) REFERENCES dbo.Crm_Lkp_Sector(SectorId);
+
+ALTER TABLE dbo.Crm_Customers ADD CONSTRAINT FK_Crm_Customers_ActivityArea
+  FOREIGN KEY(ActivityAreaId) REFERENCES dbo.Crm_Lkp_ActivityArea(ActivityAreaId);
+
+ALTER TABLE dbo.Crm_Customers ADD CONSTRAINT FK_Crm_Customers_Purpose
+  FOREIGN KEY(PurposeId) REFERENCES dbo.Crm_Lkp_Purpose(PurposeId);
+
+ALTER TABLE dbo.Crm_Customers ADD CONSTRAINT FK_Crm_Customers_ProductGroup
+  FOREIGN KEY(ProductGroupId) REFERENCES dbo.Crm_Lkp_ProductGroup(ProductGroupId);
+
+ALTER TABLE dbo.Crm_Customers ADD CONSTRAINT FK_Crm_Customers_Market
+  FOREIGN KEY(MarketId) REFERENCES dbo.Crm_Lkp_Market(MarketId);
+
+ALTER TABLE dbo.Crm_Customers ADD CONSTRAINT FK_Crm_Customers_FollowType
+  FOREIGN KEY(FollowTypeId) REFERENCES dbo.Crm_Lkp_FollowType(FollowTypeId);
+GO
+
+/* 8) SEED DATA (Türkçe örnekler) */
+
+INSERT INTO dbo.Crm_Lkp_Salutation(Name, SortOrder) VALUES
+(N'Bay', 1),(N'Bayan', 2),(N'Dr.', 3),(N'Prof. Dr.', 4),(N'Sayın', 5);
+
+INSERT INTO dbo.Crm_Lkp_Country(Name, Iso2, PhoneCode, SortOrder) VALUES
+(N'Türkiye', 'TR', '+90', 1),
+(N'Azerbaycan', 'AZ', '+994', 2),
+(N'Almanya', 'DE', '+49', 3),
+(N'Amerika Birleşik Devletleri', 'US', '+1', 4),
+(N'Birleşik Krallık', 'GB', '+44', 5);
+
+INSERT INTO dbo.Crm_Lkp_CustomerStatus(Name, IsClosed, SortOrder) VALUES
+(N'Yeni', 0, 1),
+(N'İletişim Kuruldu', 0, 2),
+(N'Toplantı Planlandı', 0, 3),
+(N'Teklif Hazırlanıyor', 0, 4),
+(N'Teklif Gönderildi', 0, 5),
+(N'Kazanıldı', 1, 6),
+(N'Kaybedildi', 1, 7);
+
+INSERT INTO dbo.Crm_Lkp_LeadSource(Name, SortOrder) VALUES
+(N'Web Form', 1),
+(N'Telefon', 2),
+(N'E-Posta', 3),
+(N'LinkedIn', 4),
+(N'Referans', 5),
+(N'Fuar / Etkinlik', 6),
+(N'Reklam', 7);
+
+INSERT INTO dbo.Crm_Lkp_Sector(Name, SortOrder) VALUES
+(N'Sağlık', 1),
+(N'Diş Kliniği', 2),
+(N'Belediye', 3),
+(N'Üretim', 4),
+(N'Perakende', 5),
+(N'Eğitim', 6),
+(N'Finans', 7),
+(N'Kamu', 8);
+
+INSERT INTO dbo.Crm_Lkp_DocumentType(Name, SortOrder) VALUES
+(N'Firma Tanıtım Sunumu', 1),
+(N'Fiyat Listesi', 2),
+(N'Teklif / Proforma', 3),
+(N'Sözleşme Taslağı', 4),
+(N'KVKK / Gizlilik Metni', 5),
+(N'Teknik Şartname', 6);
+
+INSERT INTO dbo.Crm_Lkp_ActivityArea(Name, SortOrder) VALUES
+(N'Kurumsal Yönetim', 1),
+(N'İK &amp; Bordro', 2),
+(N'CRM &amp; Satış', 3),
+(N'Sağlık / Klinik Yönetimi', 4),
+(N'Belediye Süreç Yönetimi', 5);
+
+INSERT INTO dbo.Crm_Lkp_Purpose(Name, SortOrder) VALUES
+(N'Demo Talebi', 1),
+(N'Fiyat/ Teklif Talebi', 2),
+(N'Bilgi Alma', 3),
+(N'Proje Başlatma', 4),
+(N'Kıyas / Rakip Analizi', 5);
+
+INSERT INTO dbo.Crm_Lkp_ProductGroup(Name, SortOrder) VALUES
+(N'REM Smart - CRM', 1),
+(N'WesDent', 2),
+(N'RBordro', 3),
+(N'Butterfly Strateji Platformu', 4);
+
+INSERT INTO dbo.Crm_Lkp_Market(Name, SortOrder) VALUES
+(N'Türkiye', 1),
+(N'Bakü / Azerbaycan', 2),
+(N'Avrupa', 3),
+(N'ABD', 4),
+(N'Ortadoğu', 5);
+
+INSERT INTO dbo.Crm_Lkp_FollowType(Name, SortOrder) VALUES
+(N'Telefon Görüşmesi', 1),
+(N'E-Posta', 2),
+(N'WhatsApp', 3),
+(N'Online Toplantı', 4),
+(N'Yüz Yüze Toplantı', 5),
+(N'Demo Sunumu', 6);
+GO
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Management
+        const themeSwitcher = document.getElementById('theme-switcher');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const html = document.documentElement;
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('crm-theme', theme);
+            if (theme === 'dark') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+        }
+
+        // Initialize Theme
+        const savedTheme = localStorage.getItem('crm-theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        setTheme(savedTheme);
+
+        themeSwitcher.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            if (type === 'error') toast.style.borderLeftColor = 'var(--danger)';
+            
+            toast.innerHTML = `
+                <span>${message}</span>
+                <span style="cursor:pointer; margin-left:10px;" onclick="this.parentElement.remove()">×</span>
+            `;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Simulate Save Action
+        function simulateSave(btn) {
+            btn.classList.add('is-loading');
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.classList.remove('is-loading');
+                btn.disabled = false;
+                showToast('Müşteri kartı başarıyla güncellendi.');
+            }, 1200);
+        }
+
+        // Modal Management
+        function toggleSqlModal() {
+            const modal = document.getElementById('sql-modal');
+            const isVisible = modal.style.display === 'block';
+            modal.style.display = isVisible ? 'none' : 'block';
+            if (!isVisible) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Close modal on escape key
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('sql-modal').style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    </script>
+
+</body></html>
