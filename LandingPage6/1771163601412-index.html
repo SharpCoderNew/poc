@@ -1,0 +1,644 @@
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head><script>
+    (function() {
+      const getStorage = () => {
+        try {return localStorage; } catch (e) {
+          try { return sessionStorage; } catch (e2) { return null;}
+        }
+      };
+      const storage = getStorage();
+      let theme = 'dark';
+      try{
+        if (storage && storage.getItem('theme')) {
+          theme = storage.getItem('theme');
+        }else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+          theme = 'light';}
+      } catch (e) {}
+      document.documentElement.dataset.theme = theme;document.documentElement.style.colorScheme = theme;
+    })();
+  </script>
+  <metacharset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Blue Salt Bistro | Modern Coastal Cuisine</title><style>
+    :root {
+      --primary: #0056b3;
+      --primary-2: #004494;
+      --on-primary: #ffffff;
+      --accent:#0056b3;
+      --on-accent: #ffffff;
+      
+      --bg: #ffffff;
+      --bg-2: #f4f8fb;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --text: #1a1a1a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --focus: #3b82f6;
+      --shadow-soft: none;
+      
+      --radius-btn:3px;
+      
+      --space-1: 0.5rem;
+      --space-2: 1rem;
+      --space-3: 1.5rem;
+      --space-4: 2rem;
+      --space-5: 3rem;
+      --space-6:5rem;
+      
+      --font-size-1: 0.875rem;--font-size-2: 1rem;
+      --font-size-3: 1.25rem;
+      --font-size-4: 1.5rem;
+      --font-size-5: 2.25rem;
+      --font-size-6: 3rem;--line-1: 1.2;
+      --line-2: 1.5;--line-3: 1.8;
+
+      --gutter: 20vw;
+      --page-top: 5vw;
+      --page-bottom: var(--space-6);
+    }html[data-theme="dark"] {
+      --bg: #0f172a;--bg-2: #1e293b;
+      --surface: #0f172a;--surface-2: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --primary: #3b82f6;
+      --primary-2: #2563eb;
+    }
+
+    @media (max-width: 480px) {
+      :root {
+        --gutter: var(--space-5);
+        --page-top: var(--space-6);
+        --font-size-6: 2rem;
+        --font-size-5: 1.75rem;
+      }
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {font-family: Arial, Helvetica, sans-serif;
+      background-color: var(--bg);color: var(--text);
+      line-height: var(--line-2);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #page {box-sizing: border-box;
+      padding-left: var(--gutter);
+      padding-right: var(--gutter);
+      padding-top: var(--page-top);
+      padding-bottom:var(--page-bottom);
+    }
+
+    .container {
+      width: 100%;max-width: 1120px;
+      margin-left: auto;
+      margin-right: auto;
+      min-width: 0;
+      padding-left: var(--space-1);
+      padding-right: var(--space-1);
+    }
+
+    /* Typography */
+    h1, h2, h3 {
+      line-height: var(--line-1);
+      margin-bottom: var(--space-3);
+      font-weight: 700;
+    }
+    h1 {font-size: var(--font-size-6); }
+    h2 { font-size: var(--font-size-5); }
+    h3 { font-size: var(--font-size-4);}
+    p { margin-bottom: var(--space-3); }
+
+    /* Layout Components */
+    header{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: var(--space-5);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: var(--space-5);
+    }
+
+    .brand {display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {font-size: var(--font-size-4);
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .brand-sub {
+      font-size: var(--font-size-1);color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;}
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      border-radius: var(--radius-btn);
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;transition: opacity 0.2s;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--on-primary);
+    }
+
+    .btn-ghost {background: transparent;
+      color: var(--text);
+      padding: 0.5rem;}
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;gap: 0.5rem;
+      font-size: var(--font-size-1);}
+
+    /* Sections */
+    section {
+      padding: var(--space-6) 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .section-pastel{
+      background-color: var(--bg-2);
+      margin-left: calc(-1 * var(--space-1));
+      margin-right: calc(-1 * var(--space-1));
+      padding-left: var(--space-1);
+      padding-right: var(--space-1);
+    }.hero {
+      text-align: center;
+      padding-top: var(--space-4);
+    }.hero-img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      margin-bottom: var(--space-4);
+      border-radius: 0;
+    }
+
+    .signature-list, .menu-list, .review-list{
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      list-style: none;
+    }
+
+    .item {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items:baseline;
+    }
+
+    .item-name {
+      font-size: var(--font-size-3);font-weight: 600;
+    }
+
+    .item-price {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .item-desc{
+      color: var(--muted);
+      font-size: var(--font-size-2);
+    }.dietary {
+      font-size: var(--font-size-1);
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .menu-category {
+      margin-top: var(--space-5);
+      margin-bottom: var(--space-3);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: var(--font-size-2);
+      border-left: 4px solid var(--primary);padding-left: var(--space-2);
+    }
+
+    .review-item {
+      font-style: italic;
+      border-left: 2px solid var(--primary);
+      padding-left: var(--space-3);
+    }
+
+    .review-author {
+      display: block;
+      margin-top: var(--space-2);
+      font-style: normal;
+      font-weight: 600;color: var(--muted);
+    }
+
+    /* Form */
+    .reservation-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      max-width:600px;
+    }
+
+    .form-group {
+      display: flex;flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {font-weight: 600;
+      font-size: var(--font-size-1);}
+
+    input, select, textarea {
+      padding: 0.75rem;border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      border-radius: 0;
+    }input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--primary);outline-offset: -1px;
+    }
+
+    /* Footer */
+    footer {
+      padding: var(--space-5) 0;
+      border-top: 1px solid var(--border);text-align: center;
+      font-size: var(--font-size-1);
+      color: var(--muted);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: none;align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: var(--space-4);
+    }
+
+    .modal {
+      background: var(--bg);padding: var(--space-5);
+      max-width: 500px;
+      width:100%;
+      position: relative;
+      border-radius: 0;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      font-size: 1.5rem;
+      padding: 0.5rem;
+      line-height: 1;
+    }
+
+    /* Toast */
+    #toast {position: fixed;
+      bottom: var(--space-4);
+      right: var(--space-4);
+      background: var(--primary);
+      color: var(--on-primary);
+      padding:1rem 2rem;
+      transform: translateY(200%);
+      transition: transform 0.3s ease;
+      z-index: 2000;
+      font-weight: 600;
+    }
+
+    #toast.show {
+      transform: translateY(0);
+    }@media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;animation: none !important;
+      }
+    }
+
+    .img-container {
+      margin: var(--space-4) 0;
+    }
+
+    .img-full {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div id="page">
+  <div class="container">
+    <header><div class="brand">
+        <span class="brand-name">THE BLUE SALT</span>
+        <spanclass="brand-sub">Modern Coastal Bistro</span>
+      </div>
+      <div class="nav-actions">
+        <buttonclass="btn-ghost theme-toggle" id="theme-btn" aria-label="Toggle theme">
+          <span id="theme-icon">🌙</span>
+          <span id="theme-text">Dark</span>
+        </button><a href="#reserve" style="text-decoration: none;">
+          <button class="btn-primary">BookTable</button>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero --><section class="hero">
+        <h1>Freshly Sourced. <br>Artfully Prepared.</h1><p>Experience the finest coastal flavors in a serene, modern atmosphere. Our ingredients are delivered daily from local sustainable fisheries.</p>
+        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1200" alt="Elegant restaurant dining room with blue accents" class="hero-img">
+      </section>
+
+      <!-- Signature Dishes -->
+      <section class="section-pastel">
+        <h2>Signature Dishes</h2>
+        <p>Our chef's curated selection of seasonal favorites.</p><ul class="signature-list">
+          <li class="item">
+            <div class="item-header">
+              <span class="item-name">Pan-Seared Atlantic Bass</span>
+              <span class="item-price">$34</span>
+            </div>
+            <p class="item-desc">Wild-caught bass served with lemon-infused risotto and charred asparagus.</p>
+            <span class="dietary">Gluten-Free</span>
+          </li>
+          <li class="item">
+            <div class="item-header"><span class="item-name">Blue Salt Scallops</span>
+              <span class="item-price">$28</span>
+            </div>
+            <p class="item-desc">Jumbo scallops with parsnip silk, crispy pancetta, and micro-greens.</p>
+            <span class="dietary">Chef's Choice</span></li>
+        </ul>
+        <div class="img-container">
+          <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&q=80&w=800" alt="Artfully plated seafood dish" class="img-full">
+        </div>
+      </section><!-- Menu -->
+      <section id="menu">
+        <h2>Our Menu</h2>
+        
+        <h3 class="menu-category">Starters</h3>
+        <ul class="menu-list">
+          <liclass="item">
+            <div class="item-header">
+              <span class="item-name">Coastal Focaccia</span>
+              <span class="item-price">$9</span>
+            </div>
+            <p class="item-desc">House-baked bread with rosemary and sea salt butter.</p>
+            <span class="dietary">Vegetarian</span>
+          </li>
+          <li class="item">
+            <div class="item-header"><span class="item-name">Crispy Calamari</span>
+              <span class="item-price">$16</span>
+            </div>
+            <p class="item-desc">Lightly dusted with spiced flour, served withcitrus aioli.</p>
+          </li>
+        </ul>
+
+        <h3 class="menu-category">Mains</h3>
+        <ul class="menu-list">
+          <li class="item">
+            <div class="item-header">
+              <span class="item-name">Roasted Root Risotto</span>
+              <span class="item-price">$24</span>
+            </div>
+            <p class="item-desc">Creamy Arboriorice with seasonal root vegetables and truffle oil.</p>
+            <span class="dietary">Vegetarian, Gluten-Free</span></li>
+          <li class="item">
+            <div class="item-header">
+              <span class="item-name">Herb-Crusted Lamb</span>
+              <span class="item-price">$38</span>
+            </div>
+            <p class="item-desc">Tender lamb rack with mint pea purée and fondantpotatoes.</p>
+          </li>
+        </ul>
+
+        <h3 class="menu-category">Desserts &Drinks</h3>
+        <ul class="menu-list">
+          <li class="item">
+            <divclass="item-header">
+              <span class="item-name">Lemon Lavender Tart</span>
+              <span class="item-price">$12</span>
+            </div>
+            <p class="item-desc">Shortcrust pastry with zesty lemon curd and dried lavender.</p>
+          </li>
+          <li class="item">
+            <divclass="item-header">
+              <span class="item-name">Bayside Sunset Cocktail</span>
+              <span class="item-price">$15</span>
+            </div>
+            <p class="item-desc">Gin, blood orange, elderflower, and a splash of soda.</p>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Reviews -->
+      <section class="section-pastel">
+        <h2>Guest Stories</h2>
+        <div class="review-list">
+          <blockquote class="review-item">
+            "The pan-seared basswas the best I've ever had. The attention to detail and the coastal vibes make this my new favorite spot."<cite class="review-author">— Elena Rodriguez</cite>
+          </blockquote>
+          <blockquote class="review-item">
+            "A masterclass in modern seafood. Simple, fresh, and incredibly flavorful. The service wasimpeccable."
+            <cite class="review-author">— Marcus Thorne</cite>
+          </blockquote>
+        </div>
+      </section>
+
+      <!-- Reservation -->
+      <section id="reserve">
+        <h2>Reserve a Table</h2>
+        <p>Join us for an unforgettable dining experience. We recommend booking 48 hours in advance.</p>
+        <formclass="reservation-form" id="res-form">
+          <div class="form-group">
+            <labelfor="name">Full Name</label>
+            <input type="text" id="name" name="name" requiredplaceholder="John Doe">
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" requiredplaceholder="john@example.com">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2);">
+            <div class="form-group">
+              <label for="date">Date</label>
+              <input type="date" id="date" name="date" required>
+            </div>
+            <div class="form-group">
+              <label for="guests">Guests</label>
+              <select id="guests" name="guests" required><option value="1">1 Person</option>
+                <option value="2" selected>2 People</option>
+                <option value="3">3 People</option>
+                <option value="4">4 People</option>
+                <option value="5+">5+ People</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="notes">Special Requests</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Allergies, anniversaries, etc."></textarea>
+          </div>
+          <button type="submit" class="btn-primary">Confirm Reservation</button>
+        </form>
+      </section>
+
+      <!-- Contact &Hours -->
+      <section class="section-pastel">
+        <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+          <div>
+            <h3>Find Us</h3>
+            <p>123 Coastal Promenade<br>Bayside District, CA 90210</p>
+            <p>+1 (555) 234-5678<br>hello@bluesaltbistro.com</p>
+          </div>
+          <div>
+            <h3>Hours of Service</h3>
+            <p>Monday —Thursday: 4:00 PM - 10:00 PM</p>
+            <p>Friday— Saturday: 12:00 PM - 11:00 PM</p>
+            <p>Sunday: 11:00 AM - 9:00 PM</p>
+          </div></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; <span id="year">2026</span> The Blue Salt Bistro. All rights reserved.</p>
+      <p style="margin-top: 0.5rem; font-size: 0.75rem;">Crafted forExcellence in Coastal Dining.</p>
+    </footer>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay" role="presentation">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" id="res-modal">
+    <button class="modal-close btn-ghost" id="modal-close" aria-label="Close modal">&times;</button>
+    <h3 id="modal-title">Reservation Confirmed!</h3>
+    <p id="modal-desc">Thank you, <span id="res-name-display"></span>. We have reserved a table for <span id="res-guests-display"></span> on <span id="res-date-display"></span>. A confirmation email has been sent to yourinbox.</p>
+    <button class="btn-primary" style="width: 100%; margin-top: var(--space-3);" id="modal-ok">Great, thanks!</button>
+  </div>
+</div><!-- Toast -->
+<div id="toast">Message sent successfully!</div>
+
+<script>
+  // Theme Managementconst themeBtn = document.getElementById('theme-btn');
+  const themeIcon = document.getElementById('theme-icon');
+  const themeText = document.getElementById('theme-text');
+  const html = document.documentElement;
+
+  const storage = (() => {
+    try { return localStorage; } catch (e) {try { return sessionStorage; } catch (e2) { return { getItem: () => null, setItem:() => null }; }
+    }
+  })();
+
+  function updateThemeUI(theme) {
+    themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    themeText.textContent =theme === 'dark' ? 'Light' : 'Dark';
+    html.dataset.theme = theme;html.style.colorScheme = theme;
+    themeBtn.setAttribute('aria-pressed', theme === 'dark');
+  }
+
+  themeBtn.addEventListener('click', () => {
+    const currentTheme = html.dataset.theme;
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';updateThemeUI(newTheme);
+    try { storage.setItem('theme', newTheme); } catch (e){}
+  });
+
+  // Initialize UI
+  updateThemeUI(html.dataset.theme);
+
+  // ReservationForm & Modal
+  const resForm = document.getElementById('res-form');
+  const modalOverlay = document.getElementById('modal-overlay');
+  const modalClose = document.getElementById('modal-close');
+  const modalOk = document.getElementById('modal-ok');
+  const resModal = document.getElementById('res-modal');
+
+  const resNameDisplay = document.getElementById('res-name-display');
+  const resGuestsDisplay = document.getElementById('res-guests-display');
+  const resDateDisplay = document.getElementById('res-date-display');function openModal(data) {
+    resNameDisplay.textContent = data.name;
+    resGuestsDisplay.textContent = data.guests + (data.guests === "1" ? " person" : " people");resDateDisplay.textContent = data.date;
+    
+    modalOverlay.style.display = 'flex';modalOk.focus();
+    document.body.style.overflow = 'hidden';
+  }function closeModal() {
+    modalOverlay.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    resForm.reset();
+  }
+
+  resForm.addEventListener('submit', (e)=> {
+    e.preventDefault();
+    const formData = new FormData(resForm);
+    const data =Object.fromEntries(formData.entries());
+    openModal(data);
+  });
+
+  modalClose.addEventListener('click', closeModal);
+  modalOk.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+
+  // Modal FocusTrap
+  resModal.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+      const focusables = resModal.querySelectorAll('button, [href], input, select, textarea');const first = focusables[0];
+      const last = focusables[focusables.length -1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }}
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Footer Yeardocument.getElementById('year').textContent = '2026';
+
+  // Toast Helper
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+</script>
+
+</body>
+</html>
