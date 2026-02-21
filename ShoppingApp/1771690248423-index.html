@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <title>Aura | Minimalist Task Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <linkrel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script>(function() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      }
+    })();
+  </script><style>
+    :root {
+      /* Spacing */
+      --gutter: 15vw;
+      --space-1: 0.5rem;
+      --space-2: 1rem;
+      --space-3: 1.5rem;
+      --space-4: 2rem;
+      --space-5: 3rem;
+      --space-6: 4rem;--page-top: var(--space-6);
+      --page-bottom: var(--space-6);
+
+      /* Typography */
+      --font-serif: 'Playfair Display', serif;
+      --font-sans: 'Inter', sans-serif;
+      --font-size-1: 0.875rem;
+      --font-size-2: 1rem;
+      --font-size-3: 1.25rem;
+      --font-size-4: 1.75rem;--font-size-5: 2.5rem;
+      --font-size-6:3.5rem;
+      --line-1: 1.2;
+      --line-2:1.5;
+      --line-3: 1.8;
+
+      /* UI Tokens */--radius-btn: 3px;
+      --radius-card: 8px;
+      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html[data-theme="light"] {
+      --bg: #fdfdfd;
+      --bg-2: #f7f7f7;
+      --surface: #ffffff;
+      --surface-2: #f0f0f0;
+      --text: #1a1a1a;
+      --muted: #666666;
+      --border:#e0e0e0;
+      --primary: #2d3436;
+      --primary-2: #636e72;
+      --on-primary: #ffffff;
+      --accent: #0984e3;
+      --on-accent: #ffffff;
+      --success:#00b894;
+      --warning: #fdcb6e;
+      --danger: #d63031;
+      --focus: rgba(9, 132, 227,0.3);
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0f0f0f;
+      --bg-2: #161616;
+      --surface: #1c1c1c;
+      --surface-2: #252525;
+      --text: #e0e0e0;
+      --muted: #a0a0a0;--border: #333333;
+      --primary: #fdfdfd;
+      --primary-2: #b2bec3;
+      --on-primary: #0f0f0f;
+      --accent: #74b9ff;
+      --on-accent: #0f0f0f;--success: #55efc4;
+      --warning: #ffeaa7;
+      --danger: #ff7675;
+      --focus: rgba(116, 185, 255, 0.3);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: var(--line-2);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    #page {box-sizing: border-box;
+      padding-left: var(--gutter);
+      padding-right: var(--gutter);
+      padding-top: var(--page-top);
+      padding-bottom: var(--page-bottom);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 100%;max-width: 1120px;
+      margin-left: auto;
+      margin-right: auto;
+      min-width: 0;
+      padding-left: var(--space-1);padding-right: var(--space-1);
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      line-height: var(--line-1);
+      margin-bottom: var(--space-2);
+    }
+
+    h1 { font-size: var(--font-size-5); }h2 { font-size: var(--font-size-4); }
+    h3 { font-size:var(--font-size-3); }
+
+    p { margin-bottom: var(--space-2); color: var(--muted); }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-6);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      padding: var(--space-2) 0;
+      backdrop-filter: blur(8px);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand h1 {
+      margin: 0;
+      letter-spacing: -1px;
+    }
+
+    .brand p {
+      margin: 0;
+      font-size: var(--font-size-1);
+      text-transform: uppercase;
+      letter-spacing:2px;
+    }
+
+    .controls {
+      display: flex;
+      gap: var(--space-2);
+      align-items: center;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      color:var(--text);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      font-size: var(--font-size-1);font-weight: 500;
+      transition: var(--transition);
+      display: flex;align-items: center;
+      gap: 0.5rem;
+    }
+
+    .theme-toggle:hover {
+      background: var(--surface-2);
+      border-color: var(--primary);
+    }/* Main Content */
+    main {
+      flex: 1;
+    }
+
+    .divider{
+      height: 1px;
+      background: var(--border);
+      margin: var(--space-4) 0;
+      border: none;
+    }
+
+    /* To-Do App Styles */
+    .app-section {
+      margin-bottom: var(--space-6);
+    }
+
+    .task-input-group {
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    input[type="text"], 
+    textarea,
+    input[type="email"] {
+      width: 100%;
+      background: var(--surface);
+      border:1px solid var(--border);
+      color: var(--text);
+      padding: 0.8rem 1rem;
+      border-radius: var(--radius-btn);
+      font-family: var(--font-sans);
+      font-size: var(--font-size-2);
+      transition: var(--transition);
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--focus);
+    }
+
+    .btn {
+      background: var(--primary);
+      color: var(--on-primary);
+      border: none;
+      padding: 0.8rem 1.5rem;border-radius: var(--radius-btn);
+      cursor: pointer;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      transition: var(--transition);white-space: nowrap;
+      display: inline-flex;
+      align-items: center;justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }.btn-secondary {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger {background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-small {
+      padding: 0.4rem 0.8rem;
+      font-size: var(--font-size-1);
+    }
+
+    /* Task List*/
+    .task-list {
+      display: flex;
+      flex-direction: column;gap: var(--space-3);
+    }
+
+    .task-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: var(--space-3);
+      transition: var(--transition);
+      animation:fadeIn 0.4s ease-out forwards;
+      transform-origin: top left;
+    }
+
+    .task-card:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: var(--shadow-soft);
+      border-color: var(--accent);
+    }
+
+    @keyframes fadeIn {
+      from { opacity:0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-2);
+    }
+
+    .task-title-wrap {
+      flex: 1;
+      display:flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .task-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--success);
+      transition: transform 0.15s ease-out;
+    }
+
+    .task-checkbox:active {
+      transform: scale(0.9);
+    }
+
+    .task-title {font-size: var(--font-size-3);
+      font-weight: 500;border: none;
+      background: transparent;
+      color: var(--text);
+      width:100%;
+      padding: 2px 4px;
+      transition: background-color 0.2s ease-out;
+    }
+
+    .task-title:focus {
+      background-color: var(--surface-2);
+    }
+
+    .task-title.completed {
+      text-decoration: line-through;
+      color: var(--muted);
+    }.subtask-container {
+      margin-left: var(--space-4);
+      padding-left: var(--space-2);
+      border-left: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
+    }
+
+    .subtask-item {
+      background: var(--bg-2);
+      padding: var(--space-2);
+      border-radius: var(--radius-btn);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .subtask-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+    }
+
+    .subtask-main {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .subtask-title {flex: 1;
+      font-size: var(--font-size-2);
+      background: transparent;border: none;
+      color: var(--text);
+      transition: background-color 0.2s ease-out;
+    }
+
+    .subtask-title:focus {
+      background-color: var(--surface-2);
+    }
+
+    .subtask-title.completed {
+      text-decoration: line-through;
+      color: var(--muted);
+    }.subtask-details {
+      padding-left: calc(20px + var(--space-2));display: none;
+    }
+
+    .subtask-details.active {
+      display: block;}
+
+    .subtask-desc {
+      font-size: var(--font-size-1);color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+      width: 100%;
+      resize: none;
+      padding: 4px;
+      margin-top:4px;
+      transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
+    }
+
+    .subtask-desc:focus {
+      border-color: var(--border);
+      background: var(--surface);
+    }
+
+    .expand-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;gap: 0.2rem;
+      transition: color 0.2s ease-out, transform 0.2s ease-out;
+    }
+
+    .expand-btn:hover {
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* Contact Section */
+    .contact-section {background: var(--bg-2);
+      padding: var(--space-5);
+      border-radius: var(--radius-card);
+      margin-top: var(--space-6);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;gap: var(--space-4);
+    }
+
+    @media (max-width: 768px){
+      .contact-grid { grid-template-columns: 1fr; }
+      #page { --gutter: 5vw; }
+      .task-input-group { flex-direction: column; }
+    }.form-group {
+      margin-bottom: var(--space-2);
+    }
+
+    .form-group label {
+      display: block;
+      font-size: var(--font-size-1);font-weight: 500;
+      margin-bottom: 0.5rem;
+      color:var(--text);
+    }
+
+    /* Status Toast */
+    #status-area {
+      position: fixed;bottom: var(--space-4);
+      right: var(--space-4);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap:var(--space-1);
+    }
+
+    .toast {
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-btn);
+      box-shadow: var(--shadow-soft);
+      font-size: var(--font-size-1);
+      font-weight: 500;
+      animation: slideIn 0.3s ease-out forwards;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1;}
+    }
+
+    /* Footer */
+    footer {
+      margin-top: var(--space-6);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--muted);
+      font-size: var(--font-size-1);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--space-6);
+      border: 2px dashed var(--border);border-radius: var(--radius-card);
+      color: var(--muted);
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+  </style>
+</head>
+<body>
+
+<div id="page">
+  <div class="container">
+    <header>
+      <div class="brand">
+        <p>Productivity Suite</p>
+        <h1>Aura</h1>
+      </div>
+      <div class="controls">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <span id="themeIcon">🌙</span>
+          <span id="themeText">Dark Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <main><section class="app-section">
+        <div class="task-input-group">
+          <input type="text" id="newTaskInput" placeholder="Plan the next big project..." aria-label="New tasktitle">
+          <button class="btn" id="addTaskBtn">Add Task</button>
+        </div><div id="taskList" class="task-list">
+          <!-- Tasks injected here -->
+        </div>
+      </section>
+
+      <hr class="divider">
+
+      
+    </main>
+
+    <footer>
+      <p>&copy;<span id="year"></span> Aura Task Management. All rights reserved.</p>
+    </footer>
+  </div>
+</div><div id="status-area"></div>
+
+<script>
+  // --- State Management ---
+  letstate = {
+    tasks: JSON.parse(localStorage.getItem('aura_tasks')) || [
+      {id: Date.now(),
+        title: "Welcome to Aura",
+        completed: false,
+        subtasks: [
+          { id: Date.now() + 1, title: "Create your first task", description: "Use the input field at the top to start organizing your day.", completed: false, expanded: true },
+          { id: Date.now() + 2, title: "Add subtasks for detail", description: "Each task can have multiplesubtasks with descriptions.", completed: false, expanded: false }
+        ]
+      }
+    ]
+  };const saveState = () => {
+    localStorage.setItem('aura_tasks', JSON.stringify(state.tasks));
+  };
+
+  // --- UI Components ---
+  const taskListEl = document.getElementById('taskList');const newTaskInput = document.getElementById('newTaskInput');
+  const addTaskBtn = document.getElementById('addTaskBtn');
+  const statusArea = document.getElementById('status-area');
+
+  const showToast = (msg) => {
+    const toast = document.createElement('div');
+    toast.className = 'toast';toast.textContent = msg;
+    statusArea.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  };
+
+  const render = () => {
+    if (state.tasks.length=== 0) {
+      taskListEl.innerHTML = `<div class="empty-state">No tasks yet.Start by adding one above.</div>`;
+      return;
+    }
+
+    taskListEl.innerHTML = '';state.tasks.forEach(task => {
+      const taskCard = document.createElement('div');
+      taskCard.className = 'task-card';
+      
+      const subtasksHtml = task.subtasks.map(sub =>`
+        <div class="subtask-item">
+          <div class="subtask-main"><input type="checkbox" class="task-checkbox" ${sub.completed ? 'checked' : ''}onchange="toggleSubtask(${task.id}, ${sub.id})">
+            <input type="text" class="subtask-title ${sub.completed ? 'completed' : ''}" 
+              value="${sub.title}" onchange="updateSubtask(${task.id}, ${sub.id}, 'title', this.value)">
+            <button class="expand-btn" onclick="toggleExpand(${task.id}, ${sub.id})">${sub.expanded ? '▲ Hide' : '▼ Details'}
+            </button>
+            <buttonclass="btn btn-danger btn-small" onclick="deleteSubtask(${task.id}, ${sub.id})">✕</button>
+          </div>
+          <div class="subtask-details ${sub.expanded ? 'active': ''}">
+            <textarea class="subtask-desc" placeholder="Add a description..." 
+              onchange="updateSubtask(${task.id}, ${sub.id}, 'description', this.value)">${sub.description}</textarea>
+          </div>
+        </div>
+      `).join('');
+
+      taskCard.innerHTML =`
+        <div class="task-header">
+          <div class="task-title-wrap"><input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}onchange="toggleTask(${task.id})">
+            <input type="text" class="task-title ${task.completed ? 'completed' : ''}" 
+              value="${task.title}" onchange="updateTaskTitle(${task.id}, this.value)">
+          </div>
+          <div class="controls"><button class="btn btn-secondary btn-small" onclick="addSubtask(${task.id})">+Subtask</button>
+            <button class="btn btn-danger btn-small" onclick="deleteTask(${task.id})">Delete</button>
+          </div>
+        </div>
+        <div class="subtask-container">
+          ${subtasksHtml}
+        </div>
+      `;
+      taskListEl.appendChild(taskCard);
+    });
+  };
+
+  // --- Actions ---
+  const addTask = () => {
+    consttitle = newTaskInput.value.trim();
+    if (!title) return showToast("Please enter a task title");
+    
+    state.tasks.unshift({
+      id: Date.now(),
+      title,
+      completed: false,
+      subtasks: []
+    });
+    newTaskInput.value = '';
+    saveState();render();
+    showToast("Task added");
+  };
+
+  window.toggleTask = (id) =>{
+    const task = state.tasks.find(t => t.id === id);
+    if (task) {
+      task.completed = !task.completed;
+      // Optionally complete all subtasks
+      task.subtasks.forEach(s => s.completed = task.completed);
+      saveState();
+      render();}
+  };
+
+  window.updateTaskTitle = (id, val) => {
+    const task =state.tasks.find(t => t.id === id);
+    if (task) {
+      task.title = val;
+      saveState();
+    }
+  };
+
+  window.deleteTask = (id) => {
+    if (confirm("Are you sure you want to delete this task and all its subtasks?")) {state.tasks = state.tasks.filter(t => t.id !== id);
+      saveState();
+      render();
+      showToast("Task deleted");
+    }
+  };
+
+  window.addSubtask = (taskId) => {
+    const task = state.tasks.find(t => t.id ===taskId);
+    if (task) {
+      task.subtasks.push({
+        id: Date.now(),
+        title: "New Subtask",
+        description: "",
+        completed: false,expanded: true
+      });
+      saveState();
+      render();
+    }
+  };
+
+  window.toggleSubtask = (taskId, subId) => {
+    const task = state.tasks.find(t => t.id === taskId);
+    if (task) {
+      const sub = task.subtasks.find(s => s.id === subId);
+      if (sub) {
+        sub.completed= !sub.completed;
+        // If all subtasks complete, mark parent complete? (Optional UX choice)saveState();
+        render();
+      }
+    }
+  };
+
+  window.updateSubtask =(taskId, subId, field, value) => {
+    const task = state.tasks.find(t =>t.id === taskId);
+    if (task) {
+      const sub = task.subtasks.find(s => s.id === subId);
+      if (sub) {
+        sub[field] =value;
+        saveState();
+      }
+    }
+  };
+
+  window.deleteSubtask =(taskId, subId) => {
+    const task = state.tasks.find(t => t.id=== taskId);
+    if (task) {
+      task.subtasks = task.subtasks.filter(s => s.id !== subId);
+      saveState();
+      render();
+    }
+  };window.toggleExpand = (taskId, subId) => {
+    const task = state.tasks.find(t => t.id === taskId);
+    if (task) {
+      const sub = task.subtasks.find(s => s.id === subId);
+      if (sub) {
+        sub.expanded = !sub.expanded;
+        saveState();
+        render();
+      }
+    }};
+
+  // --- Theme Logic ---
+  const themeToggle = document.getElementById('themeToggle');const themeIcon = document.getElementById('themeIcon');
+  const themeText = document.getElementById('themeText');const updateThemeUI = (theme) => {
+    themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+    themeText.textContent = theme === 'dark' ? 'Dark Mode' :'Light Mode';
+  };
+
+  themeToggle.addEventListener('click', () => {
+    const currentTheme= document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ?'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);localStorage.setItem('theme', newTheme);
+    updateThemeUI(newTheme);
+  });
+
+  //--- Initialization ---
+  document.addEventListener('DOMContentLoaded', () => {
+    render();
+    updateThemeUI(document.documentElement.getAttribute('data-theme'));
+    document.getElementById('year').textContent = new Date().getFullYear();
+    
+    addTaskBtn.addEventListener('click', addTask);
+    newTaskInput.addEventListener('keypress', (e)=> {
+      if (e.key === 'Enter') addTask();
+    });
+
+    
+  });
+
+  // Scroll Reveal Logic
+  constobserverOptions = { threshold: 0.1 };
+  const observer = new IntersectionObserver((entries) => {entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = "1";
+        entry.target.style.transform = "translateY(0)";}
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.app-section, .contact-section').forEach(el => {
+    el.style.opacity = "0";
+    el.style.transform= "translateY(20px)";
+    el.style.transition = "all 0.6sease-out";
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
