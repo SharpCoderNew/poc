@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vignette | Editorial & Fine Art Photography</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --accent: #d4af37;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(18, 18, 18, 0.8);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .light-theme {
+            --bg-primary: #fcfcfc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --accent: #b08d1a;
+            --border: rgba(0, 0, 0, 0.1);
+            --glass: rgba(252, 252, 252, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        h1, h2, h3, .serif {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+        }
+
+        ul { list-style: none; }
+        a { text-decoration: none; color: inherit; cursor: pointer; }
+        button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Nav Styles */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+
+        .theme-toggle {
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--border);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: var(--transition);
+        }
+
+        /* Hero / Ken Burns */
+        #home {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .hero-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        .hero-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.1);
+        }
+
+        .hero-slide.active img {
+            animation: kenburns 20s ease infinite;
+        }
+
+        @keyframes kenburns {
+            0% { transform: scale(1.1) translate(0, 0); }
+            50% { transform: scale(1.2) translate(-1%, -1%); }
+            100% { transform: scale(1.1) translate(0, 0); }
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.4) 100%);
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            padding: 2rem;
+            max-width: 800px;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(3rem, 10vw, 5rem);
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            color: #fff;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #fff;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            transition: var(--transition);
+            border: 1px solid var(--accent);
+        }
+
+        .btn:hover {
+            background: transparent;
+            color: var(--accent);
+        }
+
+        /* Portfolio / Masonry */
+        section {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .gallery-grid {
+            columns: 4 250px;
+            column-gap: 1.5rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            background: var(--bg-secondary);
+            break-inside: avoid;
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            transition: var(--transition);
+            opacity: 0;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .exif-tag {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+            opacity: 0.8;
+        }
+
+        /* Stories */
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .story-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .story-image {
+            height: 250px;
+            overflow: hidden;
+            background: var(--bg-primary);
+        }
+
+        .story-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+            opacity: 0;
+        }
+
+        .story-card:hover .story-image img {
+            transform: scale(1.1);
+        }
+
+        .story-content {
+            padding: 2rem;
+        }
+
+        .story-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .story-meta {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .story-excerpt {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            padding: 3rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+        }
+
+        .service-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--accent);
+        }
+
+        .price span {
+            font-size: 1rem;
+            opacity: 0.6;
+        }
+
+        .service-card ul {
+            margin-bottom: 2.5rem;
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .service-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        /* Portal */
+        .portal-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            padding: 3rem;
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+        }
+
+        .stat-card h4 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .stat-card p {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Lightbox & Modals */
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            max-width: 1200px;
+            width: 100%;
+            max-height: 90vh;
+            position: relative;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            color: #fff;
+            font-size: 2rem;
+            z-index: 2100;
+        }
+
+        .lightbox-img-container {
+            display: flex;
+            height: 80vh;
+        }
+
+        .lightbox-img {
+            flex: 2;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-img img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .lightbox-info {
+            flex: 1;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .exif-data {
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .exif-item span:first-child {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* Story Expand */
+        .story-full {
+            padding: 4rem;
+            max-height: 80vh;
+            overflow-y: auto;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        /* Footer */
+        footer {
+            padding: 5rem 0;
+            border-top: 1px solid var(--border);
+            background: var(--bg-secondary);
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .social-links a {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+        }
+
+        .copyright {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                height: 100vh;
+                background: var(--bg-primary);
+                flex-direction: column;
+                justify-content: center;
+                transition: var(--transition);
+                z-index: 1001;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .hamburger {
+                display: flex;
+                z-index: 1002;
+            }
+
+            .lightbox-img-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .lightbox-img {
+                height: 40vh;
+            }
+
+            .section-header h2 {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            z-index: 3000;
+            display: none;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Ken Burns Initial Hide */
+        .hero-slide img { opacity: 0; transition: opacity 0.5s ease; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#home" class="logo">VIGNETTE</a>
+                <div class="nav-links" id="navLinks">
+                    <a href="#home">Home</a>
+                    <a href="#portfolio">Portfolio</a>
+                    <a href="#stories">Stories</a>
+                    <a href="#services">Services</a>
+                    <a href="#portal">Client Portal</a>
+                    <a href="#contact">Contact</a>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </button>
+                </div>
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="home">
+            <div class="hero-slider" id="heroSlider">
+                <!-- Slides injected by JS -->
+            </div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content reveal">
+                <p class="serif" style="font-style: italic; letter-spacing: 4px; margin-bottom: 0.5rem;">EST. 2014</p>
+                <h1>Capturing the Essence of Light & Soul</h1>
+                <p>Fine art photography for editorial campaigns, intimate weddings, and timeless portraiture across the globe.</p>
+                <a href="#portfolio" class="btn">Explore Portfolio</a>
+            </div>
+        </section>
+
+        <section id="portfolio">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2>The Collection</h2>
+                    <p>A curation of our most evocative visual narratives.</p>
+                </div>
+                <div class="gallery-grid" id="galleryGrid">
+                    <!-- Gallery items injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <section id="stories">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2>Visual Stories</h2>
+                    <p>Deep dives into the journeys behind the frames.</p>
+                </div>
+                <div class="stories-grid" id="storiesGrid">
+                    <!-- Stories injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <section id="services" style="background: var(--bg-secondary);">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2>Investments</h2>
+                    <p>Crafting bespoke experiences tailored to your vision.</p>
+                </div>
+                <div class="services-grid" id="servicesGrid">
+                    <!-- Services injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <section id="portal">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2>Client Portal</h2>
+                    <p>Manage your sessions, galleries, and orders.</p>
+                </div>
+                
+                <div id="loginView" class="portal-container reveal">
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" required placeholder="client@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn" style="width:100%">Sign In</button>
+                    </form>
+                </div>
+
+                <div id="dashboardView" class="portal-container dashboard">
+                    <div class="dashboard-header">
+                        <h3>Welcome back, Elias</h3>
+                        <button id="signOutBtn" style="font-size: 0.8rem; text-decoration: underline;">Sign Out</button>
+                    </div>
+                    <div class="stat-grid" id="dashboardStats">
+                        <!-- Stats injected by JS -->
+                    </div>
+                    <div id="dashboardContent">
+                        <!-- Content injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2>Get In Touch</h2>
+                    <p>Let's collaborate on something extraordinary.</p>
+                </div>
+                <div class="portal-container reveal">
+                    <form id="contactForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Session Type</label>
+                            <select>
+                                <option>Editorial / Commercial</option>
+                                <option>Portrait Session</option>
+                                <option>Wedding / Event</option>
+                                <option>Fine Art Commissions</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn" style="width:100%">Send Inquiry</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">VIGNETTE</div>
+            <div class="social-links">
+                <a href="#" target="_blank" rel="noopener noreferrer">Instagram</a>
+                <a href="#" target="_blank" rel="noopener noreferrer">Vogue Italia</a>
+                <a href="#" target="_blank" rel="noopener noreferrer">Pinterest</a>
+            </div>
+            <p class="copyright">&copy; 2024 Vignette Photography. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="lightbox" class="modal" role="dialog" aria-modal="true">
+        <button class="close-modal">&times;</button>
+        <div class="modal-content">
+            <div class="lightbox-img-container">
+                <div class="lightbox-img">
+                    <img id="lightboxMainImg" src="" alt="">
+                </div>
+                <div class="lightbox-info">
+                    <h3 id="lightboxTitle"></h3>
+                    <p id="lightboxDesc" class="story-excerpt"></p>
+                    <div class="exif-data" id="exifContainer"></div>
+                    <button class="btn" id="printBtn" style="margin-top: auto;">Purchase Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="storyModal" class="modal" role="dialog" aria-modal="true">
+        <button class="close-modal">&times;</button>
+        <div class="modal-content story-full">
+            <div id="storyFullContent"></div>
+        </div>
+    </div>
+
+    <div id="printModal" class="modal" role="dialog" aria-modal="true">
+        <button class="close-modal">&times;</button>
+        <div class="modal-content" style="max-width: 500px; padding: 3rem;">
+            <h3>Fine Art Print Request</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 2rem;">All prints are produced on museum-quality Hahnemühle archival paper.</p>
+            <form id="printForm">
+                <div class="form-group">
+                    <label>Dimensions</label>
+                    <select id="printSize">
+                        <option>12" x 18" - $145</option>
+                        <option>20" x 30" - $280</option>
+                        <option>30" x 45" - $550</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Finish</label>
+                    <select>
+                        <option>Matte Silk</option>
+                        <option>High Gloss Metallic</option>
+                        <option>Textured Rag</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn" style="width:100%">Request Purchase</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast">Message sent successfully!</div>
+
+    <script>
+        /** CONSTANTS & DATA **/
+        const HERO_IMAGES = [
+            {
+                src: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=1920&q=80",
+                f1: "https://images.pexels.com/photos/1264210/pexels-photo-1264210.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+                f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Fuji_Mountain_and_Motosu_Lake.jpg/1280px-Fuji_Mountain_and_Motosu_Lake.jpg"
+            },
+            {
+                src: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=1920&q=80",
+                f1: "https://images.pexels.com/photos/1133957/pexels-photo-1133957.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+                f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Mount_Everest_as_seen_from_Drukair2_PLP_edit.jpg/1280px-Mount_Everest_as_seen_from_Drukair2_PLP_edit.jpg"
+            },
+            {
+                src: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=1920&q=80",
+                f1: "https://images.pexels.com/photos/205421/pexels-photo-205421.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+                f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Placeholder_LC.svg/1024px-Placeholder_LC.svg.png"
+            }
+        ];
+
+        const GALLERY_ITEMS = [
+            { id: 1, title: "Celestial Silence", category: "Portrait", src: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Portrait_of_a_woman.jpg/800px-Portrait_of_a_woman.jpg", exif: {iso: 100, shutter: "1/250", aperture: "f/1.4", lens: "85mm Prime"} },
+            { id: 2, title: "Urban Rhythms", category: "City", src: "https://images.unsplash.com/photo-1449156001935-d2863fb72690?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/London_City_Hall_and_the_Shard_at_night.jpg/800px-London_City_Hall_and_the_Shard_at_night.jpg", exif: {iso: 800, shutter: "1/50", aperture: "f/4.0", lens: "24-70mm"} },
+            { id: 3, title: "The Quiet Earth", category: "Nature", src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altocumulus_lenticularis_at_sunset.jpg/800px-Altocumulus_lenticularis_at_sunset.jpg", exif: {iso: 200, shutter: "1/1000", aperture: "f/8.0", lens: "16-35mm"} },
+            { id: 4, title: "Velvet Hour", category: "Fashion", src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Fashion_model_posing.jpg/800px-Fashion_model_posing.jpg", exif: {iso: 400, shutter: "1/160", aperture: "f/2.8", lens: "50mm Prime"} },
+            { id: 5, title: "Lost in Echoes", category: "Abstract", src: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/268533/pexels-photo-268533.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Abstract_bubbles.jpg/800px-Abstract_bubbles.jpg", exif: {iso: 1600, shutter: "1/200", aperture: "f/1.8", lens: "35mm Prime"} },
+            { id: 6, title: "Monolithic", category: "Architecture", src: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Burj_Khalifa.jpg/800px-Burj_Khalifa.jpg", exif: {iso: 100, shutter: "1/500", aperture: "f/5.6", lens: "24mm"} },
+            { id: 7, title: "Golden Solitude", category: "Nature", src: "https://images.unsplash.com/photo-1500673922987-e212871fec22?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/147411/italy-mountains-dawn-daybreak-147411.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Morning_mist_on_the_lake.jpg/800px-Morning_mist_on_the_lake.jpg", exif: {iso: 100, shutter: "1/80", aperture: "f/11", lens: "100mm Macro"} },
+            { id: 8, title: "Metropolis Glow", category: "City", src: "https://images.unsplash.com/photo-1477346611705-65d1883cee1e?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/169647/pexels-photo-169647.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Tokyo_Tower_night_view.jpg/800px-Tokyo_Tower_night_view.jpg", exif: {iso: 3200, shutter: "1/30", aperture: "f/2.8", lens: "24-70mm"} },
+            { id: 9, title: "Sartorial Edge", category: "Fashion", src: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Model_on_runway.jpg/800px-Model_on_runway.jpg", exif: {iso: 800, shutter: "1/500", aperture: "f/4.0", lens: "70-200mm"} },
+            { id: 10, title: "Wild Spirit", category: "Nature", src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Wild_Horse.jpg/800px-Wild_Horse.jpg", exif: {iso: 200, shutter: "1/1600", aperture: "f/4.0", lens: "400mm"} },
+            { id: 11, title: "Copper Morning", category: "Portrait", src: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Bearded_Man.jpg/800px-Bearded_Man.jpg", exif: {iso: 100, shutter: "1/125", aperture: "f/2.0", lens: "50mm Prime"} },
+            { id: 12, title: "Emerald Cove", category: "Nature", src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/326058/pexels-photo-326058.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Emerald_Lake.jpg/800px-Emerald_Lake.jpg", exif: {iso: 100, shutter: "1/4", aperture: "f/16", lens: "16-35mm"} },
+            { id: 13, title: "The Artisan", category: "Editorial", src: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/1231265/pexels-photo-1231265.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Blacksmith_working.jpg/800px-Blacksmith_working.jpg", exif: {iso: 400, shutter: "1/100", aperture: "f/2.8", lens: "35mm Prime"} },
+            { id: 14, title: "Concrete Jungle", category: "Architecture", src: "https://images.unsplash.com/photo-1444723121867-7a241cacace9?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/302769/pexels-photo-302769.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/New_York_City_Grid.jpg/800px-New_York_City_Grid.jpg", exif: {iso: 200, shutter: "1/800", aperture: "f/5.6", lens: "24mm"} },
+            { id: 15, title: "Sublime Light", category: "Portrait", src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/712513/pexels-photo-712513.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Classical_portrait.jpg/800px-Classical_portrait.jpg", exif: {iso: 100, shutter: "1/160", aperture: "f/1.8", lens: "85mm Prime"} },
+            { id: 16, title: "Neon Noir", category: "City", src: "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=800&q=80", f1: "https://images.pexels.com/photos/593172/pexels-photo-593172.jpeg?auto=compress&cs=tinysrgb&w=800", f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Neon_streets.jpg/800px-Neon_streets.jpg", exif: {iso: 1600, shutter: "1/60", aperture: "f/1.4", lens: "35mm Prime"} }
+        ];
+
+        const STORY_ITEMS = [
+            {
+                id: "story-1",
+                title: "Shadows of the Dolomites",
+                location: "Tyrol, Italy",
+                date: "October 2023",
+                excerpt: "A week spent chasing the transition of autumn to winter in the jagged peaks of Northern Italy.",
+                hero: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80",
+                f1: "https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg?auto=compress&cs=tinysrgb&w=800",
+                f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Dolomites_italy.jpg/800px-Dolomites_italy.jpg",
+                content: "<h3>The High Alpine</h3><p>Waking at 4 AM, the air was crisp and biting. We hiked for three hours to reach the Tre Cime plateau before sunrise. The silence was absolute, save for the occasional crunch of frost under our boots. As the first light touched the peaks, they turned a vibrant, burning orange—a phenomenon known as Alpenglow. It lasted only minutes, but the resulting frames captured a lifetime of raw beauty.</p><p>We spent the following days exploring the hidden valleys where the larch trees were in full gold transition. The contrast between the stark grey limestone and the warm yellow needles created a visual harmony rarely seen elsewhere.</p>"
+            },
+            {
+                id: "story-2",
+                title: "The Editorial Muse",
+                location: "Paris, France",
+                date: "June 2023",
+                excerpt: "Collaborating with Maison Noir on a collection that bridges cinematic noir with modern minimalism.",
+                hero: "https://images.unsplash.com/photo-1496200123514-419999052601?auto=format&fit=crop&w=800&q=80",
+                f1: "https://images.pexels.com/photos/3775116/pexels-photo-3775116.jpeg?auto=compress&cs=tinysrgb&w=800",
+                f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Paris_Street_Fashion.jpg/800px-Paris_Street_Fashion.jpg",
+                content: "<h3>Chasing Shadows</h3><p>Paris in June offers a specific quality of light—harsh mid-day sun that creates dramatic, sharp shadows in the limestone corridors of the 1st Arrondissement. Our goal was to use these shadows as structural elements in the composition. The model, Anaïs, brought a level of intensity that perfectly complemented the sharp tailoring of the collection.</p><p>We avoided the typical landmarks, opting instead for brutalist architecture and forgotten corners of the Metro. The final selection reflects a Paris that is both timeless and aggressively contemporary.</p>"
+            },
+            {
+                id: "story-3",
+                title: "Silk Road Portraits",
+                location: "Samarkand, Uzbekistan",
+                date: "April 2023",
+                excerpt: "Capturing the faces of the traditional silk weavers and the intricate geometry of ancient tilework.",
+                hero: "https://images.unsplash.com/photo-1528154032358-997a4969bb64?auto=format&fit=crop&w=800&q=80",
+                f1: "https://images.pexels.com/photos/2166559/pexels-photo-2166559.jpeg?auto=compress&cs=tinysrgb&w=800",
+                f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Registan_Square_Samarkand.jpg/800px-Registan_Square_Samarkand.jpg",
+                content: "<h3>Timeless Faces</h3><p>The Registan at dawn is a blue dream. Every tile tells a story of mathematical perfection and artistic devotion. But the true spirit of Uzbekistan lies in its people. We visited a family-run silk factory that has used the same techniques for seven generations. The mastery in their hands, the focus in their eyes—this is what I wanted to preserve.</p><p>Portraiture in a culture so rich in pattern requires a delicate balance. We used shallow depths of field to let the person emerge from the intricate backgrounds, emphasizing the human element within the grand historical context.</p>"
+            },
+            {
+                id: "story-4",
+                title: "Atlantic Rhapsody",
+                location: "Reykjavik, Iceland",
+                date: "January 2024",
+                excerpt: "Testing the limits of medium format equipment in the brutal, beautiful storms of the North Atlantic.",
+                hero: "https://images.unsplash.com/photo-1476610182048-b716b8518aae?auto=format&fit=crop&w=800&q=80",
+                f1: "https://images.pexels.com/photos/1009136/pexels-photo-1009136.jpeg?auto=compress&cs=tinysrgb&w=800",
+                f2: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Skogafoss_Iceland.jpg/800px-Skogafoss_Iceland.jpg",
+                content: "<h3>The Frost Giant</h3><p>Iceland in winter is not a place for the faint of heart. Wind speeds reached 90km/h on the black sand beaches of Vik. We had to weigh down the tripods and wrap our gear in protective layers. But the light—it's like nowhere else. The sun never truly rises, lingering instead in a permanent state of dawn/dusk, casting a soft, ethereal blue over the ice.</p><p>I was fascinated by the texture of the basalt columns against the crashing white foam of the Atlantic. The violence of the ocean contrasted with the static, ancient stone created a tension that I hope is felt in every image from this series.</p>"
+            }
+        ];
+
+        const SERVICE_PACKAGES = [
+            { name: "Essentials", price: "1,200", includes: ["2 Hour Session", "30 High-Res Edits", "Online Gallery", "Print License"] },
+            { name: "Signature", price: "2,800", includes: ["Full Day Session", "80 High-Res Edits", "Premium Photo Album", "2 Locations", "Social Rights"] },
+            { name: "Editorial", price: "5,500", includes: ["Multi-Day Shoot", "Full Collection", "Hand-Bound Fine Art Book", "Full Commercial Usage", "Creative Direction"] }
+        ];
+
+        const PORTAL_DATA = {
+            sessions: [
+                { id: "S-101", date: "Feb 12, 2024", type: "Studio Portrait", status: "Upcoming" },
+                { id: "S-098", date: "Jan 15, 2024", type: "Product Shoot", status: "Delivered" }
+            ],
+            galleries: [
+                { name: "Summer Editorial 2023", expiry: "Aug 2024", items: 45 },
+                { name: "New York Residency", expiry: "Dec 2024", items: 112 }
+            ],
+            invoices: [
+                { id: "INV-501", amount: "$1,450", status: "Paid" },
+                { id: "INV-512", amount: "$2,200", status: "Pending" }
+            ]
+        };
+
+        /** STATE MANAGEMENT **/
+        const state = {
+            theme: localStorage.getItem('theme_v1') || 'dark',
+            activeSlide: 0,
+            isLoggedIn: false,
+            activeLightboxIndex: 0
+        };
+
+        /** DOM ELEMENTS **/
+        const body = document.body;
+        const themeToggle = document.getElementById('themeToggle');
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        const heroSlider = document.getElementById('heroSlider');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const storiesGrid = document.getElementById('storiesGrid');
+        const servicesGrid = document.getElementById('servicesGrid');
+        const loginForm = document.getElementById('loginForm');
+        const loginView = document.getElementById('loginView');
+        const dashboardView = document.getElementById('dashboardView');
+        const dashboardStats = document.getElementById('dashboardStats');
+        const dashboardContent = document.getElementById('dashboardContent');
+        const signOutBtn = document.getElementById('signOutBtn');
+        const toast = document.getElementById('toast');
+        const lightbox = document.getElementById('lightbox');
+        const storyModal = document.getElementById('storyModal');
+        const printModal = document.getElementById('printModal');
+
+        /** IMAGE LOADER PIPELINE **/
+        async function fetchImageWithFallbacks(img, primary, f1, f2) {
+            const urls = [primary, f1, f2];
+            for (let url of urls) {
+                if (!url) continue;
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 1800);
+                    
+                    const cb = Math.random().toString(36).substring(7);
+                    const finalUrl = url + (url.includes('?') ? '&' : '?') + 'cb=' + cb;
+                    
+                    const response = await fetch(finalUrl, { 
+                        mode: "cors", 
+                        credentials: "omit", 
+                        cache: "no-store",
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        img.src = blobUrl;
+                        img.style.opacity = 1;
+                        return true;
+                    }
+                } catch (e) {
+                    console.warn(`Failed to load ${url}, trying next...`);
+                }
+            }
+            // All failed: SVG placeholder
+            img.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg width="800" height="600" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="100%25" height="100%25" fill="%23222"/%3E%3Ctext x="50%25" y="50%25" fill="%23444" text-anchor="middle" dy=".3em" font-family="Arial" font-size="20"%3EImage Unavailable%3C/text%3E%3C/svg%3E';
+            img.style.opacity = 1;
+            return false;
+        }
+
+        /** INITIALIZATION **/
+        function init() {
+            setTheme(state.theme);
+            renderHero();
+            renderGallery();
+            renderStories();
+            renderServices();
+            setupIntersectionObserver();
+            setupEventListeners();
+        }
+
+        function setTheme(theme) {
+            state.theme = theme;
+            localStorage.setItem('theme_v1', theme);
+            if (theme === 'light') {
+                body.classList.add('light-theme');
+            } else {
+                body.classList.remove('light-theme');
+            }
+        }
+
+        function renderHero() {
+            heroSlider.innerHTML = HERO_IMAGES.map((img, i) => `
+                <div class="hero-slide ${i === 0 ? 'active' : ''}">
+                    <img data-src="${img.src}" data-f1="${img.f1}" data-f2="${img.f2}" alt="Photography Showcase">
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.hero-slide img').forEach(img => {
+                fetchImageWithFallbacks(img, img.dataset.src, img.dataset.f1, img.dataset.f2);
+            });
+
+            setInterval(() => {
+                const slides = document.querySelectorAll('.hero-slide');
+                slides[state.activeSlide].classList.remove('active');
+                state.activeSlide = (state.activeSlide + 1) % slides.length;
+                slides[state.activeSlide].classList.add('active');
+            }, 5000);
+        }
+
+        function renderGallery() {
+            galleryGrid.innerHTML = GALLERY_ITEMS.map((item, i) => `
+                <div class="gallery-item reveal" onclick="openLightbox(${i})">
+                    <img data-src="${item.src}" data-f1="${item.f1}" data-f2="${item.f2}" alt="${item.title}" loading="lazy">
+                    <div class="gallery-overlay">
+                        <span class="exif-tag">${item.category}</span>
+                        <h3>${item.title}</h3>
+                    </div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.gallery-item img').forEach(img => {
+                fetchImageWithFallbacks(img, img.dataset.src, img.dataset.f1, img.dataset.f2);
+            });
+        }
+
+        function renderStories() {
+            storiesGrid.innerHTML = STORY_ITEMS.map(story => `
+                <div class="story-card reveal">
+                    <div class="story-image">
+                        <img data-src="${story.hero}" data-f1="${story.f1}" data-f2="${story.f2}" alt="${story.title}">
+                    </div>
+                    <div class="story-content">
+                        <span class="story-meta">${story.location} &bull; ${story.date}</span>
+                        <h3>${story.title}</h3>
+                        <p class="story-excerpt">${story.excerpt}</p>
+                        <button class="btn" style="padding: 0.5rem 1.5rem;" onclick="openStory('${story.id}')">Read Story</button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.story-card img').forEach(img => {
+                fetchImageWithFallbacks(img, img.dataset.src, img.dataset.f1, img.dataset.f2);
+            });
+        }
+
+        function renderServices() {
+            servicesGrid.innerHTML = SERVICE_PACKAGES.map(pkg => `
+                <div class="service-card reveal">
+                    <p class="serif" style="font-size: 0.8rem; letter-spacing: 2px; color: var(--accent); margin-bottom: 0.5rem;">COLLECTION</p>
+                    <h3>${pkg.name}</h3>
+                    <div class="price"><span>from</span> $${pkg.price}</div>
+                    <ul>
+                        ${pkg.includes.map(inc => `<li>${inc}</li>`).join('')}
+                    </ul>
+                    <a href="#contact" class="btn">Inquire Now</a>
+                </div>
+            `).join('');
+        }
+
+        function setupIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        /** LIGHTBOX LOGIC **/
+        window.openLightbox = function(index) {
+            state.activeLightboxIndex = index;
+            const item = GALLERY_ITEMS[index];
+            const mainImg = document.getElementById('lightboxMainImg');
+            
+            mainImg.style.opacity = 0;
+            fetchImageWithFallbacks(mainImg, item.src, item.f1, item.f2);
+            
+            document.getElementById('lightboxTitle').innerText = item.title;
+            document.getElementById('lightboxDesc').innerText = "Technical mastery meets artistic intent in this " + item.category.toLowerCase() + " piece.";
+            
+            document.getElementById('exifContainer').innerHTML = `
+                <div class="exif-item"><span>ISO</span><span>${item.exif.iso}</span></div>
+                <div class="exif-item"><span>Shutter</span><span>${item.exif.shutter}</span></div>
+                <div class="exif-item"><span>Aperture</span><span>${item.exif.aperture}</span></div>
+                <div class="exif-item"><span>Lens</span><span>${item.exif.lens}</span></div>
+            `;
+            
+            lightbox.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        /** STORY LOGIC **/
+        window.openStory = function(id) {
+            const story = STORY_ITEMS.find(s => s.id === id);
+            document.getElementById('storyFullContent').innerHTML = `
+                <span class="story-meta">${story.location} &bull; ${story.date}</span>
+                <h2 style="font-size: 3rem; margin-bottom: 2rem;">${story.title}</h2>
+                <div class="story-body">${story.content}</div>
+            `;
+            storyModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        /** PORTAL LOGIC **/
+        function renderDashboard() {
+            dashboardStats.innerHTML = `
+                <div class="stat-card"><h4>Upcoming</h4><p>${PORTAL_DATA.sessions.filter(s=>s.status==='Upcoming').length} Sessions</p></div>
+                <div class="stat-card"><h4>Available</h4><p>${PORTAL_DATA.galleries.length} Galleries</p></div>
+                <div class="stat-card"><h4>Balance</h4><p>${PORTAL_DATA.invoices.find(i=>i.status==='Pending').amount}</p></div>
+            `;
+
+            dashboardContent.innerHTML = `
+                <div style="margin-top: 2rem;">
+                    <h4 style="margin-bottom:1rem; border-bottom:1px solid var(--border);">Active Galleries</h4>
+                    ${PORTAL_DATA.galleries.map(g => `
+                        <div style="display:flex; justify-content:space-between; padding:1rem 0; border-bottom:1px solid var(--border); font-size: 0.9rem;">
+                            <span>${g.name} (${g.items} items)</span>
+                            <span style="color: var(--accent); cursor: pointer;">View Gallery →</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        /** EVENT LISTENERS **/
+        function setupEventListeners() {
+            // Theme toggle
+            themeToggle.addEventListener('click', () => {
+                setTheme(state.theme === 'dark' ? 'light' : 'dark');
+            });
+
+            // Mobile menu
+            hamburger.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+
+            // Close nav on link click
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => navLinks.classList.remove('active'));
+            });
+
+            // Login simulation
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                state.isLoggedIn = true;
+                loginView.style.display = 'none';
+                dashboardView.style.display = 'block';
+                renderDashboard();
+            });
+
+            signOutBtn.addEventListener('click', () => {
+                state.isLoggedIn = false;
+                loginView.style.display = 'block';
+                dashboardView.style.display = 'none';
+            });
+
+            // Contact form
+            document.getElementById('contactForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                showToast("Your inquiry has been sent successfully.");
+                e.target.reset();
+            });
+
+            // Print Modal
+            document.getElementById('printBtn').addEventListener('click', () => {
+                printModal.style.display = 'flex';
+            });
+
+            document.getElementById('printForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                printModal.style.display = 'none';
+                showToast("Print request received. We'll contact you shortly.");
+            });
+
+            // Modal Closers
+            document.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    lightbox.style.display = 'none';
+                    storyModal.style.display = 'none';
+                    printModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                });
+            });
+
+            // Click outside modals
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
+            // Keyboard support
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+                    document.body.style.overflow = 'auto';
+                }
+                if (lightbox.style.display === 'flex') {
+                    if (e.key === 'ArrowRight') openLightbox((state.activeLightboxIndex + 1) % GALLERY_ITEMS.length);
+                    if (e.key === 'ArrowLeft') openLightbox((state.activeLightboxIndex - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length);
+                }
+            });
+
+            // Click Guard (Internal Navigation Only)
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (link) {
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('#') && link.getAttribute('target') !== '_blank') {
+                        e.preventDefault();
+                        showToast("External navigation blocked in preview");
+                    }
+                }
+            });
+        }
+
+        function showToast(msg) {
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // Boot
+        init();
+
+    </script>
+</body>
+</html>
