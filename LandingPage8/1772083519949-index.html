@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AperiBar | Italianesque Restaurant & Cocktail Bar Times Square</title>
+    <meta name="description" content="Experience the vibrant spirit of Italian aperitivo culture at AperiBar. Located in the heart of Times Square, offering chic cocktails, artisanal pizza, and modern Italian plates.">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aperibar.com/">
+    <meta property="og:title" content="AperiBar | Modern Italian Hospitality in NYC">
+    <meta property="og:description" content="Chic Italianesque restaurant and cocktail bar at a Times Square hotel by a celebrated chef.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1550966841-3ee7adac1af8?auto=format&fit=crop&w=1200&q=80">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="AperiBar | Times Square NYC">
+    <meta property="twitter:description" content="Chic Italianesque restaurant and cocktail bar in Times Square.">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      "name": "AperiBar",
+      "image": "https://images.unsplash.com/photo-1550966841-3ee7adac1af8?auto=format&fit=crop&w=1200&q=80",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "120 W 41st St",
+        "addressLocality": "New York",
+        "addressRegion": "NY",
+        "postalCode": "10036",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 40.7544,
+        "longitude": -73.9848
+      },
+      "url": "https://aperibar.com",
+      "telephone": "+12127308900",
+      "servesCuisine": "Italian",
+      "priceRange": "$$$",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+          "opens": "07:00",
+          "closes": "23:00"
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        :root {
+            /* Color Palette */
+            --color-bg: #f9f7f2;
+            --color-text: #1a1a1a;
+            --color-text-muted: #555555;
+            --color-primary: #d32f2f; /* Campari Red */
+            --color-accent: #ff7043;  /* Aperol Orange */
+            --color-white: #ffffff;
+            --color-dark: #121212;
+            --color-border: #e0ddd5;
+            
+            /* Typography */
+            --font-serif: "Playfair Display", "Georgia", serif;
+            --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            
+            /* Spacing & Transitions */
+            --container-max: 1280px;
+            --transition-smooth: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --header-height-desktop: 120px;
+            --header-height-scroll: 80px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 { font-family: var(--font-serif); font-weight: 500; }
+
+        a { text-decoration: none; color: inherit; transition: var(--transition-smooth); }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; display: block; }
+        button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+        /* --- Accessibility --- */
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 0;
+            background: var(--color-primary);
+            color: white;
+            padding: 1rem;
+            z-index: 9999;
+            transition: top 0.2s;
+        }
+        .skip-link:focus { top: 0; }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* --- Layout --- */
+        .container {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 40px;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+        }
+        .btn-primary:hover {
+            background-color: var(--color-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--color-text);
+            color: var(--color-text);
+        }
+        .btn-outline:hover {
+            background-color: var(--color-text);
+            color: var(--color-white);
+        }
+
+        /* --- Header --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: var(--transition-smooth);
+            background: transparent;
+        }
+
+        header.scrolled {
+            background: var(--color-white);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .header-utility {
+            background: rgba(0,0,0,0.05);
+            font-size: 0.75rem;
+            padding: 0.5rem 0;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            transition: opacity 0.3s;
+        }
+
+        .scrolled .header-utility { opacity: 0; height: 0; padding: 0; overflow: hidden; }
+
+        .header-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--header-height-desktop);
+            transition: height 0.3s;
+        }
+
+        .scrolled .header-main { height: var(--header-height-scroll); }
+
+        .nav-logo {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .scrolled .nav-logo { color: var(--color-text); }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        header:not(.scrolled) .nav-item { color: white; }
+        header.scrolled .nav-item { color: var(--color-text); }
+
+        .nav-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--color-white);
+            min-width: 200px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition-smooth);
+        }
+
+        .nav-item:hover .nav-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-link {
+            display: block;
+            padding: 0.5rem 1.5rem;
+            color: var(--color-text) !important;
+            font-size: 0.8rem;
+        }
+
+        .dropdown-link:hover { background: var(--color-bg); }
+
+        /* --- Hero Carousel --- */
+        .hero {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero-slide.active { opacity: 1; }
+
+        .hero-slide::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.3));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 1rem;
+        }
+
+        .hero h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .hero-logo-mark {
+            width: 120px;
+            margin-bottom: 2rem;
+            fill: white;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            margin-bottom: 2rem;
+            line-height: 1.1;
+        }
+
+        .hero-controls {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 20;
+        }
+
+        .carousel-btn {
+            width: 50px;
+            height: 50px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-smooth);
+        }
+
+        .carousel-btn:hover { background: rgba(255,255,255,0.15); border-color: white; }
+
+        /* --- Story Section --- */
+        .story-section {
+            padding: 8rem 0;
+            text-align: center;
+            background-color: var(--color-bg);
+        }
+
+        .story-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .story-section .mini-logo {
+            width: 40px;
+            margin: 0 auto 2rem;
+            color: var(--color-primary);
+        }
+
+        .story-section h3 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+
+        .story-section p {
+            font-size: 1.1rem;
+            color: var(--color-text-muted);
+            margin-bottom: 3rem;
+        }
+
+        /* --- Full Bleed Parallax --- */
+        .parallax-divider {
+            height: 60vh;
+            background-image: url('https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=1920&q=80');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+        }
+
+        @media (max-width: 1024px) {
+            .parallax-divider { background-attachment: scroll; }
+        }
+
+        /* --- Split Feature --- */
+        .split-feature {
+            display: flex;
+            min-height: 70vh;
+        }
+
+        .split-content {
+            flex: 1;
+            padding: 6rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: var(--color-white);
+        }
+
+        .split-visual {
+            flex: 1;
+            background-color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .octopus-pattern {
+            width: 80%;
+            opacity: 0.1;
+            color: white;
+        }
+
+        /* --- Testimonials --- */
+        .testimonials {
+            padding: 8rem 0;
+            background-color: var(--color-dark);
+            color: var(--color-white);
+        }
+
+        .testimonial-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .rating-summary {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-accent);
+        }
+
+        .review-carousel {
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .review-card {
+            min-width: 100%;
+            padding: 0 2rem;
+            text-align: center;
+            transition: transform 0.5s ease;
+        }
+
+        .review-text {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .review-author {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        /* --- Hours & Location --- */
+        .location-section {
+            padding: 8rem 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .hours-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+        }
+
+        .hours-table tr { border-bottom: 1px solid var(--color-border); }
+        .hours-table td { padding: 1rem 0; }
+        .hours-table td:last-child { text-align: right; }
+
+        /* --- Modal --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal-content {
+            background: var(--color-white);
+            max-width: 500px;
+            width: 100%;
+            padding: 3rem;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.8rem; margin-bottom: 0.5rem; font-weight: 600; }
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 4rem 0;
+            background: var(--color-white);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .newsletter-input {
+            display: flex;
+            margin-top: 1rem;
+        }
+
+        .newsletter-input input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid var(--color-border);
+            border-right: none;
+        }
+
+        .social-links { display: flex; gap: 1rem; margin-top: 2rem; }
+        .social-icon svg { width: 24px; height: 24px; }
+
+        /* --- Mobile Styles --- */
+        .mobile-nav-toggle { display: none; }
+
+        @media (max-width: 768px) {
+            .mobile-nav-toggle { display: block; z-index: 1100; color: white; }
+            .scrolled .mobile-nav-toggle { color: var(--color-text); }
+            
+            .nav-menu {
+                position: fixed;
+                inset: 0;
+                background: var(--color-white);
+                flex-direction: column;
+                padding-top: 100px;
+                transform: translateX(100%);
+                transition: transform 0.4s ease;
+                z-index: 1050;
+            }
+
+            .nav-menu.active { transform: translateX(0); }
+            .nav-menu .nav-item { color: var(--color-text) !important; font-size: 1.5rem; }
+            .nav-menu .btn { margin-top: 2rem; }
+
+            .split-feature { flex-direction: column; }
+            .split-content { padding: 4rem 2rem; }
+            .location-section { grid-template-columns: 1fr; gap: 4rem; }
+            .header-utility { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header id="site-header">
+        <div class="header-utility">
+            <a href="https://maps.google.com/?q=120+W+41st+St+New+York+NY" target="_blank" rel="noopener">120 W 41st St, New York, NY 10036</a>
+            <a href="tel:2127308900">212-730-8900</a>
+        </div>
+        <div class="container header-main">
+            <button class="mobile-nav-toggle" aria-label="Toggle Menu" aria-expanded="false">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            
+            <a href="/" class="nav-logo" aria-label="AperiBar Home">APERIBAR</a>
+
+            <nav class="nav-menu" id="nav-menu" aria-label="Primary Navigation">
+                <div class="nav-item">
+                    <a href="#about" class="nav-link">About</a>
+                    <div class="nav-dropdown">
+                        <a href="#" class="dropdown-link">Overview</a>
+                        <a href="#" class="dropdown-link">Chef</a>
+                        <a href="#" class="dropdown-link">Press & News</a>
+                        <a href="#" class="dropdown-link">Our Team</a>
+                    </div>
+                </div>
+                <a href="#menu" class="nav-item">Menu</a>
+                <a href="#pizza" class="nav-item">Our Pizza</a>
+                <a href="#location" class="nav-item">Hours & Location</a>
+                <a href="#events" class="nav-item">Private Events</a>
+                <button class="btn btn-primary nav-reservation-trigger">Reservations</button>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero" aria-label="Hero Carousel" id="hero-carousel">
+            <div class="hero-slides">
+                <!-- Slide 1 -->
+                <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1920&q=80')" role="group" aria-roledescription="slide" aria-label="1 of 5"></div>
+                <!-- Slide 2 -->
+                <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1920&q=80')" role="group" aria-roledescription="slide" aria-label="2 of 5"></div>
+                <!-- Slide 3 -->
+                <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1550966841-3ee7adac1af8?auto=format&fit=crop&w=1920&q=80')" role="group" aria-roledescription="slide" aria-label="3 of 5"></div>
+                <!-- Slide 4 -->
+                <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=1920&q=80')" role="group" aria-roledescription="slide" aria-label="4 of 5"></div>
+                <!-- Slide 5 -->
+                <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1534430480872-3498386e7a56?auto=format&fit=crop&w=1920&q=80')" role="group" aria-roledescription="slide" aria-label="5 of 5"></div>
+            </div>
+
+            <div class="hero-content">
+                <h2>Benvenuto to</h2>
+                <svg class="hero-logo-mark" viewBox="0 0 100 100"><path d="M50 5 L90 95 L10 95 Z" fill="none" stroke="currentColor" stroke-width="2"/><text x="50" y="75" text-anchor="middle" font-family="serif" font-size="40" fill="currentColor">A</text></svg>
+                <h1>Chic Italianesque Restaurant<br>& Cocktail Bar</h1>
+                <p>By a celebrated chef in the heart of Times Square</p>
+                <div style="margin-top: 2.5rem; display: flex; gap: 1rem;">
+                    <button class="btn btn-primary nav-reservation-trigger">Book a Table</button>
+                    <a href="#menu" class="btn btn-outline" style="color: white; border-color: white;">View Menus</a>
+                </div>
+            </div>
+
+            <div class="hero-controls">
+                <button class="carousel-btn" id="prevSlide" aria-label="Previous Slide">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button class="carousel-btn" id="playPause" aria-label="Pause Slideshow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="playPauseIcon"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                </button>
+                <button class="carousel-btn" id="nextSlide" aria-label="Next Slide">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Story Section -->
+        <section class="story-section" id="about">
+            <div class="container story-content">
+                <div class="mini-logo">
+                    <svg viewBox="0 0 100 100" fill="currentColor"><circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2"/><path d="M50 20 L50 80 M20 50 L80 50" /></svg>
+                </div>
+                <h3>The Spirit of Aperitivo</h3>
+                <p>Inspired by the classic Italian tradition of transitioning from work to play, AperiBar brings the soul of Milan to Midtown Manhattan. From sunrise espresso and artisanal pastries to late-night negronis and wood-fired pizzas, we offer a sophisticated yet relaxed sanctuary for travelers and locals alike.</p>
+                <a href="#location" class="btn btn-outline">Visit Us</a>
+            </div>
+        </section>
+
+        <!-- Divider -->
+        <div class="parallax-divider" aria-hidden="true"></div>
+
+        <!-- Split Feature Section -->
+        <section class="split-feature" id="menu">
+            <div class="split-content">
+                <h3 style="font-size: 3rem; margin-bottom: 1.5rem;">Our Menu</h3>
+                <p style="color: var(--color-text-muted); margin-bottom: 2rem; max-width: 450px;">A curated selection of modern Italian small plates, hand-stretched pizzas, and seasonal entrees that celebrate the finest ingredients.</p>
+                <a href="#" class="btn btn-outline" style="align-self: flex-start;">View Menus</a>
+            </div>
+            <div class="split-visual">
+                <svg class="octopus-pattern" viewBox="0 0 100 100">
+                    <path d="M50 10 C30 10 10 30 10 50 C10 70 30 90 50 90 C70 90 90 70 90 50 C90 30 70 10 50 10 M50 30 C60 30 70 40 70 50 M30 50 C30 40 40 30 50 30" fill="none" stroke="currentColor" stroke-width="0.5"/>
+                    <circle cx="50" cy="50" r="5" fill="currentColor"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials">
+            <div class="container">
+                <div class="testimonial-header">
+                    <div class="rating-summary">4.8</div>
+                    <p>What Our Guests Are Saying</p>
+                    <div style="color: gold; margin-top: 0.5rem;">★★★★★</div>
+                </div>
+
+                <div class="review-carousel" id="review-carousel">
+                    <div class="review-card">
+                        <p class="review-text">"The best pre-theater spot in Times Square. The Aperol Spritz is perfection and the atmosphere is effortlessly chic."</p>
+                        <p class="review-author">— Sarah J. • 2 days ago</p>
+                    </div>
+                    <div class="review-card">
+                        <p class="review-text">"Incredible pizza. You wouldn't expect this level of authenticity in this neighborhood, but AperiBar delivers."</p>
+                        <p class="review-author">— Marco V. • 1 week ago</p>
+                    </div>
+                    <div class="review-card">
+                        <p class="review-text">"The service was impeccable. A perfect little Italian escape from the chaos of Midtown."</p>
+                        <p class="review-author">— James L. • 3 days ago</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 3rem;">
+                    <a href="#" class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.3);">Review us on Google</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hours & Location -->
+        <section class="container location-section" id="location">
+            <div>
+                <h3 style="font-size: 2.5rem; margin-bottom: 2rem;">Hours & Location</h3>
+                <p>120 W 41st St<br>New York, NY 10036</p>
+                <p style="margin-top: 1rem;"><a href="tel:2127308900">212-730-8900</a></p>
+                
+                <table class="hours-table">
+                    <tr><td>Monday – Thursday</td><td>7:00am – 11:00pm</td></tr>
+                    <tr><td>Friday</td><td>7:00am – 12:00am</td></tr>
+                    <tr><td>Saturday</td><td>8:00am – 12:00am</td></tr>
+                    <tr><td>Sunday</td><td>8:00am – 10:00pm</td></tr>
+                </table>
+
+                <div style="margin-top: 3rem; display: flex; flex-wrap: wrap; gap: 1rem;">
+                    <a href="https://maps.google.com" class="btn btn-primary">Get Directions</a>
+                    <button class="btn btn-outline nav-reservation-trigger">Reservations</button>
+                    <a href="#" class="btn btn-outline">Private Events</a>
+                </div>
+            </div>
+            <div style="background: #eee; min-height: 400px; border-radius: 8px; overflow: hidden;">
+                <!-- Placeholder for Map -->
+                <div style="width: 100%; height: 100%; background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80'); background-size: cover; background-position: center;"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h4 style="margin-bottom: 1.5rem;">AperiBar</h4>
+                    <p style="font-size: 0.9rem; color: var(--color-text-muted);">A modern sanctuary in Times Square. Chic Italianesque restaurant & cocktail bar.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1.5rem;">Links</h4>
+                    <ul style="font-size: 0.9rem; display: grid; gap: 0.5rem;">
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                        <li><a href="#">Store</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1.5rem;">Join the Club</h4>
+                    <p style="font-size: 0.8rem;">Sign up for updates and event invitations.</p>
+                    <form class="newsletter-input">
+                        <input type="email" placeholder="Email Address" required aria-label="Email for newsletter">
+                        <button type="submit" class="btn-primary" style="padding: 0 1.5rem; border-radius: 0 4px 4px 0;">Go</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border); padding-top: 2rem; flex-wrap: wrap; gap: 1rem;">
+                <p style="font-size: 0.75rem; color: var(--color-text-muted);">&copy; 2024 AperiBar NYC. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#" class="social-icon" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                    </a>
+                    <a href="#" class="social-icon" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </a>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted);">Design by Aperitivo Creative</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Reservation Modal -->
+    <div class="modal-overlay" id="reservationModal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <button class="close-modal" aria-label="Close Modal">&times;</button>
+            <h3 id="modal-title" style="font-size: 2rem; margin-bottom: 2rem;">Make a Reservation</h3>
+            <form id="resForm">
+                <div class="form-group">
+                    <label for="resName">Full Name</label>
+                    <input type="text" id="resName" class="form-control" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="resDate">Date</label>
+                        <input type="date" id="resDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="resSize">Party Size</label>
+                        <select id="resSize" class="form-control">
+                            <option>1 Guest</option>
+                            <option selected>2 Guests</option>
+                            <option>3 Guests</option>
+                            <option>4 Guests</option>
+                            <option>5+ Guests</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="resEmail">Email Address</label>
+                    <input type="email" id="resEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="resRequests">Special Requests</label>
+                    <textarea id="resRequests" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Find a Table</button>
+            </form>
+            <div id="resSuccess" style="display: none; text-align: center; padding: 2rem 0;">
+                <h4 style="color: var(--color-primary); margin-bottom: 1rem;">Table Requested!</h4>
+                <p>We've received your request and will contact you shortly to confirm.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Header Scroll Logic ---
+        const header = document.getElementById('site-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // --- Mobile Menu Toggle ---
+        const menuToggle = document.querySelector('.mobile-nav-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        menuToggle.addEventListener('click', () => {
+            const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            menuToggle.setAttribute('aria-expanded', !expanded);
+            navMenu.classList.toggle('active');
+            
+            // Focus trap for mobile menu
+            if (!expanded) {
+                navMenu.querySelector('a').focus();
+            }
+        });
+
+        // --- Hero Carousel Logic ---
+        const slides = document.querySelectorAll('.hero-slide');
+        const nextBtn = document.getElementById('nextSlide');
+        const prevBtn = document.getElementById('prevSlide');
+        const playPauseBtn = document.getElementById('playPause');
+        const playPauseIcon = document.getElementById('playPauseIcon');
+        let currentSlide = 0;
+        let isPlaying = true;
+        let slideInterval;
+
+        const updateSlides = (index) => {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+            // Screen reader announcement
+            const region = document.getElementById('hero-carousel');
+            region.setAttribute('aria-label', `Hero image ${index + 1} of ${slides.length}`);
+        };
+
+        const nextSlide = () => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlides(currentSlide);
+        };
+
+        const prevSlide = () => {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            updateSlides(currentSlide);
+        };
+
+        const startSlideshow = () => {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            slideInterval = setInterval(nextSlide, 5000);
+        };
+
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            if (isPlaying) { clearInterval(slideInterval); startSlideshow(); }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            if (isPlaying) { clearInterval(slideInterval); startSlideshow(); }
+        });
+
+        playPauseBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                clearInterval(slideInterval);
+                playPauseIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+                playPauseBtn.setAttribute('aria-label', 'Play Slideshow');
+            } else {
+                startSlideshow();
+                playPauseIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+                playPauseBtn.setAttribute('aria-label', 'Pause Slideshow');
+            }
+            isPlaying = !isPlaying;
+        });
+
+        startSlideshow();
+
+        // --- Testimonial Carousel ---
+        const reviewCards = document.querySelectorAll('.review-card');
+        let currentReview = 0;
+
+        function cycleReviews() {
+            currentReview = (currentReview + 1) % reviewCards.length;
+            reviewCards.forEach((card, i) => {
+                card.style.transform = `translateX(-${currentReview * 100}%)`;
+            });
+        }
+        setInterval(cycleReviews, 6000);
+
+        // --- Reservation Modal Logic ---
+        const modal = document.getElementById('reservationModal');
+        const modalTriggers = document.querySelectorAll('.nav-reservation-trigger');
+        const closeBtn = document.querySelector('.close-modal');
+        const resForm = document.getElementById('resForm');
+        const resSuccess = document.getElementById('resSuccess');
+        let lastFocusedElement;
+
+        const openModal = () => {
+            lastFocusedElement = document.activeElement;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            modal.querySelector('input').focus();
+        };
+
+        const closeModal = () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            if (lastFocusedElement) lastFocusedElement.focus();
+            // Reset form
+            resForm.style.display = 'block';
+            resSuccess.style.display = 'none';
+        };
+
+        modalTriggers.forEach(trigger => trigger.addEventListener('click', openModal));
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+        });
+
+        resForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            resForm.style.display = 'none';
+            resSuccess.style.display = 'block';
+        });
+
+        // --- Smooth Scroll for anchor links ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                // Close mobile menu if open
+                navMenu.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+
+                document.querySelector(targetId).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+    </script>
+</body>
+</html>
