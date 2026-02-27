@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>XTRACT | Intelligent Automation Agency</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Design Tokens */
+            --primary: rgb(129, 74, 200);
+            --primary-2: rgb(100, 50, 160);
+            --on-primary: #ffffff;
+            --accent: rgb(223, 122, 254);
+            --on-accent: #000000;
+            
+            --gutter: 15vw;
+            --page-top: var(--space-6);
+            --page-bottom: var(--space-6);
+            
+            --space-1: 0.5rem;
+            --space-2: 1rem;
+            --space-3: 1.5rem;
+            --space-4: 2.5rem;
+            --space-5: 4rem;
+            --space-6: 6rem;
+            
+            --font-size-1: 0.875rem;
+            --font-size-2: 1rem;
+            --font-size-3: 1.25rem;
+            --font-size-4: 1.75rem;
+            --font-size-5: 2.5rem;
+            --font-size-6: 3.5rem;
+            
+            --radius-btn: 12px;
+            --radius-card: 12px;
+            
+            --shadow-soft: 0 10px 30px -10px rgba(0,0,0,0.3);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --header-height: 80px;
+        }
+
+        html[data-theme="dark"] {
+            --bg: #0D0D0D;
+            --bg-2: #141414;
+            --surface: rgba(255, 255, 255, 0.05);
+            --surface-2: rgba(255, 255, 255, 0.08);
+            --text: #ffffff;
+            --muted: rgba(255, 255, 255, 0.6);
+            --border: #222222;
+            --glass: rgba(13, 13, 13, 0.8);
+            --glow: radial-gradient(circle at center, rgba(129, 74, 200, 0.15) 0%, transparent 70%);
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f8f9fa;
+            --surface: rgba(0, 0, 0, 0.03);
+            --surface-2: rgba(0, 0, 0, 0.06);
+            --text: #0D0D0D;
+            --muted: rgba(0, 0, 0, 0.6);
+            --border: #e2e2e2;
+            --glass: rgba(255, 255, 255, 0.8);
+            --glow: radial-gradient(circle at center, rgba(129, 74, 200, 0.05) 0%, transparent 70%);
+        }
+
+        /* Base Reset */
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Figtree', sans-serif;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        p { margin: 0; }
+        ul { list-style: none; padding: 0; margin: 0; }
+        a { text-decoration: none; color: inherit; transition: var(--transition); cursor: pointer; }
+        button { cursor: pointer; border: none; font-family: inherit; transition: var(--transition); }
+
+        /* Layout */
+        #page {
+            box-sizing: border-box;
+            padding-left: var(--gutter);
+            padding-right: var(--gutter);
+            padding-top: 0;
+            padding-bottom: var(--page-bottom);
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            min-width: 0;
+            padding-left: var(--space-1);
+            padding-right: var(--space-1);
+        }
+
+        section {
+            padding: var(--space-5) 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Header & Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links { display: none; }
+        }
+
+        .nav-link {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(129, 74, 200, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-2);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            padding: 8px;
+            color: var(--text);
+        }
+
+        /* Hero */
+        .hero {
+            padding: var(--space-6) 0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .hero-badge {
+            background: var(--surface);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid var(--border);
+            color: var(--primary);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero p {
+            font-size: var(--font-size-3);
+            color: var(--muted);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .hero-mock {
+            margin-top: var(--space-5);
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 16/9;
+            background: var(--bg-2);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .mock-ui {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .mock-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            animation: slideIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        /* Services Grid */
+        .section-header {
+            margin-bottom: var(--space-4);
+            text-align: center;
+        }
+
+        .section-header h2 { font-size: var(--font-size-5); margin-bottom: 1rem; }
+        .section-header p { color: var(--muted); max-width: 600px; margin: 0 auto; }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-3);
+        }
+
+        @media (max-width: 768px) {
+            .services-grid { grid-template-columns: 1fr; }
+        }
+
+        .service-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: var(--space-4);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .service-card:hover {
+            border-color: var(--primary);
+            background: var(--surface-2);
+            transform: translateY(-5px);
+        }
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        /* Process Steps */
+        .process-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .process-step {
+            display: flex;
+            gap: var(--space-3);
+            align-items: flex-start;
+        }
+
+        .step-num {
+            font-size: var(--font-size-5);
+            font-weight: 800;
+            color: var(--primary);
+            opacity: 0.3;
+            min-width: 80px;
+        }
+
+        .step-content h3 { margin-bottom: 0.5rem; }
+        .step-content p { color: var(--muted); }
+
+        /* Carousel Cases */
+        .cases-carousel-wrapper {
+            position: relative;
+            margin: 0 calc(var(--space-1) * -1);
+            overflow: hidden;
+        }
+
+        .cases-carousel {
+            display: flex;
+            gap: var(--space-3);
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: var(--space-2);
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            cursor: grab;
+        }
+
+        .cases-carousel::-webkit-scrollbar { display: none; }
+
+        .case-card {
+            flex: 0 0 400px;
+            scroll-snap-align: start;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+            .case-card { flex: 0 0 85vw; }
+        }
+
+        .case-img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            background: #222;
+        }
+
+        .case-info {
+            padding: var(--space-3);
+        }
+
+        .case-metric {
+            font-size: var(--font-size-4);
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .drag-hint {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-3);
+        }
+
+        @media (max-width: 1024px) {
+            .pricing-grid { grid-template-columns: 1fr; }
+        }
+
+        .pricing-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: var(--space-4);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .pricing-card.popular {
+            border-color: var(--primary);
+            background: rgba(129, 74, 200, 0.05);
+            transform: scale(1.05);
+            z-index: 2;
+        }
+
+        @media (max-width: 1024px) {
+            .pricing-card.popular { transform: scale(1); }
+        }
+
+        .price { font-size: var(--font-size-5); font-weight: 800; }
+        .price span { font-size: 1rem; color: var(--muted); }
+
+        .features-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .feature-item { display: flex; gap: 10px; font-size: 0.9rem; align-items: center; }
+        .feature-item svg { color: var(--primary); }
+
+        /* FAQ */
+        .faq-list { max-width: 800px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid var(--border); }
+        .faq-trigger {
+            width: 100%;
+            padding: var(--space-3) 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: none;
+            color: var(--text);
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: left;
+        }
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+        .faq-item.active .faq-content { max-height: 200px; padding-bottom: var(--space-3); }
+        .faq-icon { transition: transform 0.3s; }
+        .faq-item.active .faq-icon { transform: rotate(45deg); }
+
+        /* Cart Drawer */
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 400px;
+            height: 100%;
+            background: var(--bg);
+            z-index: 2000;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            padding: var(--space-4);
+        }
+
+        @media (max-width: 450px) {
+            .side-panel { width: 100%; }
+        }
+
+        .side-panel.open { right: 0; }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .overlay.open { opacity: 1; pointer-events: auto; }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--space-2) 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Forms */
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: var(--muted); }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: inherit;
+        }
+        input:focus { outline: 1px solid var(--primary); border-color: transparent; }
+
+        /* Footer */
+        footer {
+            padding: var(--space-6) 0 var(--space-4);
+            background: var(--bg-2);
+            margin-top: var(--space-6);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .footer-brand { grid-column: span 2; }
+        }
+
+        .footer-logo { font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: var(--primary); }
+        .footer-tagline { color: var(--muted); font-size: 0.95rem; }
+        .footer-links h4 { margin-bottom: 1.2rem; font-size: 1rem; }
+        .footer-links ul { display: flex; flex-direction: column; gap: 10px; }
+        .footer-links a { color: var(--muted); font-size: 0.9rem; }
+        .footer-links a:hover { color: var(--text); }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: var(--space-4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 100px;
+            z-index: 3000;
+            font-weight: 600;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Mobile Menu */
+        #mobileMenu {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg);
+            z-index: 2100;
+            padding: var(--space-4);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+            transition: left 0.4s ease;
+        }
+        #mobileMenu.open { left: 0; }
+        .mobile-link { font-size: 1.5rem; font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+
+        .badge {
+            background: var(--primary);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        .cart-btn { position: relative; }
+
+    </style>
+</head>
+<body>
+
+<div id="page">
+    <div id="overlay" class="overlay"></div>
+    
+    <header>
+        <div class="container">
+            <div class="nav-inner">
+                <a href="#" class="logo">XTRACT</a>
+                
+                <nav class="nav-links">
+                    <a href="#services" class="nav-link">Services</a>
+                    <a href="#process" class="nav-link">Process</a>
+                    <a href="#cases" class="nav-link">Cases</a>
+                    <a href="#benefits" class="nav-link">Benefits</a>
+                    <a href="#pricing" class="nav-link">Pricing</a>
+                </nav>
+
+                <div class="nav-actions">
+                    <button id="themeToggle" class="btn-ghost" title="Toggle Theme">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M17.66 6.34l1.42-1.42"/></svg>
+                    </button>
+                    <button id="cartToggle" class="btn-ghost cart-btn" title="View Cart">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        <span id="cartBadge" class="badge">0</span>
+                    </button>
+                    <a href="#pricing" class="btn btn-primary">Book a call</a>
+                    <button id="mobileToggle" class="btn-ghost" style="display:none;" title="Menu">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <main id="mainContent">
+            <!-- Hero -->
+            <section class="hero reveal">
+                <span class="hero-badge">AI-Powered Excellence</span>
+                <h1>Intelligent Automation for Modern Businesses.</h1>
+                <p>We build customized AI solutions and automated workflows that eliminate manual bottlenecking, allowing your team to focus on high-impact strategic growth.</p>
+                <div class="hero-btns">
+                    <a href="#pricing" class="btn btn-primary">Book a call</a>
+                    <a href="#services" class="btn btn-secondary">Launch Your Automation</a>
+                </div>
+                <div class="hero-mock">
+                    <div class="mock-ui" id="heroMockList">
+                        <!-- JS Rendered -->
+                    </div>
+                </div>
+                <div style="margin-top: 32px; font-size: 0.8rem; color: var(--muted); font-weight: 500;">
+                    TRUSTED BY INNOVATIVE TEAMS AT SYNERGY, NEXUSCORE, & QUANTUM FLOW
+                </div>
+            </section>
+
+            <!-- Services -->
+            <section id="services">
+                <div class="section-header reveal">
+                    <h2>Our Services</h2>
+                    <p>End-to-end automation infrastructure designed for maximum efficiency and seamless integration.</p>
+                </div>
+                <div class="services-grid" id="servicesGrid">
+                    <!-- JS Rendered -->
+                </div>
+            </section>
+
+            <!-- Process -->
+            <section id="process">
+                <div class="section-header reveal">
+                    <h2>The Workflow</h2>
+                    <p>A proven 4-step framework to transition your business from manual chaos to automated precision.</p>
+                </div>
+                <div class="process-list" id="processList">
+                    <!-- JS Rendered -->
+                </div>
+            </section>
+
+            <!-- Cases -->
+            <section id="cases">
+                <div class="section-header reveal">
+                    <h2>Case Studies</h2>
+                    <p>Real results from businesses that scaled with XTRACT automation.</p>
+                </div>
+                <div class="cases-carousel-wrapper">
+                    <div class="cases-carousel" id="casesCarousel">
+                        <!-- JS Rendered -->
+                    </div>
+                    <div class="carousel-nav">
+                        <button class="btn btn-secondary" id="prevCase">&larr;</button>
+                        <button class="btn btn-secondary" id="nextCase">&rarr;</button>
+                    </div>
+                    <div class="drag-hint">DRAG TO EXPLORE</div>
+                </div>
+            </section>
+
+            <!-- Benefits -->
+            <section id="benefits">
+                <div class="section-header reveal">
+                    <h2>Why XTRACT?</h2>
+                    <p>Beyond simple scripts—we build intelligent systems that evolve with your business needs.</p>
+                </div>
+                <div class="services-grid" style="grid-template-columns: repeat(3, 1fr);" id="benefitsGrid">
+                    <!-- JS Rendered -->
+                </div>
+            </section>
+
+            <!-- Pricing -->
+            <section id="pricing">
+                <div class="section-header reveal">
+                    <h2>Transparent Pricing</h2>
+                    <p>Scalable plans for every stage of your automation journey.</p>
+                </div>
+                <div class="pricing-grid" id="pricingGrid">
+                    <!-- JS Rendered -->
+                </div>
+            </section>
+
+            <!-- Testimonials -->
+            <section id="testimonials">
+                <div class="section-header reveal">
+                    <h2>Client Success</h2>
+                </div>
+                <div class="services-grid" id="testimonialsGrid">
+                    <!-- JS Rendered -->
+                </div>
+            </section>
+
+            <!-- FAQ -->
+            <section id="faq">
+                <div class="section-header reveal">
+                    <h2>Common Questions</h2>
+                </div>
+                <div class="faq-list" id="faqList">
+                    <!-- JS Rendered -->
+                </div>
+            </section>
+
+            <!-- Newsletter -->
+            <section id="contact">
+                <div class="section-header reveal">
+                    <h2>Ready to scale?</h2>
+                    <p>Join 500+ operators getting weekly automation tips directly to their inbox.</p>
+                </div>
+                <div style="max-width: 500px; margin: 0 auto;">
+                    <form id="newsletterForm" class="form-group" style="display:flex; gap:10px;">
+                        <input type="email" placeholder="Enter your business email" required>
+                        <button type="submit" class="btn btn-primary">Join</button>
+                    </form>
+                    <div id="formStatus" style="text-align:center; font-size:0.9rem; margin-top:10px;"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">XTRACT</div>
+                    <p class="footer-tagline">Automate Smarter, Optimize Faster, and Grow Stronger.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Solutions</h4>
+                    <ul>
+                        <li><a href="#services">Task Automation</a></li>
+                        <li><a href="#services">Sales AI</a></li>
+                        <li><a href="#services">Ops Systems</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#cases">Case Studies</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="#" target="_blank" rel="noopener noreferrer">Twitter</a></li>
+                        <li><a href="#" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+                        <li><a href="#" target="_blank" rel="noopener noreferrer">Email</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>&copy; <span id="currentYear"></span> XTRACT Agency. All rights reserved.</div>
+                <div>Built for the future of work.</div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Side Panel: Cart -->
+    <div id="cartPanel" class="side-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+            <h3>Your Plan</h3>
+            <button id="closeCart" class="btn-ghost">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div id="cartItems" style="flex-grow:1;">
+            <!-- Cart items here -->
+        </div>
+        <div id="cartSummary" style="padding-top:20px; border-top:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:1.2rem; margin-bottom:20px;">
+                <span>Total</span>
+                <span id="cartTotal">$0</span>
+            </div>
+            <button class="btn btn-primary" style="width:100%;">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenu">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="logo">XTRACT</div>
+            <button id="closeMobile" class="btn-ghost">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <a href="#services" class="mobile-link">Services</a>
+        <a href="#process" class="mobile-link">Process</a>
+        <a href="#cases" class="mobile-link">Cases</a>
+        <a href="#benefits" class="mobile-link">Benefits</a>
+        <a href="#pricing" class="mobile-link">Pricing</a>
+    </div>
+
+    <div id="toast">Message Sent!</div>
+</div>
+
+<script>
+    // Constants
+    const SERVICES = [
+        { id: 1, title: 'Automate repetitive tasks', desc: 'Free your team from data entry and reporting. We build robust bots that handle the grind with zero errors.', icon: '⚡' },
+        { id: 2, title: 'Delegate Daily Tasks', desc: 'Sync your calendars, emails, and CRMs. Our agents manage your daily admin so you can manage the vision.', icon: '🗓️' },
+        { id: 3, title: 'Accelerate Sales Growth', desc: 'Automated lead nurturing and personalized outreach at scale. Convert more leads without manual follow-ups.', icon: '📈' },
+        { id: 4, title: 'Build Smarter Systems', desc: 'Custom internal tools and AI wrappers tailored to your unique operational DNA and business goals.', icon: '🧠' }
+    ];
+
+    const PROCESS_STEPS = [
+        { title: 'Operational Audit', desc: 'We dive deep into your existing workflows to identify high-ROI automation opportunities.' },
+        { title: 'Strategic Mapping', desc: 'Architecture of your new automated environment with clear integration points and KPIs.' },
+        { title: 'Rapid Implementation', desc: 'Deployment of custom tools and AI agents with minimal disruption to your daily operations.' },
+        { title: 'Infinite Optimization', desc: 'Ongoing monitoring and iterative updates to ensure peak performance as your business scales.' }
+    ];
+
+    const CASE_STUDIES = [
+        { title: 'SaaS Expansion', metric: '40% Cost Reduction', desc: 'Automated customer onboarding and billing reconciliation for a Series B SaaS provider.', img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800' },
+        { title: 'E-com Scale', metric: '15k+ Hours Saved', desc: 'Integrated inventory management and dynamic pricing across 5 global marketplaces.', img: 'https://images.unsplash.com/photo-1551288049-bbbda546697a?auto=format&fit=crop&q=80&w=800' },
+        { title: 'Lead Gen Engine', metric: '3.5x Conversion', desc: 'AI-driven lead qualification and automated CRM routing for a national real estate firm.', img: 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=800' },
+        { title: 'Service Ops', metric: '80% Faster Response', desc: 'Deployed intelligent support agents for a legal tech startup, reducing ticket backlog.', img: 'https://images.unsplash.com/photo-1522071823991-b9671f4d8a7c?auto=format&fit=crop&q=80&w=800' }
+    ];
+
+    const BENEFITS = [
+        { title: 'Increased Efficiency', desc: 'Eliminate 80% of manual repetitive tasks within 30 days.' },
+        { title: 'Linear Scalability', desc: 'Scale your output without scaling your headcount.' },
+        { title: 'Precision & Accuracy', desc: 'Human errors are costly. Automated systems are flawless.' },
+        { title: 'Cost Reduction', desc: 'Reallocate budget from manual labor to strategic innovation.' },
+        { title: 'Rapid Deployment', desc: 'Go live with your first automation in under 14 days.' },
+        { title: 'Real-time Insights', desc: 'Dashboards that update as work happens, not days later.' }
+    ];
+
+    const PRICING_PLANS = [
+        { id: 'starter', name: 'Starter', price: 1499, popular: false, features: ['1 Core Automation', 'Standard AI Support', 'Weekly Reports', '24h Response Time'] },
+        { id: 'pro', name: 'Professional', price: 3499, popular: true, features: ['3 Core Automations', 'Advanced AI Agents', 'Real-time Dashboards', 'Priority Support', 'Custom Integrations'] },
+        { id: 'enterprise', name: 'Enterprise', price: 7999, popular: false, features: ['Unlimited Automations', 'Full-stack AI Systems', 'On-premise Options', 'Dedicated Architect', 'White-glove Onboarding'] }
+    ];
+
+    const TESTIMONIALS = [
+        { name: 'Sarah Jenkins', role: 'COO', co: 'Synergy Dev', quote: 'XTRACT didn’t just save us time, they fundamentally changed how we operate.' },
+        { name: 'Mark Wu', role: 'Founder', co: 'Pulse Ecom', quote: 'Our ROI was positive within 3 weeks of the first workflow deployment.' },
+        { name: 'Elena Rodriguez', role: 'VP Ops', co: 'Skyline Legal', quote: 'The most competent automation team we’ve worked with. Period.' },
+        { name: 'David Smith', role: 'Tech Lead', co: 'Innova Hub', quote: 'Clean systems, excellent support, and results that actually show up on the bottom line.' }
+    ];
+
+    const FAQ_ITEMS = [
+        { q: 'How long does implementation take?', a: 'Standard workflows are live within 14 days. Complex enterprise systems typically take 30-45 days.' },
+        { q: 'Do I need a technical team?', a: 'No. We handle the architecture and implementation. Your team just needs to use the tools.' },
+        { q: 'Can you integrate with my existing CRM?', a: 'Yes, we specialize in connecting siloed data via API or custom middleware.' },
+        { q: 'Is my data secure?', a: 'Security is paramount. We use enterprise-grade encryption and follow strict GDPR/SOC2 practices.' },
+        { q: 'What happens if a workflow breaks?', a: 'We monitor systems 24/7. Our Pro and Enterprise plans include priority maintenance and updates.' }
+    ];
+
+    // State
+    const state = {
+        theme: localStorage.getItem('theme_v1') || 'dark',
+        cart: [],
+        activePlanId: null,
+        mobileMenuOpen: false,
+        cartOpen: false,
+        activeCaseIndex: 0,
+        faqOpenId: null
+    };
+
+    // DOM Elements
+    const elements = {
+        themeToggle: document.getElementById('themeToggle'),
+        cartToggle: document.getElementById('cartToggle'),
+        cartBadge: document.getElementById('cartBadge'),
+        cartPanel: document.getElementById('cartPanel'),
+        closeCart: document.getElementById('closeCart'),
+        overlay: document.getElementById('overlay'),
+        mobileToggle: document.getElementById('mobileToggle'),
+        mobileMenu: document.getElementById('mobileMenu'),
+        closeMobile: document.getElementById('closeMobile'),
+        currentYear: document.getElementById('currentYear'),
+        heroMockList: document.getElementById('heroMockList'),
+        servicesGrid: document.getElementById('servicesGrid'),
+        processList: document.getElementById('processList'),
+        casesCarousel: document.getElementById('casesCarousel'),
+        benefitsGrid: document.getElementById('benefitsGrid'),
+        pricingGrid: document.getElementById('pricingGrid'),
+        testimonialsGrid: document.getElementById('testimonialsGrid'),
+        faqList: document.getElementById('faqList'),
+        cartItems: document.getElementById('cartItems'),
+        cartTotal: document.getElementById('cartTotal'),
+        newsletterForm: document.getElementById('newsletterForm'),
+        toast: document.getElementById('toast')
+    };
+
+    // Render Logic
+    function renderUI() {
+        // Theme
+        document.documentElement.setAttribute('data-theme', state.theme);
+
+        // Footer Year
+        elements.currentYear.textContent = '2026';
+
+        // Hero Mock
+        const mockSteps = ['Smart Analyzing', 'AI Development', 'Seamless Integration', 'Continuous Optimization'];
+        elements.heroMockList.innerHTML = mockSteps.map((step, i) => `
+            <div class="mock-item" style="animation-delay: ${i * 0.2}s">
+                <span class="status-pill">Active</span>
+                <span style="font-weight:600; font-size:0.9rem;">${step}</span>
+                <div style="flex-grow:1; height:2px; background:var(--border); position:relative;">
+                    <div style="position:absolute; left:0; top:0; height:100%; width:70%; background:var(--primary);"></div>
+                </div>
+            </div>
+        `).join('');
+
+        // Services
+        elements.servicesGrid.innerHTML = SERVICES.map(s => `
+            <div class="service-card reveal">
+                <div class="service-icon">${s.icon}</div>
+                <h3>${s.title}</h3>
+                <p>${s.desc}</p>
+                <div style="margin-top:auto; font-size:0.8rem; color:var(--primary); font-weight:700;">LEARN MORE &rarr;</div>
+            </div>
+        `).join('');
+
+        // Process
+        elements.processList.innerHTML = PROCESS_STEPS.map((step, i) => `
+            <div class="process-step reveal">
+                <div class="step-num">0${i + 1}</div>
+                <div class="step-content">
+                    <h3>${step.title}</h3>
+                    <p>${step.desc}</p>
+                </div>
+            </div>
+        `).join('');
+
+        // Cases
+        elements.casesCarousel.innerHTML = CASE_STUDIES.map(c => `
+            <div class="case-card">
+                <img data-src="${c.img}" data-fallback-1="${c.img}&w=400" data-fallback-2="${c.img}&w=200" class="case-img" referrerpolicy="no-referrer" alt="${c.title}">
+                <div class="case-info">
+                    <div class="case-metric">${c.metric}</div>
+                    <h3 style="font-size:1.1rem; margin-bottom:0.5rem;">${c.title}</h3>
+                    <p style="font-size:0.9rem; color:var(--muted);">${c.desc}</p>
+                </div>
+            </div>
+        `).join('');
+
+        // Benefits
+        elements.benefitsGrid.innerHTML = BENEFITS.map(b => `
+            <div class="service-card reveal" style="padding: var(--space-3);">
+                <h3 style="font-size:1.1rem; margin-bottom:0.5rem;">${b.title}</h3>
+                <p style="font-size:0.9rem; color:var(--muted);">${b.desc}</p>
+            </div>
+        `).join('');
+
+        // Pricing
+        elements.pricingGrid.innerHTML = PRICING_PLANS.map(p => `
+            <div class="pricing-card ${p.popular ? 'popular' : ''} reveal">
+                ${p.popular ? '<span style="position:absolute; top:-12px; right:20px; background:var(--primary); color:white; padding:4px 12px; border-radius:100px; font-size:0.7rem; font-weight:700;">MOST POPULAR</span>' : ''}
+                <div>
+                    <h3 style="font-size:1.5rem;">${p.name}</h3>
+                    <div class="price">$${p.price.toLocaleString()}<span>/mo</span></div>
+                </div>
+                <ul class="features-list">
+                    ${p.features.map(f => `
+                        <li class="feature-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            ${f}
+                        </li>
+                    `).join('')}
+                </ul>
+                <button class="btn ${p.popular ? 'btn-primary' : 'btn-secondary'} addToCart" data-id="${p.id}" style="margin-top:auto;">
+                    ${state.cart.some(i => i.id === p.id) ? 'Selected' : 'Add to Plan'}
+                </button>
+            </div>
+        `).join('');
+
+        // Testimonials
+        elements.testimonialsGrid.innerHTML = TESTIMONIALS.map(t => `
+            <div class="service-card reveal" style="border-style: dashed;">
+                <p style="font-style:italic; font-size:1.1rem;">"${t.quote}"</p>
+                <div style="margin-top:1rem;">
+                    <div style="font-weight:700;">${t.name}</div>
+                    <div style="font-size:0.8rem; color:var(--muted);">${t.role}, ${t.co}</div>
+                </div>
+            </div>
+        `).join('');
+
+        // FAQ
+        elements.faqList.innerHTML = FAQ_ITEMS.map((f, i) => `
+            <div class="faq-item ${state.faqOpenId === i ? 'active' : ''}" data-id="${i}">
+                <button class="faq-trigger">
+                    <span>${f.q}</span>
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-content">
+                    <p>${f.a}</p>
+                </div>
+            </div>
+        `).join('');
+
+        updateCartUI();
+        initReveal();
+    }
+
+    function updateCartUI() {
+        elements.cartBadge.textContent = state.cart.length;
+        if (state.cart.length === 0) {
+            elements.cartItems.innerHTML = '<p style="color:var(--muted); text-align:center; margin-top:40px;">Your plan is currently empty.</p>';
+            elements.cartTotal.textContent = '$0';
+        } else {
+            elements.cartItems.innerHTML = state.cart.map(item => `
+                <div class="cart-item">
+                    <div>
+                        <div style="font-weight:700;">${item.name} Plan</div>
+                        <div style="font-size:0.8rem; color:var(--muted);">Monthly Service</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-weight:700;">$${item.price.toLocaleString()}</div>
+                        <button class="btn-ghost removeFromCart" data-id="${item.id}" style="color:red; font-size:0.8rem; padding:0;">Remove</button>
+                    </div>
+                </div>
+            `).join('');
+            const total = state.cart.reduce((acc, curr) => acc + curr.price, 0);
+            elements.cartTotal.textContent = `$${total.toLocaleString()}`;
+        }
+    }
+
+    // Handlers
+    function toggleCart(show) {
+        state.cartOpen = show !== undefined ? show : !state.cartOpen;
+        elements.cartPanel.classList.toggle('open', state.cartOpen);
+        elements.overlay.classList.toggle('open', state.cartOpen || state.mobileMenuOpen);
+    }
+
+    function toggleMobileMenu(show) {
+        state.mobileMenuOpen = show !== undefined ? show : !state.mobileMenuOpen;
+        elements.mobileMenu.classList.toggle('open', state.mobileMenuOpen);
+        elements.overlay.classList.toggle('open', state.mobileMenuOpen || state.cartOpen);
+    }
+
+    function showToast(msg) {
+        elements.toast.textContent = msg;
+        elements.toast.classList.add('show');
+        setTimeout(() => elements.toast.classList.remove('show'), 3000);
+    }
+
+    // Image Loader Pipeline
+    async function loadImages() {
+        const imgs = document.querySelectorAll('img[data-src]');
+        for (const img of imgs) {
+            const sources = [img.dataset.src, img.dataset.fallback1, img.dataset.fallback2];
+            let success = false;
+            
+            for (const src of sources) {
+                if (!src) continue;
+                try {
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 1800);
+                    const response = await fetch(src + (src.includes('?') ? '&' : '?') + 'cb=' + Date.now(), { 
+                        signal: controller.signal,
+                        referrerPolicy: 'no-referrer'
+                    });
+                    clearTimeout(timeout);
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        img.src = URL.createObjectURL(blob);
+                        success = true;
+                        break;
+                    }
+                } catch (e) {}
+            }
+            if (!success) {
+                img.style.background = '#333';
+                img.style.display = 'flex';
+                img.style.alignItems = 'center';
+                img.style.justifyContent = 'center';
+            }
+        }
+    }
+
+    // Scroll Reveal
+    function initReveal() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    }
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+        renderUI();
+        loadImages();
+
+        elements.themeToggle.addEventListener('click', () => {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme_v1', state.theme);
+            renderUI();
+        });
+
+        elements.cartToggle.addEventListener('click', () => toggleCart(true));
+        elements.closeCart.addEventListener('click', () => toggleCart(false));
+        elements.overlay.addEventListener('click', () => {
+            toggleCart(false);
+            toggleMobileMenu(false);
+        });
+
+        if (window.innerWidth <= 1024) {
+            elements.mobileToggle.style.display = 'block';
+            elements.mobileToggle.addEventListener('click', () => toggleMobileMenu(true));
+            elements.closeMobile.addEventListener('click', () => toggleMobileMenu(false));
+        }
+
+        document.body.addEventListener('click', e => {
+            // FAQ Trigger
+            const faqItem = e.target.closest('.faq-item');
+            if (faqItem && (e.target.closest('.faq-trigger') || e.target.classList.contains('faq-trigger'))) {
+                const id = parseInt(faqItem.dataset.id);
+                state.faqOpenId = state.faqOpenId === id ? null : id;
+                renderUI();
+            }
+
+            // Add to Cart
+            const addBtn = e.target.closest('.addToCart');
+            if (addBtn) {
+                const id = addBtn.dataset.id;
+                const plan = PRICING_PLANS.find(p => p.id === id);
+                if (!state.cart.some(item => item.id === id)) {
+                    state.cart.push(plan);
+                    showToast(`${plan.name} Plan added to selection.`);
+                    updateCartUI();
+                    renderUI();
+                } else {
+                    showToast('Plan already selected.');
+                }
+            }
+
+            // Remove from Cart
+            const removeBtn = e.target.closest('.removeFromCart');
+            if (removeBtn) {
+                const id = removeBtn.dataset.id;
+                state.cart = state.cart.filter(item => item.id !== id);
+                updateCartUI();
+                renderUI();
+            }
+
+            // Mobile Link Click
+            if (e.target.classList.contains('mobile-link')) {
+                toggleMobileMenu(false);
+            }
+
+            // External Link Guard
+            const link = e.target.closest('a');
+            if (link && link.getAttribute('href') && !link.getAttribute('href').startsWith('#') && link.getAttribute('target') !== '_blank') {
+                e.preventDefault();
+                showToast('External navigation blocked in preview');
+            }
+        });
+
+        // Carousel Controls
+        elements.prevCase.addEventListener('click', () => {
+            elements.casesCarousel.scrollBy({ left: -400, behavior: 'smooth' });
+        });
+        elements.nextCase.addEventListener('click', () => {
+            elements.casesCarousel.scrollBy({ left: 400, behavior: 'smooth' });
+        });
+
+        // Newsletter
+        elements.newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const status = document.getElementById('formStatus');
+            btn.textContent = 'Processing...';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.textContent = 'Joined';
+                status.textContent = 'Success! You’re on the list.';
+                status.style.color = '#22c55e';
+            }, 1500);
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const offset = 80; // Header height
+                    const bodyRect = document.body.getBoundingClientRect().top;
+                    const elementRect = targetElement.getBoundingClientRect().top;
+                    const elementPosition = elementRect - bodyRect;
+                    const offsetPosition = elementPosition - offset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Scrollspy
+        window.addEventListener('scroll', () => {
+            let current = "";
+            const sections = document.querySelectorAll("section[id]");
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute("id");
+                }
+            });
+
+            document.querySelectorAll(".nav-link").forEach((a) => {
+                a.classList.remove("active");
+                if (a.getAttribute("href") === `#${current}`) {
+                    a.classList.add("active");
+                }
+            });
+        });
+    });
+
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            toggleCart(false);
+            toggleMobileMenu(false);
+        }
+    });
+</script>
+</body>
+</html>
