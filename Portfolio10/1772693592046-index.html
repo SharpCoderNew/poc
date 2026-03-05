@@ -1,0 +1,1142 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJ ONE CHANCE | Chicago's Premier Wedding & Sports DJ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0A0A0A;
+            --surface: #181818;
+            --surface-light: #1E1E1E;
+            --primary: #CC0000;
+            --primary-glow: rgba(204, 0, 0, 0.4);
+            --white: #FFFFFF;
+            --muted: #888888;
+            --border: rgba(255, 255, 255, 0.08);
+            --header-h: 80px;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        ::selection { background: var(--primary); color: white; }
+
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--bg);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+            cursor: none;
+        }
+
+        /* Base UI Elements */
+        h1, h2, h3, .bebas { font-family: 'Bebas Neue', cursive; line-height: 1; text-transform: uppercase; }
+        h2 { font-family: 'Oswald', sans-serif; font-size: 3.5rem; letter-spacing: -0.02em; }
+        p { font-size: 1.1rem; font-weight: 300; color: #CCC; }
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        ul { list-style: none; }
+        button { cursor: pointer; border: none; background: none; font-family: inherit; transition: var(--transition); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2.5rem;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            transition: var(--transition);
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: white; color: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(204, 0, 0, 0.3); }
+        .btn-outline { border: 2px solid var(--primary); color: white; }
+        .btn-outline:hover { background: var(--primary); }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 5%; }
+        .section-padding { padding: 120px 0; position: relative; }
+        .diagonal-divider {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: var(--bg);
+            clip-path: polygon(0 100%, 100% 100%, 100% 0);
+            z-index: 2;
+        }
+
+        /* Custom Cursor */
+        #cursor {
+            width: 10px; height: 10px; background: var(--primary);
+            position: fixed; top: 0; left: 0; pointer-events: none;
+            z-index: 9999; border-radius: 50%; mix-blend-mode: screen;
+            transition: transform 0.15s ease-out;
+        }
+        #cursor-follower {
+            width: 40px; height: 40px; border: 1px solid var(--primary);
+            position: fixed; top: 0; left: 0; pointer-events: none;
+            z-index: 9998; border-radius: 50%; opacity: 0.5;
+            transition: transform 0.25s ease-out;
+        }
+
+        /* Overlay Effects */
+        .scanline {
+            width: 100%; height: 100%; position: fixed; top: 0; left: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 4px, 3px 100%; z-index: 100; pointer-events: none; opacity: 0.15;
+        }
+        .grain {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04; z-index: 101; pointer-events: none;
+        }
+
+        /* Header */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            height: var(--header-h); display: flex; align-items: center;
+            transition: var(--transition); border-bottom: 1px solid transparent;
+        }
+        header.scrolled {
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+            height: 70px;
+        }
+        .nav-wrapper { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+        .logo { font-family: 'Bebas Neue'; font-size: 2rem; display: flex; align-items: center; }
+        .logo span { color: var(--primary); margin-left: 2px; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { font-family: 'Oswald'; font-weight: 500; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+        .nav-links a:hover, .nav-links a.active { color: var(--white); }
+        .header-cta { display: flex; align-items: center; gap: 1.5rem; }
+
+        /* Mobile Menu */
+        .burger { display: none; width: 30px; height: 20px; flex-direction: column; justify-content: space-between; position: relative; }
+        .burger span { width: 100%; height: 2px; background: white; transition: var(--transition); }
+        .mobile-nav {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+            background: var(--bg); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 1001; transition: 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        .mobile-nav.open { right: 0; }
+        .mobile-nav a { font-family: 'Bebas Neue'; font-size: 4rem; margin: 1rem 0; }
+
+        /* Hero Section */
+        #home {
+            height: 100vh; display: flex; align-items: center; overflow: hidden;
+            background-color: #000; position: relative;
+        }
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.5; transition: opacity 2s ease;
+        }
+        .hero-bg img { width: 100%; height: 100%; object-fit: cover; }
+        .hero-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, #0A0A0A 20%, transparent 100%), linear-gradient(to top, #0A0A0A 10%, transparent 40%);
+        }
+        .hero-content { position: relative; z-index: 10; max-width: 900px; }
+        .hero-pre { color: var(--primary); font-family: 'Oswald'; font-weight: 700; letter-spacing: 0.5em; margin-bottom: 1rem; opacity: 0; transform: translateY(20px); }
+        .hero-title { font-size: clamp(5rem, 15vw, 12rem); margin: -1rem 0; line-height: 0.9; }
+        .hero-title .outline { -webkit-text-stroke: 2px var(--primary); color: transparent; }
+        .hero-tagline { font-size: 1.4rem; max-width: 600px; margin: 2rem 0; opacity: 0; transform: translateY(20px); }
+        .hero-btns { display: flex; gap: 1.5rem; opacity: 0; transform: translateY(20px); }
+
+        /* Social Proof Bar */
+        .social-proof { background: #111; padding: 40px 0; border-bottom: 1px solid var(--border); overflow: hidden; }
+        .marquee { display: flex; overflow: hidden; user-select: none; gap: 4rem; }
+        .marquee-content { flex-shrink: 0; display: flex; justify-content: space-around; min-width: 100%; gap: 4rem; animation: marquee 30s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        .client-logo { font-family: 'Bebas Neue'; font-size: 1.8rem; color: var(--muted); opacity: 0.5; white-space: nowrap; transition: 0.3s; }
+        .client-logo:hover { color: var(--white); opacity: 1; }
+
+        /* Stats Bar */
+        .stats-bar { position: relative; padding: 60px 0; border-bottom: 1px solid var(--border); }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; text-align: center; }
+        .stat-item .num { font-family: 'Bebas Neue'; font-size: 4rem; color: var(--primary); }
+        .stat-item .label { font-family: 'Oswald'; font-size: 0.9rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.1em; }
+        .glow-orb {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 400px; height: 400px; background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            z-index: -1; pointer-events: none; filter: blur(50px);
+        }
+
+        /* About Section */
+        #about { display: flex; align-items: center; overflow: hidden; }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+        .about-img {
+            position: relative; width: 100%; height: 600px;
+            clip-path: polygon(0 0, 100% 5%, 95% 100%, 5% 95%);
+            background: var(--surface);
+        }
+        .about-img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.2); }
+        .about-content h2 { border-left: 6px solid var(--primary); padding-left: 2rem; margin-bottom: 2rem; }
+        .pull-quote { font-family: 'Oswald'; font-size: 1.8rem; font-style: italic; color: var(--white); margin: 2rem 0; position: relative; }
+        .pull-quote::before { content: '"'; font-family: 'Bebas Neue'; font-size: 5rem; color: var(--primary); position: absolute; left: -30px; top: -20px; opacity: 0.4; }
+        .badge-row { display: flex; gap: 1rem; margin-top: 3rem; flex-wrap: wrap; }
+        .badge { background: var(--surface); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+
+        /* Services Sections */
+        .service-section { overflow: hidden; display: flex; align-items: center; }
+        .service-section:nth-of-type(even) .about-grid .about-content { order: 1; }
+        .service-section:nth-of-type(even) .about-grid .about-img { order: 2; clip-path: polygon(5% 0, 95% 5%, 100% 100%, 0 95%); }
+        .service-stats { display: flex; gap: 2rem; margin: 2rem 0; }
+        .s-stat { display: flex; flex-direction: column; }
+        .s-stat span:first-child { font-family: 'Bebas Neue'; font-size: 2.5rem; color: var(--primary); }
+        .s-stat span:last-child { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; }
+        .service-features { margin-bottom: 2.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .service-features li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; }
+        .service-features li::before { content: '→'; color: var(--primary); font-weight: bold; }
+
+        /* Mixes Grid */
+        #mixes { background: #080808; }
+        .mixes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
+        .mix-card {
+            background: var(--surface); border: 1px solid var(--border);
+            padding: 2rem; position: relative; border-left: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+        .mix-card:hover { transform: translateY(-10px); background: var(--surface-light); }
+        .mix-genre { background: rgba(204, 0, 0, 0.15); color: var(--primary); padding: 0.3rem 0.8rem; font-size: 0.7rem; font-weight: 700; border-radius: 20px; display: inline-block; margin-bottom: 1rem; text-transform: uppercase; }
+        .mix-title { font-size: 2rem; margin-bottom: 1.5rem; }
+        .mix-meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.8rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        
+        .waveform { height: 40px; display: flex; align-items: flex-end; gap: 2px; margin-bottom: 2rem; }
+        .wave-bar { flex: 1; background: var(--border); height: 10%; transition: 0.2s; }
+        .mix-card.playing .wave-bar { background: var(--primary); animation: wave 1s ease-in-out infinite alternate; }
+        @keyframes wave { from { height: 10%; } to { height: 100%; } }
+
+        .mix-controls { display: flex; align-items: center; gap: 1rem; }
+        .play-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; }
+        .play-btn svg { width: 20px; fill: currentColor; }
+        
+        /* Gallery */
+        .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .gallery-item {
+            position: relative; height: 300px; overflow: hidden; cursor: pointer;
+            background: var(--surface);
+        }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; filter: grayscale(1); }
+        .gallery-item:hover img { transform: scale(1.1); filter: grayscale(0); }
+        .gallery-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; padding: 1.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            opacity: 0; transition: 0.3s;
+        }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+        .gallery-tag { font-family: 'Oswald'; font-size: 0.7rem; color: var(--primary); text-transform: uppercase; }
+
+        /* Lightbox */
+        #lightbox {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000; display: none;
+            justify-content: center; align-items: center;
+        }
+        #lightbox img { max-width: 90%; max-height: 85vh; border: 2px solid var(--border); }
+        .lightbox-close { position: absolute; top: 30px; right: 30px; font-size: 2rem; color: white; cursor: pointer; }
+        .lightbox-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; padding: 0 50px; transform: translateY(-50%); }
+        .lightbox-nav button { font-size: 3rem; color: white; opacity: 0.5; }
+        .lightbox-nav button:hover { opacity: 1; }
+
+        /* Testimonials */
+        #testimonials { background: var(--surface); }
+        .t-carousel { position: relative; max-width: 1000px; margin: 0 auto; height: 400px; overflow: hidden; }
+        .t-slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; transition: 0.8s; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        .t-slide.active { opacity: 1; }
+        .t-quote { font-size: 2rem; font-family: 'Oswald'; margin-bottom: 2rem; }
+        .t-author { color: var(--primary); font-family: 'Bebas Neue'; font-size: 1.5rem; letter-spacing: 0.1em; }
+        .t-role { color: var(--muted); font-size: 0.9rem; text-transform: uppercase; }
+        .t-stars { color: #FFD700; margin-bottom: 1rem; }
+        .t-dots { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }
+        .t-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; }
+        .t-dot.active { background: var(--primary); transform: scale(1.3); }
+
+        /* Contact Section */
+        .contact-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 5rem; }
+        .info-card { background: var(--surface); padding: 3rem; border-left: 6px solid var(--primary); }
+        .info-item { margin-bottom: 2rem; }
+        .info-item label { display: block; font-family: 'Oswald'; font-size: 0.8rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.5rem; }
+        .info-item p { font-size: 1.5rem; color: var(--white); font-family: 'Bebas Neue'; }
+
+        .contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full { grid-column: span 2; }
+        .form-group label { font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem; color: var(--muted); }
+        .form-group input, .form-group select, .form-group textarea {
+            background: var(--surface-light); border: 1px solid var(--border); padding: 1rem;
+            color: white; font-family: inherit; transition: 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow);
+        }
+        .form-group textarea { height: 150px; resize: none; }
+        .error-msg { color: var(--primary); font-size: 0.75rem; margin-top: 0.4rem; display: none; }
+
+        #form-success {
+            display: none; text-align: center; padding: 4rem;
+            background: var(--surface); border: 1px solid var(--primary);
+        }
+        #form-success h3 { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+
+        /* Footer */
+        footer { padding: 60px 0; border-top: 1px solid var(--primary); background: #050505; }
+        .footer-grid { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; }
+        .footer-nav { display: flex; gap: 1.5rem; }
+        .footer-nav a { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; }
+        .social-links { display: flex; gap: 1.5rem; }
+        .social-links a svg { width: 20px; fill: var(--muted); transition: 0.3s; }
+        .social-links a:hover svg { fill: var(--primary); transform: translateY(-3px); }
+
+        /* Toast */
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--primary); color: white; padding: 1rem 2rem; border-radius: 4px;
+            z-index: 3000; font-weight: 700; opacity: 0; transition: 0.3s; pointer-events: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .about-grid, .contact-grid { grid-template-columns: 1fr; }
+            .hero-title { font-size: 15vw; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            .service-section:nth-of-type(even) .about-grid .about-content { order: 0; }
+        }
+        @media (max-width: 768px) {
+            .nav-links, .header-cta .btn { display: none; }
+            .burger { display: flex; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .service-features { grid-template-columns: 1fr; }
+            .contact-form { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: span 1; }
+            .footer-grid { flex-direction: column; text-align: center; }
+            .t-carousel { height: 500px; }
+            .t-quote { font-size: 1.5rem; }
+            .section-padding { padding: 80px 0; }
+        }
+
+        /* Animations */
+        [data-reveal] { opacity: 0; transform: translateY(40px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        [data-reveal].visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div class="scanline"></div>
+    <div class="grain"></div>
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <header id="header">
+        <div class="container nav-wrapper">
+            <a href="#home" class="logo">ONE CHANCE<span>.</span></a>
+            <nav class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#weddings">Weddings</a>
+                <a href="#mixes">Mixes</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <div class="header-cta">
+                <a href="#contact" class="btn btn-primary" style="padding: 0.6rem 1.8rem; font-size: 0.8rem;">Book Now</a>
+                <button type="button" class="burger" id="burger">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#weddings">Weddings</a>
+        <a href="#mixes">Mixes</a>
+        <a href="#contact">Contact</a>
+    </div>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home">
+            <div class="hero-bg">
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                     data-src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1920" 
+                     data-fallback-1="https://images.pexels.com/photos/1763075/pexels-photo-1763075.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                     data-fallback-2="https://upload.wikimedia.org/wikipedia/commons/e/e1/Concert_crowd_2.jpg"
+                     alt="DJ One Chance Live" referrerpolicy="no-referrer">
+            </div>
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <p class="hero-pre" id="hero-pre">CHICAGO'S #1 ELITE DJ</p>
+                <h1 class="hero-title">
+                    <div id="hero-l1">DJ ONE</div>
+                    <div id="hero-l2" class="outline">CHANCE</div>
+                </h1>
+                <p class="hero-tagline" id="hero-tag">Official DJ for the Chicago Bulls & Blackhawks. High-energy performance for the world's most exclusive events.</p>
+                <div class="hero-btns" id="hero-btns">
+                    <a href="#contact" class="btn btn-primary">Book Your Event</a>
+                    <a href="#mixes" class="btn btn-outline">Hear My Mixes</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Social Proof -->
+        <div class="social-proof">
+            <div class="marquee" id="client-marquee">
+                <!-- JS Populated -->
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="glow-orb"></div>
+            <div class="container stats-grid" id="stats-container">
+                <!-- JS Populated -->
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <section id="about" class="section-padding">
+            <div class="container about-grid">
+                <div class="about-img" data-reveal>
+                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                         data-src="https://images.unsplash.com/photo-1598387993441-a364f854c3e1?auto=format&fit=crop&w=800"
+                         data-fallback-1="https://images.pexels.com/photos/164745/pexels-photo-164745.jpeg?auto=compress&cs=tinysrgb&w=800"
+                         data-fallback-2="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Technics_SL-1200MK2.jpg/800px-Technics_SL-1200MK2.jpg"
+                         alt="DJ One Chance Performance" referrerpolicy="no-referrer">
+                </div>
+                <div class="about-content" data-reveal>
+                    <h2>The One. The Only.</h2>
+                    <p>Born and raised in the heart of Chicago, DJ One Chance has defined the sound of the city's most iconic sports arenas and luxury ballrooms for over a decade. Whether it's the roar of 20,000 fans at the United Center or the intimate first dance of a lifetime, One Chance brings a refined musical intuition that can't be taught.</p>
+                    <div class="pull-quote">"Every event is a once-in-a-lifetime experience. I play like I've only got one chance to make it perfect."</div>
+                    <p>Known for his seamless blending across genres and high-octane energy, he has become the go-to specialist for those who refuse to settle for the standard "wedding DJ" experience.</p>
+                    <div class="badge-row">
+                        <span class="badge">Official Bulls DJ</span>
+                        <span class="badge">Blackhawks Resident</span>
+                        <span class="badge">Wedding Wire Pro</span>
+                        <span class="badge">Red Bull 3Style finalist</span>
+                    </div>
+                </div>
+            </div>
+            <div class="diagonal-divider"></div>
+        </section>
+
+        <!-- Services Loop -->
+        <div id="services-target">
+            <!-- JS Populated: #weddings, #sports, #corporate -->
+        </div>
+
+        <!-- Mixes Section -->
+        <section id="mixes" class="section-padding">
+            <div class="container">
+                <div style="text-align: center; margin-bottom: 5rem;" data-reveal>
+                    <h2>The Sound Lab</h2>
+                    <p>Exclusive studio mixes and live recordings. Press play to feel the vibe.</p>
+                </div>
+                <div class="mixes-grid" id="mixes-container">
+                    <!-- JS Populated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery -->
+        <section id="gallery" class="section-padding">
+            <div class="container">
+                <div style="margin-bottom: 4rem;" data-reveal>
+                    <h2>Live From Chicago</h2>
+                </div>
+                <div class="gallery-grid" id="gallery-container">
+                    <!-- JS Populated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section id="testimonials" class="section-padding">
+            <div class="container">
+                <div class="t-carousel" id="testimonial-carousel">
+                    <!-- JS Populated -->
+                </div>
+                <div class="t-dots" id="testimonial-dots"></div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section-padding">
+            <div class="container">
+                <div style="margin-bottom: 4rem;" data-reveal>
+                    <h2>Lock In Your Date</h2>
+                </div>
+                <div class="contact-grid">
+                    <div class="info-card" data-reveal>
+                        <div class="info-item">
+                            <label>Based In</label>
+                            <p>Chicago, IL</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Email Me</label>
+                            <p>bookings@djonechance.com</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Phone</label>
+                            <p>312.555.0199</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Social</label>
+                            <div class="social-links" style="margin-top: 1rem;">
+                                <a href="#" target="_blank" rel="noopener noreferrer">IG</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer">FB</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer">TK</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="contact-form-wrapper" data-reveal>
+                        <form class="contact-form" id="booking-form">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" required placeholder="John Doe">
+                                <span class="error-msg">Name is required</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" required placeholder="john@example.com">
+                                <span class="error-msg">Valid email is required</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="event-date">Event Date</label>
+                                <input type="date" id="event-date" required>
+                                <span class="error-msg">Please select a future date</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="event-type">Event Type</label>
+                                <select id="event-type">
+                                    <option value="Wedding">Wedding</option>
+                                    <option value="Chicago Bulls Event">Chicago Bulls Event</option>
+                                    <option value="Corporate Event">Corporate Event</option>
+                                    <option value="Private Party">Private Party</option>
+                                </select>
+                            </div>
+                            <div class="form-group full">
+                                <label for="message">Event Details</label>
+                                <textarea id="message" placeholder="Venue, expected guest count, vibe..."></textarea>
+                            </div>
+                            <div class="form-group full">
+                                <button type="submit" class="btn btn-primary" id="submit-btn">Send Inquiry</button>
+                            </div>
+                        </form>
+                        <div id="form-success">
+                            <h3>Confirmed.</h3>
+                            <p>Your inquiry has been logged. DJ One Chance will reach out within 24 hours.</p>
+                            <p style="margin-top: 2rem; color: var(--muted);">Ref ID: <span id="ref-id"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-grid">
+            <div>
+                <a href="#home" class="logo">ONE CHANCE<span>.</span></a>
+                <p style="font-size: 0.8rem; margin-top: 0.5rem;">Chicago's Premier High-Energy DJ</p>
+            </div>
+            <nav class="footer-nav">
+                <a href="#about">About</a>
+                <a href="#weddings">Weddings</a>
+                <a href="#sports">Sports</a>
+                <a href="#mixes">Mixes</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <p style="font-size: 0.7rem; color: var(--muted);">&copy; <span id="year"></span> DJ One Chance. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <div id="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <div class="lightbox-nav">
+            <button id="lb-prev">&lsaquo;</button>
+            <button id="lb-next">&rsaquo;</button>
+        </div>
+        <img src="" id="lightbox-img" alt="Gallery Preview">
+    </div>
+
+    <div id="toast">External navigation blocked in preview</div>
+
+    <script>
+        /* --- CONSTANTS --- */
+        const CLIENTS = [
+            { name: "Chicago Bulls", type: "Sports", logoText: "CHICAGO BULLS" },
+            { name: "Chicago Blackhawks", type: "Sports", logoText: "BLACKHAWKS" },
+            { name: "United Center", type: "Venue", logoText: "UNITED CENTER" },
+            { name: "Nike", type: "Corporate", logoText: "NIKE" },
+            { name: "Red Bull", type: "Sports", logoText: "RED BULL" },
+            { name: "Hyatt", type: "Corporate", logoText: "HYATT" },
+            { name: "Boeing", type: "Corporate", logoText: "BOEING" },
+            { name: "Motorola", type: "Corporate", logoText: "MOTOROLA" }
+        ];
+
+        const STATS = [
+            { number: 12, label: "Years Experience", suffix: "+" },
+            { number: 850, label: "Events Performed", suffix: "+" },
+            { number: 1, label: "Million Fans Reached", suffix: "M+" },
+            { number: 5.0, label: "Star Rating", suffix: "/5" }
+        ];
+
+        const SERVICES = [
+            {
+                id: "weddings",
+                title: "Luxury Weddings",
+                tagline: "Unforgettable Elegance Meet Pure Energy.",
+                description: "Not your average wedding DJ. We specialize in luxury, high-production wedding experiences that keep the dance floor packed from the first song to the final encore. We handle everything from bespoke ceremony sound to venue-shaking receptions.",
+                stats: [{v:"250+", l:"Weddings"}, {v:"100%", l:"Satisfaction"}],
+                features: ["Custom Playlist Design", "Premium Sound & Lighting", "Master of Ceremonies", "Wireless Audio Systems"],
+                ctaLabel: "Plan My Wedding",
+                eventTypePrefill: "Wedding",
+                img: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800"
+            },
+            {
+                id: "sports",
+                title: "Sports & Arena",
+                tagline: "The Pulse of Chicago Sports.",
+                description: "As the official DJ for the Chicago Bulls and Chicago Blackhawks, DJ One Chance knows how to command an arena. From hype-up intros to clutch timeouts, we deliver professional sports presentation that elevates the home team advantage.",
+                stats: [{v:"20k+", l:"Crowd Size"}, {v:"500+", l:"Pro Games"}],
+                features: ["Live Atmosphere Control", "Custom Hype Edits", "Arena System Integration", "Crowd Engagement"],
+                ctaLabel: "Book Sports Event",
+                eventTypePrefill: "Chicago Bulls Event",
+                img: "https://images.unsplash.com/photo-1504450758481-7338eba7524a?auto=format&fit=crop&w=800"
+            },
+            {
+                id: "corporate",
+                title: "Corporate & Activations",
+                tagline: "Brand Identity, Amplified.",
+                description: "Modern brands require modern soundtracks. Whether it's a product launch for Nike or a gala for Boeing, DJ One Chance provides a sophisticated, high-energy environment that aligns perfectly with your brand's DNA.",
+                stats: [{v:"50+", l:"Global Brands"}, {v:"10yr", l:"Corporate Resident"}],
+                features: ["Brand Soundscaping", "Multi-Day Activations", "National Tours", "Professional Hosting"],
+                ctaLabel: "Inquire Now",
+                eventTypePrefill: "Corporate Event",
+                img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800"
+            }
+        ];
+
+        const MIXES = [
+            { id: 1, title: "Arena Anthems Vol 4", genre: "Hip-Hop / Bass", duration: "45:00", bpm: "128", tracklist: ["Bulls Intro", "Blackhawks Anthem", "Chicago Soul"], visualizerSeed: 0.4 },
+            { id: 2, title: "Sunset Wedding 2024", genre: "House / Nu-Disco", duration: "62:15", bpm: "124", tracklist: ["Love Theory", "Midnight City Edit", "Disco Love"], visualizerSeed: 0.7 },
+            { id: 3, title: "The Windy City Mix", genre: "Open Format", duration: "38:40", bpm: "105", tracklist: ["Old School Chi", "Doo-Wop Flip", "Summer Vibes"], visualizerSeed: 0.2 },
+            { id: 4, title: "Blackhawks Pregame", genre: "Rock / Electro", duration: "50:00", bpm: "132", tracklist: ["Thunderstruck Remix", "Arena Rock", "Hard Bass"], visualizerSeed: 0.9 }
+        ];
+
+        const GALLERY_ITEMS = [
+            { src: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800", alt: "Main Stage Performance", category: "Arena", venue: "United Center" },
+            { src: "https://images.unsplash.com/photo-1514525253361-bee8a4874a73?auto=format&fit=crop&w=800", alt: "Luxury Wedding Dancefloor", category: "Wedding", venue: "The Peninsula" },
+            { src: "https://images.pexels.com/photos/2263436/pexels-photo-2263436.jpeg?auto=compress&cs=tinysrgb&w=800", alt: "Chicago Bulls Hype", category: "Sports", venue: "United Center" },
+            { src: "https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=800", alt: "Corporate Gala", category: "Corporate", venue: "The Field Museum" },
+            { src: "https://images.unsplash.com/photo-1459749411177-042180ce333b?auto=format&fit=crop&w=800", alt: "Blackhawks Intro", category: "Sports", venue: "United Center" },
+            { src: "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?auto=format&fit=crop&w=800", alt: "Crowd Shot", category: "Live", venue: "Grant Park" },
+            { src: "https://images.pexels.com/photos/1047442/pexels-photo-1047442.jpeg?auto=compress&cs=tinysrgb&w=800", alt: "DJ Booth Close", category: "Performance", venue: "Skydeck" },
+            { src: "https://images.unsplash.com/photo-1520110120385-c285d6b23ce2?auto=format&fit=crop&w=800", alt: "Outdoor Reception", category: "Wedding", venue: "Chicago Botanic Garden" }
+        ];
+
+        const TESTIMONIALS = [
+            { name: "Michael & Sarah J.", role: "Wedding Clients", quote: "One Chance absolutely made our wedding. He didn't just play music; he directed the entire energy of the night.", rating: 5 },
+            { name: "Ben S.", role: "Events Dir. - Nike", quote: "Professional, punctual, and culturally relevant. Exactly what we needed for our Chicago launch.", rating: 5 },
+            { name: "United Center Team", role: "Sports Production", quote: "A master of the room. One Chance understands how to work a stadium crowd better than anyone we've hired.", rating: 5 },
+            { name: "Ashley R.", role: "Bride", quote: "The transition from our cocktail hour to the party was flawless. Best decision we made for our big day.", rating: 5 },
+            { name: "Corporate Planner", role: "Tech Activation", quote: "He brought a vibe that was sophisticated yet incredibly fun. Every guest was asking for his SoundCloud.", rating: 5 },
+            { name: "James K.", role: "Groom", quote: "From the planning stages to the last song, Chance was amazing to work with. Highly recommended.", rating: 5 }
+        ];
+
+        /* --- STATE --- */
+        const state = {
+            mobileMenuOpen: false,
+            activeMixId: null,
+            lightboxIndex: -1,
+            testimonialIndex: 0,
+            formSubmitted: false,
+            audioContext: null,
+            activeSynth: null
+        };
+
+        /* --- IMAGE PIPELINE --- */
+        async function loadImage(img) {
+            const urls = [img.dataset.src, img.dataset.fallback1, img.dataset.fallback2].filter(u => u);
+            
+            for (let url of urls) {
+                try {
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 1800);
+                    
+                    const response = await fetch(url + (url.includes('?') ? '&' : '?') + 'cb=' + Date.now(), {
+                        mode: "cors",
+                        credentials: "omit",
+                        cache: "no-store",
+                        signal: controller.signal
+                    });
+                    
+                    clearTimeout(timeout);
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+                        img.src = blobUrl;
+                        img.style.opacity = '1';
+                        return;
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+            // If all fail, show a styled placeholder
+            img.style.background = "linear-gradient(45deg, #111, #222)";
+            img.style.opacity = '1';
+        }
+
+        /* --- WEB AUDIO SYNTH --- */
+        function createSynth(seed) {
+            if (!window.AudioContext && !window.webkitAudioContext) return null;
+            
+            try {
+                const ctx = state.audioContext || new (window.AudioContext || window.webkitAudioContext)();
+                state.audioContext = ctx;
+                
+                const masterBus = ctx.createGain();
+                masterBus.gain.value = 0.3;
+                masterBus.connect(ctx.destination);
+                
+                let isPlaying = true;
+                const bpm = 120 + (seed * 10);
+                const stepTime = 60 / bpm / 4;
+                let step = 0;
+
+                function playStep() {
+                    if (!isPlaying) return;
+                    
+                    const t = ctx.currentTime;
+                    
+                    // Kick
+                    if (step % 4 === 0) {
+                        const osc = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        osc.frequency.setValueAtTime(150, t);
+                        osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.1);
+                        g.gain.setValueAtTime(1, t);
+                        g.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+                        osc.connect(g);
+                        g.connect(masterBus);
+                        osc.start(t);
+                        osc.stop(t + 0.1);
+                    }
+                    
+                    // Hi-Hat
+                    if (step % 2 === 0) {
+                        const noise = ctx.createBufferSource();
+                        const buffer = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
+                        const data = buffer.getChannelData(0);
+                        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+                        noise.buffer = buffer;
+                        const g = ctx.createGain();
+                        g.gain.setValueAtTime(step % 4 === 2 ? 0.05 : 0.1, t);
+                        g.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
+                        noise.connect(g);
+                        g.connect(masterBus);
+                        noise.start(t);
+                    }
+
+                    // Chord / Bass Stab
+                    if (step % 8 === 0 || (seed > 0.5 && step % 8 === 6)) {
+                        const osc = ctx.createOscillator();
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(seed > 0.5 ? 110 : 82, t);
+                        const g = ctx.createGain();
+                        g.gain.setValueAtTime(0.1, t);
+                        g.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
+                        osc.connect(g);
+                        g.connect(masterBus);
+                        osc.start(t);
+                        osc.stop(t + 0.4);
+                    }
+
+                    step = (step + 1) % 16;
+                    setTimeout(playStep, stepTime * 1000);
+                }
+
+                playStep();
+                
+                return {
+                    stop: () => { 
+                        isPlaying = false; 
+                        masterBus.gain.rampToValueAtTime(0, ctx.currentTime + 0.2);
+                    }
+                };
+            } catch (e) {
+                console.warn("Web Audio not supported", e);
+                return null;
+            }
+        }
+
+        /* --- UI RENDERING --- */
+        function initMarquee() {
+            const marquee = document.getElementById('client-marquee');
+            const content = document.createElement('div');
+            content.className = 'marquee-content';
+            CLIENTS.forEach(c => {
+                const el = document.createElement('span');
+                el.className = 'client-logo';
+                el.textContent = c.logoText;
+                content.appendChild(el);
+            });
+            marquee.appendChild(content);
+            marquee.appendChild(content.cloneNode(true));
+        }
+
+        function initStats() {
+            const container = document.getElementById('stats-container');
+            STATS.forEach(s => {
+                container.innerHTML += `
+                    <div class="stat-item" data-num="${s.number}">
+                        <div class="num">0${s.suffix}</div>
+                        <div class="label">${s.label}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderServices() {
+            const container = document.getElementById('services-target');
+            SERVICES.forEach(s => {
+                container.innerHTML += `
+                    <section id="${s.id}" class="section-padding service-section">
+                        <div class="container about-grid">
+                            <div class="about-img" data-reveal>
+                                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                                     data-src="${s.img}" alt="${s.title}" referrerpolicy="no-referrer">
+                            </div>
+                            <div class="about-content" data-reveal>
+                                <h2 style="font-size:3rem">${s.title}</h2>
+                                <p class="hero-tagline" style="margin:1rem 0; opacity:1; transform:none; font-weight:700; color:var(--white)">${s.tagline}</p>
+                                <p>${s.description}</p>
+                                <div class="service-stats">
+                                    ${s.stats.map(st => `<div class="s-stat"><span>${st.v}</span><span>${st.l}</span></div>`).join('')}
+                                </div>
+                                <ul class="service-features">
+                                    ${s.features.map(f => `<li>${f}</li>`).join('')}
+                                </ul>
+                                <button type="button" class="btn btn-primary" onclick="prefillContact('${s.eventTypePrefill}')">${s.ctaLabel}</button>
+                            </div>
+                        </div>
+                        <div class="diagonal-divider" style="transform: rotate(180deg); bottom:auto; top:0;"></div>
+                    </section>
+                `;
+            });
+        }
+
+        function renderMixes() {
+            const container = document.getElementById('mixes-container');
+            MIXES.forEach(m => {
+                let waveHtml = '';
+                for(let i=0; i<40; i++) waveHtml += `<div class="wave-bar" style="height:${Math.random()*90+10}%"></div>`;
+                
+                container.innerHTML += `
+                    <div class="mix-card" id="mix-${m.id}" data-reveal>
+                        <span class="mix-genre">${m.genre}</span>
+                        <h3 class="mix-title">${m.title}</h3>
+                        <div class="mix-meta">
+                            <span>${m.duration}</span>
+                            <span>${m.bpm} BPM</span>
+                        </div>
+                        <div class="waveform">${waveHtml}</div>
+                        <div class="mix-controls">
+                            <button class="play-btn" onclick="togglePlay(${m.id}, ${m.visualizerSeed})">
+                                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                            <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.7rem;" onclick="showToast('External Mix coming soon!')">Full Mix</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            GALLERY_ITEMS.forEach((item, idx) => {
+                container.innerHTML += `
+                    <div class="gallery-item" onclick="openLightbox(${idx})" data-reveal>
+                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+                             data-src="${item.src}" alt="${item.alt}" referrerpolicy="no-referrer">
+                        <div class="gallery-overlay">
+                            <span class="gallery-tag">${item.category}</span>
+                            <div style="font-family:'Oswald'; font-size:0.9rem;">${item.venue}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderTestimonials() {
+            const carousel = document.getElementById('testimonial-carousel');
+            const dots = document.getElementById('testimonial-dots');
+            TESTIMONIALS.forEach((t, idx) => {
+                carousel.innerHTML += `
+                    <div class="t-slide ${idx === 0 ? 'active' : ''}" id="t-slide-${idx}">
+                        <div class="t-stars">
+                            ${'★'.repeat(t.rating)}
+                        </div>
+                        <div class="t-quote">"${t.quote}"</div>
+                        <div class="t-author">${t.name}</div>
+                        <div class="t-role">${t.role}</div>
+                    </div>
+                `;
+                dots.innerHTML += `<div class="t-dot ${idx === 0 ? 'active' : ''}" onclick="goToTestimonial(${idx})"></div>`;
+            });
+        }
+
+        /* --- CORE LOGIC --- */
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.opacity = '1';
+            setTimeout(() => t.style.opacity = '0', 3000);
+        }
+
+        function prefillContact(type) {
+            const sel = document.getElementById('event-type');
+            sel.value = type;
+            document.querySelector('#contact').scrollIntoView();
+        }
+
+        function togglePlay(id, seed) {
+            const cards = document.querySelectorAll('.mix-card');
+            const clickedCard = document.getElementById(`mix-${id}`);
+            const btn = clickedCard.querySelector('.play-btn');
+            
+            if (state.activeMixId === id) {
+                // Pause
+                if (state.activeSynth) state.activeSynth.stop();
+                state.activeSynth = null;
+                state.activeMixId = null;
+                clickedCard.classList.remove('playing');
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+            } else {
+                // Play
+                cards.forEach(c => {
+                    c.classList.remove('playing');
+                    c.querySelector('.play-btn').innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+                });
+                
+                if (state.activeSynth) state.activeSynth.stop();
+                
+                state.activeMixId = id;
+                clickedCard.classList.add('playing');
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+                
+                state.activeSynth = createSynth(seed);
+                if (!state.activeSynth) showToast("Audio preview not supported in this environment");
+            }
+        }
+
+        function openLightbox(idx) {
+            state.lightboxIndex = idx;
+            const lb = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            img.src = GALLERY_ITEMS[idx].src;
+            lb.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function updateLightbox(dir) {
+            state.lightboxIndex = (state.lightboxIndex + dir + GALLERY_ITEMS.length) % GALLERY_ITEMS.length;
+            document.getElementById('lightbox-img').src = GALLERY_ITEMS[state.lightboxIndex].src;
+        }
+
+        function goToTestimonial(idx) {
+            state.testimonialIndex = idx;
+            document.querySelectorAll('.t-slide').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.t-dot').forEach(d => d.classList.remove('active'));
+            document.getElementById(`t-slide-${idx}`).classList.add('active');
+            document.querySelectorAll('.t-dot')[idx].classList.add('active');
+        }
+
+        /* --- EVENT LISTENERS --- */
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initMarquee();
+            initStats();
+            renderServices();
+            renderMixes();
+            renderGallery();
+            renderTestimonials();
+
+            // Lazy Load Images
+            const images = document.querySelectorAll('img[data-src]');
+            const imgObserver = new IntersectionObserver((entries) => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) {
+                        loadImage(e.target);
+                        imgObserver.unobserve(e.target);
+                    }
+                });
+            });
+            images.forEach(i => imgObserver.observe(i));
+
+            // Reveal Animation
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) {
+                        e.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
+            // Stats Count-up
+            const statsObserver = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    document.querySelectorAll('.stat-item').forEach(item => {
+                        const target = parseFloat(item.dataset.num);
+                        const display = item.querySelector('.num');
+                        const suffix = display.textContent.replace(/[0-9.]/g, '');
+                        let current = 0;
+                        const inc = target / 50;
+                        const timer = setInterval(() => {
+                            current += inc;
+                            if (current >= target) {
+                                display.textContent = target + suffix;
+                                clearInterval(timer);
+                            } else {
+                                display.textContent = (target % 1 === 0 ? Math.floor(current) : current.toFixed(1)) + suffix;
+                            }
+                        }, 30);
+                    });
+                    statsObserver.unobserve(entries[0].target);
+                }
+            });
+            statsObserver.observe(document.getElementById('stats-container'));
+
+            // Hero Entrance
+            setTimeout(() => {
+                document.getElementById('hero-pre').style.opacity = '1';
+                document.getElementById('hero-pre').style.transform = 'translateY(0)';
+            }, 500);
+            setTimeout(() => {
+                document.getElementById('hero-tag').style.opacity = '1';
+                document.getElementById('hero-tag').style.transform = 'translateY(0)';
+                document.getElementById('hero-btns').style.opacity = '1';
+                document.getElementById('hero-btns').style.transform = 'translateY(0)';
+            }, 800);
+
+            // Auto Testimonials
+            setInterval(() => {
+                if (document.querySelector('#testimonials:hover')) return;
+                goToTestimonial((state.testimonialIndex + 1) % TESTIMONIALS.length);
+            }, 5000);
+
+            document.getElementById('year').textContent = new Date().getFullYear();
+        });
+
+        // Sticky Header & Scrollspy
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+
+            const sections = document.querySelectorAll('section');
+            const navItems = document.querySelectorAll('.nav-links a');
+            let current = "";
+
+            sections.forEach(s => {
+                const top = s.offsetTop - 100;
+                if (window.scrollY >= top) current = s.getAttribute('id');
+            });
+
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href').includes(current)) item.classList.add('active');
+            });
+        });
+
+        // Cursor
+        window.addEventListener('mousemove', e => {
+            const c = document.getElementById('cursor');
+            const f = document.getElementById('cursor-follower');
+            c.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+            setTimeout(() => {
+                f.style.transform = `translate(${e.clientX - 15}px, ${e.clientY - 15}px)`;
+            }, 50);
+        });
+
+        // Burger Menu
+        document.getElementById('burger').addEventListener('click', () => {
+            state.mobileMenuOpen = !state.mobileMenuOpen;
+            document.getElementById('mobile-nav').classList.toggle('open');
+            document.body.style.overflow = state.mobileMenuOpen ? 'hidden' : 'auto';
+        });
+
+        document.querySelectorAll('.mobile-nav a').forEach(a => {
+            a.addEventListener('click', () => {
+                state.mobileMenuOpen = false;
+                document.getElementById('mobile-nav').classList.remove('open');
+                document.body.style.overflow = 'auto';
+            });
+        });
+
+        // External Navigation Guard
+        document.addEventListener('click', e => {
+            const link = e.target.closest('a');
+            if (link) {
+                const href = link.getAttribute('href');
+                if (href && !href.startsWith('#') && link.getAttribute('target') !== '_blank') {
+                    e.preventDefault();
+                    showToast("External navigation blocked in preview");
+                }
+            }
+        });
+
+        // Form Submission
+        document.getElementById('booking-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.innerHTML = 'Sending...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                document.getElementById('booking-form').style.display = 'none';
+                document.getElementById('form-success').style.display = 'block';
+                document.getElementById('ref-id').textContent = 'OC-' + Math.floor(1000 + Math.random() * 9000);
+            }, 1500);
+        });
+
+        // Lightbox Keyboard
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') updateLightbox(1);
+            if (e.key === 'ArrowLeft') updateLightbox(-1);
+        });
+
+        document.getElementById('lb-next').addEventListener('click', e => { e.stopPropagation(); updateLightbox(1); });
+        document.getElementById('lb-prev').addEventListener('click', e => { e.stopPropagation(); updateLightbox(-1); });
+        document.getElementById('lightbox').addEventListener('click', closeLightbox);
+    </script>
+</body>
+</html>
