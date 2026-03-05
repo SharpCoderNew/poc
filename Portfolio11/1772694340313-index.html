@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethereal Vision | Premium Photography Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #c5a059;
+            --accent-hover: #e0bc7a;
+            --glass: rgba(18, 18, 18, 0.85);
+            --border: rgba(255, 255, 255, 0.1);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+            --container-padding: 2rem;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #fcfcfc;
+            --bg-secondary: #f3f3f3;
+            --text-primary: #121212;
+            --text-secondary: #505050;
+            --glass: rgba(252, 252, 252, 0.85);
+            --border: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 { font-family: var(--font-serif); font-weight: 700; letter-spacing: -0.02em; }
+        p { color: var(--text-secondary); margin-bottom: 1rem; }
+        .section-title { font-size: 2.5rem; text-align: center; margin-bottom: 3rem; }
+        .section-title span { color: var(--accent); display: block; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.3em; margin-bottom: 0.5rem; font-family: var(--font-sans); }
+
+        /* Layout */
+        section { padding: 6rem var(--container-padding); max-width: 1440px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+        .grid { display: grid; gap: 2rem; }
+        
+        /* Global Nav */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            height: 80px;
+            display: flex;
+            align-items: center;
+        }
+
+        nav {
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; text-decoration: none; color: var(--text-primary); letter-spacing: 2px; }
+
+        .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--text-primary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; transition: var(--transition); }
+        .nav-links a:hover { color: var(--accent); }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .hamburger { display: none; cursor: pointer; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; }
+
+        /* Hero */
+        #home { padding: 0; height: 100vh; position: relative; overflow: hidden; max-width: none; }
+        .ken-burns-container { position: absolute; inset: 0; z-index: -1; }
+        .kb-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 2s ease-in-out; background-size: cover; background-position: center; }
+        .kb-slide.active { opacity: 1; animation: kenburns 20s linear infinite; }
+        .kb-slide img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1s ease; }
+        
+        @keyframes kenburns {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            padding: 0 1rem;
+        }
+        .hero-content h1 { font-size: clamp(3rem, 8vw, 6rem); margin-bottom: 1rem; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .hero-content p { color: #f0f0f0; font-size: 1.25rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 2rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .cta-btn { 
+            background: var(--accent); color: white; padding: 1.2rem 3rem; text-decoration: none; font-weight: 600; 
+            text-transform: uppercase; letter-spacing: 0.15em; border: none; cursor: pointer; transition: var(--transition);
+            border-radius: 2px; display: inline-block;
+        }
+        .cta-btn:hover { background: var(--accent-hover); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(197, 160, 89, 0.4); }
+
+        /* Portfolio */
+        .filter-bar { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 3rem; flex-wrap: wrap; }
+        .filter-btn { background: none; border: none; color: var(--text-secondary); font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8rem; cursor: pointer; padding-bottom: 5px; border-bottom: 2px solid transparent; transition: var(--transition); }
+        .filter-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+        .masonry { columns: 1; gap: 1.5rem; }
+        @media (min-width: 640px) { .masonry { columns: 2; } }
+        @media (min-width: 1024px) { .masonry { columns: 3; } }
+        @media (min-width: 1280px) { .masonry { columns: 4; } }
+
+        .gallery-item { break-inside: avoid; margin-bottom: 1.5rem; position: relative; overflow: hidden; border-radius: 4px; cursor: pointer; background: var(--bg-secondary); }
+        .gallery-item img { width: 100%; height: auto; display: block; transition: transform 0.8s ease; opacity: 0; }
+        .gallery-item:hover img { transform: scale(1.05); }
+        .gallery-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); opacity: 0; transition: var(--transition); display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+        .gallery-overlay h4 { color: white; margin: 0; font-size: 1.1rem; }
+        .gallery-overlay p { color: #ccc; margin: 0; font-size: 0.8rem; }
+
+        /* Stories */
+        .stories-grid { grid-template-columns: 1fr; }
+        @media (min-width: 768px) { .stories-grid { grid-template-columns: 1fr 1fr; } }
+        .story-card { background: var(--bg-secondary); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--border); }
+        .story-img-wrap { width: 100%; aspect-ratio: 16/10; overflow: hidden; background: var(--border); }
+        .story-img-wrap img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s; }
+        .story-content { padding: 2rem; flex-grow: 1; }
+        .story-meta { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; display: block; }
+        .story-card h3 { margin-bottom: 1rem; font-size: 1.8rem; }
+        .read-story-btn { background: none; border: 1px solid var(--accent); color: var(--accent); padding: 0.8rem 1.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; transition: var(--transition); margin-top: 1rem; }
+        .read-story-btn:hover { background: var(--accent); color: white; }
+
+        /* Services */
+        .services-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .service-card { background: var(--bg-secondary); padding: 3rem 2rem; border-radius: 8px; text-align: center; border: 1px solid var(--border); transition: var(--transition); }
+        .service-card:hover { transform: translateY(-10px); border-color: var(--accent); }
+        .service-card h3 { font-size: 2rem; margin-bottom: 1rem; }
+        .price { font-size: 2.5rem; font-weight: 700; color: var(--accent); margin-bottom: 2rem; display: block; }
+        .service-card ul { list-style: none; margin-bottom: 2.5rem; }
+        .service-card li { margin-bottom: 0.8rem; font-size: 0.95rem; color: var(--text-secondary); }
+
+        /* Portal */
+        .portal-container { max-width: 800px; margin: 0 auto; width: 100%; }
+        .portal-card { background: var(--bg-secondary); border-radius: 12px; padding: 3rem; border: 1px solid var(--border); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.8rem; background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-primary); border-radius: 4px; font-family: inherit; }
+        .form-group input:focus { outline: none; border-color: var(--accent); }
+        
+        .portal-dashboard { display: none; }
+        .portal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        .portal-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        @media (min-width: 768px) { .portal-grid { grid-template-columns: 1fr 1fr; } }
+        .dashboard-section h4 { font-size: 1.2rem; margin-bottom: 1rem; color: var(--accent); }
+        .data-list { list-style: none; }
+        .data-item { padding: 1rem; background: var(--bg-primary); border-radius: 6px; margin-bottom: 0.8rem; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Contact */
+        .contact-layout { grid-template-columns: 1fr; }
+        @media (min-width: 900px) { .contact-layout { grid-template-columns: 1fr 2fr; } }
+        .contact-info h3 { margin-bottom: 1.5rem; }
+        .contact-info p { margin-bottom: 2rem; }
+        .contact-method { margin-bottom: 2rem; }
+        .contact-method span { display: block; font-weight: 600; color: var(--accent); font-size: 0.8rem; text-transform: uppercase; }
+
+        /* Modals */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 2rem; }
+        .modal-content { max-width: 1100px; width: 100%; max-height: 90vh; position: relative; background: var(--bg-primary); border-radius: 8px; overflow-y: auto; }
+        .modal-close { position: fixed; top: 2rem; right: 2rem; background: none; border: none; color: white; font-size: 2.5rem; cursor: pointer; z-index: 2001; }
+        
+        .lightbox-img-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .lightbox-img { max-width: 100%; max-height: 70vh; object-fit: contain; }
+        .lightbox-meta { padding: 2rem; width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 2rem; }
+        .exif-data { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        @media (min-width: 600px) { .exif-data { grid-template-columns: repeat(4, 1fr); } }
+        .exif-item span { display: block; font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; }
+        .exif-item strong { font-size: 0.9rem; }
+
+        /* Animation */
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* Toast */
+        #toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 3000; }
+        .toast { background: var(--bg-secondary); color: var(--text-primary); padding: 1rem 2rem; border-radius: 4px; border-left: 4px solid var(--accent); margin-top: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideIn 0.3s forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Lightbox Navigation */
+        .lb-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; transform: translateY(-50%); pointer-events: none; }
+        .lb-nav button { pointer-events: auto; background: rgba(255,255,255,0.1); border: none; color: white; width: 60px; height: 60px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+        .lb-nav button:hover { background: rgba(255,255,255,0.2); }
+
+        footer { padding: 4rem var(--container-padding); border-top: 1px solid var(--border); text-align: center; }
+        .social-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
+        .social-links a { color: var(--text-secondary); text-decoration: none; font-size: 1.2rem; transition: var(--transition); }
+        .social-links a:hover { color: var(--accent); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; position: fixed; top: 80px; left: 0; width: 100%; background: var(--bg-primary); flex-direction: column; padding: 2rem; border-bottom: 1px solid var(--border); }
+            .nav-links.mobile-active { display: flex; }
+            .hamburger { display: block; }
+            .modal-content { padding: 1rem; }
+            .lightbox-meta { grid-template-columns: 1fr; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <a href="#home" class="logo">ETHEREAL</a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#portfolio">Portfolio</a></li>
+                <li><a href="#stories">Stories</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#portal">Client Portal</a></li>
+            </ul>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>
+                </button>
+                <button class="hamburger" id="menuToggle" aria-label="Open menu">☰</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home">
+            <div class="ken-burns-container" id="kbContainer"></div>
+            <div class="hero-content">
+                <p class="reveal">Editorial & Fine Art Photography</p>
+                <h1 class="reveal">Capturing the Essence of Stillness</h1>
+                <a href="#portfolio" class="cta-btn reveal">Enter Gallery</a>
+            </div>
+        </section>
+
+        <section id="portfolio">
+            <h2 class="section-title"><span>Visual Narrative</span>Portfolio</h2>
+            <div class="filter-bar reveal">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="portrait">Portrait</button>
+                <button class="filter-btn" data-filter="wedding">Wedding</button>
+                <button class="filter-btn" data-filter="editorial">Editorial</button>
+            </div>
+            <div class="masonry reveal" id="galleryGrid"></div>
+        </section>
+
+        <section id="stories">
+            <h2 class="section-title"><span>Through the Lens</span>Recent Stories</h2>
+            <div class="grid stories-grid reveal" id="storiesGrid"></div>
+        </section>
+
+        <section id="services">
+            <h2 class="section-title"><span>Investment</span>Collections & Services</h2>
+            <div class="grid services-grid reveal" id="servicesGrid"></div>
+        </section>
+
+        <section id="portal">
+            <h2 class="section-title"><span>Exclusives</span>Client Portal</h2>
+            <div class="portal-container reveal">
+                <!-- Login View -->
+                <div class="portal-card" id="portalLogin">
+                    <h3 style="margin-bottom: 1.5rem; text-align: center;">Sign in to your gallery</h3>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" required placeholder="client@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="cta-btn" style="width: 100%;">Access Private Portal</button>
+                    </form>
+                </div>
+                <!-- Dashboard View -->
+                <div class="portal-card portal-dashboard" id="portalDashboard">
+                    <div class="portal-header">
+                        <h3 id="welcomeMsg">Welcome, Alexandra</h3>
+                        <button class="filter-btn" id="signOutBtn">Sign Out</button>
+                    </div>
+                    <div class="portal-grid">
+                        <div class="dashboard-section">
+                            <h4>Upcoming Sessions</h4>
+                            <ul class="data-list" id="upcomingSessions"></ul>
+                        </div>
+                        <div class="dashboard-section">
+                            <h4>Delivered Galleries</h4>
+                            <ul class="data-list" id="deliveredGalleries"></ul>
+                        </div>
+                    </div>
+                    <div class="dashboard-section" style="margin-top: 2rem;">
+                        <h4>Recent Invoices</h4>
+                        <ul class="data-list" id="invoiceList"></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2 class="section-title"><span>Get in Touch</span>Reserve Your Date</h2>
+            <div class="grid contact-layout reveal">
+                <div class="contact-info">
+                    <h3>Let's create something timeless.</h3>
+                    <p>Whether it's an intimate editorial or a grand celebration, I am here to document your journey with authenticity and grace.</p>
+                    <div class="contact-method">
+                        <span>Studio Address</span>
+                        124 Artists Loft, Chelsea, NY
+                    </div>
+                    <div class="contact-method">
+                        <span>Direct Email</span>
+                        hello@etherealvision.com
+                    </div>
+                </div>
+                <div class="portal-card">
+                    <form id="contactForm">
+                        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" required>
+                            </div>
+                        </div>
+                        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Session Type</label>
+                                <select required>
+                                    <option value="">Select Type</option>
+                                    <option>Portrait</option>
+                                    <option>Wedding</option>
+                                    <option>Editorial</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Date Preference</label>
+                                <input type="date" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="cta-btn" style="width: 100%;">Send Inquiry</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="social-links">
+            <a href="#" target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href="#" target="_blank" rel="noopener noreferrer">Behance</a>
+            <a href="#" target="_blank" rel="noopener noreferrer">Twitter</a>
+        </div>
+        <p>&copy; 2024 Ethereal Vision Photography. All rights reserved.</p>
+    </footer>
+
+    <!-- Modals -->
+    <div id="lightbox" class="modal" role="dialog" aria-modal="true" aria-label="Image Lightbox">
+        <button class="modal-close" id="closeLightbox">&times;</button>
+        <div class="modal-content">
+            <div class="lightbox-img-wrap">
+                <img src="" alt="" class="lightbox-img" id="lbImg">
+                <div class="lightbox-meta">
+                    <div>
+                        <h4 id="lbTitle">Untitled</h4>
+                        <p id="lbDesc">A fleeting moment captured in time.</p>
+                        <div class="exif-data">
+                            <div class="exif-item"><span>ISO</span><strong id="exifIso">100</strong></div>
+                            <div class="exif-item"><span>Shutter</span><strong id="exifShutter">1/250</strong></div>
+                            <div class="exif-item"><span>Aperture</span><strong id="exifAperture">f/1.4</strong></div>
+                            <div class="exif-item"><span>Lens</span><strong id="exifLens">50mm Prime</strong></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button class="cta-btn" id="openPrintModal">Purchase Print</button>
+                    </div>
+                </div>
+            </div>
+            <div class="lb-nav">
+                <button id="lbPrev" aria-label="Previous">&larr;</button>
+                <button id="lbNext" aria-label="Next">&rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="printModal" class="modal" role="dialog" aria-modal="true">
+        <div class="modal-content" style="max-width: 500px; padding: 2.5rem;">
+            <h3>Purchase Fine Art Print</h3>
+            <p style="margin-bottom: 2rem;">Museum-quality archival giclée prints on Hahnemühle paper.</p>
+            <form id="printForm">
+                <div class="form-group">
+                    <label>Print Size</label>
+                    <select id="printSize">
+                        <option>8 x 10 in - $45</option>
+                        <option>12 x 18 in - $85</option>
+                        <option>20 x 30 in - $160</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Paper Finish</label>
+                    <select>
+                        <option>Matte Fine Art</option>
+                        <option>Satin Smooth</option>
+                        <option>Textured Rag</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="cta-btn" id="closePrint" style="background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary);">Cancel</button>
+                    <button type="submit" class="cta-btn" style="flex-grow: 1;">Order Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="storyModal" class="modal" role="dialog" aria-modal="true">
+        <button class="modal-close" id="closeStory">&times;</button>
+        <div class="modal-content" style="padding: 0;">
+            <div id="storyHero" style="height: 50vh; overflow: hidden;">
+                <img src="" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="padding: 4rem var(--container-padding); max-width: 800px; margin: 0 auto;" id="storyFullContent"></div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        /**
+         * DATA CONSTANTS
+         */
+        const GALLERY_ITEMS = [
+            { id: 0, category: 'portrait', title: 'The Architect', src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Portrait_of_a_young_man.jpg/800px-Portrait_of_a_young_man.jpg', exif: { iso: '400', shutter: '1/200', aperture: 'f/1.8', lens: '85mm' } },
+            { id: 1, category: 'wedding', title: 'Golden Vows', src: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/2253870/pexels-photo-2253870.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Wedding_ceremony.jpg', exif: { iso: '100', shutter: '1/500', aperture: 'f/2.8', lens: '35mm' } },
+            { id: 2, category: 'editorial', title: 'Vogue Theory', src: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/0/07/Fashion_Editorial_01.jpg', exif: { iso: '800', shutter: '1/125', aperture: 'f/1.4', lens: '50mm' } },
+            { id: 3, category: 'portrait', title: 'Sorrow & Grace', src: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Grace_Portrait.jpg/800px-Grace_Portrait.jpg', exif: { iso: '200', shutter: '1/1000', aperture: 'f/1.2', lens: '85mm' } },
+            { id: 4, category: 'wedding', title: 'Parisian Escape', src: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Paris_Wedding.jpg', exif: { iso: '640', shutter: '1/400', aperture: 'f/4.0', lens: '24-70mm' } },
+            { id: 5, category: 'editorial', title: 'Industrial Soul', src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/1/1a/Industrial_Model.jpg', exif: { iso: '100', shutter: '1/250', aperture: 'f/2.0', lens: '35mm' } },
+            { id: 6, category: 'portrait', title: 'Monochrome Echo', src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Black_White_Man.jpg', exif: { iso: '1600', shutter: '1/80', aperture: 'f/1.8', lens: '50mm' } },
+            { id: 7, category: 'wedding', title: 'Ceremony Light', src: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/256737/pexels-photo-256737.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Wedding_Light.jpg', exif: { iso: '100', shutter: '1/2000', aperture: 'f/2.8', lens: '70-200mm' } },
+            { id: 8, category: 'editorial', title: 'Minimalist Form', src: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/1689731/pexels-photo-1689731.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Minimalist_Fashion.jpg', exif: { iso: '50', shutter: '1/500', aperture: 'f/5.6', lens: '100mm Macro' } },
+            { id: 9, category: 'portrait', title: 'Youthful Spirit', src: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/1462637/pexels-photo-1462637.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Youth_Portrait.jpg/800px-Youth_Portrait.jpg', exif: { iso: '200', shutter: '1/320', aperture: 'f/1.4', lens: '50mm' } },
+            { id: 10, category: 'wedding', title: 'After The Rain', src: 'https://images.unsplash.com/photo-1465495910483-0d674b177ec5?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/3352398/pexels-photo-3352398.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/d/df/Rainy_Wedding.jpg', exif: { iso: '3200', shutter: '1/125', aperture: 'f/2.8', lens: '24-70mm' } },
+            { id: 11, category: 'editorial', title: 'The Highline', src: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/934070/pexels-photo-934070.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/5/52/Fashion_NY.jpg', exif: { iso: '100', shutter: '1/1000', aperture: 'f/8.0', lens: '24mm' } },
+            { id: 12, category: 'portrait', title: 'Inner Thoughts', src: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/712513/pexels-photo-712513.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/7/77/Portrait_Thinking.jpg', exif: { iso: '400', shutter: '1/160', aperture: 'f/1.2', lens: '50mm' } },
+            { id: 13, category: 'wedding', title: 'First Dance', src: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/3014856/pexels-photo-3014856.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/4/4c/Wedding_Dance.jpg', exif: { iso: '1250', shutter: '1/200', aperture: 'f/2.0', lens: '35mm' } },
+            { id: 14, category: 'editorial', title: 'Abstract Light', src: 'https://images.unsplash.com/photo-1502133480873-37d90c19759e?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/2034851/pexels-photo-2034851.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Abstract_Model.jpg', exif: { iso: '100', shutter: '1/4000', aperture: 'f/1.4', lens: '50mm' } },
+            { id: 15, category: 'portrait', title: 'The Wanderer', src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80', f1: 'https://images.pexels.com/photos/428333/pexels-photo-428333.jpeg?auto=compress&cs=tinysrgb&w=800', f2: 'https://upload.wikimedia.org/wikipedia/commons/0/07/Portrait_Man_Nature.jpg', exif: { iso: '100', shutter: '1/640', aperture: 'f/2.8', lens: '135mm' } }
+        ];
+
+        const STORY_ITEMS = [
+            { id: 1, title: 'Amalfi Solitude', location: 'Amalfi, Italy', date: 'Sept 2023', excerpt: 'A visual exploration of the quiet hours on Italy’s most famous coastline.', heroSrc: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1200', f1: 'https://images.pexels.com/photos/161060/pexels-photo-161060.jpeg?auto=compress&cs=tinysrgb&w=1200', f2: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Amalfi_Coast.jpg', content: '<p>The sun hadn’t yet crested the rugged limestone cliffs when I set out on the winding paths of Ravello. While most travelers wait for the warmth of the afternoon to explore the Amalfi Coast, I find the blue hour to be its most honest state.</p><p>This story captures the architectural rhythm of the coast without the noise of the crowds. Every shadow across the tiled piazzas tells a story of centuries-old craftsmanship.</p>' },
+            { id: 2, title: 'Neon Shadows', location: 'Tokyo, Japan', date: 'Jan 2024', excerpt: 'Cinematic street photography documenting the vibrant nighttime energy of Shinjuku.', heroSrc: 'https://images.unsplash.com/photo-1503891450247-ee5f8bbafbc9?auto=format&fit=crop&w=1200', f1: 'https://images.pexels.com/photos/1105766/pexels-photo-1105766.jpeg?auto=compress&cs=tinysrgb&w=1200', f2: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Tokyo_Night.jpg', content: '<p>Tokyo exists in two versions: the organized efficiency of the day, and the electric rebellion of the night. Armed with a single 35mm lens, I walked through the narrow alleys of Golden Gai.</p><p>The colors here aren’t just light; they are the lifeblood of the city. I focused on the intersection of modern technology and traditional habits—the businessman at the vending machine, the steam rising from a late-night ramen stall.</p>' },
+            { id: 3, title: 'Ethereal Union', location: 'Cotswolds, UK', date: 'May 2023', excerpt: 'An intimate wedding story focused on the subtle details and candid emotions.', heroSrc: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?auto=format&fit=crop&w=1200', f1: 'https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=1200', f2: 'https://upload.wikimedia.org/wikipedia/commons/d/df/Wedding_Event.jpg', content: '<p>There is a specific kind of light that exists only in the British countryside after a light drizzle. It is soft, forgiving, and deeply romantic.</p><p>A and M wanted their wedding to feel like an extension of their home—intimate, warm, and unhurried. We avoided the traditional "staged" shots, choosing instead to document the stolen glances and the laughter shared over candlelight.</p>' },
+            { id: 4, title: 'The Silent Studio', location: 'Paris, France', date: 'Nov 2023', excerpt: 'A backstage look at the meticulous craft of an artisanal leather studio.', heroSrc: 'https://images.unsplash.com/photo-1516724562728-afc824a36e84?auto=format&fit=crop&w=1200', f1: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=1200', f2: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Studio_Work.jpg', content: '<p>In a world of mass production, the hands of a master craftsman are a rare sight. I was invited into one of the oldest leather ateliers in the 3rd arrondissement.</p><p>The air smelled of cedar and tanned hides. There was no music, only the rhythmic sound of the awl piercing the leather. This collection is a tribute to the patience and dedication required to create something built to last a lifetime.</p>' }
+        ];
+
+        const SERVICE_PACKAGES = [
+            { name: 'Essentials', price: '$850', duration: '2 Hours', includes: ['Up to 50 Edited Images', 'Online Private Gallery', 'Personal Usage License', 'One Location'] },
+            { name: 'Signature', price: '$1,800', duration: '5 Hours', includes: ['Up to 150 Edited Images', 'Heirloom USB Box', 'Styling Consultation', 'Two Locations', 'Commercial Use (Personal)'] },
+            { name: 'Editorial Collection', price: '$3,500', duration: 'Full Day', includes: ['Unlimited Final Edits', 'Fine Art Print Album', 'Advanced Retouching', 'Unlimited Locations', 'Full Usage Rights'] }
+        ];
+
+        const PORTAL_DATA = {
+            upcomingSessions: [{ type: 'Portrait Session', date: 'June 14, 2024', status: 'Confirmed' }],
+            deliveredGalleries: [{ title: 'Summer Garden Editorial', date: 'May 10, 2024' }, { title: 'Chelsea Market Shoot', date: 'Apr 22, 2024' }],
+            invoices: [{ id: '#INV-2041', amount: '$450', status: 'Paid' }, { id: '#INV-2102', amount: '$1,200', status: 'Pending' }]
+        };
+
+        const state = {
+            theme: localStorage.getItem('theme_v1') || 'dark',
+            activeLightboxIndex: 0,
+            portalUser: null
+        };
+
+        /**
+         * IMAGE PIPELINE (BLOB LOADER)
+         */
+        async function loadSafeImage(img) {
+            const sources = [img.dataset.src, img.dataset.f1, img.dataset.f2].filter(Boolean);
+            img.style.opacity = '0';
+            
+            for (let url of sources) {
+                try {
+                    const cb = Math.random().toString(36).substring(7);
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 1800);
+                    const finalUrl = `${url}${url.includes('?') ? '&' : '?'}cb=${cb}`;
+
+                    const response = await fetch(finalUrl, { 
+                        mode: 'cors', 
+                        credentials: 'omit',
+                        signal: controller.signal 
+                    });
+                    clearTimeout(timeoutId);
+
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const objUrl = URL.createObjectURL(blob);
+                        img.src = objUrl;
+                        img.onload = () => { img.style.opacity = '1'; };
+                        return;
+                    }
+                } catch (e) {
+                    // Try next fallback
+                }
+            }
+
+            // Final SVG Fallback if all fetch fails
+            img.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23222'/%3E%3Ctext x='50%25' y='50%25' fill='%23555' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='10'%3EImage Unavailable%3C/text%3E%3C/svg%3E`;
+            img.style.opacity = '1';
+        }
+
+        /**
+         * RENDERERS
+         */
+        function renderGallery(filter = 'all') {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = '';
+            const filtered = filter === 'all' ? GALLERY_ITEMS : GALLERY_ITEMS.filter(item => item.category === filter);
+
+            filtered.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'gallery-item reveal';
+                div.innerHTML = `
+                    <img data-src="${item.src}" data-f1="${item.f1}" data-f2="${item.f2}" alt="${item.title}" loading="lazy" referrerpolicy="no-referrer">
+                    <div class="gallery-overlay">
+                        <h4>${item.title}</h4>
+                        <p>${item.category.charAt(0).toUpperCase() + item.category.slice(1)}</p>
+                    </div>
+                `;
+                div.onclick = () => openLightbox(item.id);
+                grid.appendChild(div);
+                loadSafeImage(div.querySelector('img'));
+            });
+            observeReveal();
+        }
+
+        function renderStories() {
+            const grid = document.getElementById('storiesGrid');
+            grid.innerHTML = '';
+            STORY_ITEMS.forEach(story => {
+                const card = document.createElement('div');
+                card.className = 'story-card reveal';
+                card.innerHTML = `
+                    <div class="story-img-wrap">
+                        <img data-src="${story.heroSrc}" data-f1="${story.f1}" data-f2="${story.f2}" alt="${story.title}" referrerpolicy="no-referrer">
+                    </div>
+                    <div class="story-content">
+                        <span class="story-meta">${story.location} / ${story.date}</span>
+                        <h3>${story.title}</h3>
+                        <p>${story.excerpt}</p>
+                        <button class="read-story-btn" data-id="${story.id}">Read Full Story</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+                loadSafeImage(card.querySelector('img'));
+            });
+        }
+
+        function renderServices() {
+            const grid = document.getElementById('servicesGrid');
+            grid.innerHTML = '';
+            SERVICE_PACKAGES.forEach(pkg => {
+                const card = document.createElement('div');
+                card.className = 'service-card reveal';
+                card.innerHTML = `
+                    <h3>${pkg.name}</h3>
+                    <span class="price">${pkg.price}</span>
+                    <p style="margin-bottom: 2rem;">Duration: ${pkg.duration}</p>
+                    <ul>
+                        ${pkg.includes.map(inc => `<li>${inc}</li>`).join('')}
+                    </ul>
+                    <button class="cta-btn" style="width: 100%;">Inquire Now</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        /**
+         * LIGHTBOX & MODALS
+         */
+        function openLightbox(id) {
+            const item = GALLERY_ITEMS.find(i => i.id === id);
+            state.activeLightboxIndex = GALLERY_ITEMS.indexOf(item);
+            updateLightboxUI();
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+
+        function updateLightboxUI() {
+            const item = GALLERY_ITEMS[state.activeLightboxIndex];
+            const img = document.getElementById('lbImg');
+            img.dataset.src = item.src;
+            img.dataset.f1 = item.f1;
+            img.dataset.f2 = item.f2;
+            loadSafeImage(img);
+
+            document.getElementById('lbTitle').innerText = item.title;
+            document.getElementById('lbDesc').innerText = `${item.category.toUpperCase()} COLLECTION`;
+            document.getElementById('exifIso').innerText = item.exif.iso;
+            document.getElementById('exifShutter').innerText = item.exif.shutter;
+            document.getElementById('exifAperture').innerText = item.exif.aperture;
+            document.getElementById('exifLens').innerText = item.exif.lens;
+        }
+
+        function openStory(id) {
+            const story = STORY_ITEMS.find(s => s.id == id);
+            const modal = document.getElementById('storyModal');
+            const heroImg = modal.querySelector('#storyHero img');
+            heroImg.dataset.src = story.heroSrc;
+            heroImg.dataset.f1 = story.f1;
+            heroImg.dataset.f2 = story.f2;
+            loadSafeImage(heroImg);
+
+            document.getElementById('storyFullContent').innerHTML = `
+                <span class="story-meta">${story.location} &bull; ${story.date}</span>
+                <h2 style="font-size: 3.5rem; margin: 1rem 0 2rem;">${story.title}</h2>
+                <div style="font-size: 1.15rem; color: var(--text-secondary);">
+                    ${story.content}
+                </div>
+            `;
+            modal.style.display = 'block';
+            modal.scrollTop = 0;
+        }
+
+        /**
+         * REVEAL OBSERVER
+         */
+        function observeReveal() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        /**
+         * THEME MANAGEMENT
+         */
+        function applyTheme() {
+            document.documentElement.setAttribute('data-theme', state.theme);
+            localStorage.setItem('theme_v1', state.theme);
+        }
+
+        /**
+         * TOAST SYSTEM
+         */
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerText = msg;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        /**
+         * MOCK PORTAL LOGIC
+         */
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = e.target.querySelector('input[type="email"]').value;
+            state.portalUser = { email, name: email.split('@')[0] };
+            
+            document.getElementById('portalLogin').style.display = 'none';
+            document.getElementById('portalDashboard').style.display = 'block';
+            document.getElementById('welcomeMsg').innerText = `Welcome, ${state.portalUser.name}`;
+            
+            // Populate data
+            const fillList = (id, data, tpl) => {
+                const el = document.getElementById(id);
+                el.innerHTML = data.map(tpl).join('');
+            };
+
+            fillList('upcomingSessions', PORTAL_DATA.upcomingSessions, s => `
+                <li class="data-item">
+                    <div><strong>${s.type}</strong><br><small>${s.date}</small></div>
+                    <span style="color:var(--accent)">${s.status}</span>
+                </li>
+            `);
+            fillList('deliveredGalleries', PORTAL_DATA.deliveredGalleries, g => `
+                <li class="data-item">
+                    <span>${g.title}</span>
+                    <button class="filter-btn">Download</button>
+                </li>
+            `);
+            fillList('invoiceList', PORTAL_DATA.invoices, i => `
+                <li class="data-item">
+                    <span>${i.id} - ${i.amount}</span>
+                    <span style="opacity:0.7">${i.status}</span>
+                </li>
+            `);
+            showToast("Welcome back to your client dashboard.");
+        }
+
+        /**
+         * KEN BURNS SLIDER
+         */
+        function initHeroSlider() {
+            const container = document.getElementById('kbContainer');
+            const slides = [
+                'https://images.unsplash.com/photo-1542037104857-ffbb0b9155fb?auto=format&fit=crop&w=1600',
+                'https://images.unsplash.com/photo-1519225495810-7512330582a0?auto=format&fit=crop&w=1600',
+                'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=1600'
+            ];
+
+            slides.forEach((src, idx) => {
+                const div = document.createElement('div');
+                div.className = `kb-slide ${idx === 0 ? 'active' : ''}`;
+                const img = document.createElement('img');
+                img.dataset.src = src;
+                div.appendChild(img);
+                container.appendChild(div);
+                loadSafeImage(img);
+            });
+
+            let current = 0;
+            setInterval(() => {
+                const s = document.querySelectorAll('.kb-slide');
+                s[current].classList.remove('active');
+                current = (current + 1) % s.length;
+                s[current].classList.add('active');
+            }, 6000);
+        }
+
+        /**
+         * CLICK GUARD & EVENT LISTENERS
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTheme();
+            renderGallery();
+            renderStories();
+            renderServices();
+            initHeroSlider();
+            observeReveal();
+
+            // Theme Toggle
+            document.getElementById('themeToggle').onclick = () => {
+                state.theme = state.theme === 'dark' ? 'light' : 'dark';
+                applyTheme();
+            };
+
+            // Navigation Click Guard & Internal Nav
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (link) {
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('#')) {
+                        if (link.target !== '_blank') {
+                            e.preventDefault();
+                            showToast("External navigation blocked in preview");
+                        }
+                    } else if (href && href.startsWith('#')) {
+                        document.getElementById('navLinks').classList.remove('mobile-active');
+                    }
+                }
+            });
+
+            // Hamburger
+            document.getElementById('menuToggle').onclick = () => {
+                document.getElementById('navLinks').classList.toggle('mobile-active');
+            };
+
+            // Filter Bar
+            document.querySelector('.filter-bar').onclick = (e) => {
+                if (e.target.classList.contains('filter-btn')) {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    renderGallery(e.target.dataset.filter);
+                }
+            };
+
+            // Lightbox Nav
+            document.getElementById('lbNext').onclick = () => {
+                state.activeLightboxIndex = (state.activeLightboxIndex + 1) % GALLERY_ITEMS.length;
+                updateLightboxUI();
+            };
+            document.getElementById('lbPrev').onclick = () => {
+                state.activeLightboxIndex = (state.activeLightboxIndex - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length;
+                updateLightboxUI();
+            };
+            document.getElementById('closeLightbox').onclick = () => {
+                document.getElementById('lightbox').style.display = 'none';
+            };
+
+            // Modal Esc Key
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+                }
+                if (document.getElementById('lightbox').style.display === 'flex') {
+                    if (e.key === 'ArrowRight') document.getElementById('lbNext').click();
+                    if (e.key === 'ArrowLeft') document.getElementById('lbPrev').click();
+                }
+            });
+
+            // Story Buttons
+            document.getElementById('storiesGrid').onclick = (e) => {
+                if (e.target.classList.contains('read-story-btn')) {
+                    openStory(e.target.dataset.id);
+                }
+            };
+            document.getElementById('closeStory').onclick = () => {
+                document.getElementById('storyModal').style.display = 'none';
+            };
+
+            // Print Modal
+            document.getElementById('openPrintModal').onclick = () => {
+                document.getElementById('printModal').style.display = 'flex';
+            };
+            document.getElementById('closePrint').onclick = () => {
+                document.getElementById('printModal').style.display = 'none';
+            };
+            document.getElementById('printForm').onsubmit = (e) => {
+                e.preventDefault();
+                document.getElementById('printModal').style.display = 'none';
+                showToast("Print request received. We will contact you for shipping details.");
+            };
+
+            // Portal
+            document.getElementById('loginForm').onsubmit = handleLogin;
+            document.getElementById('signOutBtn').onclick = () => {
+                state.portalUser = null;
+                document.getElementById('portalLogin').style.display = 'block';
+                document.getElementById('portalDashboard').style.display = 'none';
+                showToast("Signed out successfully.");
+            };
+
+            // Contact Form
+            document.getElementById('contactForm').onsubmit = (e) => {
+                e.preventDefault();
+                showToast("Inquiry sent. Check your inbox for our guide shortly.");
+                e.target.reset();
+            };
+
+            // Close modals on outside click
+            window.onclick = (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
+                }
+            };
+        });
+    </script>
+</body>
+</html>
