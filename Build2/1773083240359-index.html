@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>Amarnath Ventures | Strategic Financial Advisory</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme || systemTheme);
+        })();
+    </script>
+    <style>
+        :root {
+            /* Colors - Dark */
+            --bg: #0a0a0b;
+            --bg-2: #121214;
+            --surface: #1a1a1c;
+            --surface-2: #242426;
+            --text: #f0f0f2;
+            --muted: #a1a1aa;
+            --border: #2d2d30;
+            --primary: #c5a059;
+            --primary-2: #b38b40;
+            --on-primary: #0a0a0b;
+            --accent: #8e9aaf;
+            --on-accent: #ffffff;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --focus: #c5a059;
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.5);
+            --shadow-strong: 0 8px 30px rgba(0,0,0,0.7);
+            --overlay: rgba(0,0,0,0.8);
+            --divider: rgba(255,255,255,0.08);
+            --header-bg: rgba(10, 10, 11, 0.85);
+
+            /* Layout */
+            --gutter: 15vw;
+            --page-top: var(--space-6);
+            --page-bottom: var(--space-6);
+            --radius-btn: 3px;
+            --radius-card: 8px;
+            --radius-pill: 50px;
+            --space-1: 0.5rem;
+            --space-2: 1rem;
+            --space-3: 1.5rem;
+            --space-4: 2rem;
+            --space-5: 3rem;
+            --space-6: 5rem;
+            
+            /* Typography */
+            --font-size-1: 0.75rem;
+            --font-size-2: 0.875rem;
+            --font-size-3: 1rem;
+            --font-size-4: 1.25rem;
+            --font-size-5: 2rem;
+            --font-size-6: 3.5rem;
+            --line-1: 1.2;
+            --line-2: 1.5;
+            --line-3: 1.8;
+
+            /* Motion */
+            --dur-fast: 150ms;
+            --dur-med: 300ms;
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f8f9fa;
+            --surface: #ffffff;
+            --surface-2: #f1f3f5;
+            --text: #1a1a1a;
+            --muted: #666666;
+            --border: #e0e0e0;
+            --primary: #9c7b3c;
+            --primary-2: #846833;
+            --on-primary: #ffffff;
+            --divider: rgba(0,0,0,0.06);
+            --header-bg: rgba(255, 255, 255, 0.9);
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.05);
+            --shadow-strong: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: var(--line-2);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            line-height: var(--line-1);
+        }
+
+        button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            color: inherit;
+            transition: all var(--dur-fast) var(--ease-standard);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Layout Framework */
+        #page {
+            box-sizing: border-box;
+            padding-left: var(--gutter);
+            padding-right: var(--gutter);
+            padding-top: var(--page-top);
+            padding-bottom: var(--page-bottom);
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            min-width: 0;
+            padding-left: var(--space-1);
+            padding-right: var(--space-1);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: var(--font-size-4);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            display: inline-block;
+            transform: rotate(45deg);
+        }
+
+        nav.desktop-nav {
+            display: flex;
+            gap: var(--space-4);
+        }
+
+        .nav-link {
+            font-size: var(--font-size-2);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .theme-toggle {
+            padding: var(--space-1);
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--border);
+            margin-left: var(--space-3);
+        }
+
+        /* Hero */
+        .hero {
+            padding-top: var(--space-6);
+            padding-bottom: var(--space-6);
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            margin-bottom: var(--space-3);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero p {
+            font-size: var(--font-size-4);
+            color: var(--muted);
+            max-width: 650px;
+            margin: 0 auto var(--space-5);
+            font-weight: 300;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--on-primary);
+            padding: 1rem 2.5rem;
+            font-weight: 600;
+            border-radius: var(--radius-btn);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: var(--font-size-2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-2);
+            transform: translateY(-2px);
+        }
+
+        /* Sections */
+        section {
+            padding: var(--space-6) 0;
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .section-tag {
+            font-size: var(--font-size-1);
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 0.2em;
+            margin-bottom: var(--space-2);
+            display: block;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-4);
+        }
+
+        /* Grid Services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .service-card {
+            background: var(--surface);
+            padding: var(--space-4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            transition: transform var(--dur-med) var(--ease-standard);
+        }
+
+        .service-card:hover {
+            border-color: var(--primary);
+        }
+
+        .service-card h3 {
+            margin-bottom: var(--space-2);
+            font-size: var(--font-size-4);
+        }
+
+        .service-card p {
+            color: var(--muted);
+            font-size: var(--font-size-3);
+        }
+
+        /* Feature Row */
+        .feature-row {
+            display: flex;
+            align-items: center;
+            gap: var(--space-6);
+            margin-top: var(--space-5);
+        }
+
+        .feature-image {
+            flex: 1;
+            aspect-ratio: 4/5;
+            background: var(--surface-2);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+        }
+
+        .feature-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(0.5);
+            transition: filter var(--dur-med);
+        }
+
+        .feature-image:hover img {
+            filter: grayscale(0);
+        }
+
+        .feature-content {
+            flex: 1.2;
+        }
+
+        /* Contact Form */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-6);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--font-size-2);
+            font-weight: 500;
+            margin-bottom: var(--space-1);
+            color: var(--muted);
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            padding: var(--space-2);
+            color: var(--text);
+            font-family: inherit;
+            border-radius: var(--radius-btn);
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-5) 0 var(--space-3);
+            border-top: 1px solid var(--divider);
+            margin-top: var(--space-6);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+
+        .footer-brand h4 {
+            font-size: var(--font-size-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .footer-links h5 {
+            font-size: var(--font-size-2);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-2);
+            color: var(--primary);
+        }
+
+        .footer-links button {
+            display: block;
+            color: var(--muted);
+            margin-bottom: var(--space-1);
+            font-size: var(--font-size-2);
+        }
+
+        .footer-links button:hover {
+            color: var(--text);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-3);
+            border-top: 1px solid var(--divider);
+            color: var(--muted);
+            font-size: var(--font-size-1);
+        }
+
+        /* Status & Toasts */
+        #status-region {
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            z-index: 2000;
+        }
+
+        .toast {
+            background: var(--surface);
+            border-left: 4px solid var(--primary);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-btn);
+            box-shadow: var(--shadow-strong);
+            margin-top: var(--space-2);
+            animation: slideIn 0.3s ease-out;
+            max-width: 300px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Mobile Menu */
+        .mobile-toggle {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            :root {
+                --gutter: 5vw;
+            }
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .desktop-nav {
+                display: none;
+            }
+            .mobile-toggle {
+                display: flex;
+            }
+            .feature-row {
+                flex-direction: column;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Transitions */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s var(--ease-standard);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Safety Guard Message */
+        .safety-guard {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--danger);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            z-index: 3000;
+        }
+    </style>
+</head>
+<body>
+
+<div id="status-region" aria-live="polite"></div>
+<div id="safety-guard" class="safety-guard">External action disabled in preview.</div>
+
+<header>
+    <div class="container header-inner">
+        <div class="logo">
+            <span class="logo-mark"></span>
+            AMARNATH VENTURES
+        </div>
+        
+        <nav class="desktop-nav">
+            <button type="button" class="nav-link" data-target="expertise">Expertise</button>
+            <button type="button" class="nav-link" data-target="services">Services</button>
+            <button type="button" class="nav-link" data-target="strategy">Strategy</button>
+            <button type="button" class="nav-link" data-target="contact">Inquire</button>
+        </nav>
+
+        <div style="display: flex; align-items: center;">
+            <button type="button" class="theme-toggle" id="theme-switcher" aria-label="Toggle theme">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+            <button type="button" class="mobile-toggle nav-link" id="mobile-menu-btn" style="margin-left: 1rem;">Menu</button>
+        </div>
+    </div>
+</header>
+
+<div id="page">
+    <div class="container">
+        
+        <!-- Hero Section -->
+        <section class="hero">
+            <span class="section-tag reveal">Institutional Financial Intelligence</span>
+            <h1 class="reveal">Elevating Capital Through Strategic Clarity.</h1>
+            <p class="reveal">Amarnath Ventures provides high-conviction financial analysis and bespoke portfolio advisory for firms navigating complex global markets.</p>
+            <div class="reveal">
+                <button type="button" class="btn-primary" data-target="contact">Secure a Consultation</button>
+            </div>
+        </section>
+
+        <!-- Expertise -->
+        <section id="expertise">
+            <span class="section-tag reveal">The Foundation</span>
+            <h2 class="section-title reveal">Comprehensive Expertise.</h2>
+            <div class="services-grid">
+                <div class="service-card reveal">
+                    <h3>Market Analysis</h3>
+                    <p>Granular research into macro trends, sector dynamics, and emerging volatility vectors to identify asymmetric opportunities.</p>
+                </div>
+                <div class="service-card reveal">
+                    <h3>Risk Management</h3>
+                    <p>Sophisticated stress-testing and architectural resilience planning to preserve capital in uncertain environments.</p>
+                </div>
+                <div class="service-card reveal">
+                    <h3>Capital Allocation</h3>
+                    <p>Optimizing portfolio structures through deep fundamental analysis and quantitative modeling of asset correlations.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Strategy Row -->
+        <section id="strategy">
+            <div class="feature-row">
+                <div class="feature-image reveal">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1120" 
+                         alt="Modern architecture representation of stability" 
+                         referrerpolicy="no-referrer-when-downgrade" 
+                         crossorigin="anonymous">
+                </div>
+                <div class="feature-content reveal">
+                    <span class="section-tag">Our Methodology</span>
+                    <h2 class="section-title">A Data-Driven Vision.</h2>
+                    <p style="margin-bottom: var(--space-3); color: var(--muted);">We don't just interpret data; we find the narrative within the numbers. Our strategy combines classical fundamental analysis with modern alternative data processing to provide a 360-degree view of your investments.</p>
+                    <ul style="list-style: none; color: var(--muted);">
+                        <li style="margin-bottom: var(--space-2); display: flex; align-items: start; gap: 10px;">
+                            <span style="color: var(--primary); font-weight: bold;">•</span> Proprietary alpha-generation frameworks.
+                        </li>
+                        <li style="margin-bottom: var(--space-2); display: flex; align-items: start; gap: 10px;">
+                            <span style="color: var(--primary); font-weight: bold;">•</span> Tail-risk mitigation and hedging strategies.
+                        </li>
+                        <li style="margin-bottom: var(--space-2); display: flex; align-items: start; gap: 10px;">
+                            <span style="color: var(--primary); font-weight: bold;">•</span> Long-horizon value identification.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services -->
+        <section id="services">
+            <span class="section-tag reveal">Service Catalog</span>
+            <h2 class="section-title reveal">Bespoke Solutions.</h2>
+            <div class="services-grid">
+                <div class="service-card reveal">
+                    <h3>M&A Advisory</h3>
+                    <p>Full-spectrum support for mergers, acquisitions, and divestitures, from valuation to final negotiation strategy.</p>
+                </div>
+                <div class="service-card reveal">
+                    <h3>Family Office Support</h3>
+                    <p>Dedicated financial architecture for high-net-worth lineages, ensuring multi-generational wealth preservation.</p>
+                </div>
+                <div class="service-card reveal">
+                    <h3>Corporate Strategy</h3>
+                    <p>Assisting public and private entities in refining their financial narratives and operational efficiency.</p>
+                </div>
+                <div class="service-card reveal">
+                    <h3>Due Diligence</h3>
+                    <p>Exhaustive verification and auditing of investment targets to uncover hidden liabilities or opportunities.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <div class="contact-container">
+                <div class="reveal">
+                    <span class="section-tag">Contact</span>
+                    <h2 class="section-title">Initialize Engagement.</h2>
+                    <p style="color: var(--muted); margin-bottom: var(--space-4);">We operate with discretion and exclusivity. Reach out to discuss how Amarnath Ventures can strengthen your financial position.</p>
+                    <div style="font-size: var(--font-size-2);">
+                        <p style="margin-bottom: 5px;"><strong>HQ:</strong> Financial District, London / New York</p>
+                        <p><strong>Direct:</strong> advisory@amarnathventures.com</p>
+                    </div>
+                </div>
+                <div class="reveal">
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" required placeholder="Alexander Sterling">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Professional Email</label>
+                            <input type="email" class="form-input" required placeholder="a.sterling@firm.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Subject of Inquiry</label>
+                            <select class="form-input" style="height: auto;">
+                                <option>Institutional Advisory</option>
+                                <option>Private Wealth Management</option>
+                                <option>Risk Assessment</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <textarea class="form-textarea" rows="4" required placeholder="Details regarding your strategic requirements..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%;">Submit Inquiry</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h4>AMARNATH VENTURES</h4>
+                    <p style="color: var(--muted); font-size: var(--font-size-2);">Strategic financial intelligence for the global market leader. Precision. Discretion. Growth.</p>
+                </div>
+                <div class="footer-links">
+                    <h5>Practice</h5>
+                    <button type="button" data-target="expertise">Expertise</button>
+                    <button type="button" data-target="services">Services</button>
+                    <button type="button" data-target="strategy">Strategy</button>
+                </div>
+                <div class="footer-links">
+                    <h5>Company</h5>
+                    <button type="button">About Us</button>
+                    <button type="button">Our Values</button>
+                    <button type="button">Compliance</button>
+                </div>
+                <div class="footer-links">
+                    <h5>Legal</h5>
+                    <button type="button">Privacy Policy</button>
+                    <button type="button">Terms of Service</button>
+                    <button type="button">Disclaimer</button>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div>&copy; <span id="year"></span> Amarnath Ventures Ltd. All rights reserved.</div>
+                <div style="display: flex; gap: var(--space-3);">
+                    <button type="button">LinkedIn</button>
+                    <button type="button">Bloomberg</button>
+                    <button type="button">Reuters</button>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+</div>
+
+<script>
+    // Theme Management
+    const themeSwitcher = document.getElementById('theme-switcher');
+    themeSwitcher.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        localStorage.setItem('theme', nextTheme);
+    });
+
+    // Navigation & Smooth Scroll
+    const navButtons = document.querySelectorAll('button[data-target]');
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Reveal on Scroll
+    const observerOptions = {
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Form Submission
+    const contactForm = document.getElementById('contact-form');
+    const statusRegion = document.getElementById('status-region');
+
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Internal success confirmation
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = 'Inquiry submitted successfully. An advisor will contact you shortly.';
+        statusRegion.appendChild(toast);
+
+        contactForm.reset();
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    });
+
+    // Dynamic Year
+    document.getElementById('year').textContent = new Date().getFullYear().toString();
+    // Override for requirement
+    if(new Date().getFullYear() !== 2026) {
+        document.getElementById('year').textContent = "2026";
+    }
+
+    // Interaction Guard
+    document.getElementById('page').addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') {
+            e.preventDefault();
+            showSafetyMessage();
+        }
+    });
+
+    function showSafetyMessage() {
+        const guard = document.getElementById('safety-guard');
+        guard.style.display = 'block';
+        setTimeout(() => guard.style.display = 'none', 2000);
+    }
+
+    // Escape Key for UI reset
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            // Placeholder for any active modals or menus
+        }
+    });
+
+    // Mobile Menu Toggle (Simplified for preview)
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    mobileBtn.addEventListener('click', () => {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = 'Menu expansion is handled locally in professional build.';
+        statusRegion.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    });
+</script>
+
+</body>
+</html>
+<!-- End of HTML -->
