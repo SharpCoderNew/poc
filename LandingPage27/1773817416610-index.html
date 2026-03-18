@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en" class="dark"><head>
+<script>(function previewGuardBootstrap() {
+                try {
+                    if (window.__scvPreviewNavGuardInstalled) return;
+                    window.__scvPreviewNavGuardInstalled = true;
+
+                    window.addEventListener("message", function (e) {
+                        try {
+                            var d = e && e.data;
+                            if (d && d.type === "scv_ping") {
+                                try { (window.parent || window).postMessage({ type: "scv_pong" }, "*"); } catch (err) { }
+                            }
+                        } catch (err) { }
+                    }, false);
+
+                    function clean(v) {
+                        try { return String(v || "").trim(); } catch (err) { return ""; }
+                    }
+
+                    function hasId(id) {
+                        try {
+                            id = clean(id).replace(/^#+/, "");
+                            if (!id) return false;
+                            if (document.getElementById(id)) return true;
+                            var lower = id.toLowerCase();
+                            if (lower !== id && document.getElementById(lower)) return true;
+                        } catch (err) { }
+                        return false;
+                    }
+
+                    function normalizePath(v) {
+                        v = clean(v);
+                        if (!v) return "";
+                        v = v.replace(/^\.\/+/, "");
+                        v = v.replace(/^\/+/, "");
+                        v = v.replace(/\/+$/, "");
+                        v = v.replace(/index\.html?$/i, "");
+                        v = v.replace(/\.html?$/i, "");
+                        return v;
+                    }
+
+                    function getInternalTarget(raw) {
+                        try {
+                            var v = clean(raw);
+                            if (!v || v === "#") return "";
+
+                            var hashPos = v.indexOf("#");
+                            if (hashPos >= 0) {
+                                var hashId = clean(v.slice(hashPos + 1));
+                                if (hasId(hashId)) return hashId.replace(/^#+/, "");
+                            }
+
+                            if (/^(https?:|mailto:|tel:|data:|blob:|\/\/)/i.test(v)) return "";
+                            if (/^(javascript:|about:blank)/i.test(v)) return "";
+                            if (v.charAt(0) === "/") return "";
+
+                            var bare = normalizePath(v.split("?")[0].split("#")[0]);
+                            if (!bare) return "";
+                            if (hasId(bare)) return bare.replace(/^#+/, "");
+                            var lower = bare.toLowerCase();
+                            if (hasId(lower)) return lower.replace(/^#+/, "");
+                        } catch (err) { }
+                        return "";
+                    }
+
+                    function scrollToTarget(id) {
+                        try {
+                            id = clean(id).replace(/^#+/, "");
+                            if (!id) return false;
+
+                            var el = document.getElementById(id) || document.getElementById(id.toLowerCase());
+                            if (!el) return false;
+
+                            try {
+                                if (window.history && window.history.replaceState) {
+                                    window.history.replaceState(null, "", "#" + id);
+                                } else {
+                                    window.location.hash = id;
+                                }
+                            } catch (err) { }
+
+                            try { el.scrollIntoView({ behavior: "smooth", block: "start" }); }
+                            catch (err) { try { el.scrollIntoView(true); } catch (err2) { } }
+
+                            return true;
+                        } catch (err) {
+                            return false;
+                        }
+                    }
+
+                    document.addEventListener("click", function (ev) {
+                        try {
+                            var start = ev.target;
+                            if (!start) return;
+
+                            var a = start.closest ? start.closest("a[href],area[href]") : null;
+                            if (!a) return;
+
+                            var href = clean(a.getAttribute("href"));
+                            var targetId = getInternalTarget(href);
+
+                            if (targetId) {
+                                ev.preventDefault();
+                                scrollToTarget(targetId);
+                                return;
+                            }
+
+                            if (!href || href === "#" || /^(javascript:|about:blank)/i.test(href)) {
+                                ev.preventDefault();
+                                return;
+                            }
+
+                            if (/^(https?:|mailto:|tel:|data:|blob:|\/\/)/i.test(href)) {
+                                ev.preventDefault();
+                                try { window.open(href, "_blank", "noopener"); } catch (err) { }
+                                return;
+                            }
+
+                            if (href.charAt(0) === "/") {
+                                ev.preventDefault();
+                                return;
+                            }
+
+                            var maybe = normalizePath(href.split("?")[0].split("#")[0]);
+                            if (maybe) {
+                                ev.preventDefault();
+                            }
+                        } catch (err) { }
+                    }, true);
+
+                    document.addEventListener("submit", function (ev) {
+                        try {
+                            var form = ev.target;
+                            if (!form) return;
+
+                            var action = clean(form.getAttribute("action"));
+                            var targetId = getInternalTarget(action);
+
+                            if (targetId) {
+                                ev.preventDefault();
+                                scrollToTarget(targetId);
+                                return;
+                            }
+
+                            // Preview forms should never unload the iframe.
+                            ev.preventDefault();
+                        } catch (err) { }
+                    }, true);
+                } catch (err) { }
+            })();</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharp Platform | AI-Native Intelligent Orchestration</title>
+    <meta name="description" content="The neural backbone for digital intelligence and automated orchestration.">
+    <!-- Google Fonts Emulation: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #0f0f12;
+            --surface-accent: #1a1a20;
+            --primary: #6366f1; /* Indigo 500 */
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --secondary: #06b6d4; /* Cyan 500 */
+            --accent: #f43f5e; /* Rose 500 */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --glass: rgba(15, 15, 18, 0.7);
+            --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        body {
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Utilities --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 8px;
+            font-size: 0.95rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 20px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px var(--primary-glow);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: var(--surface-accent);
+            border-color: var(--text-muted);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 50%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-padding { padding: 100px 0; }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logo-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 2px;
+            transform: rotate(45deg);
+        }
+
+        .nav-links {
+            display: none;
+            gap: 32px;
+        }
+
+        @media (min-width: 768px) {
+            .nav-links { display: flex; }
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-link:hover { color: var(--primary); }
+
+        /* --- Hero --- */
+        .hero {
+            position: relative;
+            padding-top: 180px;
+            padding-bottom: 100px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: -10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 400px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            z-index: -1;
+            filter: blur(60px);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            line-height: 1.1;
+            margin-bottom: 24px;
+            font-weight: 800;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            max-width: 650px;
+            margin: 0 auto 40px;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* --- Marquee --- */
+        .marquee-section {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,0.02);
+            overflow: hidden;
+        }
+
+        .marquee-container {
+            display: flex;
+            gap: 60px;
+            width: max-content;
+            animation: scroll 30s linear infinite;
+        }
+
+        .marquee-container:hover { animation-play-state: paused; }
+
+        .marquee-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 1.1rem;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .marquee-item:hover { opacity: 1; }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* --- Grid/Features --- */
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            padding: 40px;
+            border-radius: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.03);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--surface-accent);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            color: var(--primary);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        /* --- Interactive Platform Section --- */
+        .platform-display {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: center;
+            background: var(--surface);
+            border-radius: 32px;
+            padding: 40px;
+            border: 1px solid var(--border);
+        }
+
+        @media (min-width: 992px) {
+            .platform-display { grid-template-columns: 1fr 1.5fr; }
+        }
+
+        .module-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .module-btn {
+            text-align: left;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .module-btn.active {
+            background: var(--surface-accent);
+            border-color: var(--border);
+            color: var(--text-main);
+        }
+
+        .code-preview {
+            background: #000;
+            border-radius: 16px;
+            padding: 24px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            border: 1px solid var(--border);
+            color: #d1d5db;
+            overflow-x: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .code-accent { color: var(--secondary); }
+        .code-keyword { color: var(--primary); }
+
+        /* --- Footer --- */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 80px 0 40px;
+            background: #08080a;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-col h4 {
+            margin-bottom: 24px;
+            font-size: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .footer-link:hover { color: var(--text-main); }
+
+        /* --- Modals & Overlays --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            position: relative;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--surface-accent);
+            border: none;
+            color: var(--text-main);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* --- Form Elements --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--surface-accent);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        /* --- Toast --- */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            background: var(--surface-accent);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-menu-btn { display: none; }
+        }
+
+        .mobile-menu-btn span {
+            width: 24px;
+            height: 2px;
+            background: var(--text-main);
+            transition: var(--transition);
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            height: 100vh;
+            background: var(--surface);
+            z-index: 1000;
+            padding: 100px 40px;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .mobile-nav.active { right: 0; }
+    </style>
+</head>
+<body id="app">
+
+    <!-- Navigation -->
+    <nav class="glass">
+        <div class="container nav-inner">
+            <a href="#hero" class="logo">
+                <div class="logo-dot"></div>
+                SHARP
+            </a>
+            
+            <div class="nav-links">
+                <button type="button" class="nav-link" data-action="scroll-to" data-target="#solutions">Solutions</button>
+                <button type="button" class="nav-link" data-action="scroll-to" data-target="#platform">Platform</button>
+                <button type="button" class="nav-link" data-action="scroll-to" data-target="#developers">Developers</button>
+                <button type="button" class="nav-link" data-action="modal" data-modal="waitlist">Pricing</button>
+            </div>
+
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button type="button" class="btn btn-primary" data-action="modal" data-modal="waitlist">Get Access</button>
+                <button type="button" class="mobile-menu-btn" id="mobileToggle">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav" id="mobileNav">
+        <button type="button" class="nav-link" style="font-size: 1.5rem" data-action="scroll-to" data-target="#solutions">Solutions</button>
+        <button type="button" class="nav-link" style="font-size: 1.5rem" data-action="scroll-to" data-target="#platform">Platform</button>
+        <button type="button" class="nav-link" style="font-size: 1.5rem" data-action="scroll-to" data-target="#developers">Developers</button>
+        <button type="button" class="btn btn-primary" data-action="modal" data-modal="waitlist">Get Started</button>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-glow"></div>
+        <div class="container">
+            <span class="glass" style="padding: 6px 16px; border-radius: 100px; font-size: 0.8rem; font-weight: 600; color: var(--primary); border: 1px solid var(--primary-glow); margin-bottom: 24px; display: inline-block;">
+                v2.0 NOW IN PRIVATE BETA
+            </span>
+            <h1>The <span class="text-gradient">Neural Backbone</span> <br> for Digital Intelligence</h1>
+            <p>Deploy autonomous agents, secure orchestration workflows, and enterprise-grade AI infrastructure in minutes. Not months.</p>
+            <div class="hero-actions">
+                <button type="button" class="btn btn-primary" data-action="modal" data-modal="waitlist">Join the Waitlist</button>
+                <button type="button" class="btn btn-outline" data-action="modal" data-modal="info">Watch Technical Demo</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="marquee-section">
+        <div class="marquee-container">
+            <!-- Repeated for infinite scroll -->
+            <div class="marquee-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg> NEXUS LABS</div>
+            <div class="marquee-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8M8 12h8"></path></svg> QUANTUM DATA</div>
+            <div class="marquee-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> SHIELD SEC</div>
+            <div class="marquee-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> HYPERION</div>
+            <div class="marquee-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path></svg> VERTEX CORE</div>
+            <!-- Duplicates -->
+            <div class="marquee-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg> NEXUS LABS</div>
+            <div class="marquee-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8M8 12h8"></path></svg> QUANTUM DATA</div>
+            <div class="marquee-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> SHIELD SEC</div>
+            <div class="marquee-item"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg> HYPERION</div>
+        </div>
+    </div>
+
+    <!-- Core Solutions -->
+    <section id="solutions" class="section-padding reveal">
+        <div class="container">
+            <div class="section-title">
+                <h2>Engineered for Performance</h2>
+                <p>The core infrastructure needed to power next-gen AI applications.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="card glass">
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    </div>
+                    <h3>Secure Orchestration</h3>
+                    <p>Isolated execution environments for high-stakes AI agents. Zero-trust by design.</p>
+                    <button type="button" class="btn btn-outline btn-sm" data-action="modal" data-modal="info">Learn More</button>
+                </div>
+                <div class="card glass">
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    </div>
+                    <h3>Real-time Mesh</h3>
+                    <p>Instantaneous data synchronization across your global edge nodes.</p>
+                    <button type="button" class="btn btn-outline btn-sm" data-action="modal" data-modal="info">Explore Mesh</button>
+                </div>
+                <div class="card glass">
+                    <div class="card-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="14.31" y1="8" x2="20.05" y2="17.94"></line><line x1="9.69" y1="8" x2="21.17" y2="8"></line><line x1="7.38" y1="12" x2="13.12" y2="2.06"></line><line x1="9.69" y1="16" x2="3.95" y2="6.06"></line><line x1="14.31" y1="16" x2="2.83" y2="16"></line><line x1="16.62" y1="12" x2="10.88" y2="21.94"></line></svg>
+                    </div>
+                    <h3>Smart Agents</h3>
+                    <p>Turn static code into dynamic, self-correcting agents with native LLM integration.</p>
+                    <button type="button" class="btn btn-outline btn-sm" data-action="modal" data-modal="info">View Agents</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Section -->
+    <section id="platform" class="section-padding reveal">
+        <div class="container">
+            <div class="section-title">
+                <h2>Built for Scale</h2>
+                <p>Select a module to see how Sharp handles your logic.</p>
+            </div>
+            
+            <div class="platform-display">
+                <div class="module-list" id="moduleSelector">
+                    <button type="button" class="module-btn active" data-module="agent">
+                        <strong>01. Agent Controller</strong>
+                        <p style="font-size: 0.85rem; margin-top: 5px;">Manage thousands of concurrent LLM tasks.</p>
+                    </button>
+                    <button type="button" class="module-btn" data-module="mesh">
+                        <strong>02. Edge Mesh</strong>
+                        <p style="font-size: 0.85rem; margin-top: 5px;">Low-latency global distribution.</p>
+                    </button>
+                    <button type="button" class="module-btn" data-module="security">
+                        <strong>03. Shield Vault</strong>
+                        <p style="font-size: 0.85rem; margin-top: 5px;">Encrypted secret management for agents.</p>
+                    </button>
+                </div>
+                <div class="code-preview" id="codePreview">
+<span class="code-keyword">import</span> { Agent } <span class="code-keyword">from</span> <span class="code-accent">'@sharp/sdk'</span>;
+
+<span class="code-keyword">const</span> nexus = <span class="code-keyword">new</span> Agent({
+  id: <span class="code-accent">'nexus-01'</span>,
+  memory: <span class="code-keyword">true</span>,
+  orchestrator: <span class="code-accent">'sharp-v2'</span>
+});
+
+<span class="code-keyword">await</span> nexus.deploy();
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="section-padding reveal">
+        <div class="container">
+            <div class="glass" style="padding: 80px 40px; border-radius: 40px; text-align: center; background: radial-gradient(circle at top right, var(--primary-glow), transparent 60%), var(--surface);">
+                <h2 style="font-size: 3rem; margin-bottom: 24px;">The Future is Sharp.</h2>
+                <p style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Join 2,500+ developers building the next generation of intelligent software. Early access is limited.
+                </p>
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-primary btn-lg" data-action="modal" data-modal="waitlist">Get Your API Key</button>
+                    <button type="button" class="btn btn-outline btn-lg" data-action="toast" data-message="Developer documentation coming soon.">Read Docs</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="#hero" class="logo" style="margin-bottom: 20px;">
+                        <div class="logo-dot"></div>
+                        SHARP
+                    </a>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Empowering developers with the world's most advanced AI orchestration platform.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <ul class="footer-links">
+                        <li><button type="button" class="footer-link" data-action="modal" data-modal="info">Infrastructure</button></li>
+                        <li><button type="button" class="footer-link" data-action="modal" data-modal="info">Agent Mesh</button></li>
+                        <li><button type="button" class="footer-link" data-action="modal" data-modal="info">Security</button></li>
+                        <li><button type="button" class="footer-link" data-action="modal" data-modal="info">Case Studies</button></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><button type="button" class="footer-link" data-action="modal" data-modal="info">Documentation</button></li>
+                        <li><button type="button" class="footer-link" data-action="modal" data-modal="info">API Reference</button></li>
+                        <li><button type="button" class="footer-link" data-action="modal" data-modal="info">Community</button></li>
+                        <li><button type="button" class="footer-link" data-action="modal" data-modal="info">Changelog</button></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><button type="button" class="footer-link" data-action="modal" data-modal="info">About Us</button></li>
+                        <li><button type="button" class="footer-link" data-action="modal" data-modal="info">Careers</button></li>
+                        <li><button type="button" class="footer-link" data-action="modal" data-modal="info">Privacy</button></li>
+                        <li><button type="button" class="footer-link" data-action="toast" data-message="External social links are disabled in preview.">Twitter / X</button></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="padding-top: 40px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <p style="font-size: 0.8rem; color: var(--text-muted);">© 2024 Sharp Platform. All rights reserved.</p>
+                <div style="display: flex; gap: 24px;">
+                    <button type="button" class="footer-link" style="font-size: 0.8rem;" data-action="modal" data-modal="info">Status</button>
+                    <button type="button" class="footer-link" style="font-size: 0.8rem;" data-action="modal" data-modal="info">Terms</button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="modalOverlay">
+        <!-- Dynamic Content injected here -->
+        <div class="modal-content" id="modalBody">
+            <button type="button" class="close-modal" id="closeModal">×</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // --- Core Application Logic ---
+        const UI = {
+            app: document.getElementById('app'),
+            modal: document.getElementById('modalOverlay'),
+            modalContent: document.getElementById('modalContent'),
+            closeModalBtn: document.getElementById('closeModal'),
+            toastContainer: document.getElementById('toastContainer'),
+            mobileToggle: document.getElementById('mobileToggle'),
+            mobileNav: document.getElementById('mobileNav'),
+            moduleSelector: document.getElementById('moduleSelector'),
+            codePreview: document.getElementById('codePreview'),
+            revealElements: document.querySelectorAll('.reveal')
+        };
+
+        const MODULE_DATA = {
+            agent: `<span class="code-keyword">import</span> { Agent } <span class="code-keyword">from</span> <span class="code-accent">'@sharp/sdk'</span>;
+
+<span class="code-keyword">const</span> nexus = <span class="code-keyword">new</span> Agent({
+  id: <span class="code-accent">'nexus-01'</span>,
+  memory: <span class="code-keyword">true</span>,
+  orchestrator: <span class="code-accent">'sharp-v2'</span>
+});
+
+<span class="code-keyword">await</span> nexus.deploy();`,
+            mesh: `<span class="code-keyword">const</span> mesh = <span class="code-keyword">await</span> Sharp.Mesh.connect();
+
+mesh.on(<span class="code-accent">'event'</span>, (data) => {
+  <span class="code-keyword">return</span> Sharp.distribute(data, {
+    strategy: <span class="code-accent">'lowest-latency'</span>,
+    regions: [<span class="code-accent">'us-east'</span>, <span class="code-accent">'eu-west'</span>]
+  });
+});`,
+            security: `<span class="code-keyword">const</span> secrets = <span class="code-keyword">await</span> Sharp.Shield.load({
+  owner: <span class="code-accent">'agent-007'</span>,
+  permissions: [<span class="code-accent">'read:data'</span>]
+});
+
+<span class="code-keyword">const</span> token = secrets.encrypt(<span class="code-accent">'API_KEY_9988'</span>);`
+        };
+
+        // Initialize App
+        function init() {
+            setupEventListeners();
+            setupIntersectionObserver();
+            // Initial reveal check
+            handleReveal();
+        }
+
+        function setupEventListeners() {
+            // Global Interaction Listener (inside app root)
+            UI.app.addEventListener('click', (e) => {
+                const trigger = e.target.closest('[data-action]');
+                if (!trigger) return;
+
+                const action = trigger.getAttribute('data-action');
+                
+                if (action === 'modal') {
+                    openModal(trigger.getAttribute('data-modal'));
+                } else if (action === 'toast') {
+                    showToast(trigger.getAttribute('data-message'));
+                } else if (action === 'scroll-to') {
+                    const targetId = trigger.getAttribute('data-target');
+                    const targetEl = document.querySelector(targetId);
+                    if (targetEl) {
+                        UI.mobileNav.classList.remove('active');
+                        targetEl.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+
+            // Handle unsafe external links (safety guard)
+            UI.app.addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (link && !link.hash && !link.getAttribute('data-action')) {
+                    e.preventDefault();
+                    showToast("External navigation is disabled in this preview.");
+                }
+            });
+
+            // Modal Controls
+            UI.closeModalBtn.addEventListener('click', closeModal);
+            UI.modal.addEventListener('click', (e) => {
+                if (e.target === UI.modal) closeModal();
+            });
+
+            // Mobile Toggle
+            UI.mobileToggle.addEventListener('click', () => {
+                UI.mobileNav.classList.toggle('active');
+            });
+
+            // Module Selector
+            if (UI.moduleSelector) {
+                UI.moduleSelector.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.module-btn');
+                    if (!btn) return;
+                    
+                    document.querySelectorAll('.module-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const moduleKey = btn.getAttribute('data-module');
+                    UI.codePreview.style.opacity = '0';
+                    setTimeout(() => {
+                        UI.codePreview.innerHTML = MODULE_DATA[moduleKey];
+                        UI.codePreview.style.opacity = '1';
+                    }, 150);
+                });
+            }
+        }
+
+        // --- Interaction Functions ---
+
+        function openModal(type) {
+            let html = '';
+            if (type === 'waitlist') {
+                html = `
+                    <h2 style="margin-bottom: 12px; font-size: 1.8rem;">Join the Beta</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 24px;">Sharp v2.0 is rolling out. Secure your spot in the early access cohort.</p>
+                    <form id="waitlistForm">
+                        <div class="form-group">
+                            <label class="form-label">Work Email</label>
+                            <input type="email" class="form-input" placeholder="name@company.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">What are you building?</label>
+                            <select class="form-input">
+                                <option>SaaS Platform</option>
+                                <option>Internal Productivity Tools</option>
+                                <option>Autonomous Agents</option>
+                                <option>Enterprise Integration</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Reserve Spot</button>
+                    </form>
+                `;
+            } else {
+                html = `
+                    <h2 style="margin-bottom: 12px; font-size: 1.8rem;">Sharp Platform Info</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 24px;">This section is under active development. Our full documentation and product breakdowns are restricted to authorized beta users.</p>
+                    <div style="background: var(--surface-accent); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 0.9rem;">
+                            <li>✅ Secure Token Exchange</li>
+                            <li>✅ Multi-LLM Routing</li>
+                            <li>✅ Global Event Mesh</li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn btn-primary" style="width: 100%; margin-top: 24px;" onclick="closeModal()">Dismiss</button>
+                `;
+            }
+
+            UI.modalContent.innerHTML = html;
+            UI.modal.classList.add('active');
+
+            // Attach form handler if waitlist
+            const form = document.getElementById('waitlistForm');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    form.innerHTML = `
+                        <div style="text-align: center; padding: 20px 0;">
+                            <div style="width: 48px; height: 48px; background: #22c55e22; color: #22c55e; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <h3>You're on the list!</h3>
+                            <p style="color: var(--text-muted); margin-top: 8px;">Check your inbox for a confirmation.</p>
+                        </div>
+                    `;
+                    setTimeout(closeModal, 2500);
+                });
+            }
+        }
+
+        function closeModal() {
+            UI.modal.classList.remove('active');
+        }
+
+        window.closeModal = closeModal; // Expose for inline onclick
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <span>${message}</span>
+            `;
+            UI.toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function handleReveal() {
+            UI.revealElements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const isVisible = rect.top <= (window.innerHeight * 0.85);
+                if (isVisible) el.classList.add('visible');
+            });
+        }
+
+        function setupIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            UI.revealElements.forEach(el => observer.observe(el));
+        }
+
+        // Start
+        init();
+    </s</script></body></html>
