@@ -1,0 +1,1184 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>Carnival & Cork | Eat. Drink. Play.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Design Tokens */
+            --bg: #0a0a0c;
+            --bg-2: #141417;
+            --surface: #1c1c21;
+            --surface-2: #25252b;
+            --text: #f8f9fa;
+            --muted: #a0a0ab;
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #e63946;
+            --primary-2: #c12a36;
+            --on-primary: #ffffff;
+            --accent: #f4a261;
+            --on-accent: #1a1a1a;
+            --success: #2a9d8f;
+            --warning: #e9c46a;
+            --danger: #ef233c;
+            --focus: #457b9d;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.5);
+            --radius-btn: 3px;
+            --radius-card: 12px;
+            --radius-pill: 50px;
+            --space-1: 0.5rem;
+            --space-2: 1rem;
+            --space-3: 1.5rem;
+            --space-4: 2.5rem;
+            --space-5: 4rem;
+            --space-6: 6rem;
+            --font-size-1: 0.875rem;
+            --font-size-2: 1rem;
+            --font-size-3: 1.25rem;
+            --font-size-4: 1.75rem;
+            --font-size-5: 2.5rem;
+            --font-size-6: 3.5rem;
+            --line-1: 1.2;
+            --line-2: 1.5;
+            --line-3: 1.8;
+            --gutter: 0;
+            --page-top: var(--space-4);
+            --page-bottom: var(--space-6);
+            --header-bg: rgba(10, 10, 12, 0.85);
+            --divider: rgba(255, 255, 255, 0.08);
+            --overlay: rgba(0, 0, 0, 0.8);
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            --dur-fast: 150ms;
+            --dur-med: 350ms;
+        }
+
+        html[data-theme="light"] {
+            --bg: #fcfcfc;
+            --bg-2: #f1f3f5;
+            --surface: #ffffff;
+            --surface-2: #f8f9fa;
+            --text: #1a1a1a;
+            --muted: #666666;
+            --border: rgba(0, 0, 0, 0.1);
+            --header-bg: rgba(252, 252, 252, 0.85);
+            --divider: rgba(0, 0, 0, 0.08);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.1);
+            --overlay: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Base Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: var(--line-2);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #page {
+            width: 100%;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: var(--space-3);
+            padding-right: var(--space-3);
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, .brand {
+            font-family: 'Playfair Display', serif;
+            line-height: var(--line-1);
+        }
+
+        p {
+            margin-bottom: var(--space-2);
+            color: var(--muted);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--divider);
+            transition: transform var(--dur-med) var(--ease-standard);
+        }
+
+        header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .brand {
+            font-size: var(--font-size-3);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-desktop {
+            display: none;
+        }
+
+        @media (min-width: 1024px) {
+            .nav-desktop {
+                display: flex;
+                gap: var(--space-3);
+            }
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-weight: 600;
+            font-size: var(--font-size-1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            padding: var(--space-1) var(--space-2);
+            transition: color var(--dur-fast);
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: var(--font-size-1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: all var(--dur-med) var(--ease-standard);
+            border: 2px solid transparent;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-2);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-theme {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-pill);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .mobile-toggle {
+            display: flex;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (min-width: 1024px) {
+            .mobile-toggle {
+                display: none;
+            }
+        }
+
+        /* Hero */
+        .hero {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&q=80&w=2070') center/cover no-repeat;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, var(--bg) 90%);
+            opacity: 0.4;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 10vw, 8rem);
+            margin-bottom: var(--space-2);
+            font-style: italic;
+            text-shadow: 4px 4px 0 var(--primary);
+            line-height: 0.9;
+        }
+
+        .hero .tagline {
+            font-size: var(--font-size-3);
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: var(--space-4);
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Sections */
+        section {
+            padding: var(--space-6) 0;
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto var(--space-5);
+        }
+
+        .section-header h2 {
+            font-size: var(--font-size-6);
+            margin-bottom: var(--space-2);
+        }
+
+        .section-header p {
+            font-size: var(--font-size-3);
+        }
+
+        /* Grids */
+        .grid {
+            display: grid;
+            gap: var(--space-3);
+        }
+
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            transition: transform var(--dur-med), box-shadow var(--dur-med);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-strong);
+            border-color: var(--primary);
+        }
+
+        .card-img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: var(--space-3);
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: var(--font-size-3);
+            margin-bottom: var(--space-1);
+        }
+
+        .card-meta {
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: var(--space-2);
+        }
+
+        /* Stats Section */
+        .stats-banner {
+            background: var(--primary);
+            color: var(--on-primary);
+            padding: var(--space-5) 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            text-align: center;
+            gap: var(--space-4);
+        }
+
+        .stat-item h3 {
+            font-size: var(--font-size-6);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-item p {
+            color: rgba(255,255,255,0.8);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: var(--font-size-1);
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            color: var(--text);
+            border-radius: var(--radius-btn);
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Modals & Panels */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-3);
+        }
+
+        .modal-content {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            padding: var(--space-5);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Reservation Panel Specific */
+        .reservation-tabs {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: var(--bg);
+            z-index: 1500;
+            padding: var(--space-6) var(--space-4);
+            transition: right var(--dur-med) var(--ease-standard);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .mobile-menu.open {
+            right: 0;
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-6) 0;
+            background: var(--bg-2);
+            border-top: 1px solid var(--divider);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-5);
+        }
+
+        .footer-brand h3 {
+            color: var(--primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--space-2);
+            margin-top: var(--space-3);
+        }
+
+        .social-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        /* Utilities */
+        .text-accent { color: var(--accent); }
+        .text-primary { color: var(--primary); }
+        .hidden { display: none; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Interactive Elements */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Noise_Texture.png');
+        }
+
+        .status-toast {
+            position: fixed;
+            bottom: var(--space-3);
+            right: var(--space-3);
+            background: var(--surface);
+            color: var(--text);
+            padding: 1rem 1.5rem;
+            border-left: 4px solid var(--primary);
+            border-radius: var(--radius-btn);
+            box-shadow: var(--shadow-strong);
+            display: none;
+            z-index: 3000;
+            animation: slideUp 0.3s var(--ease-standard);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Testimonials */
+        .testimonial-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: var(--space-3);
+            padding-bottom: var(--space-3);
+            scrollbar-width: none;
+        }
+
+        .testimonial-card {
+            min-width: 300px;
+            flex: 0 0 calc(33% - var(--space-3));
+            background: var(--bg-2);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            scroll-snap-align: start;
+        }
+
+        @media (max-width: 1024px) {
+            .testimonial-card { flex: 0 0 80%; }
+        }
+
+        /* Wavy SVG text */
+        .wavy-container {
+            width: 100%;
+            height: 120px;
+            overflow: hidden;
+            margin: var(--space-5) 0;
+        }
+
+        .wavy-text {
+            fill: var(--primary);
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-style: italic;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        const THEME_KEY = 'theme';
+        const applyTheme = (theme) => {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem(THEME_KEY, theme);
+        };
+        const savedTheme = localStorage.getItem(THEME_KEY) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(savedTheme);
+    </script>
+</head>
+<body>
+    <div id="page">
+        <div class="grain-overlay"></div>
+
+        <header id="siteHeader">
+            <div class="container">
+                <button type="button" class="brand" data-scroll="home">CARNIVAL & CORK</button>
+                <nav class="nav-desktop">
+                    <button type="button" class="nav-btn" data-scroll="home">Home</button>
+                    <button type="button" class="nav-btn" data-scroll="about">About</button>
+                    <button type="button" class="nav-btn" data-scroll="eat">Eat</button>
+                    <button type="button" class="nav-btn" data-scroll="play">Play</button>
+                    <button type="button" class="nav-btn" data-scroll="groups">Groups</button>
+                    <button type="button" class="nav-btn" data-scroll="events">Events</button>
+                    <button type="button" class="nav-btn" data-scroll="contact">Contact</button>
+                </nav>
+                <div class="header-actions">
+                    <button type="button" class="btn btn-primary btn-sm" id="headerResBtn">Réserver</button>
+                    <button type="button" class="btn-theme" id="themeToggle" aria-label="Toggle Theme">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/></svg>
+                    </button>
+                    <button type="button" class="mobile-toggle" id="mobileMenuBtn">☰</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="mobile-menu" id="mobileMenu">
+            <button type="button" class="nav-btn" data-scroll="home">Home</button>
+            <button type="button" class="nav-btn" data-scroll="about">About</button>
+            <button type="button" class="nav-btn" data-scroll="eat">Eat</button>
+            <button type="button" class="nav-btn" data-scroll="play">Play</button>
+            <button type="button" class="nav-btn" data-scroll="groups">Groups</button>
+            <button type="button" class="nav-btn" data-scroll="events">Events</button>
+            <button type="button" class="nav-btn" data-scroll="contact">Contact</button>
+            <button type="button" class="btn btn-primary" id="mobileResBtn">Réserver</button>
+        </div>
+
+        <main>
+            <section id="home" class="hero">
+                <div class="hero-content">
+                    <p class="tagline">The Boardwalk Awaits</p>
+                    <h1>Eat. Drink. Play.</h1>
+                    <div class="hero-btns">
+                        <button type="button" class="btn btn-primary" id="heroResBtn">Book Your Spot</button>
+                        <button type="button" class="btn btn-outline" data-scroll="about">Explore Venue</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="about" class="reveal">
+                <div class="container">
+                    <div class="grid grid-2" style="align-items: center;">
+                        <div>
+                            <div class="section-header" style="text-align: left; margin: 0 0 var(--space-3) 0;">
+                                <h2 class="text-primary">Retro Soul. Modern Flavor.</h2>
+                                <p>Step into a world where high-end mixology meets the neon glow of a vintage carnival. Located in the heart of the Neon Boardwalk, Carnival & Cork is an adult playground designed for those who never truly grew up, but developed a finer taste for gin.</p>
+                            </div>
+                            <div class="stats-grid" style="text-align: left;">
+                                <div class="stat-item">
+                                    <h3 class="counter" data-target="25">0</h3>
+                                    <p>Vintage Games</p>
+                                </div>
+                                <div class="stat-item">
+                                    <h3 class="counter" data-target="15">0</h3>
+                                    <p>Craft Cocktails</p>
+                                </div>
+                                <div class="stat-item">
+                                    <h3 class="counter" data-target="15000">0</h3>
+                                    <p>Happy Guests</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="position: relative;">
+                            <img src="https://images.unsplash.com/photo-1471960105531-158223405763?auto=format&fit=crop&q=80&w=1000" 
+                                 alt="Venue Interior" class="card-img" style="border-radius: var(--radius-card); height: 500px;" 
+                                 referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="wavy-container">
+                <svg viewBox="0 0 1440 120">
+                    <path id="wavyPath" d="M0,60 C240,120 480,0 720,60 C960,120 1200,0 1440,60" fill="transparent"/>
+                    <text class="wavy-text">
+                        <textPath href="#wavyPath" startOffset="0%">
+                            STEP RIGHT UP • THE BEST SEAT IN THE HOUSE • EAT DRINK PLAY • STEP RIGHT UP • THE BEST SEAT IN THE HOUSE •
+                            <animate attributeName="startOffset" from="0%" to="100%" dur="20s" repeatCount="indefinite"/>
+                        </textPath>
+                    </text>
+                </svg>
+            </div>
+
+            <section id="eat" class="reveal">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Gastronomy at the Fair</h2>
+                        <p>Elevated carnival classics and artisanal plates crafted by Chef Marco Sterling.</p>
+                    </div>
+                    <div id="menuContainer" class="grid grid-4">
+                        <!-- Menu injected here -->
+                    </div>
+                    <div style="text-align: center; margin-top: var(--space-4);">
+                        <button type="button" class="btn btn-primary" id="eatResBtn">Reserve a Table</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="play" class="reveal" style="background: var(--bg-2);">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>The Arcade Gallery</h2>
+                        <p>Compete for glory on our curated selection of vintage and modern games.</p>
+                    </div>
+                    <div id="gamesContainer" class="grid grid-3">
+                        <!-- Games injected here -->
+                    </div>
+                    <div style="text-align: center; margin-top: var(--space-4);">
+                        <button type="button" class="btn btn-outline" id="playResBtn">Book a Game Session</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="groups" class="reveal">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Group Experiences</h2>
+                        <p>Perfect for corporate blowouts, birthdays, or just because.</p>
+                    </div>
+                    <div id="groupsContainer" class="grid grid-3">
+                        <!-- Groups injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="events" class="reveal" style="background: var(--bg-2);">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Upcoming Attractions</h2>
+                        <p>Don't miss out on our weekly spectacles.</p>
+                    </div>
+                    <div id="eventsContainer" class="grid grid-2">
+                        <!-- Events injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="testimonials" class="reveal">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>What the Crowd Says</h2>
+                    </div>
+                    <div id="testimonialsContainer" class="testimonial-slider">
+                        <!-- Testimonials injected here -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="reveal">
+                <div class="container">
+                    <div class="grid grid-2">
+                        <div>
+                            <h2 class="text-primary" style="margin-bottom: var(--space-2);">Get In Touch</h2>
+                            <p>Planning something big? Or just want to say hi? Our Ringmaster is standing by.</p>
+                            <div style="margin-top: var(--space-3);">
+                                <p><strong>Location:</strong> 123 Neon Boardwalk, Brighton, UK</p>
+                                <p><strong>Phone:</strong> +44 1273 555 0123</p>
+                                <p><strong>Hours:</strong> Tue-Sun, 4PM - 2AM</p>
+                            </div>
+                        </div>
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" class="form-control" placeholder="John Doe" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" class="form-control" placeholder="john@example.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Subject</label>
+                                <select class="form-control">
+                                    <option>General Inquiry</option>
+                                    <option>Private Events</option>
+                                    <option>Feedback</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Message</label>
+                                <textarea class="form-control" rows="4" placeholder="How can we help?" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full" style="width: 100%;">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <h3 class="brand">CARNIVAL & CORK</h3>
+                        <p>The premier game brasserie for the discerning player.</p>
+                        <div class="social-links" id="socialLinks">
+                            <!-- Socials injected here -->
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: var(--space-2);">Quick Links</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button type="button" class="nav-btn" data-scroll="about" style="text-align: left; padding: 0;">Our Story</button>
+                            <button type="button" class="nav-btn" data-scroll="eat" style="text-align: left; padding: 0;">Menu</button>
+                            <button type="button" class="nav-btn" data-scroll="play" style="text-align: left; padding: 0;">Games</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: var(--space-2);">Newsletter</h4>
+                        <p>Get exclusive invites to our secret speakeasy nights.</p>
+                        <form id="newsletterForm" style="display: flex; gap: 0.5rem;">
+                            <input type="email" class="form-control" placeholder="Your Email" required>
+                            <button type="submit" class="btn btn-primary">Join</button>
+                        </form>
+                    </div>
+                </div>
+                <div style="margin-top: var(--space-5); text-align: center; border-top: 1px solid var(--divider); padding-top: var(--space-3);">
+                    <p>&copy; <span id="copyrightYear"></span> Carnival & Cork. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Modals -->
+        <div id="modalOverlay" class="modal-overlay">
+            <div id="modalContent" class="modal-content">
+                <button type="button" class="modal-close" id="modalClose">&times;</button>
+                <div id="modalBody"></div>
+            </div>
+        </div>
+
+        <div id="toast" class="status-toast"></div>
+    </div>
+
+    <script>
+        // Data
+        const MENU_HIGHLIGHTS = [
+            { id: 1, name: "Truffle Popcorn", price: "$12", desc: "Hand-popped kernels infused with black truffle oil and sea salt.", img: "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=400" },
+            { id: 2, name: "Wagyu Sliders", price: "$24", desc: "Triple A beef with brioche buns and caramelized bourbon onions.", img: "https://images.unsplash.com/photo-1521305916504-4a1121188589?auto=format&fit=crop&q=80&w=400" },
+            { id: 3, name: "Cotton Candy Martini", price: "$18", desc: "A nostalgic pour over spun sugar with botanical gin.", img: "https://images.unsplash.com/photo-1536935338788-846bb9981813?auto=format&fit=crop&q=80&w=400" },
+            { id: 4, name: "Lobster Corn Dog", price: "$22", desc: "Fresh Maine lobster tail dipped in our house honey-corn batter.", img: "https://images.unsplash.com/photo-1523905330026-b8bd1f5f320e?auto=format&fit=crop&q=80&w=400" },
+            { id: 5, name: "Gold Leaf Churros", price: "$15", desc: "Mexican cocoa dip topped with 24k gold flakes.", img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80&w=400" },
+            { id: 6, name: "The Big Ring Nachos", price: "$19", desc: "Loaded with slow-cooked brisket and sharp cheddar foam.", img: "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?auto=format&fit=crop&q=80&w=400" },
+            { id: 7, name: "Neon Fries", price: "$14", desc: "Beet-stained pink aioli and pickled purple cabbage.", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&q=80&w=400" },
+            { id: 8, name: "Ferris Wheel Shake", price: "$16", desc: "A towering milkshake with donuts, sparklers, and fudge.", img: "https://images.unsplash.com/photo-1541658016709-82535e94bc71?auto=format&fit=crop&q=80&w=400" }
+        ];
+
+        const GAMES = [
+            { id: 1, name: "The Golden Skeeball", meta: "Lane 1-4", desc: "Our pride and joy. Classic rolls with modern digital scoring.", img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=400" },
+            { id: 2, name: "Vintage Pinball Alley", meta: "12 Machines", desc: "Restored machines from the 70s and 80s. High speed fun.", img: "https://images.unsplash.com/photo-1589139268310-7521e7da92d6?auto=format&fit=crop&q=80&w=400" },
+            { id: 3, name: "Claw of Fortune", meta: "Limited Edition", desc: "Win boutique prizes, from tech to designer gear.", img: "https://images.unsplash.com/photo-1561069934-eee225952461?auto=format&fit=crop&q=80&w=400" },
+            { id: 4, name: "Duck Gallery", meta: "Laser Shooting", desc: "Classic duck hunting with state-of-the-art infrared rifles.", img: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&q=80&w=400" },
+            { id: 5, name: "Strongman Hammer", meta: "Strength Test", desc: "Digital power meter to test your true boardwalk strength.", img: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=400" },
+            { id: 6, name: "Retro Arcade Lounge", meta: "Cocktail Table", desc: "Pac-Man, Galaga, and Donkey Kong while you sip.", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=400" }
+        ];
+
+        const GROUPS = [
+            { id: 1, name: "The Ringmaster", meta: "10-20 Guests", desc: "Dedicated host, open bar (premium), and unlimited game credits for 3 hours." },
+            { id: 2, name: "The Acrobat", meta: "5-10 Guests", desc: "Table reservation, signature platter, and 50 game tokens per guest." },
+            { id: 3, name: "The Illusionist", meta: "50+ Guests", desc: "Full venue buyout, customized menus, and live entertainment options." }
+        ];
+
+        const EVENTS = [
+            { id: 1, name: "Drag Queen Bingo", date: "Every Tuesday @ 8PM", desc: "High stakes, high energy, and the most fabulous prizes in town." },
+            { id: 2, name: "Jazz Under the Big Top", date: "Thursdays @ 9PM", desc: "Smooth sax and vintage vibes in our curated cocktail lounge." },
+            { id: 3, name: "Skeeball Tournament", date: "Monthly Finals", desc: "The ultimate showdown. Champion gets their name on the Golden Wall." },
+            { id: 4, name: "Retro Trivia Night", date: "Sundays @ 6PM", desc: "Test your knowledge of the 80s and 90s for booze and glory." }
+        ];
+
+        const TESTIMONIALS = [
+            { name: "Sarah J.", text: "Best birthday ever. The Wagyu Sliders and Skeeball are a dangerous combination!" },
+            { name: "Mike R.", text: "A truly unique vibe. Finally, a place that takes games and cocktails seriously." },
+            { name: "Elena K.", text: "The Gold Leaf Churros are to die for. I'll be back every weekend." },
+            { name: "Chris T.", text: "Corporate events are usually boring, but Carnival & Cork changed the game." }
+        ];
+
+        const SOCIALS = [
+            { name: "Instagram", icon: "IG", color: "#e1306c" },
+            { name: "TikTok", icon: "TT", color: "#000000" },
+            { name: "Facebook", icon: "FB", color: "#4267B2" }
+        ];
+
+        // State
+        const state = {
+            activeTab: 'eat',
+            isModalOpen: false
+        };
+
+        // Render Functions
+        const renderGrid = (containerId, data, cardType) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = data.map(item => `
+                <div class="card" data-type="${cardType}" data-id="${item.id}">
+                    ${item.img ? `<img src="${item.img}" alt="${item.name}" class="card-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">` : ''}
+                    <div class="card-body">
+                        ${item.meta ? `<p class="card-meta">${item.meta}</p>` : ''}
+                        <h3 class="card-title">${item.name}</h3>
+                        ${item.price ? `<p class="text-accent"><strong>${item.price}</strong></p>` : ''}
+                        <p>${item.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        const renderTestimonials = () => {
+            const container = document.getElementById('testimonialsContainer');
+            container.innerHTML = TESTIMONIALS.map(t => `
+                <div class="testimonial-card">
+                    <p style="font-style: italic; margin-bottom: 1rem;">"${t.text}"</p>
+                    <p><strong>— ${t.name}</strong></p>
+                </div>
+            `).join('');
+        };
+
+        const renderSocials = () => {
+            const container = document.getElementById('socialLinks');
+            container.innerHTML = SOCIALS.map(s => `
+                <button type="button" class="social-btn" data-social="${s.name}" style="border-color: ${s.color}; color: ${s.color};">
+                    ${s.icon}
+                </button>
+            `).join('');
+        };
+
+        // UI Interactions
+        const showToast = (message) => {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        };
+
+        const openModal = (content) => {
+            const overlay = document.getElementById('modalOverlay');
+            const body = document.getElementById('modalBody');
+            body.innerHTML = content;
+            overlay.style.display = 'flex';
+            state.isModalOpen = true;
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeModal = () => {
+            const overlay = document.getElementById('modalOverlay');
+            overlay.style.display = 'none';
+            state.isModalOpen = false;
+            document.body.style.overflow = 'auto';
+        };
+
+        const openReservationPanel = (tab = 'eat') => {
+            state.activeTab = tab;
+            const content = `
+                <div class="reservation-tabs">
+                    <button type="button" class="tab-btn ${state.activeTab === 'eat' ? 'active' : ''}" id="tabEat">Reserve Eat</button>
+                    <button type="button" class="tab-btn ${state.activeTab === 'play' ? 'active' : ''}" id="tabPlay">Reserve Play</button>
+                </div>
+                <div id="tabContent">
+                    ${state.activeTab === 'eat' ? `
+                        <h3>Book a Table</h3>
+                        <form id="resForm">
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Guests</label>
+                                <input type="number" class="form-control" min="1" max="10" value="2" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width:100%;">Confirm Booking</button>
+                        </form>
+                    ` : `
+                        <h3>Book a Game Session</h3>
+                        <p>Our gaming lanes are high in demand!</p>
+                        <div style="background: var(--surface-2); padding: 1.5rem; border-radius: var(--radius-btn); margin: 1rem 0;">
+                            <p style="font-size: 0.875rem; color: var(--muted);">NOTICE: Our Play Booking System is currently being integrated. Please select a time via our partner platform.</p>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="externalBtn" style="width:100%;">Proceed to Booking</button>
+                    `}
+                </div>
+            `;
+            openModal(content);
+
+            // Bind Internal Listeners
+            document.getElementById('tabEat')?.addEventListener('click', () => openReservationPanel('eat'));
+            document.getElementById('tabPlay')?.addEventListener('click', () => openReservationPanel('play'));
+            
+            document.getElementById('resForm')?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+                openModal(`
+                    <div style="text-align: center;">
+                        <h2 class="text-primary">Success!</h2>
+                        <p>Your table is reserved. We can't wait to see you.</p>
+                        <div style="font-size: 2rem; font-weight: 700; margin: 2rem 0; padding: 1rem; border: 2px dashed var(--primary);">
+                            #${code}
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="closeModal()">Great!</button>
+                    </div>
+                `);
+            });
+
+            document.getElementById('externalBtn')?.addEventListener('click', () => {
+                showToast("External or unsafe action disabled in preview.");
+            });
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGrid('menuContainer', MENU_HIGHLIGHTS, 'product');
+            renderGrid('gamesContainer', GAMES, 'product');
+            renderGrid('groupsContainer', GROUPS, 'group');
+            renderGrid('eventsContainer', EVENTS, 'event');
+            renderTestimonials();
+            renderSocials();
+
+            document.getElementById('copyrightYear').textContent = new Date().getFullYear();
+
+            // Intersection Observer for animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Trigger counters
+                        const counters = entry.target.querySelectorAll('.counter');
+                        counters.forEach(c => {
+                            const target = +c.getAttribute('data-target');
+                            let count = 0;
+                            const speed = target / 50;
+                            const update = () => {
+                                count += speed;
+                                if (count < target) {
+                                    c.innerText = Math.floor(count).toLocaleString();
+                                    setTimeout(update, 20);
+                                } else {
+                                    c.innerText = target.toLocaleString();
+                                }
+                            }
+                            update();
+                        });
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            // Event Bindings
+            document.querySelectorAll('[data-scroll]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-scroll');
+                    const target = document.getElementById(id);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                        document.getElementById('mobileMenu').classList.remove('open');
+                    }
+                });
+            });
+
+            document.getElementById('themeToggle').addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme');
+                applyTheme(current === 'dark' ? 'light' : 'dark');
+            });
+
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.toggle('open');
+            });
+
+            // Universal Click Handler for Cards & Buttons
+            document.getElementById('page').addEventListener('click', (e) => {
+                const card = e.target.closest('.card');
+                if (card) {
+                    const type = card.getAttribute('data-type');
+                    const id = card.getAttribute('data-id');
+                    let data;
+                    if (type === 'product') data = [...MENU_HIGHLIGHTS, ...GAMES].find(i => i.id == id);
+                    if (type === 'group') data = GROUPS.find(i => i.id == id);
+                    if (type === 'event') data = EVENTS.find(i => i.id == id);
+                    
+                    if (data) {
+                        openModal(`
+                            <h3>${data.name}</h3>
+                            <p class="text-accent"><strong>${data.meta || data.price || ''}</strong></p>
+                            <div style="margin: 1.5rem 0;">
+                                ${data.img ? `<img src="${data.img}" style="width:100%; border-radius: var(--radius-card); margin-bottom: 1rem;" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">` : ''}
+                                <p>${data.desc}</p>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="closeModal()">Close Details</button>
+                        `);
+                    }
+                }
+
+                const social = e.target.closest('.social-btn');
+                if (social) {
+                    const name = social.getAttribute('data-social');
+                    openModal(`
+                        <h3>Follow us on ${name}</h3>
+                        <p>Check out our latest highlights and community wins.</p>
+                        <p style="margin-top: 1rem; padding: 1rem; background: var(--surface-2); border-radius: 4px;">@carnivalandcork_official</p>
+                    `);
+                }
+            });
+
+            // Header Reservation
+            document.getElementById('headerResBtn').addEventListener('click', () => openReservationPanel('eat'));
+            document.getElementById('mobileResBtn').addEventListener('click', () => openReservationPanel('eat'));
+            document.getElementById('heroResBtn').addEventListener('click', () => openReservationPanel('eat'));
+            document.getElementById('eatResBtn').addEventListener('click', () => openReservationPanel('eat'));
+            document.getElementById('playResBtn').addEventListener('click', () => openReservationPanel('play'));
+
+            // Modal Interactions
+            document.getElementById('modalClose').addEventListener('click', closeModal);
+            window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+            document.getElementById('modalOverlay').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('modalOverlay')) closeModal();
+            });
+
+            // Forms
+            document.getElementById('contactForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                showToast("Message Sent Successfully!");
+                e.target.reset();
+            });
+
+            document.getElementById('newsletterForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                showToast("Welcome to the Boardwalk!");
+                e.target.reset();
+            });
+
+            // Defensive Guard
+            document.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A') {
+                    e.preventDefault();
+                    showToast("External action disabled in preview.");
+                }
+            }, true);
+        });
+    </script>
+</body>
+</html>
