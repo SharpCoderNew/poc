@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharp Platform | AI-Native Intelligent Automation</title>
+    <meta name="description" content="Sharp Platform: The AI-native orchestration layer for intelligent automation and digital acceleration.">
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-surface: #121212;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --primary: #00f2ff;
+            --primary-glow: rgba(0, 242, 255, 0.5);
+            --secondary: #7000ff;
+            --accent: #ff007a;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --border: rgba(255, 255, 255, 0.1);
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --transition: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* Utilities */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .glass {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .glow-button {
+            position: relative;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 14px 28px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s var(--transition);
+            box-shadow: 0 0 15px var(--primary-glow);
+            overflow: hidden;
+        }
+
+        .glow-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--primary-glow);
+        }
+
+        .glow-button:active {
+            transform: translateY(0);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 900;
+            color: #000;
+        }
+
+        .nav-links {
+            display: none;
+            gap: 32px;
+        }
+
+        @media (min-width: 1024px) {
+            .nav-links { display: flex; }
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Hero */
+        .hero {
+            padding-top: 180px;
+            padding-bottom: 100px;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1000px;
+            height: 1000px;
+            background: radial-gradient(circle, rgba(112, 0, 255, 0.15) 0%, transparent 70%);
+            z-index: -1;
+            filter: blur(60px);
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 8vw, 84px);
+            line-height: 1.1;
+            font-weight: 800;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* Trust Marquee */
+        .marquee {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .marquee-content {
+            display: flex;
+            gap: 80px;
+            animation: marquee 40s linear infinite;
+            white-space: nowrap;
+        }
+
+        .marquee-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 18px;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .marquee:hover .marquee-content {
+            animation-play-state: paused;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            max-width: 700px;
+            margin-bottom: 60px;
+        }
+
+        .section-label {
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* Solutions Grid */
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            transition: transform 0.3s var(--transition), border-color 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 242, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            color: var(--primary);
+        }
+
+        .card h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        /* Showcase */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        @media (min-width: 1024px) {
+            .showcase-block { grid-template-columns: 1fr 1fr; }
+            .showcase-block.reverse { direction: rtl; }
+            .showcase-block.reverse * { direction: ltr; }
+        }
+
+        .showcase-visual {
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 16/10;
+        }
+
+        .showcase-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .showcase-visual:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Modal / Drawer */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .modal-header h2 {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 14px;
+            border-radius: var(--radius-md);
+            color: #fff;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Toasts */
+        #toast-container {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            background: #1a1a1a;
+            border: 1px solid var(--border);
+            padding: 16px 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: slideIn 0.3s var(--transition) forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Footer */
+        footer {
+            padding: 80px 0 40px;
+            border-top: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-logo {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .footer-links h4 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+            color: #fff;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0;
+            text-align: left;
+        }
+
+        .footer-links button:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        /* Mobile Menu */
+        .mobile-toggle {
+            display: block;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        @media (min-width: 1024px) {
+            .mobile-toggle { display: none; }
+        }
+
+        /* Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s var(--transition);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            z-index: 1001;
+            width: 0%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-progress" id="scrollBar"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container nav-inner">
+            <a href="#hero" class="logo">
+                <div class="logo-mark">S</div>
+                SHARP
+            </a>
+            <div class="nav-links">
+                <a href="#solutions">Solutions</a>
+                <a href="#platform">Platform</a>
+                <a href="#developers">Developers</a>
+                <a href="#news">What's New</a>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button type="button" class="glow-button" style="padding: 10px 20px; font-size: 14px;" onclick="ui.openModal('waitlist')">Get Started</button>
+                <button type="button" class="mobile-toggle" onclick="ui.toggleMobileMenu()">☰</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile-menu" class="modal-overlay" style="justify-content: flex-end;">
+        <div class="modal-content" style="height: 100vh; max-width: 300px; border-radius: 0; margin: 0;">
+            <button type="button" class="close-modal" onclick="ui.toggleMobileMenu()">✕</button>
+            <div style="display: flex; flex-direction: column; gap: 32px; margin-top: 60px;">
+                <a href="#solutions" onclick="ui.toggleMobileMenu()" style="color: #fff; text-decoration: none; font-size: 20px;">Solutions</a>
+                <a href="#platform" onclick="ui.toggleMobileMenu()" style="color: #fff; text-decoration: none; font-size: 20px;">Platform</a>
+                <a href="#developers" onclick="ui.toggleMobileMenu()" style="color: #fff; text-decoration: none; font-size: 20px;">Developers</a>
+                <a href="#news" onclick="ui.toggleMobileMenu()" style="color: #fff; text-decoration: none; font-size: 20px;">Roadmap</a>
+                <button type="button" class="glow-button" onclick="ui.openModal('waitlist')">Join Early Access</button>
+            </div>
+        </div>
+    </div>
+
+    <main id="main-content">
+        <!-- Hero -->
+        <section class="hero" id="hero">
+            <div class="hero-bg"></div>
+            <div class="container">
+                <span class="section-label reveal">The Future of AI is Sovereign</span>
+                <h1 class="reveal">Build, Orchestrate, and <span class="gradient-text">Scale Intelligent Agents</span></h1>
+                <p class="reveal">The enterprise-grade foundation for AI-native product development. Deploy autonomous workflows in minutes, not months.</p>
+                <div class="hero-cta-group reveal">
+                    <button type="button" class="glow-button" onclick="ui.openModal('waitlist')">Join the Beta</button>
+                    <button type="button" class="glass" style="padding: 14px 28px; border-radius: var(--radius-md); color: #fff; font-weight: 600; cursor: pointer;" onclick="ui.showToast('Documentation access restricted to verified partners.')">Documentation</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trust Marquee -->
+        <div class="marquee">
+            <div class="marquee-content">
+                <div class="marquee-item"><span style="color:var(--primary)">◉</span> NEXUS SYSTEMS</div>
+                <div class="marquee-item"><span style="color:var(--secondary)">◈</span> QUANTUM DYNAMICS</div>
+                <div class="marquee-item"><span style="color:var(--accent)">▲</span> VELOCITY AI</div>
+                <div class="marquee-item"><span style="color:var(--primary)">◆</span> SYNTHETIC CORP</div>
+                <div class="marquee-item"><span style="color:var(--secondary)">◉</span> ORBITAL CLOUD</div>
+                <div class="marquee-item"><span style="color:var(--accent)">◈</span> NOVA PROTOCOL</div>
+                <!-- Duplicate for seamless loop -->
+                <div class="marquee-item"><span style="color:var(--primary)">◉</span> NEXUS SYSTEMS</div>
+                <div class="marquee-item"><span style="color:var(--secondary)">◈</span> QUANTUM DYNAMICS</div>
+                <div class="marquee-item"><span style="color:var(--accent)">▲</span> VELOCITY AI</div>
+                <div class="marquee-item"><span style="color:var(--primary)">◆</span> SYNTHETIC CORP</div>
+                <div class="marquee-item"><span style="color:var(--secondary)">◉</span> ORBITAL CLOUD</div>
+                <div class="marquee-item"><span style="color:var(--accent)">◈</span> NOVA PROTOCOL</div>
+            </div>
+        </div>
+
+        <!-- Solutions -->
+        <section id="solutions">
+            <div class="container">
+                <div class="section-header reveal">
+                    <span class="section-label">Solutions</span>
+                    <h2 class="section-title">Engineered for performance</h2>
+                    <p style="color: var(--text-muted); font-size: 18px;">Powering the next generation of digital products with native AI orchestration.</p>
+                </div>
+                <div class="solutions-grid">
+                    <div class="card glass reveal" onclick="ui.openModal('feature', 'Smart Agents')">
+                        <div class="card-icon">◈</div>
+                        <h3>Smart Agents</h3>
+                        <p>Deploy autonomous agents that reason, plan, and execute complex business logic across your stack.</p>
+                        <button type="button" style="color: var(--primary); background: none; border: none; font-weight: 600; cursor: pointer;">Learn more →</button>
+                    </div>
+                    <div class="card glass reveal" onclick="ui.openModal('feature', 'Secure Orchestration')">
+                        <div class="card-icon">⚡</div>
+                        <h3>Orchestration</h3>
+                        <p>Enterprise-grade security for AI pipelines with built-in compliance, logging, and performance auditing.</p>
+                        <button type="button" style="color: var(--primary); background: none; border: none; font-weight: 600; cursor: pointer;">Learn more →</button>
+                    </div>
+                    <div class="card glass reveal" onclick="ui.openModal('feature', 'Dev Tooling')">
+                        <div class="card-icon">⚙</div>
+                        <h3>Dev Tooling</h3>
+                        <p>Modern CLI, robust SDKs, and visual debugging for rapid deployment of agentic applications.</p>
+                        <button type="button" style="color: var(--primary); background: none; border: none; font-weight: 600; cursor: pointer;">Learn more →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Platform Showcase -->
+        <section id="platform" style="background: rgba(255, 255, 255, 0.01);">
+            <div class="container">
+                <div class="showcase-block">
+                    <div class="reveal">
+                        <span class="section-label">Platform Core</span>
+                        <h2 class="section-title">A unified engine for intelligence</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 32px; font-size: 18px;">
+                            Stop building infrastructure from scratch. Sharp Platform provides the necessary abstraction layers to turn raw LLMs into production systems.
+                        </p>
+                        <ul style="list-style: none; margin-bottom: 40px;">
+                            <li style="margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 12px;">✓</div>
+                                Distributed memory systems
+                            </li>
+                            <li style="margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 12px;">✓</div>
+                                Real-time context injection
+                            </li>
+                            <li style="margin-bottom: 16px; display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 12px;">✓</div>
+                                Multi-modal support natively
+                            </li>
+                        </ul>
+                        <button type="button" class="glow-button" onclick="ui.openModal('waitlist')">Explore Modules</button>
+                    </div>
+                    <div class="showcase-visual glass reveal">
+                        <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2000&auto=format&fit=crop" alt="Complex abstract network nodes">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developers Section -->
+        <section id="developers">
+            <div class="container">
+                <div class="showcase-block reverse">
+                    <div class="reveal">
+                        <span class="section-label">For Developers</span>
+                        <h2 class="section-title">Built by builders, for builders.</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 32px; font-size: 18px;">
+                            Integrate with your favorite tools. Sharp Platform works with GitHub, Vercel, Datadog, and your existing CI/CD pipelines.
+                        </p>
+                        <div style="background: #000; padding: 24px; border-radius: 12px; font-family: monospace; border: 1px solid var(--border); margin-bottom: 32px;">
+                            <span style="color: var(--primary)">$</span> npx sharp-cli init project-alpha<br>
+                            <span style="color: var(--text-muted)">// Deploying agent cluster...</span><br>
+                            <span style="color: #4ade80">✓</span> Project-alpha active at sharp.dev/alpha
+                        </div>
+                        <button type="button" class="glow-button" onclick="ui.showToast('Developer Portal coming soon!')">View Docs</button>
+                    </div>
+                    <div class="showcase-visual glass reveal">
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2000&auto=format&fit=crop" alt="Programming code on a dark screen">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Launch Urgency -->
+        <section style="background: linear-gradient(to bottom, transparent, rgba(112, 0, 255, 0.05));">
+            <div class="container" style="text-align: center;">
+                <div class="reveal">
+                    <h2 class="section-title">Next Cycle Launching Soon</h2>
+                    <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 40px;">
+                        The Sharp Beta is currently invite-only. Join 12,000+ developers in the waitlist for the Q4 rollout.
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 24px; margin-bottom: 60px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 40px; font-weight: 800; color: var(--primary);">14</div>
+                            <div style="font-size: 12px; text-transform: uppercase; color: var(--text-muted);">Days</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 40px; font-weight: 800; color: var(--primary);">08</div>
+                            <div style="font-size: 12px; text-transform: uppercase; color: var(--text-muted);">Hours</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 40px; font-weight: 800; color: var(--primary);">22</div>
+                            <div style="font-size: 12px; text-transform: uppercase; color: var(--text-muted);">Mins</div>
+                        </div>
+                    </div>
+                    <button type="button" class="glow-button" onclick="ui.openModal('waitlist')">Reserve Your Access</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- News / Roadmap -->
+        <section id="news">
+            <div class="container">
+                <div class="section-header reveal">
+                    <span class="section-label">Roadmap</span>
+                    <h2 class="section-title">Moving at the speed of thought.</h2>
+                </div>
+                <div class="solutions-grid">
+                    <div class="card glass reveal" onclick="ui.showToast('Release notes are available to verified users.')">
+                        <span style="font-size: 12px; color: var(--primary); font-weight: 800; margin-bottom: 12px; display: block;">v2.4 — RELEASED</span>
+                        <h3>Multi-region Mesh</h3>
+                        <p>Low-latency agent deployments across 14 global regions.</p>
+                    </div>
+                    <div class="card glass reveal" onclick="ui.showToast('Coming Q4 2024')">
+                        <span style="font-size: 12px; color: var(--accent); font-weight: 800; margin-bottom: 12px; display: block;">v2.5 — IN PROGRESS</span>
+                        <h3>Neural Sandbox</h3>
+                        <p>Advanced simulation environment for agent safety testing.</p>
+                    </div>
+                    <div class="card glass reveal" onclick="ui.showToast('Planned for 2025')">
+                        <span style="font-size: 12px; color: var(--text-muted); font-weight: 800; margin-bottom: 12px; display: block;">v3.0 — PLANNED</span>
+                        <h3>Collective Learning</h3>
+                        <p>Permissioned knowledge sharing across agent ecosystems.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section style="padding: 120px 0;">
+            <div class="container" style="text-align: center;">
+                <div class="glass reveal" style="padding: 80px 40px; border-radius: 32px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(0, 242, 255, 0.05) 0%, transparent 50%); z-index: -1;"></div>
+                    <h2 style="font-size: 48px; margin-bottom: 24px; font-weight: 800;">Ready to accelerate?</h2>
+                    <p style="color: var(--text-muted); font-size: 20px; max-width: 600px; margin: 0 auto 40px;">
+                        The most powerful AI platform is within your reach. Join the Sharp ecosystem today.
+                    </p>
+                    <button type="button" class="glow-button" onclick="ui.openModal('waitlist')">Get Started Now</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="logo footer-logo">
+                        <div class="logo-mark">S</div>
+                        SHARP
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">
+                        Building the secure orchestration layer for the agentic age. AI-native, developer-first, sovereign by design.
+                    </p>
+                </div>
+                <div class="footer-links">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><button type="button" onclick="ui.showToast('Loading Solutions...')">Solutions</button></li>
+                        <li><button type="button" onclick="ui.showToast('Opening Docs...')">Agents</button></li>
+                        <li><button type="button" onclick="ui.showToast('Security overview loading...')">Security</button></li>
+                        <li><button type="button" onclick="ui.showToast('Pricing details coming soon.')">Pricing</button></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><button type="button" onclick="ui.showToast('Redirecting to Docs...')">Documentation</button></li>
+                        <li><button type="button" onclick="ui.showToast('Opening API Reference...')">API Reference</button></li>
+                        <li><button type="button" onclick="ui.showToast('Loading Community Portal...')">Community</button></li>
+                        <li><button type="button" onclick="ui.showToast('Reading Blog...')">Blog</button></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Social</h4>
+                    <ul>
+                        <li><button type="button" onclick="ui.showToast('Internal link only: Twitter/X')">Twitter</button></li>
+                        <li><button type="button" onclick="ui.showToast('Internal link only: GitHub')">GitHub</button></li>
+                        <li><button type="button" onclick="ui.showToast('Internal link only: Discord')">Discord</button></li>
+                        <li><button type="button" onclick="ui.showToast('Internal link only: LinkedIn')">LinkedIn</button></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Sharp Platform Orchestration Inc. All rights reserved.</p>
+                <div style="display: flex; gap: 24px;">
+                    <button type="button" onclick="ui.showToast('Privacy Policy')">Privacy Policy</button>
+                    <button type="button" onclick="ui.showToast('Terms of Service')">Terms of Service</button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="modal-waitlist" class="modal-overlay">
+        <div class="modal-content">
+            <button type="button" class="close-modal" onclick="ui.closeModal('waitlist')">✕</button>
+            <div class="modal-header">
+                <h2>Join the Beta</h2>
+                <p style="color: var(--text-muted)">Be the first to build on Sharp Platform.</p>
+            </div>
+            <form class="modal-form" id="waitlist-form">
+                <div class="input-group">
+                    <label>Work Email</label>
+                    <input type="email" placeholder="name@company.com" required id="emailInput">
+                </div>
+                <div class="input-group">
+                    <label>Use Case</label>
+                    <input type="text" placeholder="e.g. Sales Automation, Customer Support" required id="usecaseInput">
+                </div>
+                <button type="submit" class="glow-button" style="width: 100%; margin-top: 10px;">Apply for Access</button>
+            </form>
+            <div id="form-success" style="display: none; text-align: center; padding: 20px 0;">
+                <h3 style="color: var(--primary); margin-bottom: 12px;">Welcome to the queue!</h3>
+                <p style="color: var(--text-muted)">We'll review your application and be in touch shortly.</p>
+                <button type="button" class="glass" style="margin-top: 20px; padding: 10px 20px; border-radius: 8px; color:#fff; cursor: pointer;" onclick="ui.closeModal('waitlist')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="modal-feature" class="modal-overlay">
+        <div class="modal-content">
+            <button type="button" class="close-modal" onclick="ui.closeModal('feature')">✕</button>
+            <div class="modal-header">
+                <h2 id="feature-title">Feature Details</h2>
+                <p id="feature-desc" style="color: var(--text-muted); margin-top: 16px;"></p>
+            </div>
+            <div style="margin-top: 32px; display: flex; flex-direction: column; gap: 16px;">
+                <div class="glass" style="padding: 20px; border-radius: 12px;">
+                    <h4 style="margin-bottom: 8px; color: var(--primary);">Global Resilience</h4>
+                    <p style="font-size: 14px; color: var(--text-muted);">99.99% Uptime guaranteed with multi-region distribution and sovereign cloud capability.</p>
+                </div>
+                <button type="button" class="glow-button" style="width: 100%;" onclick="ui.closeModal('feature')">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // UI Manager
+        const ui = {
+            // State
+            isMobileMenuOpen: false,
+
+            // Toasts
+            showToast: (message) => {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerHTML = `<span>⚡</span> ${message}`;
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(100%)';
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            },
+
+            // Modal Controls
+            openModal: (type, title = '') => {
+                const modal = document.getElementById(`modal-${type}`);
+                if (modal) {
+                    modal.classList.add('active');
+                    if (title) {
+                        const titleEl = document.getElementById('feature-title');
+                        const descEl = document.getElementById('feature-desc');
+                        if (titleEl) titleEl.innerText = title;
+                        if (descEl) descEl.innerText = `Detailed insights and configuration for ${title}. This module provides enterprise-level capability for your autonomous stack. External configuration panel is disabled in this preview.`;
+                    }
+                }
+            },
+
+            closeModal: (type) => {
+                const modal = document.getElementById(`modal-${type}`);
+                if (modal) modal.classList.remove('active');
+                
+                // Reset form state if it was waitlist
+                if (type === 'waitlist') {
+                    setTimeout(() => {
+                        document.getElementById('waitlist-form').style.display = 'flex';
+                        document.getElementById('form-success').style.display = 'none';
+                        document.getElementById('waitlist-form').reset();
+                    }, 400);
+                }
+            },
+
+            toggleMobileMenu: () => {
+                const menu = document.getElementById('mobile-menu');
+                ui.isMobileMenuOpen = !ui.isMobileMenuOpen;
+                if (ui.isMobileMenuOpen) {
+                    menu.classList.add('active');
+                } else {
+                    menu.classList.remove('active');
+                }
+            }
+        };
+
+        // Initialize Scroll Effects
+        const initScroll = () => {
+            const navbar = document.getElementById('navbar');
+            const scrollBar = document.getElementById('scrollBar');
+            const reveals = document.querySelectorAll('.reveal');
+
+            const handleScroll = () => {
+                // Navbar transformation
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+
+                // Progress Bar
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                scrollBar.style.width = scrolled + "%";
+
+                // Reveal items
+                reveals.forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+                    if (!(rect.bottom < 0 || rect.top - viewHeight >= 0)) {
+                        el.classList.add('active');
+                    }
+                });
+            };
+
+            window.addEventListener('scroll', handleScroll);
+            handleScroll(); // Initial check
+        };
+
+        // Form Handling
+        const initForms = () => {
+            const waitlistForm = document.getElementById('waitlist-form');
+            if (waitlistForm) {
+                waitlistForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    // Inline success state
+                    waitlistForm.style.display = 'none';
+                    document.getElementById('form-success').style.display = 'block';
+                    ui.showToast('Waitlist application received!');
+                });
+            }
+        };
+
+        // Click Guard for internal safety
+        const initClickGuard = () => {
+            const root = document.getElementById('main-content');
+            // This is just a safeguard; all interactive elements are already handled.
+            // We avoid window level listeners per contract.
+        };
+
+        // Run Init
+        document.addEventListener('DOMContentLoaded', () => {
+            initScroll();
+            initForms();
+
+            // Hash links smooth scroll prevention of external nav
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetEl = document.querySelector(targetId);
+                    if (targetEl) {
+                        targetEl.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // Safe Click Fallback for accidental <a> tags
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest('a');
+            if (target && !target.getAttribute('href').startsWith('#')) {
+                e.preventDefault();
+                ui.showToast('External navigation disabled in preview.');
+            }
+        });
+    </script>
+</body>
+</html>
