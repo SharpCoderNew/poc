@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJ One Chance | Official DJ of the Chicago Bulls & Blackhawks</title>
+    <meta name="description" content="Top-Rated Chicago Wedding DJ & Official DJ for the Chicago Bulls and Chicago Blackhawks.">
+    <style>
+        :root {
+            --bg-base: #050505;
+            --bg-surface: #111111;
+            --bg-elevated: #1a1a1a;
+            --primary: #CE1141; /* Chicago Bulls Red */
+            --primary-hover: #b00e36;
+            --accent: #171923;
+            --text-main: #ffffff;
+            --text-dim: #a0aec0;
+            --border: #2d3748;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        html { scroll-behavior: smooth; height: 100%; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-display);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Utilities */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .section-padding { padding: 8rem 0; }
+        .flex { display: flex; }
+        .grid { display: grid; }
+        .hidden { display: none; }
+        .glass { background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-family: inherit;
+            text-decoration: none;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(206, 17, 65, 0.3); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            transition: var(--transition);
+            padding: 1.5rem 0;
+        }
+        header.scrolled {
+            padding: 0.75rem 0;
+            background: rgba(5, 5, 5, 0.9);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+        nav.nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; color: #fff; cursor: pointer; }
+        .logo span { color: var(--primary); }
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { 
+            color: var(--text-dim); 
+            text-decoration: none; 
+            font-size: 0.85rem; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            transition: var(--transition); 
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .mobile-toggle { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+
+        /* Hero */
+        #home {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1571266028243-3716f02d2d2e?auto=format&fit=crop&q=80&w=2070') center/cover;
+            overflow: hidden;
+        }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; }
+        .hero-content h1 { font-size: clamp(3rem, 10vw, 6rem); line-height: 1; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: -2px; }
+        .hero-tagline { font-size: 1.25rem; color: var(--text-dim); margin-bottom: 2.5rem; max-width: 600px; border-left: 4px solid var(--primary); padding-left: 1.5rem; }
+        .hero-actions { display: flex; gap: 1rem; }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            opacity: 0.7;
+        }
+        .mouse { width: 24px; height: 40px; border: 2px solid white; border-radius: 20px; position: relative; }
+        .mouse::after { content: ''; position: absolute; top: 8px; left: 50%; width: 4px; height: 8px; background: white; border-radius: 2px; transform: translateX(-50%); animation: scrollMouse 2s infinite; }
+        @keyframes scrollMouse { 0% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, 15px); } }
+
+        /* Sections General */
+        .section-title { font-size: 3rem; margin-bottom: 3rem; text-transform: uppercase; letter-spacing: -1px; }
+        .section-title span { color: var(--primary); }
+
+        /* Stats */
+        .stats-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+        .stat-card { text-align: center; padding: 2rem; background: var(--bg-surface); border-radius: 8px; }
+        .stat-value { font-size: 3rem; font-weight: 800; color: var(--primary); margin-bottom: 0.5rem; }
+        .stat-label { color: var(--text-dim); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+
+        /* Services Cards */
+        .services-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .service-card { 
+            position: relative; 
+            height: 450px; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .service-card:hover { transform: translateY(-10px); }
+        .service-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.4) grayscale(0.5); transition: var(--transition); }
+        .service-card:hover .service-img { filter: brightness(0.6) grayscale(0); transform: scale(1.05); }
+        .service-content { position: absolute; bottom: 0; left: 0; padding: 2.5rem; width: 100%; z-index: 2; }
+        .service-card h3 { font-size: 1.5rem; margin-bottom: 1rem; text-transform: uppercase; }
+        .service-card p { font-size: 0.9rem; color: #ddd; margin-bottom: 1.5rem; opacity: 0; transform: translateY(20px); transition: var(--transition); }
+        .service-card:hover p { opacity: 1; transform: translateY(0); }
+
+        /* Mixes */
+        .mixes-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+        .mix-card { 
+            background: var(--bg-surface); 
+            border-radius: 12px; 
+            padding: 1.5rem; 
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .mix-card.active { border-color: var(--primary); box-shadow: 0 0 20px rgba(206,17,65,0.1); }
+        .mix-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+        .mix-info h3 { font-size: 1.1rem; margin-bottom: 0.25rem; }
+        .mix-info span { font-size: 0.8rem; color: var(--text-dim); }
+        .play-btn { 
+            width: 50px; height: 50px; border-radius: 50%; 
+            background: var(--primary); color: white; border: none; 
+            display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; transition: var(--transition);
+        }
+        .play-btn:hover { transform: scale(1.1); }
+        .waveform { display: flex; align-items: flex-end; gap: 3px; height: 40px; }
+        .wave-bar { flex: 1; background: var(--border); border-radius: 2px; transition: height 0.1s ease; }
+        .active .wave-bar { background: var(--primary); animation: waveAnim 1s ease-in-out infinite alternate; }
+        @keyframes waveAnim { from { height: 10%; } to { height: 100%; } }
+
+        /* Gallery Masonry */
+        .gallery-grid {
+            columns: 4 250px;
+            column-gap: 1rem;
+        }
+        .gallery-item {
+            margin-bottom: 1rem;
+            break-inside: avoid;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg-surface);
+            cursor: pointer;
+        }
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            transition: var(--transition);
+        }
+        .gallery-item:hover img { transform: scale(1.05); }
+
+        /* Clients - Marquee style */
+        .clients-strip { overflow: hidden; padding: 4rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .clients-track { display: flex; gap: 4rem; animation: scrollLeft 40s linear infinite; width: max-content; align-items: center; }
+        .client-logo { font-size: 1.5rem; font-weight: 800; color: var(--text-dim); white-space: nowrap; opacity: 0.5; transition: var(--transition); }
+        .client-logo:hover { opacity: 1; color: white; }
+        @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* Testimonials Carousel */
+        .testimonial-container { position: relative; overflow: hidden; }
+        .testimonial-track { display: flex; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .testimonial-slide { min-width: 100%; padding: 4rem 10%; text-align: center; }
+        .testimonial-slide blockquote { font-size: 1.5rem; font-style: italic; margin-bottom: 2rem; color: #eee; }
+        .testimonial-slide cite { font-style: normal; font-weight: 700; color: var(--primary); text-transform: uppercase; }
+        .carousel-dots { display: flex; justify-content: center; gap: 10px; margin-top: 2rem; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; transition: var(--transition); }
+        .dot.active { background: var(--primary); width: 30px; border-radius: 10px; }
+
+        /* Contact Form */
+        .contact-layout { grid-template-columns: 1fr 1fr; gap: 4rem; }
+        .contact-info h2 { margin-bottom: 2rem; }
+        .contact-details { display: grid; gap: 1.5rem; margin-bottom: 3rem; }
+        .detail-item { display: flex; gap: 1rem; align-items: flex-start; }
+        .detail-icon { color: var(--primary); font-size: 1.5rem; }
+        .contact-form { background: var(--bg-surface); padding: 3rem; border-radius: 12px; border: 1px solid var(--border); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem; color: var(--text-dim); }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 1rem; background: var(--bg-base); border: 1px solid var(--border); color: white; border-radius: 4px; font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); }
+
+        /* Footer */
+        footer { padding: 4rem 0; border-top: 1px solid var(--border); text-align: center; }
+        .social-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
+        .social-link { color: var(--text-dim); font-size: 1.5rem; transition: var(--transition); cursor: pointer; }
+        .social-link:hover { color: var(--primary); }
+
+        /* Lightbox & Modals */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 2rem; visibility: hidden; opacity: 0; transition: var(--transition); }
+        .modal.open { visibility: visible; opacity: 1; }
+        .modal-content { max-width: 900px; width: 100%; position: relative; }
+        .close-modal { position: absolute; top: -3rem; right: 0; color: white; background: none; border: none; font-size: 2rem; cursor: pointer; }
+        
+        .toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--bg-surface); border-left: 4px solid var(--primary); padding: 1rem 2rem; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: translateY(100px); opacity: 0; transition: var(--transition); z-index: 3000; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-links.open {
+                display: flex; flex-direction: column; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--bg-base); padding: 5rem 2rem; z-index: 999;
+            }
+            .mobile-toggle { display: block; position: relative; z-index: 1001; }
+            .contact-layout { grid-template-columns: 1fr; }
+            .section-title { font-size: 2rem; }
+            .hero-content h1 { font-size: 3.5rem; }
+            .gallery-grid { columns: 2; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .testimonial-slide blockquote { font-size: 1.1rem; }
+        }
+
+        /* Animations */
+        [data-reveal] { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
+        [data-reveal].revealed { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header id="site-header">
+        <div class="container">
+            <nav class="nav-content">
+                <div class="logo" id="logo-click">ONE <span>CHANCE</span></div>
+                <div class="nav-links" id="nav-links">
+                    <a href="#home">Home</a>
+                    <a href="#about">About</a>
+                    <a href="#weddings">Weddings</a>
+                    <a href="#mixes">Mixes</a>
+                    <a href="#gallery">Gallery</a>
+                    <a href="#contact">Contact</a>
+                    <button type="button" class="btn btn-primary" onclick="scrollToSection('#contact')">Book Now</button>
+                </div>
+                <button type="button" class="mobile-toggle" id="mobile-toggle" aria-label="Toggle Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1 data-reveal>The Pulse <br>Of <span>Chicago</span></h1>
+                <p class="hero-tagline" data-reveal>Official Game Day DJ for the Chicago Bulls & Blackhawks. Bringing arena energy to your private events.</p>
+                <div class="hero-actions" data-reveal>
+                    <button type="button" class="btn btn-primary" onclick="scrollToSection('#contact')">Inquire Availability</button>
+                    <button type="button" class="btn btn-outline" onclick="scrollToSection('#mixes')">Listen to Mixes</button>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse"></div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="section-padding" id="about">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card" data-reveal>
+                    <div class="stat-value" data-count="500">0</div>
+                    <div class="stat-label">Events Managed</div>
+                </div>
+                <div class="stat-card" data-reveal>
+                    <div class="stat-value" data-count="12">0</div>
+                    <div class="stat-label">Years of Experience</div>
+                </div>
+                <div class="stat-card" data-reveal>
+                    <div class="stat-value" data-count="2">0</div>
+                    <div class="stat-label">Pro Sports Residency</div>
+                </div>
+                <div class="stat-card" data-reveal>
+                    <div class="stat-value" data-count="250">0</div>
+                    <div class="stat-label">Weddings Rocked</div>
+                </div>
+            </div>
+            <div class="grid contact-layout" style="align-items: center;">
+                <div data-reveal>
+                    <h2 class="section-title">Beyond the <span>Turntables</span></h2>
+                    <p style="color: var(--text-dim); margin-bottom: 2rem; font-size: 1.1rem;">DJ One Chance isn't just a selector—he's an architect of energy. From the high-stakes atmosphere of the United Center to the intimate elegance of Chicago’s premier ballrooms, he knows exactly how to read a room and command the dance floor.</p>
+                    <p style="color: var(--text-dim);">Born and raised in the heart of Chicago, he brings the city's legendary musical heritage to every performance. Whether it's a corporate gala or a luxury wedding, expect nothing less than a production-grade experience.</p>
+                </div>
+                <div data-reveal style="position: relative;">
+                    <img src="https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&q=80&w=1000" alt="DJ Booth" style="width: 100%; border-radius: 12px; filter: grayscale(1);">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clients Marquee -->
+    <div class="clients-strip">
+        <div class="clients-track" id="clients-track">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+
+    <!-- Services -->
+    <section class="section-padding" id="weddings">
+        <div class="container">
+            <h2 class="section-title" data-reveal>Specialized <span>Events</span></h2>
+            <div class="services-grid" id="services-grid">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Mixes -->
+    <section class="section-padding" id="mixes">
+        <div class="container">
+            <h2 class="section-title" data-reveal>The <span>Sound</span></h2>
+            <div class="mixes-grid" id="mixes-grid">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="section-padding" id="gallery">
+        <div class="container">
+            <h2 class="section-title" data-reveal>Life in <span>Motion</span></h2>
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section-padding glass" id="testimonials">
+        <div class="container">
+            <div class="testimonial-container" id="testimonial-container">
+                <div class="testimonial-track" id="testimonial-track">
+                    <!-- Rendered by JS -->
+                </div>
+                <div class="carousel-dots" id="carousel-dots">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section-padding" id="contact">
+        <div class="container">
+            <div class="grid contact-layout">
+                <div class="contact-info" data-reveal>
+                    <h2 class="section-title">Ready for <span>Game Day?</span></h2>
+                    <p style="margin-bottom: 2rem; color: var(--text-dim);">Booking availability for 2024-2025 is limited. Reach out today to secure your date with Chicago's elite DJ.</p>
+                    <div class="contact-details">
+                        <div class="detail-item">
+                            <span class="detail-icon">📍</span>
+                            <div>
+                                <strong>Headquarters</strong><br>
+                                <span style="color: var(--text-dim);">River North, Chicago, IL</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">📧</span>
+                            <div>
+                                <strong>General Booking</strong><br>
+                                <span style="color: var(--text-dim);">bookings@djonechance.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form" data-reveal>
+                    <form id="contact-form-el">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="form-name" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="form-email" required placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Event Type</label>
+                            <select id="form-event-type">
+                                <option value="wedding">Wedding Reception</option>
+                                <option value="corporate">Corporate Activation</option>
+                                <option value="sports">Sporting Event</option>
+                                <option value="other">Other High-End Event</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea id="form-message" rows="4" placeholder="Tell me about your vision..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Secure My Date</button>
+                    </form>
+                    <div id="form-success" class="hidden" style="text-align: center; padding: 2rem 0;">
+                        <h3 style="color: var(--primary); margin-bottom: 1rem;">Transmission Received!</h3>
+                        <p>A coordinator will contact you within 24 hours. Reference ID: <span id="ref-id"></span></p>
+                        <button type="button" class="btn btn-outline" style="margin-top: 1.5rem;" onclick="resetForm()">Send Another</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="logo" style="margin-bottom: 2rem;">ONE <span>CHANCE</span></div>
+            <div class="social-links">
+                <button type="button" class="social-link" onclick="openSocial('Instagram')">Instagram</button>
+                <button type="button" class="social-link" onclick="openSocial('Facebook')">Facebook</button>
+                <button type="button" class="social-link" onclick="openSocial('TikTok')">TikTok</button>
+                <button type="button" class="social-link" onclick="openSocial('SoundCloud')">SoundCloud</button>
+            </div>
+            <p style="color: var(--text-dim); font-size: 0.8rem;">&copy; 2023 DJ One Chance Entertainment. Chicago Pride. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="lightbox" class="modal" onclick="closeLightbox(event)">
+        <button type="button" class="close-modal">&times;</button>
+        <div class="modal-content">
+            <img id="lightbox-img" src="" style="width: 100%; border-radius: 4px;">
+        </div>
+    </div>
+
+    <div id="info-modal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content glass" style="padding: 3rem; text-align: center; border-radius: 12px; max-width: 500px;">
+            <button type="button" class="close-modal">&times;</button>
+            <h3 id="info-title" style="margin-bottom: 1rem;"></h3>
+            <p id="info-body" style="color: var(--text-dim);"></p>
+            <button type="button" class="btn btn-primary" style="margin-top: 2rem;" onclick="closeModal(event)">Close</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // DATA
+        const CLIENTS = ["Chicago Bulls", "Chicago Blackhawks", "United Center", "Hyatt Regency", "Nike", "Red Bull", "W Hotels", "University of Chicago", "Soho House", "Navy Pier"];
+        
+        const SERVICES = [
+            { id: 'weddings', title: 'Luxury Weddings', desc: 'Seamless orchestration of your most important day, from ceremonial grace to reception fire.', img: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800' },
+            { id: 'sports', title: 'Arena Sports', desc: 'Official residency vibes. Creating the sonic atmosphere for world-class athletes and 20,000 fans.', img: 'https://images.unsplash.com/photo-1504450758481-7338eba7524a?auto=format&fit=crop&q=80&w=800' },
+            { id: 'corporate', title: 'High-End Corporate', desc: 'Sleek, professional, and trend-forward entertainment for Chicago’s leading brands.', img: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&q=80&w=800' }
+        ];
+
+        const MIXES = [
+            { id: 1, title: 'Bulls Game Day Vol. 4', genre: 'Open Format / Hype', seed: 0.8 },
+            { id: 2, title: 'Lake Shore Drive Sunset', genre: 'Deep House', seed: 0.4 },
+            { id: 3, title: 'Blackhawks Playoff Mix', genre: 'Rock / Hip-Hop', seed: 0.9 },
+            { id: 4, title: 'Gold Coast Wedding Set', genre: 'Nu-Disco / Classics', seed: 0.5 }
+        ];
+
+        const GALLERY_ITEMS = [
+            'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=600',
+            'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&q=80&w=600',
+            'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&q=80&w=600',
+            'https://images.unsplash.com/photo-1514525253344-f2526284687d?auto=format&fit=crop&q=80&w=600',
+            'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=600',
+            'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?auto=format&fit=crop&q=80&w=600',
+            'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=600',
+            'https://images.unsplash.com/photo-1459749411177-042180ce673c?auto=format&fit=crop&q=80&w=600'
+        ];
+
+        const TESTIMONIALS = [
+            { name: "Sarah & Mike", text: "He turned our wedding into a literal concert. Our guests are still talking about the Bulls-style introduction!" },
+            { name: "United Center Ops", text: "Reliable, professional, and knows how to keep 20,000 fans engaged regardless of the score." },
+            { name: "Nike Brand Team", text: "The perfect sonic backdrop for our activation. Chance is the best in Chicago, hands down." },
+            { name: "The Goldmans", text: "Exceeded every expectation. His ability to read the crowd is unlike anything we've ever seen." },
+            { name: "Chicago Bulls Mktg", text: "A key part of our fan experience. A true pro who understands brand energy." },
+            { name: "River North Gala", text: "Modern, sleek, and high-energy. The dance floor was packed from the first track." }
+        ];
+
+        // STATE
+        let state = {
+            activeMixId: null,
+            testimonialIndex: 0,
+            audioCtx: null,
+            osc: null,
+            gainNode: null
+        };
+
+        // DOM ELEMENTS
+        const header = document.getElementById('site-header');
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navLinks = document.getElementById('nav-links');
+        const clientsTrack = document.getElementById('clients-track');
+        const servicesGrid = document.getElementById('services-grid');
+        const mixesGrid = document.getElementById('mixes-grid');
+        const galleryGrid = document.getElementById('gallery-grid');
+        const testimonialTrack = document.getElementById('testimonial-track');
+        const carouselDots = document.getElementById('carousel-dots');
+        const contactForm = document.getElementById('contact-form-el');
+        const toast = document.getElementById('toast');
+
+        // INITIALIZATION
+        function init() {
+            renderClients();
+            renderServices();
+            renderMixes();
+            renderGallery();
+            renderTestimonials();
+            setupIntersectionObserver();
+            setupScrollSpy();
+        }
+
+        // RENDERING
+        function renderClients() {
+            const doubleClients = [...CLIENTS, ...CLIENTS];
+            clientsTrack.innerHTML = doubleClients.map(c => `<div class="client-logo">${c}</div>`).join('');
+        }
+
+        function renderServices() {
+            servicesGrid.innerHTML = SERVICES.map(s => `
+                <div class="service-card" onclick="prefillForm('${s.id}')" data-reveal>
+                    <img src="${s.img}" class="service-img" alt="${s.title}">
+                    <div class="service-content">
+                        <h3>${s.title}</h3>
+                        <p>${s.desc}</p>
+                        <button type="button" class="btn btn-primary btn-outline" style="border-color:white; color:white;">Select Service</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderMixes() {
+            mixesGrid.innerHTML = MIXES.map(m => `
+                <div class="mix-card" id="mix-${m.id}" data-reveal>
+                    <div class="mix-header">
+                        <div class="mix-info">
+                            <h3>${m.title}</h3>
+                            <span>${m.genre}</span>
+                        </div>
+                        <button type="button" class="play-btn" onclick="toggleMix(${m.id}, ${m.seed})">
+                            <span id="icon-${m.id}">▶</span>
+                        </button>
+                    </div>
+                    <div class="waveform" id="wave-${m.id}">
+                        ${Array(20).fill(0).map(() => `<div class="wave-bar" style="height: ${10 + Math.random() * 40}%"></div>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderGallery() {
+            galleryGrid.innerHTML = GALLERY_ITEMS.map(src => `
+                <div class="gallery-item" data-reveal onclick="openLightbox('${src}')">
+                    <img src="${src}" alt="Performance Image">
+                </div>
+            `).join('');
+        }
+
+        function renderTestimonials() {
+            testimonialTrack.innerHTML = TESTIMONIALS.map(t => `
+                <div class="testimonial-slide">
+                    <blockquote>"${t.text}"</blockquote>
+                    <cite>${t.name}</cite>
+                </div>
+            `).join('');
+            carouselDots.innerHTML = TESTIMONIALS.map((_, i) => `
+                <div class="dot ${i === 0 ? 'active' : ''}" onclick="goToTestimonial(${i})"></div>
+            `).join('');
+        }
+
+        // INTERACTIONS
+        function scrollToSection(id) {
+            const el = document.querySelector(id);
+            if (el) {
+                const offset = 80;
+                const bodyRect = document.body.getBoundingClientRect().top;
+                const elementRect = el.getBoundingClientRect().top;
+                const elementPosition = elementRect - bodyRect;
+                const offsetPosition = elementPosition - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+            navLinks.classList.remove('open');
+        }
+
+        function prefillForm(type) {
+            document.getElementById('form-event-type').value = type;
+            scrollToSection('#contact');
+            showToast(`Selected ${type} service`);
+        }
+
+        function toggleMix(id, seed) {
+            if (state.activeMixId === id) {
+                stopAudio();
+                state.activeMixId = null;
+            } else {
+                if (state.activeMixId) stopAudio();
+                state.activeMixId = id;
+                startAudio(seed);
+            }
+            updateMixUI();
+        }
+
+        function updateMixUI() {
+            document.querySelectorAll('.mix-card').forEach(card => card.classList.remove('active'));
+            document.querySelectorAll('.play-btn span').forEach(span => span.textContent = '▶');
+            
+            if (state.activeMixId) {
+                document.getElementById(`mix-${state.activeMixId}`).classList.add('active');
+                document.getElementById(`icon-${state.activeMixId}`).textContent = '■';
+            }
+        }
+
+        // AUDIO ENGINE (Synthesized)
+        function startAudio(seed) {
+            try {
+                if (!state.audioCtx) {
+                    state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                state.osc = state.audioCtx.createOscillator();
+                state.gainNode = state.audioCtx.createGain();
+                
+                state.osc.type = 'triangle';
+                state.osc.frequency.setValueAtTime(50 + (seed * 100), state.audioCtx.currentTime);
+                
+                // Low pass filter for "club" feel
+                const filter = state.audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(400, state.audioCtx.currentTime);
+
+                state.gainNode.gain.setValueAtTime(0, state.audioCtx.currentTime);
+                state.gainNode.gain.linearRampToValueAtTime(0.1, state.audioCtx.currentTime + 0.1);
+                
+                state.osc.connect(filter);
+                filter.connect(state.gainNode);
+                state.gainNode.connect(state.audioCtx.destination);
+                
+                state.osc.start();
+                
+                // Add some rhythmic variation
+                const interval = 120 / 60; // 120 BPM
+                state.audioLoop = setInterval(() => {
+                    const now = state.audioCtx.currentTime;
+                    state.gainNode.gain.cancelScheduledValues(now);
+                    state.gainNode.gain.setValueAtTime(0.1, now);
+                    state.gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                }, 500);
+
+            } catch (e) {
+                showToast("WebAudio not supported in this preview.");
+            }
+        }
+
+        function stopAudio() {
+            if (state.osc) {
+                state.osc.stop();
+                state.osc.disconnect();
+            }
+            if (state.audioLoop) clearInterval(state.audioLoop);
+        }
+
+        // LIGHTBOX
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox').classList.add('open');
+        }
+
+        function closeLightbox(e) {
+            if (e.target.id === 'lightbox' || e.target.classList.contains('close-modal')) {
+                document.getElementById('lightbox').classList.remove('open');
+            }
+        }
+
+        // CAROUSEL
+        function goToTestimonial(idx) {
+            state.testimonialIndex = idx;
+            testimonialTrack.style.transform = `translateX(-${idx * 100}%)`;
+            document.querySelectorAll('.dot').forEach((d, i) => {
+                d.classList.toggle('active', i === idx);
+            });
+        }
+
+        function autoAdvanceTestimonials() {
+            setInterval(() => {
+                let next = (state.testimonialIndex + 1) % TESTIMONIALS.length;
+                goToTestimonial(next);
+            }, 6000);
+        }
+
+        // FORM
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.textContent;
+            btn.textContent = "Processing...";
+            btn.disabled = true;
+
+            setTimeout(() => {
+                contactForm.classList.add('hidden');
+                document.getElementById('form-success').classList.remove('hidden');
+                document.getElementById('ref-id').textContent = 'CHX-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                showToast("Booking Inquiry Sent Successfully!");
+            }, 1500);
+        });
+
+        function resetForm() {
+            contactForm.reset();
+            contactForm.classList.remove('hidden');
+            document.getElementById('form-success').classList.add('hidden');
+        }
+
+        // UTILS
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function openSocial(platform) {
+            document.getElementById('info-title').textContent = platform;
+            document.getElementById('info-body').textContent = `DJ One Chance's ${platform} profile is restricted to internal viewing in this preview. In a production environment, this would navigate to the official @djonechance account.`;
+            document.getElementById('info-modal').classList.add('open');
+        }
+
+        function closeModal(e) {
+            if (e.target.id === 'info-modal' || e.target.classList.contains('close-modal') || e.target.classList.contains('btn')) {
+                document.getElementById('info-modal').classList.remove('open');
+            }
+        }
+
+        function setupIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        if (entry.target.hasAttribute('data-count')) {
+                            animateCount(entry.target);
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('[data-reveal], .stat-value').forEach(el => observer.observe(el));
+        }
+
+        function animateCount(el) {
+            const target = parseInt(el.getAttribute('data-count'));
+            let current = 0;
+            const step = target / 50;
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    el.textContent = target + (target > 10 ? '+' : '');
+                    clearInterval(timer);
+                } else {
+                    el.textContent = Math.floor(current);
+                }
+            }, 30);
+        }
+
+        function setupScrollSpy() {
+            window.addEventListener('scroll', () => {
+                // Header shrink
+                header.classList.toggle('scrolled', window.scrollY > 50);
+
+                // Nav highlight
+                let fromTop = window.scrollY + 100;
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    let section = document.querySelector(link.hash);
+                    if (section && section.offsetTop <= fromTop && section.offsetTop + section.offsetHeight > fromTop) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            });
+        }
+
+        // DOM Events
+        mobileToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+        });
+
+        document.getElementById('logo-click').addEventListener('click', () => scrollToSection('#home'));
+
+        // Guard for accidental navigation
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest('a');
+            if (target && target.getAttribute('href') && !target.getAttribute('href').startsWith('#')) {
+                e.preventDefault();
+                showToast("External navigation disabled in preview.");
+            }
+        });
+
+        // Initialize everything
+        init();
+        autoAdvanceTestimonials();
+
+    </script>
+</body>
+</html>
