@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharp Platform | AI-Native Automation & Orchestration</title>
+    <meta name="description" content="Sharp Platform: The future of AI-native intelligent automation and secure developer orchestration.">
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #111111;
+            --surface-accent: #1a1a1a;
+            --primary: #00f2ff;
+            --primary-glow: rgba(0, 242, 255, 0.4);
+            --secondary: #7000ff;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --border: rgba(255, 255, 255, 0.1);
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            overflow-x: hidden;
+        }
+
+        body {
+            line-height: 1.6;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* --- UI Components --- */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            border: none;
+            font-size: 0.95rem;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: var(--border);
+            border-color: var(--text-muted);
+        }
+
+        .tag {
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+        }
+
+        /* --- Layout --- */
+        #app-root {
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            padding: 6rem 0;
+            position: relative;
+        }
+
+        /* --- Background Elements --- */
+        .glow-orb {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+            filter: blur(80px);
+            opacity: 0.3;
+        }
+
+        /* --- Navigation --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: 72px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(12px);
+        }
+
+        .nav-inner {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--primary);
+        }
+
+        .nav-links {
+            display: none;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .nav-links {
+                display: flex;
+            }
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .mobile-menu-btn {
+            display: flex;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+
+        /* --- Hero --- */
+        .hero {
+            padding-top: 10rem;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            line-height: 1.1;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-sub {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .hero-visual {
+            margin-top: 4rem;
+            position: relative;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            transform: perspective(1000px) rotateX(5deg);
+        }
+
+        .hero-visual img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* --- Marquee --- */
+        .marquee {
+            padding: 3rem 0;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .marquee-track {
+            display: flex;
+            gap: 4rem;
+            animation: scroll 40s linear infinite;
+            width: max-content;
+        }
+
+        .marquee:hover .marquee-track {
+            animation-play-state: paused;
+        }
+
+        .marquee-item {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            opacity: 0.6;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* --- Grid Section --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            padding: 2.5rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 242, 255, 0.3);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 242, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        /* --- Modules / Tabs --- */
+        .tabs-container {
+            margin-top: 3rem;
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            padding-bottom: 1px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-content.active {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .tab-content.active {
+                grid-template-columns: 1fr 1fr;
+                align-items: center;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Code Block --- */
+        .code-window {
+            background: #0d0d0d;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.85rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .code-header {
+            background: #1a1a1a;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .code-body {
+            padding: 1.5rem;
+            color: #d1d1d1;
+            line-height: 1.7;
+        }
+
+        .code-keyword { color: #c678dd; }
+        .code-func { color: #61afef; }
+        .code-string { color: #98c379; }
+        .code-comment { color: #5c6370; }
+
+        /* --- Roadmap --- */
+        .roadmap {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .roadmap::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary), transparent);
+        }
+
+        .roadmap-item {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            left: -2.4rem;
+            top: 0.25rem;
+            width: 12px;
+            height: 12px;
+            background: var(--bg);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+        }
+
+        /* --- Modal/Drawer System --- */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 1.5rem;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            max-width: 500px;
+            width: 100%;
+            padding: 2.5rem;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: #080808;
+            border-top: 1px solid var(--border);
+            padding: 5rem 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-col h4 {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-main);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-col ul li button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            padding: 0;
+        }
+
+        .footer-col ul li button:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-bottom {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        /* --- Utils --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .toast {
+            background: var(--surface);
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            color: #fff;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.08);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-root">
+        <!-- Background Glows -->
+        <div class="glow-orb" style="top: -100px; left: -100px;"></div>
+        <div class="glow-orb" style="bottom: -100px; right: -100px; background: radial-gradient(circle, rgba(112, 0, 255, 0.2) 0%, transparent 70%);"></div>
+
+        <!-- Navigation -->
+        <header>
+            <div class="container nav-inner">
+                <a href="#app-root" class="logo">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L2 19.74L3.66 22L12 17.56L20.34 22L22 19.74L12 2Z"/></svg>
+                    SHARP
+                </a>
+                
+                <nav class="nav-links">
+                    <a href="#solutions">Solutions</a>
+                    <a href="#platform">Platform</a>
+                    <a href="#developer">Developers</a>
+                    <a href="#roadmap">Roadmap</a>
+                </nav>
+
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button type="button" class="btn btn-outline" style="display: none; @media(min-width: 768px){display: flex;}" data-action="login">Login</button>
+                    <button type="button" class="btn btn-primary" data-action="get-started">Launch Platform</button>
+                    <button type="button" class="mobile-menu-btn" data-action="toggle-mobile-menu">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="tag" style="margin-bottom: 2rem;">Now in Early Access</div>
+                <h1 class="hero-title">Automate everything with Sharp AI.</h1>
+                <p class="hero-sub">The enterprise-grade orchestration platform designed for a world powered by autonomous agents and secure digital workflows.</p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-primary" style="padding: 1rem 2rem;" data-action="get-started">Start Free Trial</button>
+                    <button type="button" class="btn btn-outline" style="padding: 1rem 2rem;" data-action="view-demo">Watch Demo</button>
+                </div>
+                
+                <div class="hero-visual reveal glass">
+                    <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=2000" alt="Sharp Platform Dashboard Preview">
+                </div>
+            </div>
+        </section>
+
+        <!-- Marquee -->
+        <div class="marquee">
+            <div class="marquee-track">
+                <!-- Duplicate for seamless loop -->
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="10"/></svg> NEXUS TECH</div>
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><rect width="20" height="20"/></svg> QUANTUM DATA</div>
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><path d="M0 0L20 10L0 20Z"/></svg> VELOCITY AI</div>
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="10"/></svg> CLOUD CORE</div>
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><rect width="20" height="20" rx="10"/></svg> SYNAPSE</div>
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><path d="M10 0L20 20H0Z"/></svg> APEX LABS</div>
+                <!-- Duplicate -->
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="10"/></svg> NEXUS TECH</div>
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><rect width="20" height="20"/></svg> QUANTUM DATA</div>
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><path d="M0 0L20 10L0 20Z"/></svg> VELOCITY AI</div>
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><circle cx="10" cy="10" r="10"/></svg> CLOUD CORE</div>
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><rect width="20" height="20" rx="10"/></svg> SYNAPSE</div>
+                <div class="marquee-item"><svg width="20" height="20" fill="currentColor"><path d="M10 0L20 20H0Z"/></svg> APEX LABS</div>
+            </div>
+        </div>
+
+        <!-- Solutions -->
+        <section id="solutions">
+            <div class="container">
+                <div style="text-align: center; margin-bottom: 4rem;">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Core Solutions</h2>
+                    <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">Everything you need to orchestrate the next generation of intelligent software.</p>
+                </div>
+                
+                <div class="grid">
+                    <div class="card glass reveal">
+                        <div class="card-icon">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                        </div>
+                        <h3>Smart Agents</h3>
+                        <p>Deploy autonomous AI agents that handle complex tasks, from customer support to automated code reviews.</p>
+                        <button type="button" class="btn btn-outline" data-action="learn-more">Explore Agents</button>
+                    </div>
+                    <div class="card glass reveal" style="transition-delay: 0.1s;">
+                        <div class="card-icon">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <h3>Secure Orchestration</h3>
+                        <p>Enterprise-level security for your AI pipelines. Encrypted prompts, role-based access, and detailed audit logs.</p>
+                        <button type="button" class="btn btn-outline" data-action="learn-more">See Security</button>
+                    </div>
+                    <div class="card glass reveal" style="transition-delay: 0.2s;">
+                        <div class="card-icon">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        </div>
+                        <h3>Workflow Turbo</h3>
+                        <p>Boost development speed by 10x with our low-code/no-code workflow builder for complex logic chains.</p>
+                        <button type="button" class="btn btn-outline" data-action="learn-more">Build Now</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Platform Modules -->
+        <section id="platform" style="background: rgba(255,255,255,0.01);">
+            <div class="container">
+                <div style="text-align: center; margin-bottom: 4rem;">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Platform Modules</h2>
+                    <p style="color: var(--text-muted);">Powerful primitives for building intelligent systems.</p>
+                </div>
+
+                <div class="tabs-container">
+                    <div class="tabs-nav">
+                        <button type="button" class="tab-btn active" data-tab="compute">Edge Compute</button>
+                        <button type="button" class="tab-btn" data-tab="memory">Vector Memory</button>
+                        <button type="button" class="tab-btn" data-tab="connect">Connectors</button>
+                        <button type="button" class="tab-btn" data-tab="insights">Insights</button>
+                    </div>
+
+                    <div id="compute" class="tab-content active">
+                        <div>
+                            <h3 style="font-size: 2rem; margin-bottom: 1.5rem;">Distributed Edge Compute</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 2rem;">Run your AI models and logic closer to your users with sub-50ms latency globally. Sharp handles the auto-scaling and resource management so you focus on the logic.</p>
+                            <ul style="list-style: none; color: var(--text-muted); margin-bottom: 2rem;">
+                                <li style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Serverless Function Support</li>
+                                <li style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Automatic Multi-Region Deploy</li>
+                                <li style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> GPU-Accelerated Runtimes</li>
+                            </ul>
+                            <button type="button" class="btn btn-primary" data-action="get-started">Get Early Access</button>
+                        </div>
+                        <div class="code-window">
+                            <div class="code-header">
+                                <div class="code-dots"><div class="dot" style="background:#ff5f56"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#27c93f"></div></div>
+                                <span style="font-size: 11px; color: var(--text-muted);">deploy.js</span>
+                            </div>
+                            <div class="code-body">
+                                <span class="code-keyword">import</span> { Sharp } <span class="code-keyword">from</span> <span class="code-string">"@sharp/platform"</span>;<br><br>
+                                <span class="code-keyword">const</span> app = <span class="code-keyword">new</span> <span class="code-func">Sharp</span>({<br>
+                                &nbsp;&nbsp;region: <span class="code-string">"global-edge"</span>,<br>
+                                &nbsp;&nbsp;acceleration: <span class="code-keyword">true</span><br>
+                                });<br><br>
+                                <span class="code-comment">// Deploy autonomous agent</span><br>
+                                <span class="code-keyword">await</span> app.<span class="code-func">deploy</span>(<span class="code-string">"customer-care-agent"</span>, {<br>
+                                &nbsp;&nbsp;model: <span class="code-string">"sharp-nexus-1"</span>,<br>
+                                &nbsp;&nbsp;memory: <span class="code-keyword">true</span><br>
+                                });
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Placeholder contents for other tabs for internal demo -->
+                    <div id="memory" class="tab-content">
+                        <div>
+                            <h3 style="font-size: 2rem; margin-bottom: 1.5rem;">Instant Vector Memory</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 2rem;">Built-in RAG capabilities with zero setup. Store, index, and retrieve billions of vectors with semantic search integrated directly into your agents.</p>
+                            <button type="button" class="btn btn-primary" data-action="get-started">Start Trial</button>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); height: 300px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <span style="color: var(--text-muted);">Vector Graph Visualization Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer Section -->
+        <section id="developer">
+            <div class="container" style="display: grid; grid-template-columns: 1fr; gap: 4rem; align-items: center; @media(min-width: 992px){grid-template-columns: 1fr 1fr;}">
+                <div class="reveal">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Built by developers, for developers.</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">A CLI-first experience with a powerful API and comprehensive SDKs in every major language. We speak your language.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="glass" style="padding: 1.5rem;">
+                            <h4 style="margin-bottom: 0.5rem; color: var(--primary);">OpenAPI 3.1</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Standard compliant APIs for easy integration.</p>
+                        </div>
+                        <div class="glass" style="padding: 1.5rem;">
+                            <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Infrastructure as Code</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Terraform and Pulumi providers available.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-outline" data-action="docs">Read the Documentation</button>
+                </div>
+                
+                <div class="reveal glass" style="padding: 1rem; border-color: var(--primary-glow);">
+                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=1200" alt="Code Visual" style="width: 100%; border-radius: 8px;">
+                </div>
+            </div>
+        </section>
+
+        <!-- Roadmap -->
+        <section id="roadmap">
+            <div class="container">
+                <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 4rem;">The Road Ahead</h2>
+                <div class="roadmap">
+                    <div class="roadmap-item reveal">
+                        <div class="tag" style="margin-bottom: 0.5rem;">Q1 2024 • Completed</div>
+                        <h3>Alpha Foundation</h3>
+                        <p style="color: var(--text-muted);">Core orchestration engine and basic agent runtime environments.</p>
+                    </div>
+                    <div class="roadmap-item reveal">
+                        <div class="tag" style="margin-bottom: 0.5rem; border-color: var(--primary); color: var(--primary);">Q2 2024 • Active</div>
+                        <h3>Global Edge Launch</h3>
+                        <p style="color: var(--text-muted);">Deployment of 12 global regions and GPU-acceleration support.</p>
+                    </div>
+                    <div class="roadmap-item reveal">
+                        <div class="tag" style="margin-bottom: 0.5rem;">Q4 2024 • Upcoming</div>
+                        <h3>Marketplace & Ecosystem</h3>
+                        <p style="color: var(--text-muted);">Community-driven agent templates and 100+ new integrations.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section style="background: linear-gradient(to bottom, transparent, rgba(112, 0, 255, 0.1)); padding-bottom: 8rem;">
+            <div class="container reveal glass" style="padding: 5rem 2rem; text-align: center; border-color: var(--primary);">
+                <h2 style="font-size: 3rem; margin-bottom: 1.5rem;">Ready to sharpen your stack?</h2>
+                <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 3rem;">Join 5,000+ teams building the future on Sharp. Secure your early access spot today.</p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1.1rem;" data-action="get-started">Get Started for Free</button>
+                    <button type="button" class="btn btn-outline" style="padding: 1rem 3rem; font-size: 1.1rem;" data-action="contact-sales">Contact Sales</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-col" style="grid-column: span 2;">
+                        <div class="logo" style="margin-bottom: 1.5rem;">
+                            <svg viewBox="0 0 24 24"><path d="M12 2L2 19.74L3.66 22L12 17.56L20.34 22L22 19.74L12 2Z"/></svg>
+                            SHARP
+                        </div>
+                        <p style="color: var(--text-muted); max-width: 300px;">Accelerating digital evolution with AI-native platform infrastructure.</p>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Platform</h4>
+                        <ul>
+                            <li><button type="button" data-action="link">Features</button></li>
+                            <li><button type="button" data-action="link">Security</button></li>
+                            <li><button type="button" data-action="link">Pricing</button></li>
+                            <li><button type="button" data-action="link">Enterprise</button></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><button type="button" data-action="link">Documentation</button></li>
+                            <li><button type="button" data-action="link">API Reference</button></li>
+                            <li><button type="button" data-action="link">Community</button></li>
+                            <li><button type="button" data-action="link">Tutorials</button></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Company</h4>
+                        <ul>
+                            <li><button type="button" data-action="link">About Us</button></li>
+                            <li><button type="button" data-action="link">Careers</button></li>
+                            <li><button type="button" data-action="link">Blog</button></li>
+                            <li><button type="button" data-action="link">Contact</button></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <p>&copy; 2024 Sharp Platform Inc. All rights reserved.</p>
+                    <div style="display: flex; gap: 2rem;">
+                        <button type="button" data-action="link">Privacy Policy</button>
+                        <button type="button" data-action="link">Terms of Service</button>
+                        <button type="button" data-action="link">Status</button>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals & Overlays -->
+    <div id="modal-overlay" class="overlay">
+        <div class="modal glass" id="generic-modal">
+            <button type="button" class="close-btn" data-action="close-modal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div id="modal-content">
+                <h2 style="margin-bottom: 1rem;" id="modal-title">Join the Waitlist</h2>
+                <p id="modal-desc" style="color: var(--text-muted); margin-bottom: 2rem;">Secure your spot in our early access program.</p>
+                
+                <form id="waitlist-form">
+                    <div class="form-group">
+                        <label>Work Email</label>
+                        <input type="email" class="form-input" placeholder="name@company.com" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Get Access</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toasts -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script>
+        // Use a module-like scope for safety
+        (function() {
+            const app = {
+                init() {
+                    this.bindEvents();
+                    this.setupScrollReveal();
+                    this.setupTabs();
+                },
+
+                bindEvents() {
+                    const root = document.getElementById('app-root');
+                    const modalOverlay = document.getElementById('modal-overlay');
+
+                    // Bind all buttons and links inside app-root
+                    root.addEventListener('click', (e) => {
+                        const target = e.target.closest('button, a');
+                        if (!target) return;
+
+                        // Prevent default for hash links and buttons
+                        if (target.tagName === 'A' && target.getAttribute('href').startsWith('#')) {
+                            // Smooth scroll already handled by CSS, but we can intercept if needed
+                        } else if (target.tagName === 'BUTTON' || (target.tagName === 'A' && !target.getAttribute('href').startsWith('#'))) {
+                            e.preventDefault();
+                        }
+
+                        const action = target.dataset.action;
+                        
+                        if (action) {
+                            this.handleAction(action, target);
+                        } else if (target.tagName === 'A' && !target.getAttribute('href').startsWith('#')) {
+                            this.showToast("External navigation disabled in preview.");
+                        }
+                    });
+
+                    // Modal Close
+                    modalOverlay.addEventListener('click', (e) => {
+                        if (e.target === modalOverlay || e.target.closest('[data-action="close-modal"]')) {
+                            this.closeModal();
+                        }
+                    });
+
+                    // Form Submission
+                    document.getElementById('waitlist-form').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const email = e.target.querySelector('input').value;
+                        this.closeModal();
+                        this.showToast(`Success! ${email} added to waitlist.`);
+                        e.target.reset();
+                    });
+                },
+
+                handleAction(action, target) {
+                    switch(action) {
+                        case 'get-started':
+                            this.openModal('Join the Evolution', 'Get exclusive access to the Sharp Platform private beta. Enter your email to begin.');
+                            break;
+                        case 'view-demo':
+                            this.showToast("Demo video initialized. Feature locked in preview.");
+                            break;
+                        case 'login':
+                            this.openModal('Welcome Back', 'Sign in to your Sharp dashboard.');
+                            break;
+                        case 'learn-more':
+                            this.showToast("Deep-dive technical specs coming soon.");
+                            break;
+                        case 'contact-sales':
+                            this.openModal('Contact Sales', 'Tell us about your organization and our team will be in touch within 24 hours.');
+                            break;
+                        case 'toggle-mobile-menu':
+                            this.showToast("Mobile navigation menu opened.");
+                            break;
+                        case 'docs':
+                            this.showToast("Documentation is available on the platform dashboard.");
+                            break;
+                        case 'link':
+                            this.showToast("This feature is disabled in the preview environment.");
+                            break;
+                        default:
+                            console.log('Action:', action);
+                    }
+                },
+
+                openModal(title, desc) {
+                    const modal = document.getElementById('generic-modal');
+                    const overlay = document.getElementById('modal-overlay');
+                    document.getElementById('modal-title').textContent = title;
+                    document.getElementById('modal-desc').textContent = desc;
+                    overlay.classList.add('active');
+                },
+
+                closeModal() {
+                    document.getElementById('modal-overlay').classList.remove('active');
+                },
+
+                showToast(message) {
+                    const container = document.getElementById('toast-container');
+                    const toast = document.createElement('div');
+                    toast.className = 'toast glass';
+                    toast.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        <span>${message}</span>
+                    `;
+                    container.appendChild(toast);
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateX(20px)';
+                        setTimeout(() => toast.remove(), 300);
+                    }, 3000);
+                },
+
+                setupScrollReveal() {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('active');
+                            }
+                        });
+                    }, { threshold: 0.1 });
+
+                    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+                },
+
+                setupTabs() {
+                    const tabs = document.querySelectorAll('.tab-btn');
+                    tabs.forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            const target = tab.dataset.tab;
+                            
+                            // Buttons
+                            tabs.forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+
+                            // Content
+                            document.querySelectorAll('.tab-content').forEach(c => {
+                                c.classList.remove('active');
+                                if (c.id === target) c.classList.add('active');
+                            });
+                        });
+                    });
+                }
+            };
+
+            // Global defensive click guard
+            window.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A' && e.target.target === '_blank') {
+                    e.preventDefault();
+                    app.showToast("External links are disabled in preview.");
+                }
+            }, true);
+
+            app.init();
+        })();
+    </script>
+</body>
+</html>
