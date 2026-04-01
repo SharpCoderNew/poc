@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AperiBar | Italian Aperitivo & Cocktails in Times Square</title>
+    <meta name="description" content="AperiBar offers an authentic Italian aperitivo experience in the heart of Times Square. Join us for classic cocktails, small plates, and a sophisticated atmosphere.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="AperiBar | Times Square NYC">
+    <meta property="og:description" content="Experience the art of the Italian Aperitivo at AperiBar.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aperibar.com">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=1200">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Restaurant",
+      "name": "AperiBar",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "120 W 41st St",
+        "addressLocality": "New York",
+        "addressRegion": "NY",
+        "postalCode": "10036",
+        "addressCountry": "US"
+      },
+      "telephone": "+12127308900",
+      "url": "https://aperibar.com",
+      "menu": "https://aperibar.com/menu",
+      "servesCuisine": "Italian, Cocktails",
+      "priceRange": "$$"
+    }
+    </script>
+
+    <style>
+        :root {
+            --primary: #121212;
+            --accent: #c4a47c;
+            --accent-light: #e0ccaf;
+            --bg: #faf9f6;
+            --text: #333333;
+            --text-muted: #666666;
+            --white: #ffffff;
+            --gold: #d4af37;
+            --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --header-height: 100px;
+            --utility-height: 40px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: "Georgia", serif;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent);
+            color: white;
+            padding: 8px;
+            z-index: 10001;
+            transition: top 0.3s;
+        }
+        .skip-link:focus { top: 0; }
+
+        /* --- UI Utility --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.8rem;
+            border: 1px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--white);
+        }
+
+        /* --- Header & Nav --- */
+        .utility-bar {
+            background: var(--primary);
+            color: var(--white);
+            height: var(--utility-height);
+            display: flex;
+            align-items: center;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .utility-bar .container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .main-header {
+            background: var(--white);
+            height: var(--header-height);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-wrapper {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            width: 100%;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--primary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+
+        .logo {
+            font-size: 2rem;
+            text-transform: uppercase;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 400;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        /* --- Mobile Nav --- */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .hamburger {
+            width: 24px;
+            height: 2px;
+            background: var(--primary);
+            position: relative;
+        }
+
+        .hamburger::before, .hamburger::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 2px;
+            background: var(--primary);
+            left: 0;
+            transition: 0.3s;
+        }
+
+        .hamburger::before { top: -8px; }
+        .hamburger::after { top: 8px; }
+
+        .mobile-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            transform: translateY(-100%);
+            transition: transform 0.5s cubic-bezier(0.77,0,0.175,1);
+        }
+
+        .mobile-panel.is-active {
+            transform: translateY(0);
+        }
+
+        /* --- Hero Carousel --- */
+        .hero {
+            height: calc(100vh - var(--header-height) - var(--utility-height));
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .carousel-track {
+            height: 100%;
+            width: 100%;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .slide.active { opacity: 1; z-index: 10; }
+
+        .slide-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 20;
+            color: white;
+            max-width: 800px;
+        }
+
+        .slide-content h2 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            margin-bottom: 1rem;
+        }
+
+        .carousel-controls {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 30;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .control-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .control-btn:hover { background: var(--accent); }
+
+        /* --- Story Section --- */
+        .story-section {
+            padding: 100px 0;
+            text-align: center;
+            background: var(--white);
+        }
+
+        .story-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .story-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .divider-img {
+            height: 500px;
+            width: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* --- Menu Feature (Bento Style) --- */
+        .menu-feature {
+            padding: 100px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .menu-card {
+            background: var(--white);
+            padding: 3rem;
+            border: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-card h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* --- Testimonials --- */
+        .testimonials {
+            background: #f4f1ed;
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .testimonial-item {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            display: none;
+        }
+
+        .testimonial-item.active { display: block; }
+
+        .quote {
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .read-more-content {
+            display: none;
+            margin-top: 1rem;
+            color: var(--text-muted);
+        }
+
+        .read-more-content.expanded { display: block; }
+
+        /* --- Hours & Location --- */
+        .location-section {
+            padding: 100px 0;
+        }
+
+        .location-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .map-placeholder {
+            height: 400px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- Modals --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-width: 500px;
+            padding: 3rem;
+            position: relative;
+            animation: modalIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        @keyframes modalIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            font-family: inherit;
+        }
+
+        .success-state {
+            display: none;
+            text-align: center;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 80px 0 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .footer-nav {
+            list-style: none;
+        }
+
+        .footer-nav li { margin-bottom: 0.5rem; }
+
+        .footer-nav a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .footer-nav a:hover { color: white; }
+
+        .bottom-bar {
+            border-top: 1px solid #333;
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #777;
+        }
+
+        /* --- Toast Notification --- */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            z-index: 10002;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 0.9rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .toast.visible { transform: translateX(-50%) translateY(0); }
+
+        /* --- Responsiveness --- */
+        @media (max-width: 992px) {
+            .nav-links, .header-actions .btn { display: none; }
+            .mobile-toggle { display: block; }
+            .nav-wrapper { grid-template-columns: 1fr auto 1fr; }
+            .menu-feature, .location-grid, .footer-grid { grid-template-columns: 1fr; }
+            .footer-grid { text-align: center; }
+            .social-links { justify-content: center; }
+            .main-header { height: 80px; }
+            .logo { font-size: 1.5rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .slide { transition: none; }
+            * { transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Top Utility Bar -->
+    <div class="utility-bar">
+        <div class="container">
+            <span>120 W 41st St, New York, NY 10036</span>
+            <span class="desktop-only">212-730-8900</span>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <header class="main-header" id="header">
+        <div class="container">
+            <nav class="nav-wrapper" aria-label="Main Navigation">
+                <ul class="nav-links">
+                    <li><a href="#story" data-internal="true">Our Story</a></li>
+                    <li><a href="#menu-feature" data-internal="true">Menus</a></li>
+                </ul>
+                <a href="#" class="logo" aria-label="AperiBar Home">AperiBar</a>
+                <div class="header-actions">
+                    <ul class="nav-links" style="margin-right: 2rem;">
+                        <li><a href="#location" data-internal="true">Location</a></li>
+                    </ul>
+                    <button type="button" class="btn btn-primary" id="open-reservation-btn">Reservations</button>
+                    <button type="button" class="mobile-toggle" id="mobile-nav-toggle" aria-expanded="false" aria-label="Toggle Menu">
+                        <div class="hamburger"></div>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mobile Nav Panel -->
+    <div class="mobile-panel" id="mobile-panel" aria-hidden="true">
+        <div style="display: flex; justify-content: flex-end;">
+            <button type="button" class="close-modal" id="close-mobile-nav" style="position: static; font-size: 2rem;">&times;</button>
+        </div>
+        <ul class="nav-links" style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem;">
+            <li><a href="#story" class="mobile-link">Our Story</a></li>
+            <li><a href="#menu-feature" class="mobile-link">Menus</a></li>
+            <li><a href="#location" class="mobile-link">Hours & Location</a></li>
+            <li><button type="button" class="btn btn-primary mobile-link" id="mobile-res-btn">Reservations</button></li>
+        </ul>
+        <div style="margin-top: auto; padding-bottom: 2rem; border-top: 1px solid #eee; padding-top: 2rem;">
+            <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">212-730-8900</p>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">120 W 41st St, New York, NY</p>
+            <ul class="social-links" style="justify-content: flex-start;">
+                <li><a href="https://instagram.com" class="external-link">IG</a></li>
+                <li><a href="https://facebook.com" class="external-link">FB</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <main id="main-content">
+        <!-- Hero Carousel -->
+        <section class="hero" aria-label="Featured Highlights">
+            <div class="carousel-track" id="hero-carousel">
+                <!-- Slide 1 -->
+                <div class="slide active">
+                    <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&q=80&w=1920" alt="Exquisite cocktail being poured" class="slide-image">
+                    <div class="slide-content">
+                        <h2>The Art of Aperitivo</h2>
+                        <p>Sophisticated flavors and timeless cocktails in the heart of Midtown.</p>
+                        <button type="button" class="btn btn-primary" style="margin-top: 2rem;" onclick="document.getElementById('open-reservation-btn').click()">Book a Table</button>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=1920" alt="Cozy restaurant interior" class="slide-image">
+                    <div class="slide-content">
+                        <h2>Vibrant Ambiance</h2>
+                        <p>Escape the bustle of Times Square into our warm, candlelit sanctuary.</p>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&q=80&w=1920" alt="Close up of artisanal pasta" class="slide-image">
+                    <div class="slide-content">
+                        <h2>Authentic Fare</h2>
+                        <p>Small plates and classic Italian recipes reimagined for today.</p>
+                    </div>
+                </div>
+                <!-- Slide 4 -->
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1544145945-f904253d0c7b?auto=format&fit=crop&q=80&w=1920" alt="Friends sharing drinks" class="slide-image">
+                    <div class="slide-content">
+                        <h2>Gather Together</h2>
+                        <p>The perfect meeting spot for pre-theater drinks or late-night bites.</p>
+                    </div>
+                </div>
+                <!-- Slide 5 -->
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1510626176961-4b57d4fbad03?auto=format&fit=crop&q=80&w=1920" alt="Bar counter at night" class="slide-image">
+                    <div class="slide-content">
+                        <h2>Aperibar After Dark</h2>
+                        <p>Curated spirits and a world-class wine list await.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-controls">
+                <button type="button" class="control-btn" id="prev-slide" aria-label="Previous slide">←</button>
+                <button type="button" class="control-btn" id="pause-autoplay" aria-label="Pause slide rotation">II</button>
+                <button type="button" class="control-btn" id="next-slide" aria-label="Next slide">→</button>
+            </div>
+            <div id="sr-announcer" class="sr-only" aria-live="polite" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;"></div>
+        </section>
+
+        <!-- Story Section -->
+        <section id="story" class="story-section">
+            <div class="container">
+                <div class="story-content">
+                    <span style="text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; color: var(--accent);">Our Philosophy</span>
+                    <h2 style="margin-top: 1rem;">Benvenuti to AperiBar</h2>
+                    <p>Inspired by the classic bars of Milan and Rome, AperiBar brings the essential Italian ritual of Aperitivo to New York City. We believe in the beauty of a well-mixed Negroni, the crunch of a fresh focaccia, and the lively conversation that bridges the gap between work and dinner.</p>
+                    <button type="button" class="btn" style="margin-top: 2rem;">Read Our Story</button>
+                </div>
+            </div>
+        </section>
+
+        <img src="https://images.unsplash.com/photo-1481931098730-1180b302a63e?auto=format&fit=crop&q=80&w=1920" alt="Interior decor detail" class="divider-img">
+
+        <!-- Menu Section -->
+        <section id="menu-feature" class="container">
+            <div class="menu-feature">
+                <div class="menu-card">
+                    <div>
+                        <h3>Beverage Program</h3>
+                        <p>From the Spritz Veneziano to our Signature Smoked Old Fashioned, our menu celebrates the diversity of Italian spirits.</p>
+                    </div>
+                    <button type="button" class="btn" style="margin-top: 2rem;" id="view-cocktail-menu">View Cocktail Menu</button>
+                </div>
+                <div class="menu-card">
+                    <div>
+                        <h3>Kitchen Highlights</h3>
+                        <p>House-made pastas, seasonal cicchetti, and imported cheeses curated to pair perfectly with your drink of choice.</p>
+                    </div>
+                    <button type="button" class="btn" style="margin-top: 2rem;" id="view-food-menu">View Food Menu</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials">
+            <div class="container">
+                <div class="testimonial-item active" id="t1">
+                    <div class="quote">"The best Negroni in Midtown. The atmosphere is upscale yet unpretentious—exactly what 41st street needed."</div>
+                    <p><strong>— Julia R., NYC Food Guide</strong></p>
+                    <button type="button" class="btn" style="margin-top: 1.5rem; border: none; text-decoration: underline;" onclick="toggleReadMore('rm1')">Read more</button>
+                    <div id="rm1" class="read-more-content">
+                        Julia continues: "I visited on a rainy Tuesday and found the service to be impeccable. The arancini were crispy and the truffle honey was a revelation."
+                    </div>
+                </div>
+                <div class="testimonial-item" id="t2">
+                    <div class="quote">"An authentic slice of Italy. The Aperitivo hour here makes me feel like I'm back in Trastevere."</div>
+                    <p><strong>— Marco V.</strong></p>
+                    <button type="button" class="btn" style="margin-top: 1.5rem; border: none; text-decoration: underline;" onclick="toggleReadMore('rm2')">Read more</button>
+                    <div id="rm2" class="read-more-content">
+                        Marco adds: "The attention to detail in the glassware and the curated selection of Amaros is unmatched in the city."
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 3rem;">
+                    <button type="button" class="control-btn" id="prev-test" style="background: var(--primary);">←</button>
+                    <button type="button" class="control-btn" id="next-test" style="background: var(--primary);">→</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hours & Location -->
+        <section id="location" class="location-section container">
+            <div class="location-grid">
+                <div>
+                    <h2>Hours & Location</h2>
+                    <p style="margin-bottom: 2rem; color: var(--text-muted);">Located conveniently near Bryant Park and the Theater District.</p>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h4 style="text-transform: uppercase; font-size: 0.8rem; margin-bottom: 0.5rem;">Address</h4>
+                        <p>120 W 41st St, New York, NY 10036</p>
+                    </div>
+
+                    <div>
+                        <h4 style="text-transform: uppercase; font-size: 0.8rem; margin-bottom: 0.5rem;">Hours</h4>
+                        <p><strong>Mon – Wed:</strong> 4:00 PM – 11:00 PM</p>
+                        <p><strong>Thu – Sat:</strong> 4:00 PM – 12:00 AM</p>
+                        <p><strong>Sun:</strong> 3:00 PM – 10:00 PM</p>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" style="margin-top: 2rem;" id="get-directions">Get Directions</button>
+                </div>
+                <div class="map-placeholder">
+                    <img src="https://images.unsplash.com/photo-1541336032412-2048a678540d?auto=format&fit=crop&q=80&w=800" alt="Neighborhood view of Midtown NYC">
+                    <div style="position: absolute; background: white; padding: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                        <p style="font-weight: bold;">AperiBar</p>
+                        <p style="font-size: 0.8rem;">120 W 41st St</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Hospitality Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <span class="logo footer-logo" style="color: white;">AperiBar</span>
+                    <p style="color: #aaa; font-size: 0.9rem;">The intersection of Italian tradition and New York energy.</p>
+                    <ul class="social-links">
+                        <li><a href="https://instagram.com" class="external-link" style="color: white; text-decoration: none;">Instagram</a></li>
+                        <li><a href="https://facebook.com" class="external-link" style="color: white; text-decoration: none;">Facebook</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1.5rem; text-transform: uppercase; font-size: 0.8rem;">Explore</h4>
+                    <ul class="footer-nav">
+                        <li><a href="#story">About</a></li>
+                        <li><a href="#menu-feature">Menu</a></li>
+                        <li><a href="#" class="external-link">Events</a></li>
+                        <li><a href="#" class="external-link">Press</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1.5rem; text-transform: uppercase; font-size: 0.8rem;">Contact</h4>
+                    <ul class="footer-nav">
+                        <li><a href="tel:2127308900">212-730-8900</a></li>
+                        <li><a href="#" class="external-link">Inquiries</a></li>
+                        <li><a href="#" class="external-link">Gift Cards</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1.5rem; text-transform: uppercase; font-size: 0.8rem;">Newsletter</h4>
+                    <form id="newsletter-form" onsubmit="event.preventDefault()">
+                        <input type="email" placeholder="Email Address" required style="background: transparent; border-color: #444; color: white; margin-bottom: 1rem;">
+                        <button type="submit" class="btn" style="border-color: #444; color: white; width: 100%;">Join</button>
+                    </form>
+                </div>
+            </div>
+            <div class="bottom-bar">
+                <p>&copy; 2024 AperiBar. All rights reserved.</p>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="#" class="external-link" style="color: inherit; text-decoration: none;">Privacy Policy</a>
+                    <a href="#" class="external-link" style="color: inherit; text-decoration: none;">Accessibility</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Reservation Modal -->
+    <div class="modal-overlay" id="reservation-modal">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <button type="button" class="close-modal" id="close-res-modal" aria-label="Close modal">&times;</button>
+            <div id="reservation-form-container">
+                <h2 id="modal-title" style="margin-bottom: 1.5rem;">Make a Reservation</h2>
+                <form id="res-form">
+                    <div class="form-group">
+                        <label for="res-date">Date</label>
+                        <input type="date" id="res-date" required>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="res-time">Time</label>
+                            <select id="res-time" required>
+                                <option value="17:00">5:00 PM</option>
+                                <option value="18:00">6:00 PM</option>
+                                <option value="19:00">7:00 PM</option>
+                                <option value="20:00">8:00 PM</option>
+                                <option value="21:00">9:00 PM</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="res-guests">Guests</label>
+                            <select id="res-guests" required>
+                                <option value="1">1 Person</option>
+                                <option value="2">2 People</option>
+                                <option value="3">3 People</option>
+                                <option value="4">4 People</option>
+                                <option value="5+">5+ People</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="res-name">Full Name</label>
+                        <input type="text" id="res-name" required placeholder="John Doe">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Confirm Table</button>
+                </form>
+            </div>
+            <div id="res-success" class="success-state">
+                <div style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;">✓</div>
+                <h2>Reservation Confirmed!</h2>
+                <p style="margin: 1rem 0 2rem;">We've sent a confirmation email to you. We look forward to seeing you at AperiBar.</p>
+                <button type="button" class="btn" id="close-success">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Toast -->
+    <div class="toast" id="toast">External navigation disabled in preview.</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            /* --- Hero Carousel Logic --- */
+            const slides = document.querySelectorAll('.slide');
+            const announcer = document.getElementById('sr-announcer');
+            let currentSlide = 0;
+            let autoplayInterval;
+            let isPaused = false;
+
+            function showSlide(index) {
+                slides.forEach(s => s.classList.remove('active'));
+                if (index >= slides.length) index = 0;
+                if (index < 0) index = slides.length - 1;
+                currentSlide = index;
+                slides[currentSlide].classList.add('active');
+                announcer.textContent = `Showing slide ${currentSlide + 1} of ${slides.length}`;
+            }
+
+            function startAutoplay() {
+                autoplayInterval = setInterval(() => {
+                    if (!isPaused) showSlide(currentSlide + 1);
+                }, 5000);
+            }
+
+            document.getElementById('next-slide').addEventListener('click', () => {
+                showSlide(currentSlide + 1);
+                isPaused = true;
+                updatePauseBtn();
+            });
+
+            document.getElementById('prev-slide').addEventListener('click', () => {
+                showSlide(currentSlide - 1);
+                isPaused = true;
+                updatePauseBtn();
+            });
+
+            const pauseBtn = document.getElementById('pause-autoplay');
+            function updatePauseBtn() {
+                pauseBtn.textContent = isPaused ? '▶' : 'II';
+                pauseBtn.setAttribute('aria-label', isPaused ? 'Play slide rotation' : 'Pause slide rotation');
+            }
+
+            pauseBtn.addEventListener('click', () => {
+                isPaused = !isPaused;
+                updatePauseBtn();
+            });
+
+            startAutoplay();
+
+            /* --- Testimonial Carousel --- */
+            const testimonials = document.querySelectorAll('.testimonial-item');
+            let currentTest = 0;
+
+            function showTestimonial(index) {
+                testimonials.forEach(t => t.classList.remove('active'));
+                if (index >= testimonials.length) index = 0;
+                if (index < 0) index = testimonials.length - 1;
+                currentTest = index;
+                testimonials[currentTest].classList.add('active');
+            }
+
+            document.getElementById('next-test').addEventListener('click', () => showTestimonial(currentTest + 1));
+            document.getElementById('prev-test').addEventListener('click', () => showTestimonial(currentTest - 1));
+
+            /* --- Modals & Mobile Nav --- */
+            const resModal = document.getElementById('reservation-modal');
+            const openResBtn = document.getElementById('open-reservation-btn');
+            const closeResBtn = document.getElementById('close-res-modal');
+            const mobilePanel = document.getElementById('mobile-panel');
+            const mobileToggle = document.getElementById('mobile-nav-toggle');
+            const closeMobileNav = document.getElementById('close-mobile-nav');
+
+            function toggleModal(modal, show) {
+                modal.style.display = show ? 'flex' : 'none';
+                if (show) {
+                    modal.querySelector('button, input, select').focus();
+                }
+            }
+
+            openResBtn.addEventListener('click', () => toggleModal(resModal, true));
+            document.getElementById('mobile-res-btn').addEventListener('click', () => {
+                mobilePanel.classList.remove('is-active');
+                toggleModal(resModal, true);
+            });
+            closeResBtn.addEventListener('click', () => toggleModal(resModal, false));
+            
+            // Close modal on backdrop click
+            resModal.addEventListener('click', (e) => {
+                if (e.target === resModal) toggleModal(resModal, false);
+            });
+
+            // ESC to close
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    toggleModal(resModal, false);
+                    mobilePanel.classList.remove('is-active');
+                    mobileToggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            /* --- Reservation Form Submission --- */
+            const resForm = document.getElementById('res-form');
+            const resFormContainer = document.getElementById('reservation-form-container');
+            const resSuccess = document.getElementById('res-success');
+
+            resForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Simulate processing
+                resFormContainer.style.display = 'none';
+                resSuccess.style.display = 'block';
+                resSuccess.querySelector('button').focus();
+            });
+
+            document.getElementById('close-success').addEventListener('click', () => {
+                toggleModal(resModal, false);
+                // Reset for next time
+                setTimeout(() => {
+                    resFormContainer.style.display = 'block';
+                    resSuccess.style.display = 'none';
+                    resForm.reset();
+                }, 500);
+            });
+
+            /* --- Mobile Navigation Logic --- */
+            mobileToggle.addEventListener('click', () => {
+                const expanded = mobileToggle.getAttribute('aria-expanded') === 'true';
+                mobileToggle.setAttribute('aria-expanded', !expanded);
+                mobilePanel.classList.toggle('is-active');
+            });
+
+            closeMobileNav.addEventListener('click', () => {
+                mobilePanel.classList.remove('is-active');
+                mobileToggle.setAttribute('aria-expanded', 'false');
+            });
+
+            // Close mobile menu on link click
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobilePanel.classList.remove('is-active');
+                    mobileToggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+
+            /* --- Toast Logic for External Links --- */
+            const toast = document.getElementById('toast');
+            function showToast(msg) {
+                toast.textContent = msg || "External navigation disabled in preview.";
+                toast.classList.add('visible');
+                setTimeout(() => toast.classList.remove('visible'), 3000);
+            }
+
+            /* --- Click Guard & Interaction Contract --- */
+            const appRoot = document.body;
+            appRoot.addEventListener('click', (e) => {
+                const target = e.target.closest('a, button');
+                if (!target) return;
+
+                // Handle internal hash links
+                if (target.tagName === 'A' && target.getAttribute('href').startsWith('#')) {
+                    // Smooth scroll is handled by CSS, but we can ensure internal logic here
+                    return;
+                }
+
+                // Internal marked links
+                if (target.dataset.internal === 'true') return;
+
+                // Handle external-ish buttons/links
+                if (target.classList.contains('external-link') || target.tagName === 'A') {
+                    e.preventDefault();
+                    showToast();
+                }
+
+                // Handle generic buttons that aren't specific actions
+                if (target.tagName === 'BUTTON' && !target.id && !target.classList.contains('control-btn') && target.type === 'button') {
+                    showToast("Feature coming soon: " + target.textContent.trim());
+                }
+            }, false);
+
+            /* --- Menu Action Buttons --- */
+            document.getElementById('view-cocktail-menu').addEventListener('click', () => showToast("Opening Cocktail PDF... (Mocked)"));
+            document.getElementById('view-food-menu').addEventListener('click', () => showToast("Opening Food PDF... (Mocked)"));
+            document.getElementById('get-directions').addEventListener('click', () => showToast("Opening Maps... (Disabled in Preview)"));
+            
+            /* --- Newsletter Mock --- */
+            document.getElementById('newsletter-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                showToast("Thank you for subscribing!");
+                e.target.reset();
+            });
+
+        });
+
+        /* --- Global Functions (Scope-safe) --- */
+        function toggleReadMore(id) {
+            const content = document.getElementById(id);
+            const isExpanded = content.classList.contains('expanded');
+            content.classList.toggle('expanded');
+            event.target.textContent = isExpanded ? 'Read more' : 'Show less';
+        }
+    </script>
+</body>
+</html>
