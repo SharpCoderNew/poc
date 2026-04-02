@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJ ONE CHANCE | Official DJ for Chicago Bulls & Blackhawks</title>
+    <meta name="description" content="Top-rated Chicago Wedding DJ and Official DJ for the Chicago Bulls and Chicago Blackhawks. Professional event entertainment in Chicago, IL.">
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#CE1141', // Bulls Red
+                            black: '#000000',
+                            charcoal: '#111111',
+                            dark: '#0a0a0a',
+                            accent: '#ffffff'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                    animation: {
+                        'waveform': 'waveform 1.2s ease-in-out infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        waveform: {
+                            '0%, 100%': { height: '10%' },
+                            '50%': { height: '100%' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0a0a0a; color: #ffffff; }
+        .glass { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .hero-gradient { background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(10,10,10,1)); }
+        .section-padding { padding: 100px 0; }
+        .card-hover { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease; }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(206, 17, 65, 0.15); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .active-dot { background-color: #CE1141 !important; transform: scale(1.3); }
+        .mix-active { border-color: #CE1141; background: rgba(206, 17, 65, 0.05); }
+        .waveform-bar { width: 3px; background-color: #CE1141; margin: 0 1px; border-radius: 2px; }
+        .masonry { column-count: 2; column-gap: 1.5rem; }
+        @media (min-width: 768px) { .masonry { column-count: 3; } }
+        @media (min-width: 1024px) { .masonry { column-count: 4; } }
+        .masonry-item { break-inside: avoid; margin-bottom: 1.5rem; }
+        input:focus, textarea:focus { outline: none; border-color: #CE1141; ring: 2px #CE1141; }
+    </style>
+</head>
+<body class="font-sans antialiased overflow-x-hidden">
+
+    <!-- Global UI Elements -->
+    <div id="toast-container" class="fixed top-24 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+    
+    <div id="lightbox" class="fixed inset-0 z-[110] bg-black/95 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <button type="button" onclick="ui.closeLightbox()" class="absolute top-8 right-8 text-white/50 hover:text-white transition-colors">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <button type="button" onclick="ui.prevLightbox()" class="absolute left-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button type="button" onclick="ui.nextLightbox()" class="absolute right-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors">
+            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <div class="max-w-5xl max-h-[80vh] px-4">
+            <img id="lightbox-img" src="" alt="Gallery Preview" class="max-w-full max-h-[80vh] object-contain shadow-2xl">
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <header id="main-header" class="fixed w-full z-50 transition-all duration-300 h-24 flex items-center px-6 lg:px-12">
+        <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+            <a href="#home" class="flex items-center gap-2 group">
+                <span class="font-display text-2xl lg:text-3xl font-bold tracking-tighter">
+                    DJ<span class="text-brand-red group-hover:text-white transition-colors">ONE</span>CHANCE
+                </span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold uppercase tracking-widest text-white/70">
+                <a href="#about" class="hover:text-brand-red transition-colors">About</a>
+                <a href="#weddings" class="hover:text-brand-red transition-colors">Weddings</a>
+                <a href="#sports" class="hover:text-brand-red transition-colors">Sports</a>
+                <a href="#mixes" class="hover:text-brand-red transition-colors">Mixes</a>
+                <a href="#gallery" class="hover:text-brand-red transition-colors">Gallery</a>
+                <a href="#contact" class="bg-brand-red text-white px-6 py-3 rounded-none hover:bg-white hover:text-black transition-all duration-300">Book Now</a>
+            </nav>
+
+            <!-- Mobile Toggle -->
+            <button type="button" id="mobile-toggle" class="lg:hidden text-white p-2">
+                <svg id="menu-icon" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-brand-dark flex flex-col items-center justify-center translate-x-full transition-transform duration-500 lg:hidden">
+        <nav class="flex flex-col gap-8 text-2xl font-display font-bold uppercase text-center">
+            <a href="#home" onclick="ui.toggleMenu()" class="hover:text-brand-red">Home</a>
+            <a href="#about" onclick="ui.toggleMenu()" class="hover:text-brand-red">About</a>
+            <a href="#weddings" onclick="ui.toggleMenu()" class="hover:text-brand-red">Weddings</a>
+            <a href="#mixes" onclick="ui.toggleMenu()" class="hover:text-brand-red">Mixes</a>
+            <a href="#gallery" onclick="ui.toggleMenu()" class="hover:text-brand-red">Gallery</a>
+            <a href="#contact" onclick="ui.toggleMenu()" class="bg-brand-red px-8 py-4 mt-4">Book DJ One Chance</a>
+        </nav>
+    </div>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="relative h-screen flex items-center overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img src="https://images.unsplash.com/photo-1477414348463-c0eb7f1359b6?auto=format&fit=crop&q=80&w=2000" alt="Chicago Skyline" class="w-full h-full object-cover opacity-40">
+                <div class="absolute inset-0 hero-gradient"></div>
+            </div>
+
+            <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full pt-20">
+                <div class="max-w-4xl">
+                    <span class="inline-block text-brand-red font-bold uppercase tracking-[0.3em] mb-4 text-sm lg:text-base animate-pulse">Official DJ for the Chicago Bulls & Blackhawks</span>
+                    <h1 class="text-6xl lg:text-9xl font-display font-black leading-tight mb-8">
+                        THE BEAT <br>OF <span class="text-brand-red">CHICAGO.</span>
+                    </h1>
+                    <p class="text-xl lg:text-2xl text-white/60 mb-12 max-w-2xl font-light">
+                        Elevating weddings, stadium events, and high-profile corporate experiences with world-class open-format mixing.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-6">
+                        <a href="#contact" class="px-10 py-5 bg-brand-red text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all text-center">Inquire Availability</a>
+                        <a href="#mixes" class="px-10 py-5 border border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/10 transition-all text-center flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Listen to Mixes
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#about" class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 text-white/30 hover:text-white transition-colors group">
+                <span class="text-xs uppercase tracking-widest font-bold">Scroll to Explore</span>
+                <div class="w-px h-16 bg-gradient-to-b from-brand-red to-transparent group-hover:h-20 transition-all"></div>
+            </a>
+        </section>
+
+        <!-- Stats Counter -->
+        <section class="bg-brand-charcoal py-20 border-y border-white/5">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-2 lg:grid-cols-4 gap-12">
+                <div class="text-center">
+                    <div class="text-4xl lg:text-6xl font-display font-bold text-brand-red mb-2 counter" data-target="1500">0</div>
+                    <div class="text-white/40 uppercase tracking-widest text-xs font-bold">Events Completed</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl lg:text-6xl font-display font-bold text-brand-red mb-2 counter" data-target="250">0</div>
+                    <div class="text-white/40 uppercase tracking-widest text-xs font-bold">Weddings Yearly</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl lg:text-6xl font-display font-bold text-brand-red mb-2 counter" data-target="500000">0</div>
+                    <div class="text-white/40 uppercase tracking-widest text-xs font-bold">Fans Entertained</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl lg:text-6xl font-display font-bold text-brand-red mb-2 counter" data-target="15">0</div>
+                    <div class="text-white/40 uppercase tracking-widest text-xs font-bold">Years Experience</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section-padding overflow-hidden">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12">
+                <div class="flex flex-col lg:flex-row gap-20 items-center">
+                    <div class="w-full lg:w-1/2 relative">
+                        <div class="absolute -top-10 -left-10 w-40 h-40 border-t-4 border-l-4 border-brand-red opacity-50"></div>
+                        <img src="https://images.unsplash.com/photo-1571266028243-3716f02d2d2e?auto=format&fit=crop&q=80&w=1000" alt="DJ One Chance Live" class="relative z-10 w-full h-[600px] object-cover grayscale hover:grayscale-0 transition-all duration-700">
+                        <div class="absolute -bottom-10 -right-10 w-64 h-64 bg-brand-red/10 -z-0"></div>
+                    </div>
+                    <div class="w-full lg:w-1/2">
+                        <h2 class="text-sm font-bold text-brand-red uppercase tracking-[0.4em] mb-6">The Professional Choice</h2>
+                        <h3 class="text-4xl lg:text-6xl font-display font-bold mb-8 leading-tight">CHICAGO'S PREMIER <br>TURNTABLIST</h3>
+                        <div class="space-y-6 text-lg text-white/60 leading-relaxed font-light">
+                            <p>DJ One Chance isn't just a DJ; he's a staple of the Chicago entertainment landscape. As the official DJ for the <span class="text-white font-semibold">Chicago Bulls</span> and <span class="text-white font-semibold">Chicago Blackhawks</span>, he understands how to read a room of 20,000 people—and brings that same energy to every private event.</p>
+                            <p>With a specialty in weddings and premium corporate activations, One Chance combines technical turntablism with high-end production value. No cheesy jokes, no predictable playlists—just seamless transitions and a packed dance floor.</p>
+                        </div>
+                        <div class="mt-12 pt-12 border-t border-white/10 grid grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="text-white font-bold uppercase mb-2">Style</h4>
+                                <p class="text-white/40">Open Format, Hip Hop, Top 40, House, Throwbacks</p>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold uppercase mb-2">Service</h4>
+                                <p class="text-white/40">Wedding, Stadium, Corporate, Nightlife</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clients Banner -->
+        <section class="bg-white/5 py-12">
+            <div class="max-w-7xl mx-auto px-6 overflow-hidden">
+                <p class="text-center text-xs font-bold uppercase tracking-[0.5em] text-white/30 mb-8">Trusted By The Best</p>
+                <div class="flex flex-wrap justify-center items-center gap-12 lg:gap-20 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                    <span class="font-display text-2xl font-bold">CHICAGO BULLS</span>
+                    <span class="font-display text-2xl font-bold">BLACKHAWKS</span>
+                    <span class="font-display text-2xl font-bold">NIKE</span>
+                    <span class="font-display text-2xl font-bold">RED BULL</span>
+                    <span class="font-display text-2xl font-bold">COCA-COLA</span>
+                    <span class="font-display text-2xl font-bold">UNITED</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services -->
+        <section id="weddings" class="section-padding bg-brand-dark">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+                    <div>
+                        <h2 class="text-sm font-bold text-brand-red uppercase tracking-[0.4em] mb-4">Event Specialties</h2>
+                        <h3 class="text-4xl lg:text-6xl font-display font-bold">PREMIUM SERVICES</h3>
+                    </div>
+                    <p class="max-w-md text-white/40">Tailored musical experiences for the most important moments of your life or brand.</p>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Weddings -->
+                    <div class="group relative overflow-hidden h-[600px] card-hover">
+                        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1000" alt="Weddings" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-black via-transparent to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-10">
+                            <h4 class="text-3xl font-display font-bold mb-4">WEDDINGS</h4>
+                            <p class="text-white/60 mb-8 font-light">Sophisticated soundtracks for modern couples. Custom planning and premium audio/lighting packages.</p>
+                            <button type="button" onclick="ui.prefillContact('Wedding')" class="text-brand-red font-bold uppercase tracking-widest flex items-center gap-2 group/btn">
+                                Book Wedding <span class="group-hover/btn:translate-x-2 transition-transform">→</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sports -->
+                    <div id="sports" class="group relative overflow-hidden h-[600px] card-hover">
+                        <img src="https://images.unsplash.com/photo-1504450758481-7338eba7524a?auto=format&fit=crop&q=80&w=1000" alt="Sports" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-black via-transparent to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-10">
+                            <h4 class="text-3xl font-display font-bold mb-4">SPORTS & STADIUM</h4>
+                            <p class="text-white/60 mb-8 font-light">Official arena vibe curator. Keeping the energy at a peak for pro athletics and large-scale games.</p>
+                            <button type="button" onclick="ui.prefillContact('Sports')" class="text-brand-red font-bold uppercase tracking-widest flex items-center gap-2 group/btn">
+                                Arena Booking <span class="group-hover/btn:translate-x-2 transition-transform">→</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Corporate -->
+                    <div id="corporate" class="group relative overflow-hidden h-[600px] card-hover">
+                        <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80&w=1000" alt="Corporate" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-black via-transparent to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-10">
+                            <h4 class="text-3xl font-display font-bold mb-4">CORPORATE</h4>
+                            <p class="text-white/60 mb-8 font-light">Brand-aligned entertainment for galas, launches, and summits. Professionalism meeting high energy.</p>
+                            <button type="button" onclick="ui.prefillContact('Corporate')" class="text-brand-red font-bold uppercase tracking-widest flex items-center gap-2 group/btn">
+                                Corporate Inquiry <span class="group-hover/btn:translate-x-2 transition-transform">→</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mixes / Music -->
+        <section id="mixes" class="section-padding bg-brand-charcoal">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12">
+                <div class="text-center mb-20">
+                    <h2 class="text-sm font-bold text-brand-red uppercase tracking-[0.4em] mb-4">The Sound</h2>
+                    <h3 class="text-4xl lg:text-6xl font-display font-bold">LATEST MIXES</h3>
+                </div>
+
+                <div id="mixes-grid" class="grid md:grid-cols-2 gap-6">
+                    <!-- Mixes will be rendered here by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery -->
+        <section id="gallery" class="section-padding">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12">
+                <div class="flex justify-between items-end mb-16">
+                    <h3 class="text-4xl lg:text-6xl font-display font-bold">GALLERY</h3>
+                    <button type="button" onclick="ui.showToast('Full gallery loading soon!')" class="text-white/40 hover:text-white uppercase tracking-widest text-xs font-bold transition-colors">View All Images</button>
+                </div>
+
+                <div id="gallery-container" class="masonry">
+                    <!-- Gallery items will be rendered here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="section-padding bg-brand-red overflow-hidden relative">
+            <div class="absolute top-0 right-0 w-1/3 h-full bg-black/10 -skew-x-12 translate-x-1/2"></div>
+            <div class="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
+                    <div class="lg:w-1/3">
+                        <h3 class="text-5xl lg:text-7xl font-display font-bold text-white mb-6">WHAT THEY SAY.</h3>
+                        <p class="text-white/80 text-xl font-light">Join over 1,500 happy clients who trusted the beat of Chicago.</p>
+                    </div>
+                    <div class="lg:w-2/3 w-full">
+                        <div id="testimonial-carousel" class="relative bg-brand-dark p-10 lg:p-16 min-h-[400px] flex flex-col justify-between">
+                            <div class="absolute top-10 left-10 text-brand-red opacity-20">
+                                <svg class="w-20 h-20" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.899 14.899 16 16.017 16L18.017 16C18.57 16 19.017 15.553 19.017 15L19.017 13C19.017 12.447 18.57 12 18.017 12L15.017 12C13.914 12 13.017 11.103 13.017 10L13.017 7C13.017 5.897 13.914 5 15.017 5L18.017 5C19.121 5 20.017 5.897 20.017 7L20.017 15C20.017 18.314 17.331 21 14.017 21ZM4.017 21L4.017 18C4.017 16.899 4.899 16 6.017 16L8.017 16C8.57 16 9.017 15.553 9.017 15L9.017 13C9.017 12.447 8.57 12 8.017 12L5.017 12C3.914 12 3.017 11.103 3.017 10L3.017 7C3.017 5.897 3.914 5 5.017 5L8.017 5C9.121 5 10.017 5.897 10.017 7L10.017 15C10.017 18.314 7.331 21 4.017 21Z"/></svg>
+                            </div>
+                            <div id="testimonial-content" class="relative z-10 transition-opacity duration-500">
+                                <!-- Testimonial will be rendered here -->
+                            </div>
+                            <div class="flex items-center gap-6 mt-12">
+                                <button type="button" onclick="ui.prevTestimonial()" class="w-12 h-12 border border-white/10 flex items-center justify-center hover:bg-brand-red transition-all">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                                </button>
+                                <button type="button" onclick="ui.nextTestimonial()" class="w-12 h-12 border border-white/10 flex items-center justify-center hover:bg-brand-red transition-all">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                </button>
+                                <div id="testimonial-dots" class="flex gap-2 ml-auto">
+                                    <!-- Dots rendered here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section-padding bg-brand-dark">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12">
+                <div class="grid lg:grid-cols-2 gap-24">
+                    <div>
+                        <h2 class="text-sm font-bold text-brand-red uppercase tracking-[0.4em] mb-4">Availability</h2>
+                        <h3 class="text-5xl lg:text-7xl font-display font-bold mb-8">SECURE THE <br>CHANCE.</h3>
+                        <p class="text-white/60 text-xl font-light mb-12">Dates for the upcoming season are filling fast. Contact us for a quote and to check availability for your Chicago event.</p>
+                        
+                        <div class="space-y-8">
+                            <div class="flex items-start gap-6">
+                                <div class="w-12 h-12 bg-white/5 flex items-center justify-center shrink-0">
+                                    <svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-bold uppercase mb-1">Email</h4>
+                                    <button type="button" onclick="ui.showToast('Email system initialized. Action disabled in preview.')" class="text-white/40 hover:text-white transition-colors">booking@djonechance.com</button>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-6">
+                                <div class="w-12 h-12 bg-white/5 flex items-center justify-center shrink-0">
+                                    <svg class="w-6 h-6 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-bold uppercase mb-1">Base</h4>
+                                    <p class="text-white/40">Chicago, IL (Serving Worldwide)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 mt-16">
+                            <button type="button" onclick="ui.showProfile('Instagram')" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-brand-red transition-all">IG</button>
+                            <button type="button" onclick="ui.showProfile('Facebook')" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-brand-red transition-all">FB</button>
+                            <button type="button" onclick="ui.showProfile('TikTok')" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-brand-red transition-all">TT</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-charcoal p-8 lg:p-12 relative overflow-hidden">
+                        <div id="form-overlay" class="absolute inset-0 bg-brand-charcoal/90 z-20 flex flex-col items-center justify-center p-12 text-center opacity-0 pointer-events-none transition-opacity duration-500">
+                            <div class="w-20 h-20 bg-brand-red rounded-full flex items-center justify-center mb-6">
+                                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <h4 class="text-3xl font-display font-bold mb-4">INQUIRY SENT</h4>
+                            <p class="text-white/60 mb-8">Thank you! DJ One Chance will review your details and reach out within 24 hours.</p>
+                            <p class="text-xs font-mono text-brand-red">Ref: #OC-<span id="ref-id"></span></p>
+                            <button type="button" onclick="ui.resetForm()" class="mt-8 text-white/40 underline uppercase text-xs tracking-widest hover:text-white">Send Another</button>
+                        </div>
+
+                        <form id="booking-form" class="space-y-6 relative z-10">
+                            <div class="grid sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Full Name</label>
+                                    <input type="text" id="form-name" required class="w-full bg-black/40 border border-white/10 px-4 py-4 text-white focus:border-brand-red transition-colors" placeholder="John Doe">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Email Address</label>
+                                    <input type="email" id="form-email" required class="w-full bg-black/40 border border-white/10 px-4 py-4 text-white focus:border-brand-red transition-colors" placeholder="john@example.com">
+                                </div>
+                            </div>
+                            <div class="grid sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Event Type</label>
+                                    <select id="form-event-type" class="w-full bg-black/40 border border-white/10 px-4 py-4 text-white focus:border-brand-red transition-colors appearance-none">
+                                        <option value="Wedding">Wedding Reception</option>
+                                        <option value="Sports">Sports / Arena</option>
+                                        <option value="Corporate">Corporate Event</option>
+                                        <option value="Private">Private Party</option>
+                                        <option value="Club">Club / Nightlife</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Event Date</label>
+                                    <input type="date" id="form-date" required class="w-full bg-black/40 border border-white/10 px-4 py-4 text-white focus:border-brand-red transition-colors">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Tell Us About Your Vision</label>
+                                <textarea id="form-message" rows="4" required class="w-full bg-black/40 border border-white/10 px-4 py-4 text-white focus:border-brand-red transition-colors" placeholder="What kind of vibe are we going for?"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-5 bg-brand-red text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all flex items-center justify-center gap-3">
+                                <span id="submit-text">Send Booking Inquiry</span>
+                                <div id="submit-spinner" class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin hidden"></div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black py-12 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="font-display text-xl font-bold tracking-tighter">
+                DJ<span class="text-brand-red">ONE</span>CHANCE
+            </div>
+            <div class="flex gap-8 text-xs font-bold uppercase tracking-widest text-white/30">
+                <a href="#about" class="hover:text-brand-red transition-colors">About</a>
+                <a href="#mixes" class="hover:text-brand-red transition-colors">Mixes</a>
+                <a href="#gallery" class="hover:text-brand-red transition-colors">Gallery</a>
+                <button type="button" onclick="ui.showToast('Privacy Policy is internal-only.')" class="hover:text-brand-red transition-colors">Privacy</button>
+            </div>
+            <div class="text-white/20 text-[10px] uppercase tracking-widest">
+                &copy; 2024 DJ One Chance Entertainment. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Data Configuration
+        const MIXES = [
+            { id: 1, title: "UNITED CENTER VIBES", genre: "Arena Anthems", duration: "1:04:22", image: "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?auto=format&fit=crop&q=80&w=600", seed: 0.8 },
+            { id: 2, title: "GOLD COAST SUMMER", genre: "Deep House", duration: "52:15", image: "https://images.unsplash.com/photo-1574672280600-4accfa5b6f98?auto=format&fit=crop&q=80&w=600", seed: 0.4 },
+            { id: 3, title: "THE WEDDING AFTERPARTY", genre: "Open Format", duration: "1:45:00", image: "https://images.unsplash.com/photo-1459749411177-042180ce673c?auto=format&fit=crop&q=80&w=600", seed: 0.6 },
+            { id: 4, title: "90s HIP HOP REWIND", genre: "Old School", duration: "48:30", image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=600", seed: 0.9 }
+        ];
+
+        const GALLERY = [
+            "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1514525253361-bee8a19740c1?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&q=80&w=800"
+        ];
+
+        const TESTIMONIALS = [
+            { name: "Sarah & Mike", role: "Wedding Couple", text: "DJ One Chance made our wedding legendary. The transitions were so smooth and he kept everyone from my 80-year-old grandma to our college friends on the dance floor all night." },
+            { name: "James L.", role: "Event Director, Bulls", "text": "Nobody reads the energy of the United Center like Chance. He knows exactly when to ramp up the intensity and when to let the crowd breathe. A true professional." },
+            { name: "Elena Rodriguez", role: "Corporate Events, Nike", text: "We've hired Chance for multiple brand launches. His ability to align the music with our brand voice while maintaining a party atmosphere is unmatched." },
+            { name: "David T.", role: "Anniversary Party", text: "Exceptional service from start to finish. He wasn't just a DJ, he helped coordinate the flow of the entire evening. Worth every penny." },
+            { name: "Chris P.", role: "Nightlife Manager", text: "One of the best technical DJs in the city. If you want real turntablism and not just a Spotify playlist, he's the one." },
+            { name: "Monica G.", role: "Gala Coordinator", text: "Absolute class. The equipment was top-tier, the setup was clean, and the music was perfect for our black-tie event." }
+        ];
+
+        // Core State
+        const state = {
+            mobileMenuOpen: false,
+            activeMixId: null,
+            testimonialIndex: 0,
+            lightboxIndex: 0,
+            audioContext: null,
+            audioOsc: null,
+            isAudioPlaying: false
+        };
+
+        // UI Controller
+        const ui = {
+            init() {
+                this.renderMixes();
+                this.renderGallery();
+                this.renderTestimonials();
+                this.setupScrollEffects();
+                this.setupForm();
+                this.setupAudio();
+                this.setupCounters();
+                this.setupDefensiveClicks();
+            },
+
+            showToast(msg) {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = 'pointer-events-auto bg-brand-charcoal border-l-4 border-brand-red px-6 py-4 text-white shadow-2xl flex items-center gap-4 animate-bounce-in';
+                toast.innerHTML = `
+                    <svg class="w-5 h-5 text-brand-red" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                    <span class="text-sm font-bold uppercase tracking-widest">${msg}</span>
+                `;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', 'translate-x-full', 'transition-all', 'duration-500');
+                    setTimeout(() => toast.remove(), 500);
+                }, 3000);
+            },
+
+            toggleMenu() {
+                state.mobileMenuOpen = !state.mobileMenuOpen;
+                const menu = document.getElementById('mobile-menu');
+                const icon = document.getElementById('menu-icon');
+                menu.style.transform = state.mobileMenuOpen ? 'translateX(0)' : 'translateX(100%)';
+                icon.innerHTML = state.mobileMenuOpen 
+                    ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>'
+                    : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>';
+            },
+
+            renderMixes() {
+                const grid = document.getElementById('mixes-grid');
+                grid.innerHTML = MIXES.map(mix => `
+                    <div id="mix-${mix.id}" class="bg-black/40 p-6 flex items-center gap-6 border border-white/5 transition-all duration-300 group">
+                        <div class="relative shrink-0 w-24 h-24 overflow-hidden">
+                            <img src="${mix.image}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all">
+                            <button type="button" onclick="ui.toggleMix(${mix.id})" class="absolute inset-0 flex items-center justify-center bg-brand-red/80 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg class="w-8 h-8 text-white play-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h4 class="font-display font-bold text-xl uppercase truncate">${mix.title}</h4>
+                                    <span class="text-[10px] text-brand-red font-bold uppercase tracking-widest">${mix.genre}</span>
+                                </div>
+                                <span class="text-[10px] font-mono text-white/30">${mix.duration}</span>
+                            </div>
+                            <!-- Waveform Simulation -->
+                            <div class="flex items-center h-8 gap-0.5 mt-2 opacity-30 waveform-container" data-seed="${mix.seed}">
+                                ${Array(40).fill(0).map((_, i) => `<div class="waveform-bar" style="height: ${Math.random() * 80 + 20}%"></div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            toggleMix(id) {
+                if (state.activeMixId === id && state.isAudioPlaying) {
+                    this.stopAudio();
+                    state.activeMixId = null;
+                } else {
+                    if (state.activeMixId) {
+                        document.getElementById(`mix-${state.activeMixId}`).classList.remove('mix-active');
+                        this.stopAudio();
+                    }
+                    state.activeMixId = id;
+                    document.getElementById(`mix-${id}`).classList.add('mix-active');
+                    this.playAudio(MIXES.find(m => m.id === id).seed);
+                    this.showToast(`Now Playing: ${MIXES.find(m => m.id === id).title}`);
+                }
+                this.updateMixUI();
+            },
+
+            updateMixUI() {
+                document.querySelectorAll('.waveform-container').forEach(w => w.classList.remove('animate-pulse', 'opacity-100'));
+                document.querySelectorAll('.play-icon').forEach(p => p.innerHTML = '<path d="M8 5v14l11-7z"/>');
+                
+                if (state.activeMixId) {
+                    const mixEl = document.getElementById(`mix-${state.activeMixId}`);
+                    mixEl.querySelector('.waveform-container').classList.add('animate-pulse', 'opacity-100');
+                    mixEl.querySelector('.play-icon').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                }
+            },
+
+            setupAudio() {
+                // Initialize context on first click
+                document.addEventListener('mousedown', () => {
+                    if (!state.audioContext) state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }, { once: true });
+            },
+
+            playAudio(seed) {
+                if (!state.audioContext) return;
+                if (state.audioContext.state === 'suspended') state.audioContext.resume();
+                
+                state.isAudioPlaying = true;
+                const osc = state.audioContext.createOscillator();
+                const gain = state.audioContext.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(110 + (seed * 100), state.audioContext.currentTime);
+                
+                // Add rhythm
+                gain.gain.setValueAtTime(0, state.audioContext.currentTime);
+                for(let i=0; i<100; i++) {
+                    gain.gain.exponentialRampToValueAtTime(0.05, state.audioContext.currentTime + (i * 0.5));
+                    gain.gain.exponentialRampToValueAtTime(0.001, state.audioContext.currentTime + (i * 0.5) + 0.1);
+                }
+
+                osc.connect(gain);
+                gain.connect(state.audioContext.destination);
+                osc.start();
+                state.audioOsc = osc;
+            },
+
+            stopAudio() {
+                if (state.audioOsc) {
+                    state.audioOsc.stop();
+                    state.audioOsc = null;
+                }
+                state.isAudioPlaying = false;
+            },
+
+            renderGallery() {
+                const container = document.getElementById('gallery-container');
+                container.innerHTML = GALLERY.map((src, i) => `
+                    <div class="masonry-item group relative cursor-pointer overflow-hidden" onclick="ui.openLightbox(${i})">
+                        <img src="${src}" class="w-full grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500">
+                        <div class="absolute inset-0 bg-brand-red/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            openLightbox(idx) {
+                state.lightboxIndex = idx;
+                document.getElementById('lightbox-img').src = GALLERY[idx];
+                const lb = document.getElementById('lightbox');
+                lb.classList.remove('pointer-events-none', 'opacity-0');
+                document.body.style.overflow = 'hidden';
+            },
+
+            closeLightbox() {
+                const lb = document.getElementById('lightbox');
+                lb.classList.add('pointer-events-none', 'opacity-0');
+                document.body.style.overflow = 'auto';
+            },
+
+            nextLightbox() {
+                state.lightboxIndex = (state.lightboxIndex + 1) % GALLERY.length;
+                document.getElementById('lightbox-img').src = GALLERY[state.lightboxIndex];
+            },
+
+            prevLightbox() {
+                state.lightboxIndex = (state.lightboxIndex - 1 + GALLERY.length) % GALLERY.length;
+                document.getElementById('lightbox-img').src = GALLERY[state.lightboxIndex];
+            },
+
+            renderTestimonials() {
+                this.updateTestimonialUI();
+                const dots = document.getElementById('testimonial-dots');
+                dots.innerHTML = TESTIMONIALS.map((_, i) => `
+                    <button type="button" onclick="ui.setTestimonial(${i})" class="w-2 h-2 rounded-full bg-white/20 transition-all ${i === state.testimonialIndex ? 'active-dot' : ''}"></button>
+                `).join('');
+            },
+
+            updateTestimonialUI() {
+                const content = document.getElementById('testimonial-content');
+                const t = TESTIMONIALS[state.testimonialIndex];
+                content.style.opacity = '0';
+                setTimeout(() => {
+                    content.innerHTML = `
+                        <p class="text-2xl lg:text-3xl font-light leading-relaxed mb-8">"${t.text}"</p>
+                        <div>
+                            <h5 class="text-xl font-display font-bold uppercase">${t.name}</h5>
+                            <span class="text-xs text-brand-red font-bold uppercase tracking-widest">${t.role}</span>
+                        </div>
+                    `;
+                    content.style.opacity = '1';
+                }, 300);
+            },
+
+            setTestimonial(idx) {
+                state.testimonialIndex = idx;
+                this.renderTestimonials();
+            },
+
+            nextTestimonial() {
+                state.testimonialIndex = (state.testimonialIndex + 1) % TESTIMONIALS.length;
+                this.renderTestimonials();
+            },
+
+            prevTestimonial() {
+                state.testimonialIndex = (state.testimonialIndex - 1 + TESTIMONIALS.length) % TESTIMONIALS.length;
+                this.renderTestimonials();
+            },
+
+            setupScrollEffects() {
+                const header = document.getElementById('main-header');
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 100) {
+                        header.classList.add('glass', 'h-20');
+                        header.classList.remove('h-24');
+                    } else {
+                        header.classList.remove('glass', 'h-20');
+                        header.classList.add('h-24');
+                    }
+                });
+            },
+
+            setupCounters() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const target = parseInt(entry.target.getAttribute('data-target'));
+                            const increment = target / 100;
+                            let current = 0;
+                            const update = () => {
+                                if (current < target) {
+                                    current += increment;
+                                    entry.target.innerText = Math.ceil(current).toLocaleString();
+                                    requestAnimationFrame(update);
+                                } else {
+                                    entry.target.innerText = target.toLocaleString() + (target === 15 ? '' : '+');
+                                }
+                            };
+                            update();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                document.querySelectorAll('.counter').forEach(c => observer.observe(c));
+            },
+
+            setupForm() {
+                const form = document.getElementById('booking-form');
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const btn = form.querySelector('button[type="submit"]');
+                    const text = document.getElementById('submit-text');
+                    const spinner = document.getElementById('submit-spinner');
+                    const overlay = document.getElementById('form-overlay');
+                    const ref = document.getElementById('ref-id');
+
+                    text.classList.add('hidden');
+                    spinner.classList.remove('hidden');
+                    btn.disabled = true;
+
+                    setTimeout(() => {
+                        ref.innerText = Math.random().toString(36).substring(7).toUpperCase();
+                        overlay.classList.remove('pointer-events-none', 'opacity-0');
+                    }, 2000);
+                });
+            },
+
+            prefillContact(type) {
+                const select = document.getElementById('form-event-type');
+                select.value = type;
+                document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+                this.showToast(`Form updated for: ${type}`);
+            },
+
+            resetForm() {
+                document.getElementById('booking-form').reset();
+                const overlay = document.getElementById('form-overlay');
+                overlay.classList.add('pointer-events-none', 'opacity-0');
+                const btn = document.querySelector('#booking-form button[type="submit"]');
+                const text = document.getElementById('submit-text');
+                const spinner = document.getElementById('submit-spinner');
+                text.classList.remove('hidden');
+                spinner.classList.add('hidden');
+                btn.disabled = false;
+            },
+
+            showProfile(network) {
+                this.showToast(`External ${network} profile navigation is disabled in preview. Follow @DJOneChance on all platforms.`);
+            },
+
+            setupDefensiveClicks() {
+                document.getElementById('mobile-toggle').addEventListener('click', () => this.toggleMenu());
+                
+                // Keyboard support for Lightbox
+                window.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.closeLightbox();
+                    if (e.key === 'ArrowRight') this.nextLightbox();
+                    if (e.key === 'ArrowLeft') this.prevLightbox();
+                });
+
+                // Prevent unsafe clicks
+                document.addEventListener('click', (e) => {
+                    const el = e.target.closest('a');
+                    if (el && el.getAttribute('href')?.startsWith('http')) {
+                        e.preventDefault();
+                        this.showToast('External navigation disabled in preview.');
+                    }
+                });
+            }
+        };
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => ui.init());
+    </script>
+</body>
+</html>
