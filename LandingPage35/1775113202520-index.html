@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharp Platform | AI-Native Intelligent Automation</title>
+    <style>
+        :root {
+            --bg-deep: #020204;
+            --bg-card: rgba(18, 18, 24, 0.7);
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --accent: #ff007a;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glow: 0 0 20px rgba(0, 242, 255, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- Components --- */
+        .glass {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: var(--glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        /* --- Navigation --- */
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 72px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+
+        .nav.scrolled {
+            background: rgba(2, 2, 4, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        /* --- Hero --- */
+        .hero {
+            position: relative;
+            padding: 180px 5% 100px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80vw;
+            height: 60vh;
+            background: radial-gradient(circle, rgba(112, 0, 255, 0.15) 0%, rgba(0, 242, 255, 0.1) 40%, transparent 70%);
+            filter: blur(80px);
+            z-index: -1;
+        }
+
+        .badge {
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            line-height: 1.1;
+            margin-bottom: 24px;
+            max-width: 900px;
+            background: linear-gradient(180deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-sub {
+            color: var(--text-dim);
+            font-size: 1.25rem;
+            max-width: 650px;
+            margin-bottom: 40px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* --- Trust Marquee --- */
+        .marquee-section {
+            padding: 60px 0;
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            overflow: hidden;
+        }
+
+        .marquee-container {
+            display: flex;
+            width: fit-content;
+            animation: scroll 40s linear infinite;
+        }
+
+        .marquee-item {
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0.5;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .marquee-item:hover {
+            opacity: 1;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* --- Grid Section --- */
+        .section {
+            padding: 100px 5%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            padding: 40px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 242, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .card h3 {
+            margin-bottom: 12px;
+            font-size: 1.25rem;
+        }
+
+        .card p {
+            color: var(--text-dim);
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            flex-grow: 1;
+        }
+
+        /* --- Code Preview Section --- */
+        .code-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .code-window {
+            background: #0d0d12;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .code-header {
+            background: rgba(255,255,255,0.05);
+            padding: 12px 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-r { background: #ff5f56; }
+        .dot-y { background: #ffbd2e; }
+        .dot-g { background: #27c93f; }
+
+        .code-content {
+            padding: 24px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .c-1 { color: #ff79c6; } /* keyword */
+        .c-2 { color: #bd93f9; } /* function */
+        .c-3 { color: #f1fa8c; } /* string */
+        .c-4 { color: #50fa7b; } /* param */
+
+        /* --- Roadmap / News --- */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .timeline-date {
+            min-width: 100px;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: right;
+        }
+
+        .timeline-content {
+            padding-bottom: 40px;
+            border-left: 2px solid var(--glass-border);
+            padding-left: 40px;
+        }
+
+        .timeline-content h4 {
+            margin-bottom: 8px;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 139px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 80px 5% 40px;
+            background: #020204;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-logo {
+            margin-bottom: 24px;
+        }
+
+        .footer-desc {
+            color: var(--text-dim);
+            max-width: 300px;
+        }
+
+        .footer-col h5 {
+            margin-bottom: 24px;
+            font-size: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            padding-top: 40px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* --- Modal & Toast --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal {
+            max-width: 500px;
+            width: 90%;
+            padding: 40px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active {
+            transform: scale(1);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 3000;
+        }
+
+        .toast {
+            background: #111;
+            border: 1px solid var(--primary);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-top: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* --- Mobile Responsive --- */
+        @media (max-width: 992px) {
+            .code-split { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .mobile-toggle { display: block; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .footer-grid { grid-template-columns: 1fr; }
+            .timeline-item { flex-direction: column; gap: 8px; }
+            .timeline-date { text-align: left; }
+            .timeline-content { border-left: none; padding-left: 0; }
+            .timeline-item::after { display: none; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body id="top">
+
+    <!-- Navigation -->
+    <nav class="nav" id="mainNav">
+        <div class="logo">
+            <div class="logo-mark"></div>
+            SHARP
+        </div>
+        <div class="nav-links">
+            <a href="#solutions">Solutions</a>
+            <a href="#platform">Platform</a>
+            <a href="#developers">Developers</a>
+            <a href="#roadmap">Roadmap</a>
+            <button type="button" class="btn btn-outline" data-action="auth">Log In</button>
+            <button type="button" class="btn btn-primary" data-action="signup">Start Free</button>
+        </div>
+        <button type="button" class="mobile-toggle" id="mobileMenuBtn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-glow"></div>
+        <div class="badge">Next Generation AI OS</div>
+        <h1>Orchestrate Intelligence at Scale</h1>
+        <p class="hero-sub">Sharp Platform is the first AI-native operating system designed for the agentic era. Build, deploy, and scale autonomous pipelines in minutes.</p>
+        <div class="hero-actions">
+            <button type="button" class="btn btn-primary" data-action="launch">Launch Console</button>
+            <button type="button" class="btn btn-outline" data-action="demo">Watch Demo</button>
+        </div>
+    </header>
+
+    <!-- Trust Marquee -->
+    <section class="marquee-section">
+        <div class="marquee-container">
+            <div class="marquee-item"><strong>NEURAL</strong> CORE</div>
+            <div class="marquee-item"><strong>DATA</strong> SYNC</div>
+            <div class="marquee-item"><strong>VECTOR</strong> FLOW</div>
+            <div class="marquee-item"><strong>QUANTUM</strong> OPS</div>
+            <div class="marquee-item"><strong>AGENT</strong> HUB</div>
+            <div class="marquee-item"><strong>MODERN</strong> STACK</div>
+            <!-- Duplicate for loop -->
+            <div class="marquee-item"><strong>NEURAL</strong> CORE</div>
+            <div class="marquee-item"><strong>DATA</strong> SYNC</div>
+            <div class="marquee-item"><strong>VECTOR</strong> FLOW</div>
+            <div class="marquee-item"><strong>QUANTUM</strong> OPS</div>
+            <div class="marquee-item"><strong>AGENT</strong> HUB</div>
+            <div class="marquee-item"><strong>MODERN</strong> STACK</div>
+        </div>
+    </section>
+
+    <!-- Core Solutions -->
+    <section class="section" id="solutions">
+        <div class="section-header">
+            <h2>Core Solutions</h2>
+            <p>Every tool you need to transition from legacy code to autonomous intelligence.</p>
+        </div>
+        <div class="grid-3">
+            <div class="card glass">
+                <div class="card-icon">⚡</div>
+                <h3>Agentic Orchestration</h3>
+                <p>Deploy persistent, autonomous agents that communicate via a secure mesh network.</p>
+                <button type="button" class="btn btn-outline" data-action="learn">View Architecture</button>
+            </div>
+            <div class="card glass">
+                <div class="card-icon">🧠</div>
+                <h3>Neural Pipelines</h3>
+                <p>Transform raw data into embedding streams with zero-latency synchronization.</p>
+                <button type="button" class="btn btn-outline" data-action="learn">Explore ETL</button>
+            </div>
+            <div class="card glass">
+                <div class="card-icon">🔒</div>
+                <h3>Secure Sandboxing</h3>
+                <p>Run untrusted AI-generated code in isolated, zero-trust environments.</p>
+                <button type="button" class="btn btn-outline" data-action="learn">Security Whitepaper</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Section -->
+    <section class="section" id="developers" style="background: rgba(255,255,255,0.02)">
+        <div class="code-split">
+            <div>
+                <div class="badge">For Developers</div>
+                <h2 style="font-size: 2.5rem; margin-bottom: 24px;">Built for the next 10 years</h2>
+                <p style="color: var(--text-dim); margin-bottom: 32px;">Sharp provides a native SDK that feels like writing standard Python or TS, but executes across a distributed neural mesh. Scalability is no longer a code concern; it's a platform guarantee.</p>
+                <ul style="list-style: none; margin-bottom: 32px;">
+                    <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--primary)">✓</span> Native Python & TS SDKs
+                    </li>
+                    <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--primary)">✓</span> Hot-reloadable Agent Logic
+                    </li>
+                    <li style="margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--primary)">✓</span> Automatic Vectorization
+                    </li>
+                </ul>
+                <button type="button" class="btn btn-primary" data-action="docs">Read Documentation</button>
+            </div>
+            <div class="code-window">
+                <div class="code-header">
+                    <div class="dot dot-r"></div>
+                    <div class="dot dot-y"></div>
+                    <div class="dot dot-g"></div>
+                </div>
+                <div class="code-content">
+                    <div><span class="c-1">import</span> { SharpAgent } <span class="c-1">from</span> <span class="c-3">'@sharp/sdk'</span>;</div>
+                    <br>
+                    <div><span class="c-1">const</span> agent = <span class="c-1">new</span> <span class="c-2">SharpAgent</span>({</div>
+                    <div style="padding-left: 20px;">  role: <span class="c-3">'orchestrator'</span>,</div>
+                    <div style="padding-left: 20px;">  model: <span class="c-3">'sharp-ultra-4'</span>,</div>
+                    <div style="padding-left: 20px;">  memory: <span class="c-1">true</span></div>
+                    <div>});</div>
+                    <br>
+                    <div><span class="c-1">await</span> agent.<span class="c-2">deploy</span>({</div>
+                    <div style="padding-left: 20px;">  trigger: <span class="c-3">'on_transaction'</span>,</div>
+                    <div style="padding-left: 20px;">  action: <span class="c-1">async</span> (<span class="c-4">ctx</span>) => {</div>
+                    <div style="padding-left: 40px;">    <span class="c-1">return await</span> ctx.<span class="c-2">audit</span>();</div>
+                    <div style="padding-left: 20px;">  }</div>
+                    <div>});</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="section" id="roadmap">
+        <div class="section-header">
+            <h2>The Roadmap</h2>
+            <p>Our journey toward AGI orchestration and beyond.</p>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-date">Q1 2024</div>
+                <div class="timeline-content">
+                    <h4>Public Beta Launch</h4>
+                    <p>Opening access to the Core SDK and neural orchestration engine for enterprise partners.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Q2 2024</div>
+                <div class="timeline-content">
+                    <h4>Agent Marketplace</h4>
+                    <p>Browse and deploy community-vetted agent templates for common business logic workflows.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">Q3 2024</div>
+                <div class="timeline-content">
+                    <h4>Sharp Quantum</h4>
+                    <p>Integration with next-gen specialized hardware for sub-millisecond inference across the edge.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="section" style="text-align: center;">
+        <div class="glass" style="padding: 80px 40px; max-width: 1000px; margin: 0 auto; border: 1px solid var(--primary);">
+            <h2 style="font-size: 3rem; margin-bottom: 24px;">Ready to Sharp?</h2>
+            <p style="color: var(--text-dim); margin-bottom: 40px; max-size: 600px; margin-left: auto; margin-right: auto;">Join 4,000+ engineers building the future of autonomous systems on Sharp Platform.</p>
+            <div style="display: flex; gap: 16px; justify-content: center;">
+                <button type="button" class="btn btn-primary btn-lg" data-action="signup">Claim Early Access</button>
+                <button type="button" class="btn btn-outline" data-action="community">Join Discord</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo footer-logo">
+                    <div class="logo-mark"></div>
+                    SHARP
+                </div>
+                <p class="footer-desc">The intelligent substrate for the modern digital enterprise. Built for speed, security, and scale.</p>
+            </div>
+            <div class="footer-col">
+                <h5>Platform</h5>
+                <ul class="footer-links">
+                    <li><a href="#solutions">Solutions</a></li>
+                    <li><a href="#developers">SDK Documentation</a></li>
+                    <li><a href="#pricing" data-action="link">Pricing</a></li>
+                    <li><a href="#security" data-action="link">Security</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Company</h5>
+                <ul class="footer-links">
+                    <li><a href="#about" data-action="link">About Us</a></li>
+                    <li><a href="#careers" data-action="link">Careers</a></li>
+                    <li><a href="#blog" data-action="link">Blog</a></li>
+                    <li><a href="#press" data-action="link">Press Kit</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>Legal</h5>
+                <ul class="footer-links">
+                    <li><a href="#terms" data-action="link">Terms of Service</a></li>
+                    <li><a href="#privacy" data-action="link">Privacy Policy</a></li>
+                    <li><a href="#cookies" data-action="link">Cookie Settings</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Sharp Platform Inc. All rights reserved.</p>
+            <div style="display: flex; gap: 24px;">
+                <a href="#twitter" data-action="social">Twitter</a>
+                <a href="#github" data-action="social">GitHub</a>
+                <a href="#linkedin" data-action="social">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- UI Overlays -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal glass">
+            <h2 id="modalTitle" style="margin-bottom: 16px;">Early Access</h2>
+            <p id="modalBody" style="color: var(--text-dim); margin-bottom: 24px;">Sharp Platform is currently in private beta. Please enter your email to join the waitlist.</p>
+            <form id="internalForm" onsubmit="event.preventDefault();">
+                <input type="email" placeholder="name@company.com" required style="width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: white; margin-bottom: 16px;">
+                <div style="display: flex; gap: 12px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Join Waitlist</button>
+                    <button type="button" class="btn btn-outline" id="closeModal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // --- Navigation Logic ---
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // --- Interaction Handler ---
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const closeModal = document.getElementById('closeModal');
+        const toastContainer = document.getElementById('toastContainer');
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> ${message}`;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function openModal(title, text) {
+            modalTitle.innerText = title;
+            modalBody.innerText = text;
+            modalOverlay.classList.add('active');
+            setTimeout(() => modalOverlay.querySelector('.modal').classList.add('active'), 10);
+        }
+
+        function handleInternalAction(action, label = '') {
+            switch(action) {
+                case 'signup':
+                case 'launch':
+                case 'claim':
+                    openModal('Request Early Access', 'You are one step away from the future of AI orchestration. Enter your professional email to receive an invite code.');
+                    break;
+                case 'demo':
+                    openModal('Watch Product Demo', 'The product showcase is currently being rendered. We will notify you once the full visual tour is live.');
+                    break;
+                case 'auth':
+                    openModal('Platform Login', 'The login portal is restricted to authorized beta participants only during this phase.');
+                    break;
+                case 'docs':
+                    openModal('Technical Docs', 'Documentation is available via our private GitHub repository. Please sign up for access first.');
+                    break;
+                case 'learn':
+                    openModal('Solution Details', `Diving deeper into ${label}... This specific module overview is being updated for the v2.4 launch.`);
+                    break;
+                case 'community':
+                    showToast('Discord invite link copied to clipboard!');
+                    break;
+                case 'link':
+                case 'social':
+                    showToast('External navigation disabled in preview experience.');
+                    break;
+                default:
+                    showToast(`Action: ${action} registered successfully.`);
+            }
+        }
+
+        // --- Event Delegation (Scoped) ---
+        document.body.addEventListener('click', (e) => {
+            const btn = e.target.closest('button[type="button"], a[data-action]');
+            
+            if (btn) {
+                const action = btn.getAttribute('data-action');
+                if (action) {
+                    e.preventDefault();
+                    const label = btn.closest('.card')?.querySelector('h3')?.innerText || '';
+                    handleInternalAction(action, label);
+                    return;
+                }
+            }
+
+            // Defensive check for regular links that might be external
+            const link = e.target.closest('a');
+            if (link) {
+                const href = link.getAttribute('href');
+                if (href && !href.startsWith('#')) {
+                    e.preventDefault();
+                    showToast('External navigation disabled in preview.');
+                }
+            }
+        });
+
+        // Form Submit
+        document.getElementById('internalForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = e.target.querySelector('input').value;
+            modalOverlay.classList.remove('active');
+            showToast(`Success! Invite sent to ${email}`);
+            e.target.reset();
+        });
+
+        closeModal.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+
+        // Mobile Menu
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            showToast('Mobile menu navigation triggered.');
+        });
+
+        // Scroll reveal animation simple implementation
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card, .timeline-item, .code-window').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // --- Marquee Pause on Hover ---
+        const marquee = document.querySelector('.marquee-container');
+        marquee.addEventListener('mouseenter', () => marquee.style.animationPlayState = 'paused');
+        marquee.addEventListener('mouseleave', () => marquee.style.animationPlayState = 'running');
+
+    </script>
+</body>
+</html>
