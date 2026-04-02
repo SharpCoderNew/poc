@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>L'ÉLÉGANCE | Haute Gastronomy</title>
+    <style>
+        :root {
+            /* Color Palette - Dark Editorial */
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #121212;
+            --bg-accent: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --accent: #c5a059; /* Muted Luxury Gold */
+            --accent-hover: #e0bc75;
+            --border: #2a2a2a;
+            --surface: rgba(255, 255, 255, 0.03);
+            --font-serif: "Playfair Display", Georgia, serif;
+            --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --toast-bg: #1e1e1e;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9f9f9;
+            --bg-accent: #f0f0f0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #555555;
+            --accent: #9a7b41;
+            --accent-hover: #7a6133;
+            --border: #e0e0e0;
+            --surface: rgba(0, 0, 0, 0.03);
+            --toast-bg: #ffffff;
+        }
+
+        /* Base & Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, .serif { font-family: var(--font-serif); font-weight: 400; }
+        a { text-decoration: none; color: inherit; transition: var(--transition); }
+        button { cursor: pointer; border: none; background: none; font-family: inherit; transition: var(--transition); }
+        img { max-width: 100%; height: auto; display: block; object-fit: cover; }
+        ul { list-style: none; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .section-padding { padding: 100px 0; }
+        .flex { display: flex; align-items: center; }
+        .grid { display: grid; gap: 2rem; }
+
+        /* Typography Utilities */
+        .uppercase { text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; }
+        .text-center { text-center: center; }
+        .section-title { font-size: 3rem; margin-bottom: 3rem; text-align: center; }
+        .section-title::after { content: ""; display: block; width: 60px; height: 1px; background: var(--accent); margin: 2rem auto; }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 80px;
+            z-index: 1000;
+            background: rgba(var(--bg-primary), 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-inner {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 4rem;
+        }
+
+        .logo { font-family: var(--font-serif); font-size: 1.5rem; letter-spacing: 0.2rem; }
+
+        .nav-links { display: flex; gap: 2.5rem; }
+        .nav-links a { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; }
+        .nav-links a:hover { opacity: 1; color: var(--accent); }
+
+        .nav-actions { display: flex; gap: 1.5rem; align-items: center; }
+        .theme-toggle { font-size: 1.2rem; color: var(--accent); }
+        .cart-trigger { position: relative; }
+        .cart-count { 
+            position: absolute; top: -8px; right: -8px; 
+            background: var(--accent); color: #000; 
+            font-size: 0.6rem; width: 16px; height: 16px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;
+        }
+
+        /* Hero */
+        #home {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=2000');
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.05);
+            animation: heroZoom 20s infinite alternate linear;
+        }
+
+        @keyframes heroZoom { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+        .hero-content { text-align: center; color: #fff; max-width: 800px; padding: 2rem; }
+        .hero-content h1 { font-size: clamp(3rem, 8vw, 6rem); margin-bottom: 1.5rem; }
+        .hero-content p { font-size: 1.2rem; margin-bottom: 2.5rem; opacity: 0.9; letter-spacing: 0.1em; }
+        
+        .btn {
+            padding: 1.2rem 2.5rem;
+            border: 1px solid var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.75rem;
+            display: inline-block;
+            transition: var(--transition);
+        }
+        .btn-primary { background: var(--accent); color: #000; }
+        .btn-primary:hover { background: transparent; color: var(--accent); }
+        .btn-outline { color: var(--accent); }
+        .btn-outline:hover { background: var(--accent); color: #000; }
+
+        .hero-actions { display: flex; gap: 1.5rem; justify-content: center; }
+
+        /* Menu Section */
+        .menu-filters { display: flex; justify-content: center; gap: 2rem; margin-bottom: 4rem; flex-wrap: wrap; }
+        .filter-btn { opacity: 0.5; padding: 0.5rem 0; border-bottom: 1px solid transparent; }
+        .filter-btn.active { opacity: 1; border-bottom: 1px solid var(--accent); color: var(--accent); }
+
+        .menu-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+        .menu-item { 
+            padding-bottom: 2rem; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; flex-direction: column; 
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+        .menu-item:hover { transform: translateY(-5px); }
+        .menu-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+        .menu-title { font-family: var(--font-serif); font-size: 1.25rem; }
+        .menu-price { font-weight: bold; color: var(--accent); }
+        .menu-desc { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .menu-tags { display: flex; gap: 0.5rem; }
+        .tag { font-size: 0.6rem; border: 1px solid var(--border); padding: 2px 6px; text-transform: uppercase; }
+
+        /* Gallery */
+        .gallery-grid { 
+            display: grid; 
+            grid-template-columns: repeat(12, 1fr); 
+            grid-auto-rows: 200px;
+            gap: 1rem;
+        }
+        .gallery-item { position: relative; overflow: hidden; cursor: pointer; }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
+        .gallery-item:hover img { transform: scale(1.05); }
+        .gallery-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; opacity: 0; transition: var(--transition);
+            color: #fff; text-align: center; padding: 1rem;
+        }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+
+        .g-1 { grid-column: span 4; grid-row: span 2; }
+        .g-2 { grid-column: span 4; grid-row: span 1; }
+        .g-3 { grid-column: span 4; grid-row: span 3; }
+        .g-4 { grid-column: span 8; grid-row: span 2; }
+        .g-5 { grid-column: span 4; grid-row: span 2; }
+
+        /* Stories */
+        .stories-grid { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+        .story-card { background: var(--bg-secondary); padding: 2rem; border: 1px solid var(--border); transition: var(--transition); }
+        .story-card:hover { border-color: var(--accent); }
+        .story-date { font-size: 0.7rem; color: var(--accent); margin-bottom: 1rem; display: block; }
+        .story-title { font-size: 1.5rem; margin-bottom: 1rem; line-height: 1.2; }
+        .story-excerpt { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+
+        /* Reservations & Forms */
+        .form-container { max-width: 600px; margin: 0 auto; background: var(--bg-secondary); padding: 3rem; border: 1px solid var(--border); }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+        input, select, textarea {
+            width: 100%; padding: 1rem; background: var(--bg-primary); 
+            border: 1px solid var(--border); color: var(--text-primary);
+            font-family: inherit; font-size: 0.9rem;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); outline: none; }
+        
+        /* Modal & Portal */
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 2000; display: none;
+            align-items: center; justify-content: center; backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            background: var(--bg-secondary); width: 90%; max-width: 600px;
+            max-height: 90vh; overflow-y: auto; padding: 3rem; position: relative;
+            border: 1px solid var(--border);
+        }
+        .close-modal { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.5rem; opacity: 0.5; }
+        .close-modal:hover { opacity: 1; color: var(--accent); }
+
+        .portal-dashboard { display: grid; grid-template-columns: 200px 1fr; gap: 2rem; }
+        .portal-nav { border-right: 1px solid var(--border); }
+        .portal-nav button { display: block; width: 100%; text-align: left; padding: 0.75rem 0; opacity: 0.6; }
+        .portal-nav button.active { opacity: 1; color: var(--accent); font-weight: bold; }
+
+        /* Toast Notifications */
+        .toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 3000; }
+        .toast {
+            background: var(--toast-bg); color: var(--text-primary); padding: 1rem 2rem;
+            border-left: 4px solid var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-top: 1rem; animation: slideIn 0.3s forwards;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Mobile Adjustments */
+        .mobile-menu-toggle { display: none; font-size: 1.5rem; }
+        @media (max-width: 992px) {
+            .nav-inner { padding: 0 2rem; }
+            .nav-links { display: none; }
+            .mobile-menu-toggle { display: block; }
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 250px; }
+            .g-1, .g-2, .g-3, .g-4, .g-5 { grid-column: span 2; grid-row: span 1; }
+            .portal-dashboard { grid-template-columns: 1fr; }
+            .portal-nav { border-right: none; border-bottom: 1px solid var(--border); display: flex; gap: 1rem; overflow-x: auto; margin-bottom: 1rem; }
+        }
+
+        /* Utils */
+        .hidden { display: none; }
+        .mt-2 { margin-top: 2rem; }
+        .flex-col { flex-direction: column; }
+    </style>
+</head>
+<body id="app-root">
+
+    <nav id="navbar">
+        <div class="nav-inner">
+            <a href="#home" class="logo">L'ÉLÉGANCE</a>
+            <div class="nav-links">
+                <a href="#menu">Menu</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#stories">Stories</a>
+                <a href="#reservations">Reservations</a>
+                <a href="#private-dining">Events</a>
+                <a href="#portal">Guest Portal</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="nav-actions">
+                <button type="button" class="theme-toggle" id="theme-btn" aria-label="Toggle Theme">🌓</button>
+                <button type="button" class="cart-trigger" id="cart-btn" aria-label="Cart">
+                    🛒 <span class="cart-count" id="cart-count">0</span>
+                </button>
+                <button type="button" class="mobile-menu-toggle" id="menu-btn">☰</button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero -->
+        <section id="home">
+            <div class="hero-bg"></div>
+            <div class="hero-content">
+                <p class="uppercase">Michelin Distinction Since 1994</p>
+                <h1>Culinary Artistry Redefined</h1>
+                <div class="hero-actions">
+                    <a href="#menu" class="btn btn-primary">Discover Menu</a>
+                    <a href="#reservations" class="btn btn-outline">Book a Table</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu Section -->
+        <section id="menu" class="section-padding container">
+            <h2 class="section-title">The Seasonal Palette</h2>
+            <div class="menu-filters" id="menu-filters">
+                <button type="button" class="filter-btn active" data-filter="all">All Courses</button>
+                <button type="button" class="filter-btn" data-filter="garden">The Garden</button>
+                <button type="button" class="filter-btn" data-filter="ocean">The Ocean</button>
+                <button type="button" class="filter-btn" data-filter="land">The Land</button>
+                <button type="button" class="filter-btn" data-filter="cellar">The Cellar</button>
+            </div>
+            <div class="grid menu-grid" id="menu-container">
+                <!-- Rendered by JS -->
+            </div>
+        </section>
+
+        <!-- Gallery -->
+        <section id="gallery" class="section-padding container">
+            <h2 class="section-title">Visual Symphony</h2>
+            <div class="gallery-grid" id="gallery-container">
+                <!-- Rendered by JS -->
+            </div>
+        </section>
+
+        <!-- Stories -->
+        <section id="stories" class="section-padding container" style="background: var(--bg-secondary);">
+            <h2 class="section-title">Chef's Stories</h2>
+            <div class="grid stories-grid" id="stories-container">
+                <!-- Rendered by JS -->
+            </div>
+        </section>
+
+        <!-- Reservations -->
+        <section id="reservations" class="section-padding container">
+            <h2 class="section-title">Securing Your Experience</h2>
+            <div class="form-container">
+                <form id="reservation-form">
+                    <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" required id="res-date">
+                        </div>
+                        <div class="form-group">
+                            <label>Guests</label>
+                            <select id="res-guests">
+                                <option value="2">2 Guests</option>
+                                <option value="3">3 Guests</option>
+                                <option value="4">4 Guests</option>
+                                <option value="6">6+ (Private)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Time Slot</label>
+                        <select id="res-time" required>
+                            <option value="">Select a time</option>
+                            <option>18:00</option>
+                            <option>19:30</option>
+                            <option>20:00</option>
+                            <option>21:30</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" placeholder="Alexandre Dumas" required id="res-name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="alexandre@epicure.com" required id="res-email">
+                    </div>
+                    <div class="form-group">
+                        <label>Special Requests</label>
+                        <textarea placeholder="Dietary restrictions, celebrations..." rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Confirm Request</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Private Dining -->
+        <section id="private-dining" class="section-padding container">
+            <h2 class="section-title">Private Occasions</h2>
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div class="story-card">
+                    <h3 class="serif">The Library Vault</h3>
+                    <p class="story-excerpt">An intimate setting for up to 8 guests surrounded by vintage culinary manuscripts.</p>
+                    <button type="button" class="btn btn-outline inquiry-btn" data-type="Library Vault">Inquire</button>
+                </div>
+                <div class="story-card">
+                    <h3 class="serif">The Sky Terrace</h3>
+                    <p class="story-excerpt">Panoramic city views with a dedicated sommelier for parties up to 20.</p>
+                    <button type="button" class="btn btn-outline inquiry-btn" data-type="Sky Terrace">Inquire</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Guest Portal -->
+        <section id="portal" class="section-padding container" style="background: var(--bg-secondary);">
+            <h2 class="section-title">Guest Portal</h2>
+            <div id="portal-content">
+                <!-- Logged Out State -->
+                <div id="portal-login" class="form-container" style="max-width: 400px;">
+                    <p class="text-center" style="margin-bottom: 2rem;">Access your reservations and culinary history.</p>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" value="guest@luxury.com" id="login-email">
+                        </div>
+                        <div class="form-group">
+                            <label>Access Code</label>
+                            <input type="password" value="••••••" id="login-pass">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact" class="section-padding container">
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div>
+                    <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 2rem;">Connect</h2>
+                    <p style="margin-bottom: 2rem; color: var(--text-secondary);">124 Avenue des Champs-Élysées<br>75008 Paris, France</p>
+                    <p style="margin-bottom: 0.5rem;">+33 1 42 25 12 12</p>
+                    <p style="margin-bottom: 2rem;">concierge@lelegance.fr</p>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="button" class="social-link">Instagram</button>
+                        <button type="button" class="social-link">Michelin Guide</button>
+                    </div>
+                </div>
+                <div class="form-container" style="margin: 0; width: 100%;">
+                    <form id="contact-form">
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-outline" style="width: 100%;">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer style="padding: 4rem 0; border-top: 1px solid var(--border); background: var(--bg-primary);">
+        <div class="container text-center">
+            <p class="logo" style="margin-bottom: 1rem;">L'ÉLÉGANCE</p>
+            <p style="font-size: 0.7rem; opacity: 0.5; letter-spacing: 0.2em;">© 2024 L'ÉLÉGANCE GASTRONOMIE. INTERNAL USE ONLY.</p>
+        </div>
+    </footer>
+
+    <!-- Universal Modal System -->
+    <div class="modal-backdrop" id="modal-system">
+        <div class="modal-content">
+            <button type="button" class="close-modal" id="modal-close">✕</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        /**
+         * LUXURY RESTAURANT ENGINE
+         * Production-grade interaction logic
+         */
+
+        const STATE = {
+            theme: localStorage.getItem('theme_v1') || 'dark',
+            cart: [],
+            reservations: [
+                { id: 'RES-8821', date: '2024-12-15', guests: 2, time: '20:00', status: 'Confirmed' }
+            ],
+            isLoggedIn: false,
+            activeFilter: 'all'
+        };
+
+        const MENU_ITEMS = [
+            { id: 1, name: "Wild Forest Morilles", category: "garden", price: 42, tags: ["V", "GF"], desc: "Hand-picked mushrooms, truffle emulsion, shaved hazelnut." },
+            { id: 2, name: "Heritage Beetroot Tartare", category: "garden", price: 34, tags: ["V"], desc: "Smoked yogurt, dill oil, crispy rye shard." },
+            { id: 3, name: "White Asparagus Velouté", category: "garden", price: 38, tags: ["V", "GF"], desc: "Oscietra caviar, chive blossoms, lemon balm." },
+            { id: 4, name: "Salt-Baked Celeriac", category: "garden", price: 36, tags: ["VG"], desc: "Black garlic jus, fermented apple, pickled mustard." },
+            { id: 5, name: "Brittany Blue Lobster", category: "ocean", price: 85, tags: ["GF"], desc: "Coral butter, sea succulents, yuzu reduction." },
+            { id: 6, name: "Wild Turbot 'A la Plancha'", category: "ocean", price: 72, tags: ["GF"], desc: "Artichoke barigoule, saffron fumé, cockles." },
+            { id: 7, name: "Scallops Saint-Jacques", category: "ocean", price: 64, tags: ["GF"], desc: "Cauliflower silk, brown butter, caperberry." },
+            { id: 8, name: "Langoustine Carpaccio", category: "ocean", price: 58, tags: ["GF"], desc: "Finger lime, Shiso, cold-pressed olive oil." },
+            { id: 9, name: "A5 Miyazaki Wagyu", category: "land", price: 145, tags: ["GF"], desc: "Charred leeks, bone marrow jus, smoked salt." },
+            { id: 10, name: "Milk-Fed Lozère Lamb", category: "land", price: 68, tags: ["GF"], desc: "Wild thyme crust, confit garlic, pea shoots." },
+            { id: 11, name: "Bresse Chicken 'Suprême'", category: "land", price: 62, tags: ["GF"], desc: "Foie gras core, Albufera sauce, baby parsnip." },
+            { id: 12, name: "Dry-Aged Duck Breast", category: "land", price: 74, tags: ["GF"], desc: "Honey & lavender glaze, spiced plum, endive." },
+            { id: 13, name: "Grand Cru Soufflé", category: "cellar", price: 28, tags: ["V"], desc: "70% Valrhona, Madagascan vanilla bean gelato." },
+            { id: 14, name: "Citrus Deconstruction", category: "cellar", price: 24, tags: ["V", "GF"], desc: "Blood orange sorbet, meringue, bergamot curd." },
+            { id: 15, name: "Chateau d'Yquem Pear", category: "cellar", price: 32, tags: ["V"], desc: "Saffron poached, gold leaf, pistachio sable." },
+            { id: 16, name: "Le Fromage Cart", category: "cellar", price: 45, tags: ["V"], desc: "Selection of 12 artisanal French cheeses." },
+            { id: 17, name: "Vintage Krug 2008", category: "cellar", price: 850, tags: ["LTD"], desc: "By the bottle. Rare selection from our private cellar." },
+            { id: 18, name: "Dom Pérignon P2", category: "cellar", price: 1200, tags: ["LTD"], desc: "Legendary complexity, unparalleled depth." },
+            { id: 19, name: "Iberico Pluma", category: "land", price: 54, tags: ["GF"], desc: "Acorn-fed pork, romesco, grilled spring onion." },
+            { id: 20, name: "Sea Urchin Risotto", category: "ocean", price: 70, tags: ["GF"], desc: "Acquerello rice, uni butter, gold leaf." }
+        ];
+
+        const GALLERY_ITEMS = [
+            { id: 101, cls: "g-1", url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800", title: "Signature Plating" },
+            { id: 102, cls: "g-2", url: "https://images.unsplash.com/photo-1550966841-3ee5ad60d0d9?auto=format&fit=crop&w=800", title: "The Cellar Vault" },
+            { id: 103, cls: "g-3", url: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800", title: "Kitchen Precision" },
+            { id: 104, cls: "g-4", url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200", title: "Evening Ambiance" },
+            { id: 105, cls: "g-5", url: "https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=800", title: "Final Touches" }
+        ];
+
+        const STORIES = [
+            { id: 1, date: "Nov 12, 2024", title: "The Art of Fermentation", excerpt: "How our kitchen uses age-old techniques to define modern flavors." },
+            { id: 2, date: "Oct 28, 2024", title: "Sourcing the Sea", excerpt: "A journey to the Brittany coast with our master fisherman." },
+            { id: 3, date: "Oct 05, 2024", title: "Truffle Season", excerpt: "The hunt for the elusive Black Diamond in the Périgord region." },
+            { id: 4, date: "Sep 15, 2024", title: "Sustainable Luxury", excerpt: "Our zero-waste commitment in high gastronomy." }
+        ];
+
+        // --- Core Functions ---
+
+        function init() {
+            renderMenu();
+            renderGallery();
+            renderStories();
+            applyTheme();
+            setupEventListeners();
+            updateCartUI();
+        }
+
+        function showToast(msg) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        function applyTheme() {
+            document.documentElement.setAttribute('data-theme', STATE.theme);
+            localStorage.setItem('theme_v1', STATE.theme);
+        }
+
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            const filtered = STATE.activeFilter === 'all' 
+                ? MENU_ITEMS 
+                : MENU_ITEMS.filter(i => i.category === STATE.activeFilter);
+            
+            container.innerHTML = filtered.map(item => `
+                <div class="menu-item" data-id="${item.id}">
+                    <div>
+                        <div class="menu-header">
+                            <h3 class="menu-title">${item.name}</h3>
+                            <span class="menu-price">€${item.price}</span>
+                        </div>
+                        <p class="menu-desc">${item.desc}</p>
+                        <div class="menu-tags">
+                            ${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-outline mt-2 add-to-cart" data-id="${item.id}">Order This Course</button>
+                </div>
+            `).join('');
+        }
+
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = GALLERY_ITEMS.map(item => `
+                <div class="gallery-item ${item.cls}" data-id="${item.id}">
+                    <img src="${item.url}" alt="${item.title}" loading="lazy">
+                    <div class="gallery-overlay">
+                        <p class="uppercase">Excellence</p>
+                        <h3 class="serif">${item.title}</h3>
+                        <button type="button" class="btn btn-primary mt-2" style="padding: 0.5rem 1rem;">View Full</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderStories() {
+            const container = document.getElementById('stories-container');
+            container.innerHTML = STORIES.map(s => `
+                <div class="story-card">
+                    <span class="story-date uppercase">${s.date}</span>
+                    <h3 class="story-title serif">${s.title}</h3>
+                    <p class="story-excerpt">${s.excerpt}</p>
+                    <button type="button" class="btn-outline read-story" data-id="${s.id}" style="border:none; border-bottom:1px solid; padding: 0;">Read Full Story</button>
+                </div>
+            `).join('');
+        }
+
+        function renderPortal() {
+            const container = document.getElementById('portal-content');
+            if (!STATE.isLoggedIn) {
+                // Handled by static HTML initially, but can re-render here if needed
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="portal-dashboard">
+                    <div class="portal-nav">
+                        <button type="button" class="portal-link active">Dashboard</button>
+                        <button type="button" class="portal-link">My Bookings</button>
+                        <button type="button" class="portal-link">Wine Preferences</button>
+                        <button type="button" class="portal-link" id="sign-out">Sign Out</button>
+                    </div>
+                    <div class="portal-main">
+                        <h3 class="serif" style="font-size: 2rem; margin-bottom: 2rem;">Welcome Back, Excellence</h3>
+                        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                            <div class="story-card">
+                                <p class="uppercase" style="font-size: 0.6rem;">Status</p>
+                                <p>Platinum Gastronome</p>
+                            </div>
+                            <div class="story-card">
+                                <p class="uppercase" style="font-size: 0.6rem;">Points</p>
+                                <p>2,450 XP</p>
+                            </div>
+                        </div>
+                        <h4 class="uppercase" style="margin-bottom: 1rem;">Upcoming Experience</h4>
+                        ${STATE.reservations.map(res => `
+                            <div class="menu-item" style="padding: 1.5rem; background: var(--bg-primary);">
+                                <div class="menu-header">
+                                    <span class="serif">${res.id} — Table for ${res.guests}</span>
+                                    <span class="tag" style="background: var(--accent); color: #000;">${res.status}</span>
+                                </div>
+                                <p style="font-size: 0.9rem;">${res.date} at ${res.time}</p>
+                                <div class="flex" style="gap: 1rem; margin-top: 1rem;">
+                                    <button type="button" class="btn btn-outline" style="font-size: 0.6rem; padding: 0.5rem;">Modify</button>
+                                    <button type="button" class="btn-outline" style="font-size: 0.6rem; color: #ff5555; border:none;">Cancel</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateCartUI() {
+            const count = STATE.cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cart-count').textContent = count;
+        }
+
+        function openModal(content) {
+            const modal = document.getElementById('modal-system');
+            const body = document.getElementById('modal-body');
+            body.innerHTML = content;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal-system');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // --- Event Handlers ---
+
+        function setupEventListeners() {
+            // Theme Toggle
+            document.getElementById('theme-btn').addEventListener('click', () => {
+                STATE.theme = STATE.theme === 'dark' ? 'light' : 'dark';
+                applyTheme();
+            });
+
+            // Mobile Menu
+            document.getElementById('menu-btn').addEventListener('click', () => {
+                const links = document.querySelector('.nav-links');
+                links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+                links.style.position = 'absolute';
+                links.style.top = '80px';
+                links.style.left = '0';
+                links.style.width = '100%';
+                links.style.background = 'var(--bg-primary)';
+                links.style.flexDirection = 'column';
+                links.style.padding = '2rem';
+                links.style.borderBottom = '1px solid var(--border)';
+            });
+
+            // Navigation Clicks (Internal Only)
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // Menu Filters
+            document.getElementById('menu-filters').addEventListener('click', (e) => {
+                if (e.target.classList.contains('filter-btn')) {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    STATE.activeFilter = e.target.dataset.filter;
+                    renderMenu();
+                }
+            });
+
+            // Cart & Add to Cart
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('add-to-cart')) {
+                    const id = parseInt(e.target.dataset.id);
+                    const item = MENU_ITEMS.find(i => i.id === id);
+                    const existing = STATE.cart.find(c => c.id === id);
+                    if (existing) {
+                        existing.qty++;
+                    } else {
+                        STATE.cart.push({ ...item, qty: 1 });
+                    }
+                    updateCartUI();
+                    showToast(`${item.name} added to your plan.`);
+                }
+
+                if (e.target.id === 'cart-btn') {
+                    const cartHtml = STATE.cart.length === 0 
+                        ? `<p class="text-center">Your culinary plan is empty.</p>`
+                        : `
+                            <h3 class="serif" style="margin-bottom: 2rem;">Your Selection</h3>
+                            ${STATE.cart.map(i => `
+                                <div class="flex" style="justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+                                    <div>
+                                        <p>${i.name}</p>
+                                        <p style="font-size: 0.7rem; color: var(--accent);">€${i.price} x ${i.qty}</p>
+                                    </div>
+                                    <button type="button" class="remove-cart" data-id="${i.id}" style="color: #ff5555;">✕</button>
+                                </div>
+                            `).join('')}
+                            <div class="mt-2" style="border-top: 2px solid var(--accent); padding-top: 1rem;">
+                                <div class="flex" style="justify-content: space-between; font-weight: bold;">
+                                    <span>Total Estimation</span>
+                                    <span>€${STATE.cart.reduce((s, i) => s + (i.price * i.qty), 0)}</span>
+                                </div>
+                                <button type="button" class="btn btn-primary mt-2" style="width: 100%;" onclick="showToast('Ordering disabled in preview')">Check Out</button>
+                            </div>
+                        `;
+                    openModal(cartHtml);
+                }
+
+                if (e.target.classList.contains('remove-cart')) {
+                    const id = parseInt(e.target.dataset.id);
+                    STATE.cart = STATE.cart.filter(c => c.id !== id);
+                    updateCartUI();
+                    closeModal(); // Quick refresh of cart view
+                    setTimeout(() => document.getElementById('cart-btn').click(), 10);
+                }
+
+                if (e.target.classList.contains('inquiry-btn')) {
+                    const type = e.target.dataset.type;
+                    openModal(`
+                        <h3 class="serif">Private Event Inquiry: ${type}</h3>
+                        <p style="margin: 1rem 0;">Our events team will contact you within 24 hours.</p>
+                        <form id="inquiry-form-real">
+                            <input type="text" placeholder="Full Name" required style="margin-bottom: 1rem;">
+                            <input type="email" placeholder="Email" required style="margin-bottom: 1rem;">
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Request</button>
+                        </form>
+                    `);
+                    document.getElementById('inquiry-form-real').onsubmit = (ev) => {
+                        ev.preventDefault();
+                        closeModal();
+                        showToast("Inquiry submitted successfully.");
+                    };
+                }
+
+                if (e.target.classList.contains('read-story')) {
+                    const id = parseInt(e.target.dataset.id);
+                    const story = STORIES.find(s => s.id === id);
+                    openModal(`
+                        <span class="uppercase">${story.date}</span>
+                        <h3 class="serif" style="font-size: 2rem; margin: 1rem 0;">${story.title}</h3>
+                        <div style="line-height: 1.8; color: var(--text-secondary);">
+                            <p>Luxury is more than a price point; it is a meticulous attention to detail. At L'Élégance, we believe that the story of a dish begins long before it reaches the plate. From the volcanic soils where our grapes grow to the precision of a chef's blade, every element is considered.</p>
+                            <br>
+                            <p>This commitment to excellence is what defines our seasonal menus. We invite you to experience the harmony of tradition and innovation in every bite.</p>
+                        </div>
+                    `);
+                }
+
+                if (e.target.id === 'sign-out') {
+                    STATE.isLoggedIn = false;
+                    renderPortal();
+                    showToast("Signed out safely.");
+                    // Re-render the login form
+                    document.getElementById('portal-content').innerHTML = `
+                        <div id="portal-login" class="form-container" style="max-width: 400px;">
+                            <p class="text-center" style="margin-bottom: 2rem;">Access your reservations and culinary history.</p>
+                            <form id="login-form">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" value="guest@luxury.com" id="login-email">
+                                </div>
+                                <div class="form-group">
+                                    <label>Access Code</label>
+                                    <input type="password" value="••••••" id="login-pass">
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+                            </form>
+                        </div>
+                    `;
+                    // Re-attach login listener
+                    attachLoginListener();
+                }
+            });
+
+            // Reservation Form
+            document.getElementById('reservation-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('res-name').value;
+                const date = document.getElementById('res-date').value;
+                const time = document.getElementById('res-time').value;
+                const guests = document.getElementById('res-guests').value;
+                
+                const newRes = { id: `RES-${Math.floor(1000 + Math.random() * 9000)}`, date, guests, time, status: 'Confirmed' };
+                STATE.reservations.push(newRes);
+                
+                openModal(`
+                    <div class="text-center">
+                        <div style="font-size: 3rem; color: var(--accent); margin-bottom: 1rem;">✓</div>
+                        <h3 class="serif">Reservation Confirmed</h3>
+                        <p style="margin: 1rem 0;">Thank you, ${name}. Your table for ${guests} is secured for ${date} at ${time}.</p>
+                        <p class="uppercase" style="font-size: 0.7rem; opacity: 0.5;">Confirmation Code: ${newRes.id}</p>
+                        <button type="button" class="btn btn-primary mt-2" id="res-done">View in Portal</button>
+                    </div>
+                `);
+                
+                document.getElementById('res-done').onclick = () => {
+                    closeModal();
+                    document.getElementById('portal').scrollIntoView({ behavior: 'smooth' });
+                    STATE.isLoggedIn = true;
+                    renderPortal();
+                };
+                
+                e.target.reset();
+            });
+
+            // Contact Form
+            document.getElementById('contact-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                showToast("Your message has been sent to the concierge.");
+                e.target.reset();
+            });
+
+            // Modal Close
+            document.getElementById('modal-close').addEventListener('click', closeModal);
+            document.getElementById('modal-system').addEventListener('click', (e) => {
+                if (e.target.id === 'modal-system') closeModal();
+            });
+
+            function attachLoginListener() {
+                const loginForm = document.getElementById('login-form');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        STATE.isLoggedIn = true;
+                        renderPortal();
+                        showToast("Welcome back to L'Élégance.");
+                    });
+                }
+            }
+            attachLoginListener();
+
+            // Defensive Click Guard
+            document.addEventListener('click', (e) => {
+                const target = e.target.closest('a');
+                if (target && target.hostname !== window.location.hostname) {
+                    e.preventDefault();
+                    showToast("External navigation disabled in this experience.");
+                }
+            }, true);
+        }
+
+        // Initial Load
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
