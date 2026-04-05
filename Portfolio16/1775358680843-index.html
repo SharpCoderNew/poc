@@ -1,0 +1,930 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <title>Kautilya Utkarsh | Software Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Colors */
+      --primary: #6366f1;
+      --primary-2: #4f46e5;
+      --on-primary: #ffffff;
+      --accent: #f43f5e;
+      --on-accent: #ffffff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      
+      /* Spacing */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 1rem;
+      --space-4: 2rem;
+      --space-5: 4rem;
+      --space-6: 8rem;
+      --gutter: 0;
+      
+      /* Typography */
+      --font-serif: 'Playfair Display', serif;
+      --font-sans: 'Inter', sans-serif;
+      --line-1: 1.2;
+      --line-2: 1.5;
+      --line-3: 1.7;
+      
+      /* UI */
+      --radius-btn: 3px;
+      --radius-card: 12px;
+      --radius-pill: 9999px;
+      --header-height: 72px;
+      --dur-fast: 0.2s;
+      --dur-med: 0.4s;
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-soft: 0 4px 20px rgba(0,0,0,0.1);
+      --shadow-strong: 0 10px 40px rgba(0,0,0,0.25);
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0a0a0a;
+      --bg-2: #141414;
+      --surface: #1a1a1a;
+      --surface-2: #242424;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: #2d2d2d;
+      --focus: #6366f1;
+      --overlay: rgba(0, 0, 0, 0.85);
+      --header-bg: rgba(10, 10, 10, 0.8);
+      --divider: rgba(255, 255, 255, 0.05);
+    }
+
+    html[data-theme="light"] {
+      --bg: #ffffff;
+      --bg-2: #f8fafc;
+      --surface: #ffffff;
+      --surface-2: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --focus: #4f46e5;
+      --overlay: rgba(255, 255, 255, 0.9);
+      --header-bg: rgba(255, 255, 255, 0.8);
+      --divider: rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: var(--line-2);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #page {
+      width: 100%;
+      position: relative;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: var(--space-3);
+      padding-right: var(--space-3);
+      min-width: 0;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif);
+      line-height: var(--line-1);
+      font-weight: 700;
+    }
+
+    .text-serif { font-family: var(--font-serif); }
+    .text-muted { color: var(--muted); }
+    .text-center { text-align: center; }
+
+    /* Buttons */
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+      transition: all var(--dur-fast) var(--ease-standard);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--on-primary);
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-btn);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.875rem;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-2);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .btn-ghost {
+      color: var(--text);
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-btn);
+    }
+
+    .btn-ghost:hover {
+      background-color: var(--surface-2);
+      border-color: var(--muted);
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--header-height);
+      background-color: var(--header-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 1000;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .logo {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-desktop {
+      display: flex;
+      gap: var(--space-4);
+    }
+
+    .nav-item {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      opacity: 0.7;
+    }
+
+    .nav-item:hover {
+      opacity: 1;
+    }
+
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+    }
+
+    /* Hero */
+    .hero {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('/uploadedimages/8b2c2838421a4dd99ea781c08571d7ec/20260405_030750_a7029fb956.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-referrer;
+      color: #ffffff;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      z-index: 2;
+    }
+
+    .hero-tag {
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: var(--space-3);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 10vw, 5rem);
+      margin-bottom: var(--space-3);
+    }
+
+    .hero p {
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      opacity: 0.9;
+      margin-bottom: var(--space-4);
+      font-weight: 300;
+    }
+
+    /* Stats */
+    .stats-band {
+      background-color: var(--bg-2);
+      padding: var(--space-5) 0;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-family: var(--font-serif);
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    /* Sections */
+    section {
+      padding: var(--space-6) 0;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-2);
+    }
+
+    .section-subtitle {
+      max-width: 600px;
+      margin-bottom: var(--space-5);
+    }
+
+    /* Grid Layouts */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .project-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      transition: all var(--dur-med) var(--ease-standard);
+      text-align: left;
+    }
+
+    .project-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-strong);
+      border-color: var(--primary);
+    }
+
+    .project-img-wrapper {
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+    }
+
+    .project-img-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--dur-med) var(--ease-standard);
+    }
+
+    .project-card:hover .project-img-wrapper img {
+      transform: scale(1.05);
+    }
+
+    .project-body {
+      padding: var(--space-4);
+    }
+
+    .project-tag {
+      font-size: 0.75rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+      display: block;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--overlay);
+      backdrop-filter: blur(8px);
+      display: none;
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-3);
+    }
+
+    .modal-content {
+      background-color: var(--surface);
+      width: 100%;
+      max-width: 700px;
+      border-radius: var(--radius-card);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-strong);
+      border: 1px solid var(--border);
+    }
+
+    .modal-header {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--divider);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: var(--space-4);
+    }
+
+    .modal-close {
+      font-size: 1.5rem;
+      color: var(--muted);
+    }
+
+    /* Experience Timeline */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: var(--space-4);
+    }
+
+    .timeline-date {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .timeline-content h3 {
+      margin-bottom: var(--space-2);
+    }
+
+    /* Contact Form */
+    .contact-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: var(--space-5);
+    }
+
+    .form-group {
+      margin-bottom: var(--space-3);
+    }
+
+    label {
+      display: block;
+      margin-bottom: var(--space-1);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-btn);
+      font-family: inherit;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Footer */
+    footer {
+      padding: var(--space-5) 0;
+      background-color: var(--bg-2);
+      border-top: 1px solid var(--divider);
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+
+    .social-links {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .social-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-desktop { display: none; }
+      .timeline-item { grid-template-columns: 1fr; }
+      .contact-wrapper { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 2.5rem; }
+    }
+
+    /* Interaction Guard Message */
+    #interaction-toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 12px 20px;
+      border-radius: 4px;
+      box-shadow: var(--shadow-strong);
+      z-index: 3000;
+      display: none;
+      border-left: 4px solid var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+<div id="page">
+  <header>
+    <div class="container">
+      <div class="logo">KAUTILYA UTKARSH</div>
+      <nav class="nav-desktop">
+        <button type="button" class="nav-item" data-scroll="about">About</button>
+        <button type="button" class="nav-item" data-scroll="projects">Projects</button>
+        <button type="button" class="nav-item" data-scroll="experience">Experience</button>
+        <button type="button" class="nav-item" data-scroll="contact">Contact</button>
+      </nav>
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon" style="display: none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button type="button" class="btn-primary" data-scroll="contact">Let's Connect</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+      <div class="hero-content container">
+        <div class="hero-tag">Engineering Tomorrow</div>
+        <h1>Kautilya Utkarsh</h1>
+        <p>Software Engineer at Thinkverse Lab specializing in distributed systems, high-performance web architecture, and cloud-native solutions.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+          <button type="button" class="btn-primary" data-scroll="projects">View My Work</button>
+          <button type="button" class="btn-ghost" style="color: white; border-color: rgba(255,255,255,0.5);" data-scroll="about">Learn More</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <div class="stats-band">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number" data-target="52">0</div>
+            <div class="stat-label">Projects Completed</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" data-target="15">0</div>
+            <div class="stat-label">Countries Reached</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" data-target="104">0</div>
+            <div class="stat-label">GitHub Contributions</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" data-target="8">0</div>
+            <div class="stat-label">Industry Awards</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about">
+      <div class="container">
+        <div class="contact-wrapper" style="align-items: center;">
+          <div>
+            <div class="project-img-wrapper" style="border-radius: var(--radius-card); aspect-ratio: 1/1;">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800" alt="Kautilya Utkarsh" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous" style="cursor: pointer;" data-detail="person" data-name="Kautilya Utkarsh" data-role="Software Engineer" data-bio="Kautilya is a passionate engineer at Thinkverse Lab, focusing on building scalable infrastructure and elegant user experiences. With over 6 years in the industry, he bridges the gap between complex backend systems and intuitive frontend design.">
+            </div>
+          </div>
+          <div>
+            <h2 class="section-title">Crafting digital experiences with precision.</h2>
+            <p class="section-subtitle text-muted">Based at Thinkverse Lab, I spend my days (and sometimes nights) architecting software that solves real-world problems. My approach combines technical rigor with a deep understanding of human-centered design.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+              <div>
+                <h4 style="margin-bottom: 0.5rem;">Core Expertise</h4>
+                <ul style="list-style: none; color: var(--muted); font-size: 0.95rem;">
+                  <li>• System Architecture</li>
+                  <li>• React & Next.js Ecosystem</li>
+                  <li>• Go & Node.js Backend</li>
+                  <li>• AWS Cloud Infrastructure</li>
+                </ul>
+              </div>
+              <div>
+                <h4 style="margin-bottom: 0.5rem;">Technical Philosophy</h4>
+                <p style="color: var(--muted); font-size: 0.95rem;">Simplicity is the ultimate sophistication. I believe in code that is as readable as it is efficient.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" style="background-color: var(--bg-2);">
+      <div class="container">
+        <h2 class="section-title text-center">Selected Work</h2>
+        <p class="section-subtitle text-center text-muted" style="margin-left: auto; margin-right: auto;">A glimpse into the systems and interfaces I've built at Thinkverse Lab and beyond.</p>
+        
+        <div class="card-grid">
+          <!-- Project 1 -->
+          <button type="button" class="project-card" data-detail="project" data-title="ThinkStream Engine" data-desc="A high-throughput data processing engine designed to handle millions of events per second for real-time analytics." data-tech="Go, Redis, Kubernetes, Apache Kafka">
+            <div class="project-img-wrapper">
+              <img src="https://images.unsplash.com/photo-1551288049-bbbda536639a?auto=format&fit=crop&q=80&w=800" alt="Project" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+            </div>
+            <div class="project-body">
+              <span class="project-tag">Cloud Infrastructure</span>
+              <h3>ThinkStream Engine</h3>
+              <p class="text-muted" style="font-size: 0.9rem; margin-top: 0.5rem;">Real-time event processing for massive datasets.</p>
+            </div>
+          </button>
+
+          <!-- Project 2 -->
+          <button type="button" class="project-card" data-detail="project" data-title="Nexus UI System" data-desc="A comprehensive design system and component library that powers over 40 applications across the Thinkverse ecosystem." data-tech="React, TypeScript, Styled Components, Storybook">
+            <div class="project-img-wrapper">
+              <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&q=80&w=800" alt="Project" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+            </div>
+            <div class="project-body">
+              <span class="project-tag">Design Systems</span>
+              <h3>Nexus UI Framework</h3>
+              <p class="text-muted" style="font-size: 0.9rem; margin-top: 0.5rem;">Standardizing internal UI development across the globe.</p>
+            </div>
+          </button>
+
+          <!-- Project 3 -->
+          <button type="button" class="project-card" data-detail="project" data-title="Global Sentry" data-desc="Automated security auditing platform that scans distributed environments for vulnerabilities in real-time." data-tech="Python, Rust, AWS Lambda, GraphQL">
+            <div class="project-img-wrapper">
+              <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" alt="Project" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+            </div>
+            <div class="project-body">
+              <span class="project-tag">Security</span>
+              <h3>Global Sentry</h3>
+              <p class="text-muted" style="font-size: 0.9rem; margin-top: 0.5rem;">Automated security and compliance for cloud-native apps.</p>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience">
+      <div class="container">
+        <h2 class="section-title">Career Path</h2>
+        <div class="timeline" style="margin-top: var(--space-5);">
+          <div class="timeline-item">
+            <div class="timeline-date">2023 — Present</div>
+            <div class="timeline-content">
+              <h3>Software Engineer</h3>
+              <p style="font-weight: 500; color: var(--primary);">Thinkverse Lab</p>
+              <p class="text-muted" style="margin-top: 0.5rem;">Leading development on core infrastructure projects. Implementing high-availability services and optimizing distributed database performance. Mentoring junior developers and defining engineering standards.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2021 — 2023</div>
+            <div class="timeline-content">
+              <h3>Full Stack Developer</h3>
+              <p style="font-weight: 500; color: var(--primary);">Vortex Solutions</p>
+              <p class="text-muted" style="margin-top: 0.5rem;">Developed and maintained internal ERP software. Focused on React-based dashboards and Node.js microservices. Reduced deployment times by 40% using automated CI/CD pipelines.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2019 — 2021</div>
+            <div class="timeline-content">
+              <h3>Frontend Engineer</h3>
+              <p style="font-weight: 500; color: var(--primary);">Pixel Labs</p>
+              <p class="text-muted" style="margin-top: 0.5rem;">Specialized in highly interactive web experiences for premium brands. Built custom animation libraries and optimized asset delivery for global audiences.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" style="background-color: var(--bg-2); border-bottom: 1px solid var(--divider);">
+      <div class="container">
+        <h2 class="section-title text-center">Get In Touch</h2>
+        <p class="section-subtitle text-center text-muted" style="margin-left: auto; margin-right: auto;">Have a project in mind or just want to chat about tech? Drop me a message.</p>
+        
+        <div class="contact-wrapper">
+          <div style="background-color: var(--surface); padding: var(--space-4); border-radius: var(--radius-card); border: 1px solid var(--border);">
+            <h3 style="margin-bottom: var(--space-3);">Contact Info</h3>
+            <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+              <div style="display: flex; gap: 1rem; align-items: center;">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-2); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <div>
+                  <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--muted);">Email</div>
+                  <div>kautilya@thinkverselab.com</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 1rem; align-items: center;">
+                <div style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-2); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div>
+                  <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--muted);">Location</div>
+                  <div>San Francisco, CA (Thinkverse Lab HQ)</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="social-links" style="margin-top: var(--space-4);">
+              <button type="button" class="social-btn" data-detail="social" data-platform="LinkedIn" data-handle="kautilyautkarsh">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              </button>
+              <button type="button" class="social-btn" data-detail="social" data-platform="GitHub" data-handle="kutkarsh-dev">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              </button>
+              <button type="button" class="social-btn" data-detail="social" data-platform="Twitter" data-handle="@kautilya_u">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+              </button>
+            </div>
+          </div>
+          
+          <form id="contactForm" style="background-color: var(--surface); padding: var(--space-4); border-radius: var(--radius-card); border: 1px solid var(--border);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" placeholder="Enter your name" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="email@example.com" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" placeholder="What is this about?" required>
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" rows="5" placeholder="Your message here..." required></textarea>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%;">Send Message</button>
+            <div id="formFeedback" style="margin-top: 1rem; text-align: center; font-size: 0.9rem; display: none;"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <div class="logo">KAUTILYA UTKARSH</div>
+      <div class="text-muted" style="font-size: 0.875rem;">
+        &copy; <span id="year"></span> Thinkverse Lab. Built with Passion & Logic.
+      </div>
+      <div style="display: flex; gap: 1.5rem;">
+        <button type="button" class="nav-item" data-scroll="home">Back to Top</button>
+        <button type="button" class="nav-item" data-scroll="projects">Portfolio</button>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Interaction Toast -->
+<div id="interaction-toast">External action disabled in preview.</div>
+
+<!-- Modals -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalTitle">Details</h3>
+      <button type="button" class="modal-close" id="modalClose">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <!-- Dynamic content -->
+    </div>
+  </div>
+</div>
+
+<script>
+  // Runtime Year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Theme Management
+  const themeToggle = document.getElementById('themeToggle');
+  const sunIcon = themeToggle.querySelector('.sun-icon');
+  const moonIcon = themeToggle.querySelector('.moon-icon');
+  
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    if (theme === 'light') {
+      sunIcon.style.display = 'none';
+      moonIcon.style.display = 'block';
+    } else {
+      sunIcon.style.display = 'block';
+      moonIcon.style.display = 'none';
+    }
+  }
+
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  setTheme(savedTheme);
+
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  });
+
+  // Smooth Scroll
+  document.querySelectorAll('[data-scroll]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-scroll');
+      const targetEl = document.getElementById(targetId);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // Stats Animation
+  const stats = document.querySelectorAll('.stat-number');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const target = parseInt(entry.target.getAttribute('data-target'));
+        let current = 0;
+        const increment = target / 50;
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= target) {
+            entry.target.textContent = target + '+';
+            clearInterval(timer);
+          } else {
+            entry.target.textContent = Math.floor(current) + '+';
+          }
+        }, 30);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  stats.forEach(stat => observer.observe(stat));
+
+  // Modal System
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalBody = document.getElementById('modalBody');
+  const modalClose = document.getElementById('modalClose');
+
+  function openModal(title, content) {
+    modalTitle.textContent = title;
+    modalBody.innerHTML = content;
+    modalOverlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modalOverlay.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  document.querySelectorAll('[data-detail]').forEach(el => {
+    el.addEventListener('click', () => {
+      const type = el.getAttribute('data-detail');
+      if (type === 'project') {
+        const title = el.getAttribute('data-title');
+        const desc = el.getAttribute('data-desc');
+        const tech = el.getAttribute('data-tech');
+        openModal(title, `<p style="margin-bottom:1rem">${desc}</p><p><strong>Technologies:</strong> ${tech}</p><button type="button" class="btn-primary" style="margin-top:2rem; width:100%" onclick="showToast()">View Live Project</button>`);
+      } else if (type === 'person') {
+        const name = el.getAttribute('data-name');
+        const role = el.getAttribute('data-role');
+        const bio = el.getAttribute('data-bio');
+        openModal(name, `<h4 style="color:var(--primary); margin-bottom:0.5rem">${role}</h4><p>${bio}</p>`);
+      } else if (type === 'social') {
+        const platform = el.getAttribute('data-platform');
+        const handle = el.getAttribute('data-handle');
+        openModal(`${platform} Profile`, `<p>You are about to visit <strong>${handle}</strong> on ${platform}.</p><button type="button" class="btn-primary" style="margin-top:1.5rem; width:100%" onclick="showToast()">Visit Profile</button>`);
+      }
+    });
+  });
+
+  // Contact Form
+  const contactForm = document.getElementById('contactForm');
+  const formFeedback = document.getElementById('formFeedback');
+
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    formFeedback.style.display = 'block';
+    formFeedback.textContent = 'Sending message...';
+    formFeedback.style.color = 'var(--primary)';
+    
+    setTimeout(() => {
+      formFeedback.textContent = 'Thank you! Your message has been sent successfully.';
+      formFeedback.style.color = 'var(--success)';
+      contactForm.reset();
+    }, 1500);
+  });
+
+  // Interaction Toast
+  const toast = document.getElementById('interaction-toast');
+  window.showToast = function() {
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 3000);
+  };
+
+  // Local Guard for accidental anchor clicks if any
+  document.getElementById('page').addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') {
+      e.preventDefault();
+      showToast();
+    }
+  });
+
+</script>
+
+</body>
+</html>
