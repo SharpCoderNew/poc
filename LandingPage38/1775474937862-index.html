@@ -1,0 +1,1128 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>Zenith IT Dynamics | Innovative Enterprise Solutions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Design Tokens - Dark (Default) */
+            --bg: #0a0a0b;
+            --bg-2: #141416;
+            --surface: #1c1c1f;
+            --surface-2: #252529;
+            --text: #f4f4f5;
+            --muted: #a1a1aa;
+            --border: #27272a;
+            --primary: #3b82f6;
+            --primary-2: #2563eb;
+            --on-primary: #ffffff;
+            --accent: #8b5cf6;
+            --on-accent: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --focus: #3b82f6;
+            --shadow-soft: 0 4px 20px -2px rgba(0,0,0,0.5);
+            --shadow-strong: 0 10px 30px -5px rgba(0,0,0,0.7);
+            --radius-btn: 3px;
+            --radius-card: 8px;
+            --radius-pill: 9999px;
+            --space-1: 0.5rem;
+            --space-2: 1rem;
+            --space-3: 1.5rem;
+            --space-4: 2.5rem;
+            --space-5: 4rem;
+            --space-6: 6rem;
+            --gutter: 0;
+            --page-top: var(--space-4);
+            --page-bottom: var(--space-6);
+            --header-bg: rgba(10, 10, 11, 0.8);
+            --divider: #27272a;
+            --overlay: rgba(0, 0, 0, 0.85);
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            --dur-fast: 150ms;
+            --dur-med: 300ms;
+            --font-main: 'Inter', sans-serif;
+            --font-heading: 'Playfair Display', serif;
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f9fafb;
+            --surface: #f3f4f6;
+            --surface-2: #e5e7eb;
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --primary: #2563eb;
+            --primary-2: #1d4ed8;
+            --on-primary: #ffffff;
+            --accent: #7c3aed;
+            --on-accent: #ffffff;
+            --shadow-soft: 0 4px 20px -2px rgba(0,0,0,0.05);
+            --shadow-strong: 0 10px 30px -5px rgba(0,0,0,0.1);
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --divider: #f1f5f9;
+            --overlay: rgba(255, 255, 255, 0.9);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #page {
+            width: 100%;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: var(--space-3);
+            padding-right: var(--space-3);
+            min-width: 0;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--text);
+        }
+
+        h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); }
+        h2 { font-size: clamp(2rem, 5vw, 2.75rem); margin-bottom: var(--space-3); }
+        h3 { font-size: 1.5rem; margin-bottom: var(--space-2); }
+
+        p { margin-bottom: var(--space-2); color: var(--muted); }
+
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            border: none;
+            background: none;
+            transition: all var(--dur-fast) var(--ease-standard);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .btn {
+            padding: 0.75rem 1.75rem;
+            border-radius: var(--radius-btn);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-2);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--surface);
+            border-color: var(--primary);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: var(--header-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            height: 72px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .nav-btn {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--muted);
+            padding: 0.5rem;
+        }
+
+        .nav-btn:hover {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            background: var(--surface);
+        }
+
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            width: 40px;
+            height: 40px;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background: var(--text);
+            transition: var(--dur-med);
+        }
+
+        /* Hero */
+        .hero {
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(var(--overlay), var(--overlay)), 
+                        url("https://staging.sharpcoder.ai/uploadedimages/2006de55-0b67-46d2-8597-e0f8ef1413b3/20260406_101335_8fbd709c91.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-inner {
+            max-width: 800px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            margin-bottom: var(--space-2);
+            animation: fadeInUp 1s var(--ease-standard);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: var(--space-4);
+            color: #d1d5db;
+            animation: fadeInUp 1.2s var(--ease-standard);
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: var(--space-2);
+            justify-content: center;
+            animation: fadeInUp 1.4s var(--ease-standard);
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: var(--space-5) 0;
+            background-color: var(--bg-2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-3);
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+            font-family: var(--font-main);
+        }
+
+        .stat-item p {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+        }
+
+        /* About Section */
+        .about {
+            padding: var(--space-6) 0;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: var(--space-5);
+            align-items: center;
+        }
+
+        .about-image {
+            position: relative;
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .about-image img {
+            width: 100%;
+            display: block;
+            transition: transform var(--dur-med);
+        }
+
+        .about-image:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Services Grid */
+        .services {
+            padding: var(--space-6) 0;
+            background-color: var(--bg-2);
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto var(--space-5);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-3);
+        }
+
+        .service-card {
+            background-color: var(--surface);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+            transition: all var(--dur-med);
+            text-align: left;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            background-color: var(--bg);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            margin-bottom: var(--space-3);
+        }
+
+        /* Team Section */
+        .team {
+            padding: var(--space-6) 0;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-3);
+        }
+
+        .team-card {
+            background-color: var(--surface);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .team-img-wrapper {
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .team-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--dur-med);
+        }
+
+        .team-card:hover .team-img-wrapper img {
+            transform: scale(1.1);
+        }
+
+        .team-info {
+            padding: var(--space-3);
+        }
+
+        .team-info h4 {
+            margin-bottom: 0.25rem;
+            font-family: var(--font-main);
+            font-weight: 600;
+        }
+
+        .team-info span {
+            color: var(--primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: var(--space-6) 0;
+            background-color: var(--bg-2);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: var(--space-5);
+        }
+
+        .contact-form {
+            background-color: var(--surface);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-5) 0;
+            border-top: 1px solid var(--border);
+            background-color: var(--bg);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+
+        .footer-col h4 {
+            font-family: var(--font-main);
+            font-size: 1rem;
+            margin-bottom: var(--space-3);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-link {
+            text-align: left;
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-3);
+            border-top: 1px solid var(--divider);
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--dur-med);
+            padding: var(--space-3);
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--surface);
+            max-width: 600px;
+            width: 100%;
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform var(--dur-med);
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-2);
+            right: var(--space-2);
+            font-size: 1.5rem;
+            color: var(--muted);
+        }
+
+        /* Toast */
+        #toast-container {
+            position: fixed;
+            bottom: var(--space-3);
+            right: var(--space-3);
+            z-index: 3000;
+        }
+
+        .toast {
+            background-color: var(--surface);
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-btn);
+            box-shadow: var(--shadow-strong);
+            margin-top: 1rem;
+            animation: slideIn 0.3s ease-out;
+            color: var(--text);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .about-grid, .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .about-image {
+                order: 2;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-desktop {
+                display: none;
+            }
+            .menu-toggle {
+                display: flex;
+            }
+            .header-actions .btn {
+                display: none;
+            }
+            .hero h1 { font-size: 2.5rem; }
+            .mobile-nav {
+                position: fixed;
+                top: 72px;
+                left: 0;
+                width: 100%;
+                height: 0;
+                background: var(--bg);
+                overflow: hidden;
+                transition: height var(--dur-med);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding-top: 0;
+                z-index: 999;
+            }
+            .mobile-nav.active {
+                height: calc(100vh - 72px);
+                padding-top: var(--space-5);
+            }
+            .mobile-nav .nav-btn {
+                font-size: 1.5rem;
+                padding: var(--space-2);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="page">
+    <header>
+        <div class="container header-content">
+            <button type="button" class="brand-logo" data-scroll="hero">ZENITH IT</button>
+            
+            <nav class="nav-desktop">
+                <button type="button" class="nav-btn" data-scroll="about">About</button>
+                <button type="button" class="nav-btn" data-scroll="services">Services</button>
+                <button type="button" class="nav-btn" data-scroll="team">Team</button>
+                <button type="button" class="nav-btn" data-scroll="contact">Contact</button>
+            </nav>
+
+            <div class="header-actions">
+                <button type="button" class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle Theme">
+                    <svg class="sun-icon" width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="display:none;"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/></svg>
+                    <svg class="moon-icon" width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                </button>
+                <button type="button" class="btn btn-primary" data-scroll="contact">Start Project</button>
+                <button type="button" class="menu-toggle" id="menu-toggle-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-nav" id="mobile-nav">
+        <button type="button" class="nav-btn" data-scroll="about">About</button>
+        <button type="button" class="nav-btn" data-scroll="services">Services</button>
+        <button type="button" class="nav-btn" data-scroll="team">Team</button>
+        <button type="button" class="nav-btn" data-scroll="contact">Contact</button>
+    </div>
+
+    <main>
+        <!-- Hero -->
+        <section class="hero" id="hero">
+            <div class="container">
+                <div class="hero-inner">
+                    <h1>Architecting the <br>Digital Future</h1>
+                    <p>Zenith IT Dynamics provides cutting-edge enterprise software, cybersecurity, and cloud transformation services for high-growth startups and global firms.</p>
+                    <div class="hero-btns">
+                        <button type="button" class="btn btn-primary" data-scroll="services">Our Solutions</button>
+                        <button type="button" class="btn btn-outline" data-scroll="about">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3 class="animate-num" data-val="150">0</h3>
+                        <p>Global Clients</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="animate-num" data-val="12">0</h3>
+                        <p>Tech Hubs</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="animate-num" data-val="500">0</h3>
+                        <p>Projects Delivered</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="animate-num" data-val="99">0</h3>
+                        <p>Uptime %</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About -->
+        <section class="about" id="about">
+            <div class="container">
+                <div class="about-grid">
+                    <div class="about-image">
+                        <img src="https://staging.sharpcoder.ai/uploadedimages/2006de55-0b67-46d2-8597-e0f8ef1413b3/20260406_101335_31665bcc7f.png" alt="Innovation Hub" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    </div>
+                    <div class="about-content">
+                        <h2>Innovation Powered by Intelligence</h2>
+                        <p>Founded in 2022, Zenith IT Dynamics has rapidly grown into a leader of digital transformation. We don't just build software; we engineer resilience and scalability into every line of code.</p>
+                        <p>Our multidisciplinary team of engineers, designers, and strategists work in lockstep with your business goals to deliver results that matter. Whether it's migrating complex legacy systems to the cloud or deploying custom AI agents, we are your strategic partner in the digital age.</p>
+                        <button type="button" class="btn btn-outline" style="margin-top:var(--space-2)" id="show-values-btn">Our Core Values</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services -->
+        <section class="services" id="services">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Advanced IT Solutions</h2>
+                    <p>Scalable, secure, and smart. We provide the infrastructure and expertise to keep your business ahead of the curve.</p>
+                </div>
+                <div class="services-grid">
+                    <div class="service-card" data-product="cloud">
+                        <div class="service-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19c.3 0 .5 0 .8-.1a4.7 4.7 0 00.2-9.3 7 7 0 00-13.5-2 5 5 0 00.5 9.9h12z"/></svg>
+                        </div>
+                        <h3>Cloud Architecture</h3>
+                        <p>Multi-cloud strategies and serverless migrations designed for infinite scalability and cost-efficiency.</p>
+                        <button type="button" class="btn btn-outline btn-sm" style="margin-top:auto" data-modal="service-cloud">Details</button>
+                    </div>
+                    <div class="service-card" data-product="cyber">
+                        <div class="service-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <h3>Cybersecurity</h3>
+                        <p>Zero-trust frameworks and 24/7 threat monitoring to protect your intellectual property and user data.</p>
+                        <button type="button" class="btn btn-outline btn-sm" style="margin-top:auto" data-modal="service-cyber">Details</button>
+                    </div>
+                    <div class="service-card" data-product="ai">
+                        <div class="service-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1010 10H12V2z"/><path d="M12 12L2.1 12.3"/><path d="M12 12l9.8 3.6"/><path d="M12 12l-5.1 8.6"/><path d="M12 12l4.2-9.1"/></svg>
+                        </div>
+                        <h3>AI Integration</h3>
+                        <p>Custom machine learning models and generative AI workflows tailored for your specific operations.</p>
+                        <button type="button" class="btn btn-outline btn-sm" style="margin-top:auto" data-modal="service-ai">Details</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team -->
+        <section class="team" id="team">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Meet the Architects</h2>
+                    <p>A global team of experts committed to excellence and innovation in everything we build.</p>
+                </div>
+                <div class="team-grid">
+                    <div class="team-card">
+                        <div class="team-img-wrapper" data-modal="team-sarah">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop" alt="Sarah Chen" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        </div>
+                        <div class="team-info">
+                            <h4>Sarah Chen</h4>
+                            <span>CEO & Founder</span>
+                        </div>
+                    </div>
+                    <div class="team-card">
+                        <div class="team-img-wrapper" data-modal="team-marcus">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" alt="Marcus Thorne" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        </div>
+                        <div class="team-info">
+                            <h4>Marcus Thorne</h4>
+                            <span>Chief Technology Officer</span>
+                        </div>
+                    </div>
+                    <div class="team-card">
+                        <div class="team-img-wrapper" data-modal="team-elena">
+                            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=800&auto=format&fit=crop" alt="Elena Rodriguez" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        </div>
+                        <div class="team-info">
+                            <h4>Elena Rodriguez</h4>
+                            <span>Head of AI Research</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section class="contact" id="contact">
+            <div class="container">
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <h2>Get in Touch</h2>
+                        <p>Ready to scale your digital infrastructure? Contact our advisory team today for a free technical assessment.</p>
+                        <div style="margin-top:var(--space-4)">
+                            <div style="margin-bottom:var(--space-2)">
+                                <strong>Headquarters</strong><br>
+                                <span style="color:var(--muted)">1200 Innovation Way, Suite 400<br>San Francisco, CA 94105</span>
+                            </div>
+                            <div style="margin-bottom:var(--space-2)">
+                                <strong>Support</strong><br>
+                                <span style="color:var(--muted)">support@zenithitdynamics.io</span>
+                            </div>
+                        </div>
+                    </div>
+                    <form class="contact-form" id="contact-form">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" class="form-control" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" class="form-control" placeholder="john@company.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="topic">Subject / Topic</label>
+                            <select id="topic" class="form-control" required>
+                                <option value="">Select an option</option>
+                                <option value="cloud">Cloud Transformation</option>
+                                <option value="cyber">Cybersecurity Audit</option>
+                                <option value="ai">AI Implementation</option>
+                                <option value="other">General Inquiry</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" class="form-control" placeholder="Tell us about your project..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <button type="button" class="brand-logo" style="margin-bottom:var(--space-2); padding:0" data-scroll="hero">ZENITH IT</button>
+                    <p>Next-generation IT solutions for the enterprise world. Architecting resilience since 2022.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <div class="footer-links">
+                        <button type="button" class="footer-link" data-scroll="about">About Us</button>
+                        <button type="button" class="footer-link" data-scroll="team">Our Team</button>
+                        <button type="button" class="footer-link" id="careers-btn">Careers</button>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <div class="footer-links">
+                        <button type="button" class="footer-link" id="privacy-btn">Privacy Policy</button>
+                        <button type="button" class="footer-link" id="terms-btn">Terms of Service</button>
+                        <button type="button" class="footer-link" id="security-btn">Security</button>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Social</h4>
+                    <div class="social-links">
+                        <button type="button" class="theme-toggle" aria-label="LinkedIn" data-modal="social-li">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                        </button>
+                        <button type="button" class="theme-toggle" aria-label="Twitter" data-modal="social-tw">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="year"></span> Zenith IT Dynamics. All rights reserved.</p>
+                <p>Designed for Enterprise Excellence.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button type="button" class="modal-close">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+</div>
+
+<script>
+    (function() {
+        // Theme Management
+        const html = document.documentElement;
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const sunIcon = themeToggleBtn.querySelector('.sun-icon');
+        const moonIcon = themeToggleBtn.querySelector('.moon-icon');
+
+        const applyTheme = (theme) => {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'light') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+        };
+
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(savedTheme);
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+        // Sticky Header / Scroll
+        const header = document.querySelector('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.style.height = '64px';
+                header.style.backgroundColor = 'var(--header-bg)';
+            } else {
+                header.style.height = '72px';
+            }
+        });
+
+        // Navigation Jumps
+        const navButtons = document.querySelectorAll('[data-scroll]');
+        const mobileNav = document.getElementById('mobile-nav');
+        const menuToggle = document.getElementById('menu-toggle-btn');
+
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-scroll');
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                    mobileNav.classList.remove('active');
+                }
+            });
+        });
+
+        menuToggle.addEventListener('click', () => {
+            mobileNav.classList.toggle('active');
+        });
+
+        // Stats Animation
+        const animateNumbers = () => {
+            const items = document.querySelectorAll('.animate-num');
+            items.forEach(item => {
+                const target = parseInt(item.getAttribute('data-val'));
+                const duration = 2000;
+                const start = 0;
+                const increment = target / (duration / 16);
+                let current = start;
+
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        item.textContent = target + (target === 99 ? '%' : '+');
+                        clearInterval(timer);
+                    } else {
+                        item.textContent = Math.floor(current);
+                    }
+                }, 16);
+            });
+        };
+
+        // Observer for stats
+        const statsSection = document.querySelector('.stats');
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                animateNumbers();
+                observer.unobserve(statsSection);
+            }
+        }, { threshold: 0.5 });
+        observer.observe(statsSection);
+
+        // Modal Logic
+        const modal = document.getElementById('modal');
+        const modalBody = document.getElementById('modal-body');
+        const modalClose = modal.querySelector('.modal-close');
+
+        const openModal = (content) => {
+            modalBody.innerHTML = content;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeModal = () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        modalClose.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Content for Modals
+        const modalContents = {
+            'team-sarah': `<h3>Sarah Chen</h3><p><strong>CEO & Founder</strong></p><p>With over 15 years in enterprise software, Sarah led digital transformation for three Fortune 500 companies before founding Zenith IT Dynamics. She is a frequent keynote speaker on AI ethics and organizational resilience.</p>`,
+            'team-marcus': `<h3>Marcus Thorne</h3><p><strong>Chief Technology Officer</strong></p><p>Marcus is the lead architect behind our proprietary Zero-Trust Security framework. Former Lead Engineer at a major cloud provider, he brings unparalleled expertise in distributed systems.</p>`,
+            'team-elena': `<h3>Elena Rodriguez</h3><p><strong>Head of AI Research</strong></p><p>Dr. Rodriguez holds a PhD in Neural Networks and leads our AI innovation lab. Her work focuses on bridging the gap between theoretical machine learning and practical business operations.</p>`,
+            'service-cloud': `<h3>Cloud Architecture</h3><p>Our cloud solutions go beyond migration. We specialize in:</p><ul><li>Serverless Architecture Design</li><li>Multi-cloud Cost Optimization</li><li>High-Availability Infrastructure</li><li>Kubernetes Orchestration</li></ul>`,
+            'service-cyber': `<h3>Cybersecurity</h3><p>In an age of constant threats, we provide:</p><ul><li>Zero-Trust Network Implementation</li><li>Continuous Vulnerability Assessment</li><li>Compliance Automation (GDPR, SOC2)</li><li>Incident Response & Recovery</li></ul>`,
+            'service-ai': `<h3>AI Integration</h3><p>Unlock the power of your data:</p><ul><li>Custom LLM Fine-tuning</li><li>Predictive Analytics Engines</li><li>Automated Workflow Agents</li><li>AI Governance Frameworks</li></ul>`,
+            'social-li': `<h3>LinkedIn Profile</h3><p>External social profiles are disabled in this preview. This button would normally take you to our official LinkedIn page.</p>`,
+            'social-tw': `<h3>Twitter Profile</h3><p>External social profiles are disabled in this preview. This button would normally take you to our official Twitter/X page.</p>`
+        };
+
+        document.querySelectorAll('[data-modal]').forEach(trigger => {
+            trigger.addEventListener('click', () => {
+                const key = trigger.getAttribute('data-modal');
+                if (modalContents[key]) {
+                    openModal(modalContents[key]);
+                } else {
+                    openModal(`<h3>Information</h3><p>Details about this item are currently unavailable in this view.</p>`);
+                }
+            });
+        });
+
+        // Generic Buttons
+        document.getElementById('show-values-btn').addEventListener('click', () => {
+            openModal(`<h3>Our Core Values</h3><ul><li><strong>Integrity First:</strong> We build trust through transparency.</li><li><strong>Radical Innovation:</strong> We challenge the status quo daily.</li><li><strong>Client Success:</strong> Your growth is our primary metric.</li><li><strong>Security by Design:</strong> Protection is not an afterthought.</li></ul>`);
+        });
+
+        ['careers-btn', 'privacy-btn', 'terms-btn', 'security-btn'].forEach(id => {
+            document.getElementById(id).addEventListener('click', () => {
+                const label = document.getElementById(id).textContent;
+                openModal(`<h3>${label}</h3><p>This section is reserved for official company documentation. In this preview, actual legal texts are replaced with this informational panel.</p>`);
+            });
+        });
+
+        // Form Submission
+        const contactForm = document.getElementById('contact-form');
+        const toastContainer = document.getElementById('toast-container');
+
+        const showToast = (message) => {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = contactForm.querySelector('button');
+            const originalText = btn.textContent;
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                showToast('Thank you! Your message has been sent successfully.');
+                contactForm.reset();
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 1200);
+        });
+
+        // Footer Year
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Safe Interaction Guard
+        document.getElementById('page').addEventListener('click', (e) => {
+            const target = e.target.closest('a');
+            if (target) {
+                e.preventDefault();
+                showToast('External or unsafe action disabled in preview.');
+            }
+        });
+
+    })();
+</script>
+
+</body>
+</html>
