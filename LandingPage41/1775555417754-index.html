@@ -1,0 +1,962 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>HackIndia 2026 | The Future of AI & Web3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gutter: 0;
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 1rem;
+            --space-4: 2rem;
+            --space-5: 4rem;
+            --space-6: 8rem;
+            --font-size-1: 0.75rem;
+            --font-size-2: 0.875rem;
+            --font-size-3: 1rem;
+            --font-size-4: 1.25rem;
+            --font-size-5: 2rem;
+            --font-size-6: 3.5rem;
+            --line-1: 1.2;
+            --line-2: 1.5;
+            --line-3: 1.8;
+            --radius-btn: 3px;
+            --radius-card: 12px;
+            --radius-pill: 50px;
+            --header-height: 80px;
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            --dur-fast: 0.2s;
+            --dur-med: 0.4s;
+            --page-top: var(--space-4);
+            --page-bottom: var(--space-6);
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f8f9fa;
+            --surface: #ffffff;
+            --surface-2: #f1f3f5;
+            --text: #1a1a1a;
+            --muted: #666666;
+            --border: #e9ecef;
+            --primary: #000000;
+            --primary-2: #333333;
+            --on-primary: #ffffff;
+            --accent: #228be6;
+            --on-accent: #ffffff;
+            --success: #40c057;
+            --warning: #fab005;
+            --danger: #fa5252;
+            --focus: rgba(34, 139, 230, 0.4);
+            --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-strong: 0 12px 32px rgba(0, 0, 0, 0.1);
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --divider: #dee2e6;
+            --overlay: rgba(0, 0, 0, 0.5);
+        }
+
+        html[data-theme="dark"] {
+            --bg: #0a0a0a;
+            --bg-2: #141414;
+            --surface: #1a1a1a;
+            --surface-2: #252525;
+            --text: #f8f9fa;
+            --muted: #adb5bd;
+            --border: #333333;
+            --primary: #ffffff;
+            --primary-2: #e9ecef;
+            --on-primary: #000000;
+            --accent: #4dabf7;
+            --on-accent: #000000;
+            --success: #51cf66;
+            --warning: #fcc419;
+            --danger: #ff6b6b;
+            --focus: rgba(77, 171, 247, 0.4);
+            --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-strong: 0 12px 48px rgba(0, 0, 0, 0.5);
+            --header-bg: rgba(10, 10, 10, 0.8);
+            --divider: #2a2a2a;
+            --overlay: rgba(0, 0, 0, 0.8);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: var(--line-2);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #page {
+            width: 100%;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: var(--space-3);
+            padding-right: var(--space-3);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: var(--line-1);
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            transition: all var(--dur-fast) var(--ease-standard);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: var(--radius-btn);
+            font-size: var(--font-size-3);
+            gap: var(--space-2);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--surface-2);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background-color: var(--header-bg);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .header-content {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-4);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        /* Hero */
+        .hero {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url("https://localhost:53794/uploadedimages/f1499b82-d705-41a1-ac99-5ba710d155b8/20260406_124451_fa1f47ae56.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .hero-inner {
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 10vw, 5rem);
+            margin-bottom: var(--space-3);
+            color: #fff;
+        }
+
+        .hero p {
+            font-size: var(--font-size-4);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: var(--space-4);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Stats */
+        .stats-section {
+            padding: var(--space-5) 0;
+            background-color: var(--bg-2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: var(--font-size-6);
+            margin-bottom: var(--space-1);
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+        }
+
+        .stat-item p {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: var(--font-size-2);
+        }
+
+        /* About */
+        .about-section {
+            padding: var(--space-6) 0;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: var(--space-5);
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .about-grid { grid-template-columns: 1fr; }
+        }
+
+        .about-image {
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            box-shadow: var(--shadow-strong);
+            aspect-ratio: 4/5;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Tracks */
+        .tracks-section {
+            padding: var(--space-6) 0;
+            background-color: var(--bg-2);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-5);
+        }
+
+        .section-header h2 {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-2);
+        }
+
+        .tracks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .track-card {
+            background-color: var(--surface);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+            transition: transform var(--dur-med) var(--ease-standard);
+        }
+
+        .track-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .track-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-3);
+        }
+
+        /* Speakers */
+        .speakers-section {
+            padding: var(--space-6) 0;
+        }
+
+        .speakers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .speaker-card {
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .speaker-img-wrapper {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            margin-bottom: var(--space-3);
+        }
+
+        .speaker-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--dur-med) var(--ease-standard);
+        }
+
+        .speaker-card:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Contact */
+        .contact-section {
+            padding: var(--space-6) 0;
+            background-color: var(--bg-2);
+        }
+
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-1);
+            font-size: var(--font-size-2);
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: var(--radius-btn);
+            font-family: inherit;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--overlay);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--surface);
+            width: 90%;
+            max-width: 600px;
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            font-size: 1.5rem;
+            color: var(--muted);
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-5) 0;
+            border-top: 1px solid var(--divider);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            margin-bottom: var(--space-2);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-3);
+            border-top: 1px solid var(--divider);
+            color: var(--muted);
+            font-size: var(--font-size-2);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        /* Utilities */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #feedback-toast {
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            background-color: var(--primary);
+            color: var(--on-primary);
+            padding: 1rem 2rem;
+            border-radius: var(--radius-btn);
+            display: none;
+            z-index: 3000;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: 100%;
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--divider);
+            padding: var(--space-4);
+            display: none;
+            flex-direction: column;
+            gap: var(--space-3);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+<div id="page">
+    <header>
+        <div class="container header-content">
+            <div class="brand">HackIndia 2026</div>
+            <nav class="nav-links">
+                <button type="button" data-scroll="about">About</button>
+                <button type="button" data-scroll="tracks">Tracks</button>
+                <button type="button" data-scroll="speakers">Speakers</button>
+                <button type="button" data-scroll="contact">Contact</button>
+            </nav>
+            <div class="header-actions">
+                <button type="button" id="theme-toggle" aria-label="Toggle theme">
+                    <svg class="sun-icon" style="display:none" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    <svg class="moon-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                </button>
+                <button type="button" class="btn btn-primary" data-action="register">Register Now</button>
+                <button type="button" class="hamburger" id="menu-btn">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-menu" id="mobile-menu">
+        <button type="button" data-scroll="about">About</button>
+        <button type="button" data-scroll="tracks">Tracks</button>
+        <button type="button" data-scroll="speakers">Speakers</button>
+        <button type="button" data-scroll="contact">Contact</button>
+    </div>
+
+    <section class="hero" id="home">
+        <div class="container hero-inner">
+            <h1 class="reveal">Build the Future of Intelligence & Decentralization</h1>
+            <p class="reveal">India's premier AI and Web3 Hackathon. 48 hours of innovation, collaboration, and high-stakes building in the heart of the tech revolution.</p>
+            <div class="reveal" style="display: flex; gap: var(--space-3); justify-content: center;">
+                <button type="button" class="btn btn-primary" data-action="register">Apply as Hacker</button>
+                <button type="button" class="btn btn-outline" data-scroll="about">Learn More</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="container stats-grid">
+            <div class="stat-item">
+                <h3 data-count="5000">0</h3>
+                <p>Attendees</p>
+            </div>
+            <div class="stat-item">
+                <h3 data-count="60">0</h3>
+                <p>Global Speakers</p>
+            </div>
+            <div class="stat-item">
+                <h3 data-count="25">0</h3>
+                <p>Countries</p>
+            </div>
+            <div class="stat-item">
+                <h3 data-count="150">0</h3>
+                <p>Innovators</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section" id="about">
+        <div class="container about-grid">
+            <div class="about-image reveal">
+                <img src="https://localhost:53794images/1_b3e90481d3f34bec920dfb4e16c13c63.png" 
+                     alt="About HackIndia" 
+                     referrerpolicy="no-referrer-when-downgrade" 
+                     crossorigin="anonymous">
+            </div>
+            <div class="about-content reveal">
+                <h2>Converging Intelligence and Trust</h2>
+                <p style="margin-bottom: 1.5rem;">HackIndia 2026 is more than just a competition; it's a launchpad for the next generation of decentralized applications. We bring together the sharpest minds in Artificial Intelligence and Blockchain to solve real-world problems.</p>
+                <p style="margin-bottom: 2rem;">Whether you're building generative AI agents, zero-knowledge proof systems, or sustainable DeFi protocols, this is your arena to showcase your vision to world-class mentors and investors.</p>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <span style="font-size: 1.5rem;">🚀</span>
+                        <div>
+                            <strong>$500k+ Prize Pool</strong>
+                            <p style="color: var(--muted); font-size: 0.9rem;">Grants, bounties, and investment opportunities.</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <span style="font-size: 1.5rem;">🤝</span>
+                        <div>
+                            <strong>1:1 Mentorship</strong>
+                            <p style="color: var(--muted); font-size: 0.9rem;">Direct access to industry leads from top AI & Web3 firms.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="tracks-section" id="tracks">
+        <div class="container">
+            <div class="section-header">
+                <h2>Innovation Tracks</h2>
+                <p>Push the boundaries of technology in these focus areas.</p>
+            </div>
+            <div class="tracks-grid">
+                <div class="track-card reveal">
+                    <div class="track-icon">🤖</div>
+                    <h3>AI Agents & LLMs</h3>
+                    <p style="color: var(--muted); margin-top: 1rem;">Develop autonomous agents that can navigate on-chain environments and facilitate complex tasks.</p>
+                    <button type="button" class="btn btn-outline" style="margin-top: 1.5rem; width: 100%;" data-item="ai-track">Track Details</button>
+                </div>
+                <div class="track-card reveal">
+                    <div class="track-icon">💎</div>
+                    <h3>Decentralized Finance</h3>
+                    <p style="color: var(--muted); margin-top: 1rem;">Reimagining the global financial system through transparent, trustless, and permissionless protocols.</p>
+                    <button type="button" class="btn btn-outline" style="margin-top: 1.5rem; width: 100%;" data-item="defi-track">Track Details</button>
+                </div>
+                <div class="track-card reveal">
+                    <div class="track-icon">🔐</div>
+                    <h3>Privacy & ZK</h3>
+                    <p style="color: var(--muted); margin-top: 1rem;">Implementing zero-knowledge proofs to enable privacy-preserving identities and computations.</p>
+                    <button type="button" class="btn btn-outline" style="margin-top: 1.5rem; width: 100%;" data-item="zk-track">Track Details</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="speakers-section" id="speakers">
+        <div class="container">
+            <div class="section-header">
+                <h2>Global Speakers</h2>
+                <p>Insights from the pioneers of the digital frontier.</p>
+            </div>
+            <div class="speakers-grid">
+                <!-- Speakers will be enhanced by modals -->
+                <div class="speaker-card reveal" data-speaker="1">
+                    <div class="speaker-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400" alt="Dr. Aruna Sharma" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    </div>
+                    <h3>Dr. Aruna Sharma</h3>
+                    <p style="color: var(--muted);">AI Ethics Lead, Future Labs</p>
+                </div>
+                <div class="speaker-card reveal" data-speaker="2">
+                    <div class="speaker-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400" alt="Vikram Malhotra" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    </div>
+                    <h3>Vikram Malhotra</h3>
+                    <p style="color: var(--muted);">CTO, Decentralize.io</p>
+                </div>
+                <div class="speaker-card reveal" data-speaker="3">
+                    <div class="speaker-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400" alt="Sarah Chen" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    </div>
+                    <h3>Sarah Chen</h3>
+                    <p style="color: var(--muted);">Web3 Venture Partner</p>
+                </div>
+                <div class="speaker-card reveal" data-speaker="4">
+                    <div class="speaker-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" alt="Julian Reed" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    </div>
+                    <h3>Julian Reed</h3>
+                    <p style="color: var(--muted);">Lead Researcher, NeuralBlock</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Get in Touch</h2>
+                <p>Have questions? We're here to help you get started.</p>
+            </div>
+            <div class="contact-container reveal">
+                <form id="contact-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" required placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required placeholder="you@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="topic">Subject/Topic</label>
+                        <input type="text" id="topic" required placeholder="What is this regarding?">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" rows="5" required placeholder="Tell us more..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-logo">HackIndia 2026</div>
+                    <p style="color: var(--muted); font-size: 0.9rem;">Building the bridge between intelligent algorithms and decentralized trust protocols.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Resources</h4>
+                    <ul style="list-style: none; font-size: 0.9rem; color: var(--muted); display: flex; flex-direction: column; gap: 0.5rem;">
+                        <li><button type="button" data-action="info">Whitepaper</button></li>
+                        <li><button type="button" data-action="info">Hacker Guide</button></li>
+                        <li><button type="button" data-action="info">Brand Assets</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Community</h4>
+                    <div class="social-links">
+                        <button type="button" class="social-icon" data-platform="Discord">👾</button>
+                        <button type="button" class="social-icon" data-platform="Twitter">🐦</button>
+                        <button type="button" class="social-icon" data-platform="GitHub">🐙</button>
+                        <button type="button" class="social-icon" data-platform="LinkedIn">💼</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="year"></span> HackIndia. All rights reserved.</p>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="button" data-action="info">Privacy Policy</button>
+                    <button type="button" data-action="info">Terms of Service</button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Global Modal Structure -->
+    <div class="modal-overlay" id="global-modal">
+        <div class="modal-content">
+            <button type="button" class="close-modal" id="close-modal">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast Feedback -->
+    <div id="feedback-toast" role="status">Success! Message received.</div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Year compute
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = themeToggle.querySelector('.sun-icon');
+        const moonIcon = themeToggle.querySelector('.moon-icon');
+        
+        const applyTheme = (theme) => {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'light') {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+        };
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        applyTheme(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            applyTheme(current === 'dark' ? 'light' : 'dark');
+        });
+
+        // Local Smooth Scroll
+        document.querySelectorAll('[data-scroll]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-scroll');
+                const target = document.getElementById(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    mobileMenu.style.display = 'none';
+                }
+            });
+        });
+
+        // Mobile Menu
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.style.display = mobileMenu.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        // Intersection Observer for Reveal & Counters
+        const observerOptions = { threshold: 0.1 };
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // Animated Counters
+        const countObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.getAttribute('data-count'));
+                    animateCount(entry.target, target);
+                    countObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
+
+        function animateCount(el, target) {
+            let start = 0;
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    el.textContent = target + (target > 100 ? '+' : '');
+                    clearInterval(timer);
+                } else {
+                    el.textContent = Math.floor(start);
+                }
+            }, 16);
+        }
+
+        // Modals Data
+        const speakers = {
+            "1": { name: "Dr. Aruna Sharma", role: "AI Ethics Lead", bio: "Renowned expert in the governance of autonomous systems and neural network ethics. Dr. Sharma will be discussing the intersection of human rights and machine learning.", talk: "Decentralized Ethics: Protecting Human Agency" },
+            "2": { name: "Vikram Malhotra", role: "CTO, Decentralize.io", bio: "Pioneer in layer-2 scaling solutions and high-throughput blockchain architecture. Vikram has led some of the largest Web3 infrastructure migrations.", talk: "The AI Oracle Problem: Getting Data On-Chain" },
+            "3": { name: "Sarah Chen", role: "Web3 Venture Partner", bio: "Leading investor in early-stage Web3 startups. Sarah has a track record of identifying transformative technologies before they hit the mainstream.", talk: "Future-Proofing Your Web3 Startup" },
+            "4": { name: "Julian Reed", role: "Lead Researcher, NeuralBlock", bio: "Architect of the NeuralBlock protocol, focusing on private AI training over decentralized compute networks.", talk: "Confidential Computing for Large Language Models" }
+        };
+
+        const tracks = {
+            "ai-track": { title: "AI Agents & LLMs", detail: "Focus on autonomous agents that use blockchain for payment, identity, and coordination. Projects can include LLM fine-tuning for specific on-chain tasks, AI governance DAOs, or decentralized agent marketplaces." },
+            "defi-track": { title: "Decentralized Finance", detail: "Innovation in liquidity provision, decentralized stablecoins, and yield optimization. We are specifically looking for cross-chain liquidity solutions and AI-driven risk management in DeFi." },
+            "zk-track": { title: "Privacy & ZK", detail: "Utilizing zero-knowledge proofs for identity, scaling, and private transactions. Create tools that allow users to prove facts about their data without revealing the data itself." }
+        };
+
+        const modal = document.getElementById('global-modal');
+        const modalBody = document.getElementById('modal-body');
+        const closeModal = document.getElementById('close-modal');
+
+        const openModal = (htmlContent) => {
+            modalBody.innerHTML = htmlContent;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeAllModals = () => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        // Speaker Click
+        document.querySelectorAll('.speaker-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.getAttribute('data-speaker');
+                const s = speakers[id];
+                openModal(`
+                    <h2 style="margin-bottom: 0.5rem;">${s.name}</h2>
+                    <p style="color: var(--accent); font-weight: 600; margin-bottom: 1.5rem;">${s.role}</p>
+                    <p style="margin-bottom: 1.5rem;">${s.bio}</p>
+                    <div style="background: var(--bg-2); padding: 1rem; border-radius: 8px;">
+                        <strong>Keynote Talk:</strong>
+                        <p style="margin-top: 0.25rem;">${s.talk}</p>
+                    </div>
+                `);
+            });
+        });
+
+        // Track Click
+        document.querySelectorAll('[data-item]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-item');
+                const t = tracks[id];
+                openModal(`
+                    <h2 style="margin-bottom: 1rem;">${t.title}</h2>
+                    <p style="line-height: 1.6;">${t.detail}</p>
+                    <button type="button" class="btn btn-primary" style="margin-top: 2rem; width: 100%;" onclick="document.getElementById('close-modal').click()">Close Details</button>
+                `);
+            });
+        });
+
+        // Social & Generic Info Click
+        document.querySelectorAll('.social-icon, [data-action="info"], [data-action="register"]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const platform = btn.getAttribute('data-platform') || "the action";
+                openModal(`
+                    <div style="text-align: center; padding: 1rem;">
+                        <h2 style="margin-bottom: 1rem;">Information</h2>
+                        <p>Detailed view for <strong>${platform}</strong> is currently disabled in this preview environment.</p>
+                        <p style="margin-top: 1rem; color: var(--muted);">Stay tuned for the full launch of HackIndia 2026!</p>
+                        <button type="button" class="btn btn-primary" style="margin-top: 2rem;" onclick="document.getElementById('close-modal').click()">Got it</button>
+                    </div>
+                `);
+            });
+        });
+
+        // Close Modal Events
+        closeModal.addEventListener('click', closeAllModals);
+        window.addEventListener('click', (e) => { if (e.target === modal) closeAllModals(); });
+        window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllModals(); });
+
+        // Contact Form Submission
+        const contactForm = document.getElementById('contact-form');
+        const toast = document.getElementById('feedback-toast');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Show toast
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+                contactForm.reset();
+            }, 3000);
+        });
+
+        // Local Safe Interaction Guard
+        const pageRoot = document.getElementById('page');
+        pageRoot.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                showToast("External action disabled in preview.");
+            }
+        }, true);
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+                toast.textContent = "Success! Message received.";
+            }, 3000);
+        }
+    });
+</script>
+
+</body>
+</html>
