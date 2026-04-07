@@ -1,0 +1,976 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>HackIndia 2026 | AI & Web3 Hackathon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-2: #4f46e5;
+            --on-primary: #ffffff;
+            --accent: #10b981;
+            --on-accent: #ffffff;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --focus: #818cf8;
+            
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 1rem;
+            --space-4: 1.5rem;
+            --space-5: 2rem;
+            --space-6: 4rem;
+            
+            --font-size-1: 0.875rem;
+            --font-size-2: 1rem;
+            --font-size-3: 1.25rem;
+            --font-size-4: 1.5rem;
+            --font-size-5: 2.25rem;
+            --font-size-6: 3.5rem;
+            
+            --radius-btn: 3px;
+            --radius-card: 8px;
+            --radius-pill: 9999px;
+            
+            --gutter: 0;
+            --page-top: var(--space-4);
+            --page-bottom: var(--space-6);
+            --divider: rgba(255,255,255,0.1);
+            --overlay: rgba(0,0,0,0.7);
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            --dur-fast: 150ms;
+            --dur-med: 300ms;
+            --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-strong: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f9fafb;
+            --surface: #ffffff;
+            --surface-2: #f3f4f6;
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --divider: rgba(0,0,0,0.05);
+        }
+
+        html[data-theme="dark"] {
+            --bg: #0b0f19;
+            --bg-2: #111827;
+            --surface: #1f2937;
+            --surface-2: #374151;
+            --text: #f9fafb;
+            --muted: #9ca3af;
+            --border: #374151;
+            --header-bg: rgba(11, 15, 25, 0.8);
+            --divider: rgba(255,255,255,0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            color: inherit;
+            transition: all var(--dur-fast) var(--ease-standard);
+        }
+
+        #page {
+            width: 100%;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: var(--space-3);
+            padding-right: var(--space-3);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 72px;
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--divider);
+            display: flex;
+            align-items: center;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: var(--font-size-3);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        nav.desktop-nav {
+            display: flex;
+            gap: var(--space-4);
+        }
+
+        nav button {
+            font-size: var(--font-size-1);
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        nav button:hover {
+            color: var(--text);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            font-size: var(--font-size-1);
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-2);
+            transform: translateY(-1px);
+        }
+
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--surface-2);
+            color: var(--text);
+        }
+
+        /* Hero */
+        .hero {
+            width: 100%;
+            min-height: 100vh;
+            background-image: linear-gradient(to bottom, rgba(11, 15, 25, 0.6), rgba(11, 15, 25, 0.9)), url("https://staging.sharpcoder.ai/uploadedimages/2006de55-0b67-46d2-8597-e0f8ef1413b3/20260407_055653_380c48fd9c.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding-top: 72px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, var(--font-size-6));
+            margin-bottom: var(--space-3);
+            color: #fff;
+        }
+
+        .hero p {
+            font-size: var(--font-size-3);
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: var(--space-5);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: center;
+        }
+
+        /* Sections */
+        section {
+            padding: var(--space-6) 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: var(--space-5);
+        }
+
+        .section-title h2 {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-2);
+        }
+
+        .section-title p {
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* About */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: var(--space-5);
+            align-items: center;
+        }
+
+        .about-image {
+            width: 100%;
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .about-text h3 {
+            font-size: var(--font-size-4);
+            margin-bottom: var(--space-3);
+            color: var(--primary);
+        }
+
+        /* Stats */
+        .stats-band {
+            background: var(--bg-2);
+            border-top: 1px solid var(--divider);
+            border-bottom: 1px solid var(--divider);
+            padding: var(--space-5) 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-4);
+            text-align: center;
+        }
+
+        .stat-item h4 {
+            font-size: var(--font-size-6);
+            font-family: 'Inter', sans-serif;
+            color: var(--primary);
+        }
+
+        .stat-item p {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            font-size: var(--font-size-1);
+        }
+
+        /* Tracks */
+        .track-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .track-card {
+            background: var(--surface);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+            transition: transform var(--dur-med) var(--ease-standard);
+        }
+
+        .track-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+        }
+
+        .track-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--surface-2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-3);
+            color: var(--primary);
+        }
+
+        /* Speakers */
+        .speaker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .speaker-card {
+            background: var(--surface);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: transform var(--dur-med) var(--ease-standard);
+        }
+
+        .speaker-card:hover {
+            transform: scale(1.02);
+        }
+
+        .speaker-img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+        }
+
+        .speaker-info {
+            padding: var(--space-3);
+        }
+
+        .speaker-info h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: var(--font-size-2);
+            margin-bottom: var(--space-1);
+        }
+
+        .speaker-info p {
+            font-size: var(--font-size-1);
+            color: var(--muted);
+        }
+
+        /* Form */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: var(--space-5);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        .form-group label {
+            display: block;
+            font-size: var(--font-size-1);
+            font-weight: 500;
+            margin-bottom: var(--space-1);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: var(--radius-btn);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: 2px solid var(--focus);
+            outline-offset: -2px;
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-6) 0 var(--space-4);
+            border-top: 1px solid var(--divider);
+            background: var(--bg-2);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: var(--space-5);
+            margin-bottom: var(--space-5);
+        }
+
+        .footer-brand h4 {
+            font-size: var(--font-size-3);
+            margin-bottom: var(--space-2);
+            color: var(--primary);
+        }
+
+        .footer-links h5 {
+            margin-bottom: var(--space-3);
+            font-size: var(--font-size-2);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: var(--space-2);
+        }
+
+        .footer-links button {
+            color: var(--muted);
+            font-size: var(--font-size-1);
+        }
+
+        .footer-links button:hover {
+            color: var(--text);
+        }
+
+        .copyright {
+            text-align: center;
+            color: var(--muted);
+            font-size: var(--font-size-1);
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--divider);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--overlay);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: var(--space-3);
+        }
+
+        .modal-content {
+            background: var(--surface);
+            max-width: 500px;
+            width: 100%;
+            border-radius: var(--radius-card);
+            padding: var(--space-5);
+            position: relative;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            font-size: var(--font-size-4);
+            line-height: 1;
+        }
+
+        /* Toasts */
+        #toast-container {
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            z-index: 3000;
+        }
+
+        .toast {
+            background: var(--surface);
+            color: var(--text);
+            padding: var(--space-3) var(--space-4);
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            box-shadow: var(--shadow-strong);
+            margin-top: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-nav { display: none; }
+            .mobile-menu-btn { display: block; font-size: 1.5rem; }
+            .about-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: var(--font-size-5); }
+        }
+
+        .mobile-drawer {
+            position: fixed;
+            top: 0; right: -100%;
+            width: 80%; max-width: 300px;
+            height: 100%;
+            background: var(--surface);
+            z-index: 2001;
+            padding: var(--space-6) var(--space-4);
+            transition: right 0.3s ease;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .mobile-drawer.active { right: 0; }
+
+        .drawer-links {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .drawer-links button {
+            text-align: left;
+            font-size: var(--font-size-3);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div id="page">
+    <header>
+        <div class="container">
+            <button type="button" class="logo" onclick="window.scrollTo({top:0, behavior:'smooth'})">HackIndia 2026</button>
+            
+            <nav class="desktop-nav">
+                <button type="button" data-target="about">About</button>
+                <button type="button" data-target="tracks">Tracks</button>
+                <button type="button" data-target="speakers">Speakers</button>
+                <button type="button" data-target="contact">Contact</button>
+            </nav>
+
+            <div class="header-actions">
+                <button type="button" class="theme-toggle" id="theme-btn" aria-label="Toggle Theme">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                </button>
+                <button type="button" class="btn btn-primary" data-target="contact">Join Now</button>
+                <button type="button" class="mobile-menu-btn" id="menu-open">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>The Future of AI & Web3 is Decentralized</h1>
+                    <p>India's largest hackathon focused on the synergy between Generative AI and Decentralized Networks. Build the next generation of intelligent protocols.</p>
+                    <div class="hero-btns">
+                        <button type="button" class="btn btn-primary" data-target="about">Discover More</button>
+                        <button type="button" class="btn" style="background: var(--surface); border: 1px solid var(--border);" data-target="tracks">View Tracks</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Band -->
+        <div class="stats-band">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h4 class="count-up" data-value="5000">0</h4>
+                        <p>Hackers</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 class="count-up" data-value="120">0</h4>
+                        <p>Mentors & Speakers</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4 class="count-up" data-value="25">0</h4>
+                        <p>Innovation Tracks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <section id="about">
+            <div class="container">
+                <div class="about-grid">
+                    <div class="about-image">
+                        <img src="https://staging.sharpcoder.ai/uploadedimages/2006de55-0b67-46d2-8597-e0f8ef1413b3/20260407_055653_e0d46702e9.png" alt="HackIndia Event Atmosphere" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    </div>
+                    <div class="about-text">
+                        <h3>About HackIndia 2026</h3>
+                        <h2>Where Silicon Valley meets the silicon coast of Bangalore.</h2>
+                        <p>HackIndia is more than just a competition; it's a movement to empower the next wave of Indian developers. In 2026, we are zeroing in on the intersection of Artificial Intelligence and Web3 technology.</p>
+                        <p style="margin-top: var(--space-3)">Participants will have 48 hours to design, develop, and pitch solutions that leverage on-chain data for LLMs, decentralized compute resources, and autonomous agents that live on the blockchain.</p>
+                        <button type="button" class="btn btn-primary" style="margin-top: var(--space-4)" onclick="showModal('event-details')">View Agenda</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tracks Section -->
+        <section id="tracks" style="background: var(--bg-2);">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Innovation Tracks</h2>
+                    <p>Compete for a total prize pool of $150,000 across five specialized tracks.</p>
+                </div>
+                <div class="track-grid">
+                    <div class="track-card" onclick="showModal('track-ai')">
+                        <div class="track-icon">🤖</div>
+                        <h3>On-Chain AI</h3>
+                        <p>Build LLMs that execute transactions and verify their logic via Zero-Knowledge Proofs.</p>
+                    </div>
+                    <div class="track-card" onclick="showModal('track-web3')">
+                        <div class="track-icon">🌐</div>
+                        <h3>Decentralized Social</h3>
+                        <p>Reclaim ownership of social graphs using AI-powered moderation on Web3 protocols.</p>
+                    </div>
+                    <div class="track-card" onclick="showModal('track-infra')">
+                        <div class="track-icon">🏗️</div>
+                        <h3>Compute Economy</h3>
+                        <p>Marketplaces for GPU/CPU power to train large-scale AI models without central silos.</p>
+                    </div>
+                    <div class="track-card" onclick="showModal('track-gaming')">
+                        <div class="track-icon">🎮</div>
+                        <h3>Autonomous Gaming</h3>
+                        <p>Fully on-chain game worlds populated by self-evolving AI NPCs and dynamic economies.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Speakers Section -->
+        <section id="speakers">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Meet the Mentors</h2>
+                    <p>Global industry leaders from AI research labs and Web3 foundations.</p>
+                </div>
+                <div class="speaker-grid">
+                    <!-- Speaker 1 -->
+                    <div class="speaker-card" onclick="showSpeakerModal('Dr. Aruna Iyer', 'Lead AI Researcher at DeepLink', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400')">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400" alt="Dr. Aruna Iyer" class="speaker-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        <div class="speaker-info">
+                            <h4>Dr. Aruna Iyer</h4>
+                            <p>DeepLink Research</p>
+                        </div>
+                    </div>
+                    <!-- Speaker 2 -->
+                    <div class="speaker-card" onclick="showSpeakerModal('Vikram Shah', 'Founder of ChainLogic', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400')">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" alt="Vikram Shah" class="speaker-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        <div class="speaker-info">
+                            <h4>Vikram Shah</h4>
+                            <p>ChainLogic</p>
+                        </div>
+                    </div>
+                    <!-- Speaker 3 -->
+                    <div class="speaker-card" onclick="showSpeakerModal('Elena Rodriguez', 'CTO of NeonProtocol', 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400')">
+                        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400" alt="Elena Rodriguez" class="speaker-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        <div class="speaker-info">
+                            <h4>Elena Rodriguez</h4>
+                            <p>NeonProtocol</p>
+                        </div>
+                    </div>
+                    <!-- Speaker 4 -->
+                    <div class="speaker-card" onclick="showSpeakerModal('Siddharth Malotra', 'Ecosystem Lead, Solana India', 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400')">
+                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400" alt="Siddharth Malotra" class="speaker-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        <div class="speaker-info">
+                            <h4>Siddharth Malotra</h4>
+                            <p>Solana India</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" style="background: var(--bg-2);">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Apply Now</h2>
+                    <p>Registration ends August 15th, 2026. Submit your team early to secure a spot.</p>
+                </div>
+                <form class="contact-form" id="reg-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Primary Track</label>
+                        <input type="text" id="subject" placeholder="e.g. On-Chain AI" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Your Experience (Links to GitHub/LinkedIn)</label>
+                        <textarea id="message" rows="4" placeholder="Tell us about your background..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Application</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h4>HackIndia 2026</h4>
+                    <p>Empowering the builders of tomorrow through open-source innovation and decentralized intelligence.</p>
+                </div>
+                <div class="footer-links">
+                    <h5>Resources</h5>
+                    <ul>
+                        <li><button type="button" onclick="showModal('whitepaper')">Whitepaper</button></li>
+                        <li><button type="button" onclick="showModal('guide')">Hackathon Guide</button></li>
+                        <li><button type="button" onclick="showModal('code-of-conduct')">Code of Conduct</button></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h5>Social</h5>
+                    <ul>
+                        <li><button type="button" onclick="showModal('twitter')">Twitter (X)</button></li>
+                        <li><button type="button" onclick="showModal('discord')">Discord Community</button></li>
+                        <li><button type="button" onclick="showModal('github')">GitHub Org</button></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; <span id="year"></span> HackIndia Council. All rights reserved. Built for the decentralized future.
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal-overlay">
+    <div class="modal-content">
+        <button type="button" class="modal-close" id="modal-close">&times;</button>
+        <div id="modal-body"></div>
+    </div>
+</div>
+
+<!-- Mobile Drawer -->
+<div id="drawer" class="mobile-drawer">
+    <div class="drawer-links">
+        <button type="button" data-target="about">About</button>
+        <button type="button" data-target="tracks">Tracks</button>
+        <button type="button" data-target="speakers">Speakers</button>
+        <button type="button" data-target="contact">Apply Now</button>
+    </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+    // Theme Logic
+    const html = document.documentElement;
+    const themeBtn = document.getElementById('theme-btn');
+    
+    function initTheme() {
+        const saved = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', saved);
+    }
+    initTheme();
+
+    themeBtn.addEventListener('click', () => {
+        const current = html.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+    });
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Scroll Logic
+    document.querySelectorAll('[data-target]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-target');
+            const target = document.getElementById(id);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('drawer').classList.remove('active');
+            } else {
+                showToast("Action disabled in preview.");
+            }
+        });
+    });
+
+    // Mobile Menu
+    const menuOpen = document.getElementById('menu-open');
+    const drawer = document.getElementById('drawer');
+    menuOpen.addEventListener('click', () => {
+        drawer.classList.toggle('active');
+    });
+
+    // Close on outside click
+    window.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal-overlay')) {
+            hideModal();
+        }
+        if (e.target === drawer) {
+            drawer.classList.remove('active');
+        }
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            hideModal();
+            drawer.classList.remove('active');
+        }
+    });
+
+    // Modal Logic
+    const modal = document.getElementById('modal');
+    const modalBody = document.getElementById('modal-body');
+    const modalClose = document.getElementById('modal-close');
+
+    function showModal(type) {
+        let content = '';
+        switch(type) {
+            case 'track-ai':
+                content = `<h3>On-Chain AI</h3><p>This track focuses on integrating Large Language Models with smart contract functionality. We are looking for projects that utilize ZKML (Zero-Knowledge Machine Learning) to prove that an AI model was run correctly on-chain.</p>`;
+                break;
+            case 'track-web3':
+                content = `<h3>Decentralized Social</h3><p>Reinvent how we connect. Use decentralized storage and AI-driven content verification to build social platforms that prioritize user privacy and data ownership.</p>`;
+                break;
+            default:
+                content = `<h3>Info</h3><p>Detailed information about ${type} is coming soon in the official participant dashboard.</p>`;
+        }
+        modalBody.innerHTML = content;
+        modal.style.display = 'flex';
+    }
+
+    function showSpeakerModal(name, bio, img) {
+        modalBody.innerHTML = `
+            <div style="text-align:center;">
+                <img src="${img}" style="width:120px; height:120px; border-radius:50%; object-fit:cover; margin-bottom:1rem;" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                <h3>${name}</h3>
+                <p style="color:var(--primary); font-weight:600;">${bio}</p>
+                <div style="margin-top:1.5rem; text-align:left; font-size:var(--font-size-1); color:var(--muted);">
+                    <p>Join ${name.split(' ')[0]}'s masterclass on "Scaling AI Infrastructure for Web3 Systems" during Day 2 of the hackathon.</p>
+                </div>
+            </div>
+        `;
+        modal.style.display = 'flex';
+    }
+
+    function hideModal() {
+        modal.style.display = 'none';
+    }
+    modalClose.addEventListener('click', hideModal);
+
+    // Form Submission
+    const form = document.getElementById('reg-form');
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        showToast("Application submitted successfully!");
+        form.reset();
+    });
+
+    // Toast Logic
+    function showToast(msg) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = msg;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Intersection Observer for Stats
+    const countItems = document.querySelectorAll('.count-up');
+    const observerOptions = { threshold: 0.5 };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = parseInt(entry.target.getAttribute('data-value'));
+                animateValue(entry.target, 0, target, 2000);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    countItems.forEach(item => observer.observe(item));
+
+    function animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = Math.floor(progress * (end - start) + start) + (end > 1000 ? '+' : '');
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    // Scroll reveal
+    const revealSections = document.querySelectorAll('section');
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    revealSections.forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        revealObserver.observe(section);
+    });
+
+</script>
+
+</body>
+</html>
