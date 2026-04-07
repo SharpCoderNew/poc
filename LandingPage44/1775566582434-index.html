@@ -1,0 +1,1029 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>HackIndia 2026 | AI & Web3 Hackathon</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme || systemTheme);
+        })();
+    </script>
+
+    <style>
+        :root {
+            --gutter: 0;
+            --space-1: 0.5rem;
+            --space-2: 1rem;
+            --space-3: 1.5rem;
+            --space-4: 2rem;
+            --space-5: 4rem;
+            --space-6: 8rem;
+            
+            --font-size-1: 0.875rem;
+            --font-size-2: 1rem;
+            --font-size-3: 1.25rem;
+            --font-size-4: 1.5rem;
+            --font-size-5: 2.5rem;
+            --font-size-6: 4rem;
+
+            --radius-btn: 3px;
+            --radius-card: 12px;
+            --radius-pill: 9999px;
+
+            --dur-fast: 0.2s;
+            --dur-med: 0.4s;
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+            --page-top: var(--space-4);
+            --page-bottom: var(--space-6);
+        }
+
+        html[data-theme="dark"] {
+            --bg: #0a0a0c;
+            --bg-2: #121215;
+            --surface: #18181c;
+            --surface-2: #24242b;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: #2d2d35;
+            --primary: #6366f1;
+            --primary-2: #4f46e5;
+            --on-primary: #ffffff;
+            --accent: #f43f5e;
+            --on-accent: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --focus: #818cf8;
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.5);
+            --shadow-strong: 0 10px 40px rgba(0,0,0,0.7);
+            --header-bg: rgba(10, 10, 12, 0.8);
+            --divider: rgba(255, 255, 255, 0.05);
+            --overlay: rgba(0, 0, 0, 0.8);
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f8fafc;
+            --surface: #ffffff;
+            --surface-2: #f1f5f9;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #4f46e5;
+            --primary-2: #4338ca;
+            --on-primary: #ffffff;
+            --accent: #e11d48;
+            --on-accent: #ffffff;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --focus: #6366f1;
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.05);
+            --shadow-strong: 0 10px 40px rgba(0,0,0,0.1);
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --divider: rgba(0, 0, 0, 0.05);
+            --overlay: rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        #page {
+            width: 100%;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            min-width: 0;
+            padding-left: var(--space-3);
+            padding-right: var(--space-3);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            transition: all var(--dur-fast) var(--ease-standard);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: var(--header-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            height: 72px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: var(--font-size-4);
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: var(--space-4);
+        }
+
+        .nav-desktop button {
+            color: var(--muted);
+            font-weight: 500;
+            font-size: var(--font-size-1);
+        }
+
+        .nav-desktop button:hover {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-pill);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-2);
+            color: var(--text);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            font-size: var(--font-size-1);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-2);
+            transform: translateY(-1px);
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-image: url("https://app.sharpcoder.ai/uploadedimages/8b2c2838421a4dd99ea781c08571d7ec/20260403_110605_8ab233f1ba.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-referrer-when-downgrade;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            color: #ffffff;
+            margin-bottom: var(--space-2);
+        }
+
+        .hero p {
+            font-size: var(--font-size-4);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: var(--space-4);
+            font-weight: 300;
+        }
+
+        /* Stats */
+        .stats-section {
+            padding: var(--space-5) 0;
+            background: var(--bg-2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: var(--font-size-5);
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-item p {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+            font-size: var(--font-size-1);
+        }
+
+        /* About Section */
+        .about-section {
+            padding: var(--space-6) 0;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-5);
+            align-items: center;
+        }
+
+        .about-image {
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .about-text h2 {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-3);
+        }
+
+        .about-text p {
+            font-size: var(--font-size-2);
+            color: var(--muted);
+            margin-bottom: var(--space-3);
+        }
+
+        /* Tracks Section */
+        .tracks-section {
+            padding: var(--space-5) 0;
+            background: var(--bg-2);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-5);
+        }
+
+        .section-header h2 {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-1);
+        }
+
+        .track-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .track-card {
+            background: var(--surface);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+            transition: transform var(--dur-med) var(--ease-standard);
+        }
+
+        .track-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+        }
+
+        .track-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            color: var(--on-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-3);
+        }
+
+        /* Speakers Section */
+        .speakers-section {
+            padding: var(--space-6) 0;
+        }
+
+        .speaker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .speaker-card {
+            background: var(--surface);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all var(--dur-med) var(--ease-standard);
+        }
+
+        .speaker-card:hover {
+            box-shadow: var(--shadow-strong);
+            border-color: var(--primary);
+        }
+
+        .speaker-image {
+            aspect-ratio: 1;
+            overflow: hidden;
+        }
+
+        .speaker-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--dur-med) var(--ease-standard);
+        }
+
+        .speaker-card:hover .speaker-image img {
+            transform: scale(1.05);
+        }
+
+        .speaker-info {
+            padding: var(--space-3);
+            text-align: center;
+        }
+
+        .speaker-info h4 {
+            font-size: var(--font-size-3);
+            margin-bottom: 0.25rem;
+        }
+
+        .speaker-info p {
+            color: var(--muted);
+            font-size: var(--font-size-1);
+        }
+
+        /* Contact */
+        .contact-section {
+            padding: var(--space-6) 0;
+            background: var(--bg-2);
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: var(--font-size-1);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: var(--radius-btn);
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--focus);
+        }
+
+        /* Footer */
+        .footer {
+            padding: var(--space-5) 0;
+            border-top: 1px solid var(--border);
+            background: var(--bg);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-5);
+            margin-bottom: var(--space-5);
+        }
+
+        .footer-brand h2 {
+            font-size: var(--font-size-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .footer-links h4 {
+            margin-bottom: var(--space-2);
+            font-size: var(--font-size-2);
+        }
+
+        .footer-links button {
+            display: block;
+            color: var(--muted);
+            padding: 0.5rem 0;
+            font-size: var(--font-size-1);
+        }
+
+        .footer-links button:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .social-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--surface-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+        }
+
+        .copyright {
+            text-align: center;
+            color: var(--muted);
+            font-size: var(--font-size-1);
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--divider);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background: var(--surface);
+            max-width: 600px;
+            width: 90%;
+            border-radius: var(--radius-card);
+            padding: var(--space-4);
+            position: relative;
+            box-shadow: var(--shadow-strong);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-2);
+            right: var(--space-2);
+            font-size: 1.5rem;
+            color: var(--muted);
+        }
+
+        /* Status Toast */
+        .status-area {
+            position: fixed;
+            bottom: var(--space-3);
+            right: var(--space-3);
+            z-index: 3000;
+        }
+
+        .toast {
+            background: var(--surface-2);
+            color: var(--text);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--shadow-strong);
+            margin-top: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            color: var(--text);
+        }
+
+        @media (max-width: 768px) {
+            .nav-desktop { display: none; }
+            .hamburger { display: block; }
+            .about-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 3rem; }
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 72px;
+            left: 0;
+            width: 100%;
+            background: var(--surface);
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border);
+            display: none;
+            flex-direction: column;
+            gap: var(--space-2);
+            z-index: 999;
+        }
+
+        .mobile-menu.active { display: flex; }
+    </style>
+</head>
+<body>
+
+<div id="page">
+    <header class="header">
+        <div class="container">
+            <div class="logo">HackIndia</div>
+            
+            <nav class="nav-desktop">
+                <button type="button" onclick="scrollToId('about')">About</button>
+                <button type="button" onclick="scrollToId('tracks')">Tracks</button>
+                <button type="button" onclick="scrollToId('speakers')">Speakers</button>
+                <button type="button" onclick="scrollToId('contact')">Contact</button>
+            </nav>
+
+            <div class="header-actions">
+                <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-sun" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+                <button type="button" class="btn-primary" onclick="showToast('Registration opening soon!')">Apply Now</button>
+                <button type="button" class="hamburger" id="menuToggle" aria-label="Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <button type="button" onclick="scrollToId('about')">About</button>
+        <button type="button" onclick="scrollToId('tracks')">Tracks</button>
+        <button type="button" onclick="scrollToId('speakers')">Speakers</button>
+        <button type="button" onclick="scrollToId('contact')">Contact</button>
+    </div>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content container">
+                <h1>HACKINDIA 2026</h1>
+                <p>The Nexus of Decentralized Intelligence</p>
+                <div style="display:flex; gap: var(--space-2); justify-content:center; flex-wrap:wrap;">
+                    <button type="button" class="btn-primary" style="padding: 1rem 2.5rem; font-size: var(--font-size-2);" onclick="scrollToId('about')">Explore Event</button>
+                    <button type="button" class="btn-primary" style="background:transparent; border: 1px solid #fff; padding: 1rem 2.5rem; font-size: var(--font-size-2);" onclick="showModal('Partner with us', 'HackIndia 2026 is looking for visionary sponsors to build the future of AI and Web3. Reach out to collaborate.')">Sponsor Us</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats-section">
+            <div class="container stats-grid">
+                <div class="stat-item">
+                    <h3 class="counter" data-target="5000">0</h3>
+                    <p>Hackers</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="counter" data-target="48">0</h3>
+                    <p>Hours</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="counter" data-target="250">0</h3>
+                    <p>Innovators</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="counter" data-target="50000">0</h3>
+                    <p>Prize Pool ($)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section">
+            <div class="container about-grid">
+                <div class="about-image">
+                    <img src="https://app.sharpcoder.ai/uploadedimages/8b2c2838421a4dd99ea781c08571d7ec/20260403_110609_fd586b15ff.png" alt="Collaborative Innovation" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                </div>
+                <div class="about-text">
+                    <h2>Bridging Two Worlds</h2>
+                    <p>HackIndia 2026 is India's premier hackathon dedicated to the intersection of Artificial Intelligence and Web3 technologies. We believe the future is decentralized and intelligent.</p>
+                    <p>Join thousands of developers, designers, and visionaries for 48 hours of intense building, workshops, and networking. Whether you're training LLMs or deploying smart contracts, there's a place for you here.</p>
+                    <button type="button" class="btn-primary" style="background: var(--surface-2); color: var(--text); border: 1px solid var(--border);" onclick="showModal('Event Mission', 'Our mission is to foster an ecosystem where decentralized governance meets machine intelligence, creating tools that are transparent, secure, and smart.')">Learn Our Mission</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tracks Section -->
+        <section id="tracks" class="tracks-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Innovation Tracks</h2>
+                    <p>Choose your battlefield and build something extraordinary.</p>
+                </div>
+                <div class="track-grid">
+                    <div class="track-card">
+                        <div class="track-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        </div>
+                        <h3>AI Agents on Chain</h3>
+                        <p>Build autonomous agents that interact with smart contracts to automate complex DeFi strategies or governance.</p>
+                    </div>
+                    <div class="track-card">
+                        <div class="track-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        </div>
+                        <h3>Zero-Knowledge AI</h3>
+                        <p>Privacy-preserving machine learning using ZK-Proofs to verify model computation without revealing sensitive data.</p>
+                    </div>
+                    <div class="track-card">
+                        <div class="track-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </div>
+                        <h3>Decentralized Infra</h3>
+                        <p>Building the backbone for the future web: storage, compute, and connectivity for high-performance AI dApps.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Speakers Section -->
+        <section id="speakers" class="speakers-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Global Speakers</h2>
+                    <p>Learn from the minds shaping the future of tech.</p>
+                </div>
+                <div class="speaker-grid">
+                    <div class="speaker-card" onclick="showPersonModal('Dr. Aruna Singh', 'Chief Scientist, NeuralChain', 'Topic: Decentralized LLMs and the Future of Trust.')">
+                        <div class="speaker-image">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop" alt="Speaker" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        </div>
+                        <div class="speaker-info">
+                            <h4>Dr. Aruna Singh</h4>
+                            <p>NeuralChain</p>
+                        </div>
+                    </div>
+                    <div class="speaker-card" onclick="showPersonModal('Vikram Mehta', 'Founder, EtherMind', 'Topic: Hyper-scaling Web3 with AI-optimized nodes.')">
+                        <div class="speaker-image">
+                            <img src="https://images.unsplash.com/photo-1556157382-97dee2dcb341?q=80&w=800&auto=format&fit=crop" alt="Speaker" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        </div>
+                        <div class="speaker-info">
+                            <h4>Vikram Mehta</h4>
+                            <p>Founder, EtherMind</p>
+                        </div>
+                    </div>
+                    <div class="speaker-card" onclick="showPersonModal('Elena Rossi', 'Lead Dev, PrivacyProtocol', 'Topic: ZK-Proofs in Modern AI Data Pipelines.')">
+                        <div class="speaker-image">
+                            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=800&auto=format&fit=crop" alt="Speaker" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        </div>
+                        <div class="speaker-info">
+                            <h4>Elena Rossi</h4>
+                            <p>PrivacyProtocol</p>
+                        </div>
+                    </div>
+                    <div class="speaker-card" onclick="showPersonModal('David Chen', 'Head of AI, BlockScale', 'Topic: Tokenomics for AI Model Training.')">
+                        <div class="speaker-image">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" alt="Speaker" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        </div>
+                        <div class="speaker-info">
+                            <h4>David Chen</h4>
+                            <p>BlockScale</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Get in Touch</h2>
+                    <p>Have questions? Our team is here to help.</p>
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" required placeholder="Jane Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required placeholder="jane@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" required placeholder="How can we help?">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" rows="5" required placeholder="Tell us more..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Send Message</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h2>HackIndia</h2>
+                    <p style="color: var(--muted); max-width: 300px;">The biggest AI and Web3 hackathon in the heart of the innovation hub.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Navigate</h4>
+                    <button type="button" onclick="scrollToId('about')">About</button>
+                    <button type="button" onclick="scrollToId('tracks')">Tracks</button>
+                    <button type="button" onclick="scrollToId('speakers')">Speakers</button>
+                </div>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <button type="button" onclick="showModal('F.A.Q', 'Registration is free. Travel reimbursements are available for top 100 applicants. Laptops are required.')">F.A.Q</button>
+                    <button type="button" onclick="showModal('Privacy Policy', 'We value your privacy. Your data is used only for hackathon logistics and communication.')">Privacy Policy</button>
+                    <button type="button" onclick="showModal('Terms of Service', 'All participants must follow the code of conduct. Harassment of any kind will not be tolerated.')">Terms</button>
+                </div>
+                <div class="footer-links">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <button type="button" class="social-btn" onclick="showModal('Twitter', 'Follow us @HackIndia2026 for real-time updates.')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 4s-1 2.1-3 2.8c1.4.3 3.5 1.3 3.5 3.9 0 0-1.5-.5-2.5-.5.8.5 1.5 1.5 1.5 2.5 0 2.5-2.5 3.5-4 3.5 1.5 1.5 2.5 3.5 2.5 5.5 0 3-2.5 5-6 5s-6-2-6-5c0-2 1-4 2.5-5.5-1.5 0-4-1-4-3.5 0-1 .7-2 1.5-2.5-1-.2-2.5 0-2.5 1 0-2.6 2.1-3.6 3.5-3.9-2-.7-3-2.8-3-2.8"></path></svg>
+                        </button>
+                        <button type="button" class="social-btn" onclick="showModal('Discord', 'Join our Discord server to find teammates and mentors.')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8Z"></path><path d="M10 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"></path></svg>
+                        </button>
+                        <button type="button" class="social-btn" onclick="showModal('GitHub', 'Check out our open-source resources and starter kits.')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; <span id="year"></span> HackIndia 2026. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- Modal Structure -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="infoModal">
+        <button type="button" class="modal-close" id="modalClose">&times;</button>
+        <h2 id="modalTitle" style="margin-bottom: var(--space-2);"></h2>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<!-- Toast Feedback Area -->
+<div class="status-area" id="statusArea"></div>
+
+<script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const sunIcon = themeToggle.querySelector('.theme-icon-sun');
+    const moonIcon = themeToggle.querySelector('.theme-icon-moon');
+
+    function updateThemeIcons(theme) {
+        if (theme === 'light') {
+            sunIcon.style.display = 'none';
+            moonIcon.style.display = 'block';
+        } else {
+            sunIcon.style.display = 'block';
+            moonIcon.style.display = 'none';
+        }
+    }
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        localStorage.setItem('theme', nextTheme);
+        updateThemeIcons(nextTheme);
+    });
+
+    updateThemeIcons(document.documentElement.getAttribute('data-theme'));
+
+    // Scroll to ID
+    function scrollToId(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            const headerOffset = 72;
+            const elementPosition = el.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: "smooth"
+            });
+            
+            // Close mobile menu if open
+            document.getElementById('mobileMenu').classList.remove('active');
+        }
+    }
+
+    // Mobile Menu Toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('active');
+    });
+
+    // Modal Logic
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+
+    function showModal(title, content) {
+        modalTitle.textContent = title;
+        modalBody.innerHTML = `<p>${content}</p>`;
+        modalOverlay.style.display = 'flex';
+    }
+
+    function showPersonModal(name, role, talk) {
+        modalTitle.textContent = name;
+        modalBody.innerHTML = `
+            <div style="display:flex; flex-direction:column; gap: var(--space-2);">
+                <div style="font-weight: 600; color: var(--primary);">${role}</div>
+                <div style="padding: var(--space-2); background: var(--bg-2); border-radius: var(--radius-card); border: 1px solid var(--border);">
+                    <h4 style="margin-bottom: 0.5rem;">Featured Talk</h4>
+                    <p>${talk}</p>
+                </div>
+                <button type="button" class="btn-primary" style="margin-top: 1rem;" onclick="showToast('Reminder set for this talk!')">Add to Calendar</button>
+            </div>
+        `;
+        modalOverlay.style.display = 'flex';
+    }
+
+    modalClose.addEventListener('click', () => {
+        modalOverlay.style.display = 'none';
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) modalOverlay.style.display = 'none';
+    });
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') modalOverlay.style.display = 'none';
+    });
+
+    // Toast Feedback
+    function showToast(message) {
+        const statusArea = document.getElementById('statusArea');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>${message}</span>
+        `;
+        statusArea.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Counters
+    const counters = document.querySelectorAll('.counter');
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counter = entry.target;
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000;
+                let startTime = null;
+
+                function animate(currentTime) {
+                    if (!startTime) startTime = currentTime;
+                    const progress = Math.min((currentTime - startTime) / duration, 1);
+                    counter.innerText = Math.floor(progress * target).toLocaleString();
+                    if (progress < 1) requestAnimationFrame(animate);
+                    else counter.innerText = target.toLocaleString() + (target > 1000 ? '+' : '');
+                }
+                requestAnimationFrame(animate);
+                counterObserver.unobserve(counter);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    counters.forEach(counter => counterObserver.observe(counter));
+
+    // Form Submission
+    const contactForm = document.getElementById('contactForm');
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        showToast('Thank you! Your message has been received.');
+        contactForm.reset();
+    });
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Interaction Guard
+    document.addEventListener('click', (e) => {
+        const anchor = e.target.closest('a');
+        if (anchor) {
+            e.preventDefault();
+            showToast('External action disabled in preview.');
+        }
+    }, true);
+
+</script>
+
+</body>
+</html>
