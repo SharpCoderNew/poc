@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <title>Alexander Vance | AI & Web3 Strategy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <style>
+    :root {
+      --gutter: 0;
+      --space-1: 0.5rem;
+      --space-2: 1rem;
+      --space-3: 1.5rem;
+      --space-4: 3rem;
+      --space-5: 5rem;
+      --space-6: 8rem;
+      
+      --font-size-1: 0.875rem;
+      --font-size-2: 1rem;
+      --font-size-3: 1.25rem;
+      --font-size-4: 1.5rem;
+      --font-size-5: 2.5rem;
+      --font-size-6: 4rem;
+
+      --line-1: 1.2;
+      --line-2: 1.5;
+      --line-3: 1.7;
+
+      --radius-btn: 3px;
+      --radius-card: 12px;
+      --radius-pill: 9999px;
+
+      --dur-fast: 0.2s;
+      --dur-med: 0.4s;
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+      
+      --page-top: var(--space-4);
+      --page-bottom: var(--space-6);
+      --header-height: 80px;
+    }
+
+    html[data-theme="light"] {
+      --bg: #ffffff;
+      --bg-2: #f8f9fa;
+      --surface: #ffffff;
+      --surface-2: #f1f3f5;
+      --text: #1a1a1a;
+      --muted: #666666;
+      --border: #e9ecef;
+      --primary: #000000;
+      --primary-2: #333333;
+      --on-primary: #ffffff;
+      --accent: #228be6;
+      --on-accent: #ffffff;
+      --success: #40c057;
+      --warning: #fab005;
+      --danger: #fa5252;
+      --focus: rgba(0, 0, 0, 0.1);
+      --shadow-soft: 0 4px 12px rgba(0,0,0,0.05);
+      --shadow-strong: 0 12px 24px rgba(0,0,0,0.1);
+      --header-bg: rgba(255, 255, 255, 0.85);
+      --divider: #eeeeee;
+      --overlay: rgba(255, 255, 255, 0.95);
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0a0a0a;
+      --bg-2: #121212;
+      --surface: #1a1a1a;
+      --surface-2: #252525;
+      --text: #f8f9fa;
+      --muted: #adb5bd;
+      --border: #333333;
+      --primary: #ffffff;
+      --primary-2: #e9ecef;
+      --on-primary: #000000;
+      --accent: #4dabf7;
+      --on-accent: #ffffff;
+      --success: #51cf66;
+      --warning: #fcc419;
+      --danger: #ff6b6b;
+      --focus: rgba(255, 255, 255, 0.1);
+      --shadow-soft: 0 4px 12px rgba(0,0,0,0.4);
+      --shadow-strong: 0 12px 24px rgba(0,0,0,0.6);
+      --header-bg: rgba(10, 10, 10, 0.85);
+      --divider: #222222;
+      --overlay: rgba(10, 10, 10, 0.98);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: var(--line-2);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, .serif {
+      font-family: 'Playfair Display', serif;
+      line-height: var(--line-1);
+      font-weight: 700;
+    }
+
+    #page {
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: var(--space-3);
+      padding-right: var(--space-3);
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--header-height);
+      z-index: 1000;
+      backdrop-filter: blur(12px);
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      transition: background-color var(--dur-med) var(--ease-standard);
+    }
+
+    header .container {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      font-size: var(--font-size-3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--text);
+    }
+
+    .nav-desktop {
+      display: flex;
+      gap: var(--space-4);
+      align-items: center;
+    }
+
+    .nav-link {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: var(--font-size-1);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: opacity var(--dur-fast) var(--ease-standard);
+      padding: var(--space-1);
+    }
+
+    .nav-link:hover {
+      opacity: 0.7;
+    }
+
+    .cta-btn {
+      background-color: var(--primary);
+      color: var(--on-primary);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: var(--font-size-1);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      transition: transform var(--dur-fast) var(--ease-standard), opacity var(--dur-fast) var(--ease-standard);
+    }
+
+    .cta-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background-color var(--dur-fast);
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--focus);
+    }
+
+    /* Hero */
+    .hero {
+      width: 100%;
+      min-height: 100vh;
+      background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("https://staging.sharpcoder.ai/uploadedimages/3039d3b5-b8bc-450a-ba21-68c4304dc34f/20260408_080256_a78186683b.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-referrer-when-downgrade;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #ffffff;
+      padding-top: var(--header-height);
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      margin-bottom: var(--space-3);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: revealUp 0.8s forwards var(--ease-standard);
+    }
+
+    .hero p {
+      font-size: var(--font-size-4);
+      margin-bottom: var(--space-4);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: revealUp 0.8s forwards var(--ease-standard) 0.2s;
+      font-weight: 300;
+    }
+
+    .hero-btns {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: revealUp 0.8s forwards var(--ease-standard) 0.4s;
+    }
+
+    @keyframes revealUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stats */
+    .stats-bar {
+      padding: var(--space-5) 0;
+      background-color: var(--bg-2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-4);
+      text-align: center;
+    }
+
+    .stat-item h3 {
+      font-size: var(--font-size-5);
+      margin-bottom: var(--space-1);
+    }
+
+    .stat-item p {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: var(--font-size-1);
+    }
+
+    /* Sections General */
+    section {
+      padding: var(--space-6) 0;
+      width: 100%;
+    }
+
+    .section-tag {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: var(--font-size-1);
+      margin-bottom: var(--space-2);
+      display: block;
+    }
+
+    .section-title {
+      font-size: var(--font-size-5);
+      margin-bottom: var(--space-4);
+    }
+
+    /* About Section */
+    .about-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      align-items: center;
+    }
+
+    .about-img-container {
+      position: relative;
+    }
+
+    .about-img {
+      width: 100%;
+      height: 600px;
+      object-fit: cover;
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .about-text p {
+      font-size: var(--font-size-3);
+      color: var(--muted);
+      margin-bottom: var(--space-3);
+    }
+
+    /* Services Grid */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .service-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      padding: var(--space-4);
+      border-radius: var(--radius-card);
+      transition: transform var(--dur-med), box-shadow var(--dur-med);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      cursor: pointer;
+    }
+
+    .service-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-soft);
+      border-color: var(--accent);
+    }
+
+    .service-card h4 {
+      font-size: var(--font-size-4);
+    }
+
+    .service-card p {
+      color: var(--muted);
+      font-size: var(--font-size-2);
+    }
+
+    /* Form */
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: var(--surface-2);
+      padding: var(--space-5);
+      border-radius: var(--radius-card);
+    }
+
+    .form-group {
+      margin-bottom: var(--space-3);
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: var(--space-1);
+      font-size: var(--font-size-1);
+      font-weight: 500;
+    }
+
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 1rem;
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-btn);
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    /* Footer */
+    footer {
+      padding: var(--space-5) 0;
+      border-top: 1px solid var(--divider);
+      background-color: var(--bg-2);
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .social-icons {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .social-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      cursor: pointer;
+      color: var(--text);
+      transition: color var(--dur-fast);
+    }
+
+    .social-btn:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--overlay);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-3);
+    }
+
+    .modal-content {
+      background: var(--surface);
+      padding: var(--space-5);
+      max-width: 600px;
+      width: 100%;
+      border-radius: var(--radius-card);
+      position: relative;
+      box-shadow: var(--shadow-strong);
+      border: 1px solid var(--border);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    /* Toast */
+    #toast-container {
+      position: fixed;
+      bottom: var(--space-3);
+      right: var(--space-3);
+      z-index: 3000;
+    }
+
+    .toast {
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: 1rem 2rem;
+      border-radius: var(--radius-btn);
+      margin-top: var(--space-2);
+      box-shadow: var(--shadow-strong);
+      animation: slideIn 0.3s forwards;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    /* Mobile Nav */
+    .burger {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 1024px) {
+      .about-split { grid-template-columns: 1fr; }
+      .about-img { height: 400px; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-desktop { display: none; }
+      .burger { display: block; }
+      .hero h1 { font-size: 3rem; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="page">
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <button type="button" class="brand" data-scroll="hero">Vance.AI</button>
+      
+      <div class="nav-desktop">
+        <button type="button" class="nav-link" data-scroll="services">Strategies</button>
+        <button type="button" class="nav-link" data-scroll="about">Philosophy</button>
+        <button type="button" class="nav-link" data-scroll="contact">Consult</button>
+        <button type="button" class="theme-toggle" id="themeBtn" title="Toggle Theme">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/></svg>
+        </button>
+        <button type="button" class="cta-btn" data-scroll="contact">Book Briefing</button>
+      </div>
+
+      <button type="button" class="burger" id="burgerBtn">☰</button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <div class="container hero-content">
+      <span class="section-tag" style="color:#ffffff;">Intelligence Redefined</span>
+      <h1>Architecting the <br><span class="serif" style="font-style: italic;">Next Era</span> of Value</h1>
+      <p>Bespoke consultancy at the intersection of Generative AI and Decentralized Protocols. Scaling human ambition through autonomous systems.</p>
+      <div class="hero-btns">
+        <button type="button" class="cta-btn" data-scroll="services">Explore Strategies</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <h3 class="counter" data-target="150">0</h3>
+          <p>AI Models Deployed</p>
+        </div>
+        <div class="stat-item">
+          <h3 class="counter" data-target="12">0</h3>
+          <p>Global Web3 Networks</p>
+        </div>
+        <div class="stat-item">
+          <h3 class="counter" data-target="45">0</h3>
+          <p>Portfolio Ventures</p>
+        </div>
+        <div class="stat-item">
+          <h3 class="counter" data-target="850">0</h3>
+          <p>Billion USD in AUM Impact</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services -->
+  <section id="services">
+    <div class="container">
+      <span class="section-tag">Capabilities</span>
+      <h2 class="section-title">Technological Edge</h2>
+      <div class="services-grid">
+        <div class="service-card" data-detail="ai-strat">
+          <span style="font-size: 2rem;">🧠</span>
+          <h4>Generative AI Strategy</h4>
+          <p>Leveraging LLMs and diffusion models to automate operational bottlenecks and enhance creative output at scale.</p>
+        </div>
+        <div class="service-card" data-detail="web3-eco">
+          <span style="font-size: 2rem;">⛓️</span>
+          <h4>Web3 Ecosystems</h4>
+          <p>Tokenomics design, DAO governance modeling, and smart contract audit facilitation for resilient decentralized networks.</p>
+        </div>
+        <div class="service-card" data-detail="nexus-sol">
+          <span style="font-size: 2rem;">⚡</span>
+          <h4>The AI-Web3 Nexus</h4>
+          <p>Integrating on-chain verification for AI provenance and decentralized compute for private model training.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" style="background-color: var(--bg-2);">
+    <div class="container">
+      <div class="about-split">
+        <div class="about-img-container">
+          <img src="https://staging.sharpcoder.ai/uploadedimages/3039d3b5-b8bc-450a-ba21-68c4304dc34f/20260408_080258_01ab1a8d04.png" alt="Alexander Vance" class="about-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+        </div>
+        <div class="about-text">
+          <span class="section-tag">Expertise</span>
+          <h2 class="section-title">Alexander Vance</h2>
+          <p>With over a decade of experience navigating the bleeding edge of software architecture, I specialize in identifying the hidden synergies between machine intelligence and trustless ledger systems.</p>
+          <p>My approach is rooted in first principles: technology should not just be advanced—it should be meaningful, sustainable, and fundamentally empowering to the individual.</p>
+          <button type="button" class="cta-btn" data-detail="bio-full">Read Full Biography</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product/Project Showreel -->
+  <section id="portfolio">
+    <div class="container">
+      <span class="section-tag">Case Studies</span>
+      <h2 class="section-title">Recent Deployments</h2>
+      <div class="services-grid">
+        <div class="service-card" data-detail="project-1">
+          <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80&w=600" alt="Decentralized Compute" style="width:100%; height:200px; object-fit:cover; border-radius:8px; margin-bottom:1rem;" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+          <h4>Aether Grid</h4>
+          <p>A decentralized marketplace for high-performance GPU compute, optimized for model training.</p>
+        </div>
+        <div class="service-card" data-detail="project-2">
+          <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=600" alt="AI Oracle" style="width:100%; height:200px; object-fit:cover; border-radius:8px; margin-bottom:1rem;" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+          <h4>Hermes Oracle</h4>
+          <p>Bridging real-world AI inference data to EVM-compatible chains with ZK-proofs.</p>
+        </div>
+        <div class="service-card" data-detail="project-3">
+          <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=600" alt="Governance Tool" style="width:100%; height:200px; object-fit:cover; border-radius:8px; margin-bottom:1rem;" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+          <h4>Nomos DAO</h4>
+          <p>An AI-augmented governance framework for high-velocity treasury management.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-form">
+        <span class="section-tag" style="text-align:center; display:block;">Get Started</span>
+        <h2 class="section-title" style="text-align:center;">Initiate a Briefing</h2>
+        <form id="consultForm">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="form-name" placeholder="John Doe" required>
+          </div>
+          <div class="form-group">
+            <label>Professional Email</label>
+            <input type="email" id="form-email" placeholder="john@company.com" required>
+          </div>
+          <div class="form-group">
+            <label>Project Focus</label>
+            <input type="text" id="form-subject" placeholder="AI Infrastructure / Web3 Migration" required>
+          </div>
+          <div class="form-group">
+            <label>Context / Message</label>
+            <textarea id="form-message" rows="5" placeholder="Briefly describe your objectives..." required></textarea>
+          </div>
+          <button type="submit" class="cta-btn" style="width:100%;">Transmit Request</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content">
+      <div>
+        <h4 class="brand">Vance.AI</h4>
+        <p style="color:var(--muted); font-size:var(--font-size-1); margin-top:var(--space-1);">Strategic Intelligence Consultant</p>
+      </div>
+      <div class="social-icons">
+        <button type="button" class="social-btn" data-detail="social-x">𝕏</button>
+        <button type="button" class="social-btn" data-detail="social-li">in</button>
+        <button type="button" class="social-btn" data-detail="social-gh">gh</button>
+      </div>
+      <p style="color:var(--muted); font-size:var(--font-size-1);">&copy; <span id="year"></span> Alexander Vance. All rights reserved.</p>
+    </div>
+  </footer>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal-overlay">
+  <div class="modal-content">
+    <button type="button" class="close-modal" id="closeModal">&times;</button>
+    <div id="modalBody">
+      <!-- Dynamic Content -->
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="modal-overlay">
+  <div class="modal-content" style="max-width: 300px; text-align: center;">
+    <button type="button" class="close-modal" id="closeMobile">&times;</button>
+    <div style="display: flex; flex-direction: column; gap: var(--space-3); padding-top: var(--space-4);">
+      <button type="button" class="nav-link" data-scroll="services">Strategies</button>
+      <button type="button" class="nav-link" data-scroll="about">Philosophy</button>
+      <button type="button" class="nav-link" data-scroll="contact">Consult</button>
+      <button type="button" class="cta-btn" data-scroll="contact">Book Briefing</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div id="toast-container"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Theme Logic
+    const themeBtn = document.getElementById('themeBtn');
+    const html = document.documentElement;
+
+    themeBtn.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+
+    // 2. Scroll Logic
+    const scrollButtons = document.querySelectorAll('[data-scroll]');
+    scrollButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-scroll');
+        const target = document.getElementById(targetId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+          document.getElementById('mobileMenu').style.display = 'none';
+        }
+      });
+    });
+
+    // 3. Animated Numbers
+    const counters = document.querySelectorAll('.counter');
+    const observerOptions = { threshold: 0.5 };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const counter = entry.target;
+          const target = +counter.getAttribute('data-target');
+          let count = 0;
+          const increment = target / 50;
+          const updateCount = () => {
+            if (count < target) {
+              count += increment;
+              counter.innerText = Math.ceil(count) + (target > 100 ? '+' : '');
+              setTimeout(updateCount, 20);
+            } else {
+              counter.innerText = target + (target > 100 ? '+' : '');
+            }
+          };
+          updateCount();
+          observer.unobserve(counter);
+        }
+      });
+    }, observerOptions);
+
+    counters.forEach(c => observer.observe(c));
+
+    // 4. Modal System
+    const modal = document.getElementById('modal');
+    const modalBody = document.getElementById('modalBody');
+    const closeModal = document.getElementById('closeModal');
+
+    const detailsMap = {
+      'ai-strat': {
+        title: 'Generative AI Strategy',
+        content: 'We develop custom fine-tuned models for enterprise knowledge management, automated client servicing, and predictive analytics. Our strategy focuses on ethical deployment and proprietary data sovereignty.'
+      },
+      'web3-eco': {
+        title: 'Web3 Ecosystems',
+        content: 'From layer-2 scaling solutions to liquid staking derivatives, we advise on the architecture of decentralized protocols that prioritize security, decentralization, and long-term economic stability.'
+      },
+      'nexus-sol': {
+        title: 'The AI-Web3 Nexus',
+        content: 'Creating a verifiable internet of intelligence. We help projects implement Proof of Inference and decentralized GPU clusters to ensure AI models remain open, auditable, and censorship-resistant.'
+      },
+      'bio-full': {
+        title: 'Biography: Alexander Vance',
+        content: 'Previously a Lead Architect at Fortune 500 fintech firms and an early contributor to multiple DeFi protocols. Alexander holds a PhD in Computational Linguistics and has spent the last 5 years advising Tier-1 venture capital funds on their AI and Blockchain investment strategies.'
+      },
+      'project-1': {
+        title: 'Aether Grid Case Study',
+        content: 'Aether Grid required a trustless way to verify that GPU providers were actually performing the work they were paid for. We implemented a ZK-based validation layer that reduced fraud by 98%.'
+      },
+      'project-2': {
+        title: 'Hermes Oracle Details',
+        content: 'Traditional oracles are too slow for real-time AI needs. We built a streaming data bridge that allows sub-second inference result verification on Arbitrum and Polygon.'
+      },
+      'project-3': {
+        title: 'Nomos DAO Architecture',
+        content: 'The Nomos DAO utilizes an AI-governor to analyze proposal sentiment and risk profiles before they reach a human vote, increasing governance efficiency by 40%.'
+      },
+      'social-x': { title: 'Twitter / 𝕏 Profile', content: 'Follow @AlexanderVanceAI for daily insights on the intersection of neural networks and decentralized finance.' },
+      'social-li': { title: 'LinkedIn Profile', content: 'Connect with Alexander Vance for professional inquiries and strategic partnerships.' },
+      'social-gh': { title: 'GitHub Repository', content: 'Explore open-source implementations of decentralized AI frameworks and smart contract templates.' }
+    };
+
+    document.querySelectorAll('[data-detail]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-detail');
+        const data = detailsMap[id] || { title: 'Detail View', content: 'Informational content currently being updated. Please check back soon.' };
+        modalBody.innerHTML = `<h2 class="serif" style="margin-bottom:var(--space-2);">${data.title}</h2><p style="color:var(--muted); font-size:1.1rem;">${data.content}</p>`;
+        modal.style.display = 'flex';
+      });
+    });
+
+    const closeAllModals = () => {
+      modal.style.display = 'none';
+      document.getElementById('mobileMenu').style.display = 'none';
+    };
+
+    closeModal.addEventListener('click', closeAllModals);
+    window.addEventListener('click', (e) => { if (e.target === modal || e.target === document.getElementById('mobileMenu')) closeAllModals(); });
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllModals(); });
+
+    // 5. Mobile Menu
+    const burger = document.getElementById('burgerBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const closeMobile = document.getElementById('closeMobile');
+
+    burger.addEventListener('click', () => { mobileMenu.style.display = 'flex'; });
+    closeMobile.addEventListener('click', () => { mobileMenu.style.display = 'none'; });
+
+    // 6. Form Submission
+    const form = document.getElementById('consultForm');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerText = 'Transmission Received. Our analysts will reach out shortly.';
+      document.getElementById('toast-container').appendChild(toast);
+      form.reset();
+      setTimeout(() => toast.remove(), 4000);
+    });
+
+    // 7. Footer Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Defensive interaction guard
+    document.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.style.backgroundColor = 'var(--danger)';
+        toast.innerText = 'External or unsafe action disabled in preview.';
+        document.getElementById('toast-container').appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
