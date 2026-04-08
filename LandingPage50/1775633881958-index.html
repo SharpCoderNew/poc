@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>Axiom | AI & Web3 Strategy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-2: #2563eb;
+            --on-primary: #ffffff;
+            --accent: #8b5cf6;
+            --on-accent: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --focus: rgba(59, 130, 246, 0.5);
+            
+            --space-1: 0.5rem;
+            --space-2: 1rem;
+            --space-3: 1.5rem;
+            --space-4: 2rem;
+            --space-5: 4rem;
+            --space-6: 8rem;
+            
+            --font-size-1: 0.875rem;
+            --font-size-2: 1rem;
+            --font-size-3: 1.25rem;
+            --font-size-4: 1.5rem;
+            --font-size-5: 2.5rem;
+            --font-size-6: 4rem;
+            
+            --radius-btn: 3px;
+            --radius-card: 12px;
+            --radius-pill: 9999px;
+            
+            --gutter: 0;
+            --page-top: var(--space-4);
+            --page-bottom: var(--space-6);
+            --header-height: 80px;
+            
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            --dur-fast: 150ms;
+            --dur-med: 300ms;
+        }
+
+        html[data-theme="dark"] {
+            --bg: #0f172a;
+            --bg-2: #1e293b;
+            --surface: #1e293b;
+            --surface-2: #334155;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: #334155;
+            --header-bg: rgba(15, 23, 42, 0.8);
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-strong: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --divider: #1e293b;
+            --overlay: rgba(0, 0, 0, 0.85);
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f8fafc;
+            --surface: #ffffff;
+            --surface-2: #f1f5f9;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-strong: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --divider: #f1f5f9;
+            --overlay: rgba(255, 255, 255, 0.95);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        #page {
+            width: 100%;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: var(--space-3);
+            padding-right: var(--space-3);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background-color: var(--header-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: var(--font-size-4);
+            font-weight: 700;
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            letter-spacing: -0.5px;
+        }
+
+        nav {
+            display: flex;
+            gap: var(--space-4);
+            align-items: center;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: var(--font-size-1);
+            font-weight: 500;
+            cursor: pointer;
+            padding: var(--space-1) var(--space-2);
+            transition: color var(--dur-fast) var(--ease-standard);
+        }
+
+        nav button:hover {
+            color: var(--primary);
+        }
+
+        .theme-toggle {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px;
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            padding: 12px 24px;
+            border-radius: var(--radius-btn);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--dur-fast) var(--ease-standard);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-2);
+            transform: translateY(-1px);
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #ffffff;
+            background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url("https://staging.sharpcoder.ai/uploadedimages/2006de55-0b67-46d2-8597-e0f8ef1413b3/20260407_055653_380c48fd9c.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .hero-content {
+            z-index: 2;
+            padding: var(--space-4);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            margin-bottom: var(--space-3);
+            max-width: 900px;
+        }
+
+        .hero p {
+            font-size: var(--font-size-3);
+            max-width: 600px;
+            margin: 0 auto var(--space-4);
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: var(--space-5) 0;
+            background: var(--bg-2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: var(--font-size-6);
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item p {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            font-size: var(--font-size-1);
+        }
+
+        /* About Section */
+        .about {
+            padding: var(--space-6) 0;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-5);
+            align-items: center;
+        }
+
+        .about-image {
+            position: relative;
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.6s var(--ease-standard);
+        }
+
+        .about-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .about-content h2 {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-3);
+        }
+
+        .about-content p {
+            margin-bottom: var(--space-3);
+            color: var(--muted);
+            font-size: var(--font-size-2);
+        }
+
+        /* Services */
+        .services {
+            padding: var(--space-6) 0;
+            background: var(--bg-2);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-5);
+        }
+
+        .section-header h2 {
+            font-size: var(--font-size-5);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .service-card {
+            background: var(--surface);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+            transition: all var(--dur-med) var(--ease-standard);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--surface-2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-3);
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .service-card h3 {
+            margin-bottom: var(--space-2);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .service-card p {
+            color: var(--muted);
+            font-size: var(--font-size-1);
+        }
+
+        /* Team */
+        .team {
+            padding: var(--space-6) 0;
+        }
+
+        .team-card {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+            background: var(--surface);
+            border-radius: var(--radius-card);
+            padding: var(--space-4);
+            cursor: pointer;
+            transition: transform var(--dur-med) var(--ease-standard);
+        }
+
+        .team-card:hover {
+            transform: scale(1.02);
+        }
+
+        .team-img-wrapper {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto var(--space-3);
+            overflow: hidden;
+            border: 4px solid var(--primary);
+        }
+
+        .team-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Contact */
+        .contact {
+            padding: var(--space-6) 0;
+            background: var(--bg-2);
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: var(--font-size-1);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius-btn);
+            border: 1px solid var(--border);
+            background: var(--bg-2);
+            color: var(--text);
+            font-family: inherit;
+            transition: border-color var(--dur-fast);
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--focus);
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-5) 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-socials {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .social-btn {
+            background: var(--surface-2);
+            border: none;
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background var(--dur-fast);
+        }
+
+        .social-btn:hover {
+            background: var(--primary);
+            color: var(--on-primary);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background: var(--surface);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            box-shadow: var(--shadow-strong);
+            animation: modalFadeIn 0.3s var(--ease-standard);
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-2);
+            right: var(--space-2);
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Status Toast */
+        #toast-container {
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            z-index: 3000;
+        }
+
+        .toast {
+            background: var(--surface);
+            color: var(--text);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-btn);
+            box-shadow: var(--shadow-strong);
+            border-left: 4px solid var(--primary);
+            margin-top: var(--space-2);
+            font-size: var(--font-size-1);
+            animation: toastIn 0.3s var(--ease-standard);
+        }
+
+        @keyframes toastIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+            nav {
+                display: none;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+            .hero h1 {
+                font-size: 3rem;
+            }
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+        }
+
+        /* Mobile Menu */
+        .mobile-nav {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: var(--bg);
+            overflow: hidden;
+            transition: height 0.3s var(--ease-standard);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            padding: 0 var(--space-3);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-nav.active {
+            height: auto;
+            padding: var(--space-4) var(--space-3);
+        }
+
+        .mobile-nav button {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: var(--font-size-3);
+            text-align: left;
+            padding: var(--space-2) 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Utility */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s var(--ease-standard);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div id="page">
+    <header>
+        <div class="container">
+            <button type="button" class="logo" data-scroll="hero">AXIOM</button>
+            
+            <nav id="desktop-nav">
+                <button type="button" data-scroll="about">Philosophy</button>
+                <button type="button" data-scroll="services">Specialties</button>
+                <button type="button" data-scroll="stats">Impact</button>
+                <button type="button" data-scroll="contact" class="btn-primary">Connect</button>
+                <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>
+                </button>
+            </nav>
+
+            <button type="button" class="hamburger" id="hamburgerBtn" aria-label="Menu">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="mobile-nav" id="mobileNav">
+        <button type="button" data-scroll="about">Philosophy</button>
+        <button type="button" data-scroll="services">Specialties</button>
+        <button type="button" data-scroll="stats">Impact</button>
+        <button type="button" data-scroll="contact">Connect</button>
+        <button type="button" id="themeToggleMobile">Toggle Light/Dark</button>
+    </div>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <div class="container hero-content">
+                <h1 class="reveal">Architecting the Intelligent Web.</h1>
+                <p class="reveal">Axiom is a premium consultancy bridging the gap between Artificial Intelligence and Decentralized Protocols for the next era of enterprise.</p>
+                <div class="reveal">
+                    <button type="button" class="btn-primary" data-scroll="services">View Capabilities</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats" id="stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="150">0</h3>
+                        <p>Projects Launched</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="12">0</h3>
+                        <p>Global Regions</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="45">0</h3>
+                        <p>AI Agents Deployed</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="98">0</h3>
+                        <p>Client Retention %</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about" id="about">
+            <div class="container">
+                <div class="about-grid">
+                    <div class="about-image reveal">
+                        <img src="https://staging.sharpcoder.ai/uploadedimages/2006de55-0b67-46d2-8597-e0f8ef1413b3/20260407_055653_e0d46702e9.png" alt="Axiom Office" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    </div>
+                    <div class="about-content reveal">
+                        <h2>Future-Proof Your Infrastructure.</h2>
+                        <p>In 2026, the intersection of autonomous AI agents and blockchain transparency isn't a luxury—it's the baseline. At Axiom, we guide Fortune 500s and ambitious startups through the complexities of this dual-revolution.</p>
+                        <p>Our philosophy is rooted in technical rigor. We don't just "talk" Web3; we architect protocols. We don't just "implement" AI; we train bespoke large-scale models tailored to your proprietary data.</p>
+                        <button type="button" class="btn-primary" id="openTeamModal">Meet the Lead Strategist</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section class="services" id="services">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2>Consulting Specializations</h2>
+                </div>
+                <div class="services-grid">
+                    <div class="service-card reveal">
+                        <div class="service-icon">✦</div>
+                        <h3>AI Strategy & Integration</h3>
+                        <p>Deep implementation of LLMs, computer vision, and predictive analytics into existing workflows with a focus on data privacy.</p>
+                        <button type="button" class="btn-detail" data-detail="ai">Learn more</button>
+                    </div>
+                    <div class="service-card reveal">
+                        <div class="service-icon">◈</div>
+                        <h3>Web3 Infrastructure</h3>
+                        <p>Developing scalable layer-2 solutions, smart contract auditing, and DAO governance structures for transparent operations.</p>
+                        <button type="button" class="btn-detail" data-detail="web3">Learn more</button>
+                    </div>
+                    <div class="service-card reveal">
+                        <div class="service-icon">⚙</div>
+                        <h3>Autonomous Tokenomics</h3>
+                        <p>Designing economic systems where AI agents handle liquidity, yield, and distribution autonomously on-chain.</p>
+                        <button type="button" class="btn-detail" data-detail="tokens">Learn more</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact" id="contact">
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2>Initiate Engagement</h2>
+                    <p>Briefly describe your project goals.</p>
+                </div>
+                <div class="contact-form reveal">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" required placeholder="Dr. Elena Vance">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Work Email</label>
+                            <input type="email" id="email" required placeholder="elena@research.org">
+                        </div>
+                        <div class="form-group">
+                            <label for="topic">Primary Focus</label>
+                            <input type="text" id="topic" placeholder="e.g., ZK-Proof AI Training">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Project Brief</label>
+                            <textarea id="message" rows="5" required placeholder="Outline your requirements..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%;">Submit Brief</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-socials">
+                <button type="button" class="social-btn" aria-label="Twitter">𝕏</button>
+                <button type="button" class="social-btn" aria-label="LinkedIn">in</button>
+                <button type="button" class="social-btn" aria-label="GitHub">gh</button>
+            </div>
+            <p>&copy; <span id="year"></span> Axiom Strategy Group. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="mainModal" role="dialog" aria-modal="true">
+        <button type="button" class="modal-close" id="closeModal">&times;</button>
+        <div id="modalContent">
+            <!-- Dynamic Content -->
+        </div>
+    </div>
+</div>
+
+<div id="toast-container" aria-live="polite"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Theme Management
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        const themeToggleMobile = document.getElementById('themeToggleMobile');
+        
+        const applyTheme = (theme) => {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        };
+
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(savedTheme);
+
+        const toggleTheme = () => {
+            const current = html.getAttribute('data-theme');
+            applyTheme(current === 'dark' ? 'light' : 'dark');
+        };
+
+        themeToggle.addEventListener('click', toggleTheme);
+        themeToggleMobile.addEventListener('click', toggleTheme);
+
+        // Navigation Scroll
+        const scrollButtons = document.querySelectorAll('[data-scroll]');
+        scrollButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-scroll');
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                    mobileNav.classList.remove('active');
+                }
+            });
+        });
+
+        // Mobile Menu
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        hamburgerBtn.addEventListener('click', () => {
+            mobileNav.classList.toggle('active');
+        });
+
+        // Year Display
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Reveal Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // Animated Numbers
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.getAttribute('data-target'));
+                    const duration = 2000;
+                    const step = target / (duration / 16);
+                    let current = 0;
+                    
+                    const animate = () => {
+                        current += step;
+                        if (current < target) {
+                            entry.target.textContent = Math.floor(current);
+                            requestAnimationFrame(animate);
+                        } else {
+                            entry.target.textContent = target + (target > 90 ? '%' : '+');
+                        }
+                    };
+                    animate();
+                    statObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.counter').forEach(counter => statObserver.observe(counter));
+
+        // Modals
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContent = document.getElementById('modalContent');
+        const closeModal = document.getElementById('closeModal');
+
+        const showModal = (contentHtml) => {
+            modalContent.innerHTML = contentHtml;
+            modalOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        };
+
+        const hideModal = () => {
+            modalOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        closeModal.addEventListener('click', hideModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) hideModal();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') hideModal();
+        });
+
+        // Consultant Modal
+        document.getElementById('openTeamModal').addEventListener('click', () => {
+            showModal(`
+                <div style="text-align: center;">
+                    <div class="team-img-wrapper" style="width: 120px; height: 120px;">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&h=256&auto=format&fit=crop" alt="Founder" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    </div>
+                    <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 1rem;">Marcus Thorne</h3>
+                    <p style="color: var(--primary); font-weight: 600; margin-bottom: 1rem;">Founding Strategist</p>
+                    <p style="color: var(--muted); line-height: 1.6;">Former Head of Digital Systems at NexaCorp. Marcus has spent 15 years at the intersection of cryptography and machine learning. He founded Axiom to provide the clarity he felt was missing in the consulting landscape.</p>
+                    <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                        <button type="button" class="btn-primary" onclick="this.closest('.modal-overlay').style.display='none'">Contact Marcus</button>
+                    </div>
+                </div>
+            `);
+        });
+
+        // Detail Modals
+        const details = {
+            ai: {
+                title: "AI Strategy & Integration",
+                text: "We specialize in developing RAG (Retrieval-Augmented Generation) systems that allow your organization to interact with internal knowledge bases securely. Our team ensures that your data never leaves your controlled environment while benefiting from the power of frontier models."
+            },
+            web3: {
+                title: "Web3 Infrastructure",
+                text: "From zero-knowledge proof implementations to multi-sig governance structures, we build the foundations of trustless business. We focus on gas-efficient Solidity architecture and cross-chain interoperability to ensure your platform survives the next decade of evolution."
+            },
+            tokens: {
+                title: "Autonomous Tokenomics",
+                text: "Dynamic supply models driven by real-time on-chain metrics. We design incentive structures that reward long-term stability rather than short-term speculation, often utilizing AI agents to manage automated buybacks and treasury rebalancing."
+            }
+        };
+
+        document.querySelectorAll('.btn-detail').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.getAttribute('data-detail');
+                const data = details[type];
+                showModal(`
+                    <h3 style="font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 1rem;">${data.title}</h3>
+                    <p style="color: var(--muted); line-height: 1.8; font-size: 1.1rem;">${data.text}</p>
+                    <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                        <button type="button" class="btn-primary" onclick="this.closest('.modal-overlay').style.display='none'">Discuss Project</button>
+                    </div>
+                `);
+            });
+        });
+
+        // Social Button Modals
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const label = btn.getAttribute('aria-label');
+                showModal(`
+                    <div style="text-align: center; padding: 1rem;">
+                        <h3>${label} Profile</h3>
+                        <p style="margin: 1rem 0; color: var(--muted);">Direct external links are disabled in preview. Please search for "@AxiomConsulting" on ${label}.</p>
+                        <button type="button" class="btn-primary" onclick="this.closest('.modal-overlay').style.display='none'">Close</button>
+                    </div>
+                `);
+            });
+        });
+
+        // Toast Helper
+        const showToast = (message) => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
+        // Form Submission
+        const contactForm = document.getElementById('contactForm');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const submitBtn = contactForm.querySelector('button');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Transmitting...';
+
+            setTimeout(() => {
+                showToast('Brief successfully transmitted to our strategists.');
+                contactForm.reset();
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }, 1500);
+        });
+
+        // Global Guard for accidental anchors
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (link) {
+                e.preventDefault();
+                showToast('External actions are disabled in preview.');
+            }
+        }, true);
+    });
+</script>
+</body>
+</html>
