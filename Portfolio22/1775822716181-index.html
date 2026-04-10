@@ -1,0 +1,1256 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>Kautilya Utkarsh | AI Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-2: #4f46e5;
+            --on-primary: #ffffff;
+            --accent: #10b981;
+            --on-accent: #ffffff;
+            --bg: #0a0a0c;
+            --bg-2: #141418;
+            --surface: #1c1c21;
+            --surface-2: #25252b;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: #334155;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --focus: rgba(99, 102, 241, 0.5);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-strong: 0 10px 40px rgba(0, 0, 0, 0.6);
+            --radius-btn: 3px;
+            --radius-card: 8px;
+            --radius-pill: 9999px;
+            --space-1: 0.5rem;
+            --space-2: 1rem;
+            --space-3: 1.5rem;
+            --space-4: 2.5rem;
+            --space-5: 4rem;
+            --space-6: 6rem;
+            --font-size-1: 0.875rem;
+            --font-size-2: 1rem;
+            --font-size-3: 1.25rem;
+            --font-size-4: 1.75rem;
+            --font-size-5: 2.5rem;
+            --font-size-6: 3.5rem;
+            --line-1: 1.2;
+            --line-2: 1.5;
+            --line-3: 1.8;
+            --gutter: 0;
+            --page-top: var(--space-4);
+            --page-bottom: var(--space-6);
+            --header-bg: rgba(10, 10, 12, 0.85);
+            --divider: rgba(255, 255, 255, 0.08);
+            --overlay: rgba(0, 0, 0, 0.8);
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            --dur-fast: 150ms;
+            --dur-med: 300ms;
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f8fafc;
+            --surface: #ffffff;
+            --surface-2: #f1f5f9;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --divider: rgba(0, 0, 0, 0.08);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow-strong: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: var(--line-2);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        #page {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            min-width: 0;
+            padding-left: var(--space-3);
+            padding-right: var(--space-3);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: var(--line-1);
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            color: inherit;
+            transition: all var(--dur-fast) var(--ease-standard);
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .nav-wrapper {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: var(--font-size-3);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-4);
+            align-items: center;
+        }
+
+        .nav-item {
+            font-size: var(--font-size-1);
+            font-weight: 500;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-pill);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--divider);
+        }
+
+        .theme-toggle:hover {
+            background: var(--surface-2);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--on-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            font-size: var(--font-size-1);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-2);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* Hero */
+        .hero {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=2000') no-repeat center center/cover;
+            text-align: center;
+        }
+
+        .hero-content {
+            z-index: 10;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, var(--font-size-6));
+            margin-bottom: var(--space-2);
+            color: #fff;
+        }
+
+        .hero p {
+            font-size: var(--font-size-3);
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin: 0 auto var(--space-4);
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: var(--space-2);
+            justify-content: center;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: var(--space-5) 0;
+            background: var(--bg-2);
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: var(--font-size-5);
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-card p {
+            font-size: var(--font-size-1);
+            color: var(--muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* Projects Section */
+        .section-title {
+            text-align: center;
+            margin-bottom: var(--space-5);
+        }
+
+        .section-title h2 {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-1);
+        }
+
+        .section-title span {
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: var(--font-size-1);
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .work {
+            padding: var(--space-6) 0;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: var(--space-3);
+        }
+
+        .project-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            transition: all var(--dur-med) var(--ease-standard);
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .project-img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .project-info {
+            padding: var(--space-3);
+        }
+
+        .project-info h4 {
+            font-size: var(--font-size-3);
+            margin-bottom: var(--space-1);
+        }
+
+        .project-info p {
+            font-size: var(--font-size-1);
+            color: var(--muted);
+            margin-bottom: var(--space-3);
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--bg-2);
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: var(--space-6) 0;
+            background: var(--bg-2);
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-3);
+        }
+
+        .testimonial-card {
+            background: var(--surface);
+            padding: var(--space-3);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--divider);
+        }
+
+        .quote {
+            font-size: var(--font-size-2);
+            font-style: italic;
+            color: var(--text);
+            margin-bottom: var(--space-3);
+            position: relative;
+        }
+
+        .quote::before {
+            content: '"';
+            font-size: 4rem;
+            color: var(--primary);
+            opacity: 0.2;
+            position: absolute;
+            top: -20px;
+            left: -10px;
+        }
+
+        .client {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .client-img {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-pill);
+            object-fit: cover;
+        }
+
+        .client-info h5 {
+            font-family: 'Inter', sans-serif;
+            font-size: var(--font-size-2);
+        }
+
+        .client-info p {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: var(--space-6) 0;
+        }
+
+        .contact-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: var(--space-5);
+        }
+
+        .contact-info-panel h3 {
+            margin-bottom: var(--space-2);
+        }
+
+        .contact-item {
+            margin-bottom: var(--space-3);
+        }
+
+        .contact-item span {
+            display: block;
+            font-size: var(--font-size-1);
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .contact-item p {
+            font-weight: 500;
+        }
+
+        .contact-form {
+            background: var(--surface);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-2);
+        }
+
+        .form-group label {
+            display: block;
+            font-size: var(--font-size-1);
+            margin-bottom: 8px;
+            color: var(--muted);
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: var(--radius-btn);
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--focus);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 14px;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            margin-top: var(--space-2);
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-4) 0;
+            background: var(--bg);
+            border-top: 1px solid var(--divider);
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .social-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-pill);
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--divider);
+        }
+
+        .social-btn:hover {
+            color: var(--primary);
+            background: var(--surface-2);
+        }
+
+        .copyright {
+            color: var(--muted);
+            font-size: var(--font-size-1);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: var(--surface);
+            width: 90%;
+            max-width: 600px;
+            border-radius: var(--radius-card);
+            padding: var(--space-4);
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: var(--muted);
+        }
+
+        .modal-body img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: var(--radius-card);
+            margin-bottom: var(--space-3);
+        }
+
+        /* Mobile Menu */
+        .hamburger {
+            display: none;
+            font-size: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .hamburger {
+                display: block;
+            }
+            .contact-layout {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 3rem;
+            }
+        }
+
+        /* Toasts */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 3000;
+        }
+
+        .toast {
+            background: var(--surface);
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-btn);
+            box-shadow: var(--shadow-strong);
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Scroll Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+<script>
+            // SharpCoder Vibe Configuration
+            window.__SCV_CONFIG = window.__SCV_CONFIG || {};
+            window.__SCV_CONFIG.deployToken = "CfDJ8OUDH72-h_xMuKpv5SB4va5_yYOtWf2pQ-Ns30U3oPm8qnUgBdDBOaS_YXdqHUSGyBnt1fLMxKMWiaGRzia2UV79o0zXC7MWqt17x9YgSuRc8UX1Z71wyCLWNZU0FsMl47pDaiK4BhRJhSUcqIKhlVarmvplkXmb6gcq-8V7hfrZ-VQbkga4fIfmwyNWNTI2Sg";
+            window.__SCV_CONFIG.emailApiUrl = "/api/email/send";
+            window.__SCV_CONFIG.emailEnabled = true;
+            window.__SCV_CONFIG.version = "1.0.0";
+            </script>
+<script>let deployToken = "CfDJ8OUDH72-h_xMuKpv5SB4va5_yYOtWf2pQ-Ns30U3oPm8qnUgBdDBOaS_YXdqHUSGyBnt1fLMxKMWiaGRzia2UV79o0zXC7MWqt17x9YgSuRc8UX1Z71wyCLWNZU0FsMl47pDaiK4BhRJhSUcqIKhlVarmvplkXmb6gcq-8V7hfrZ-VQbkga4fIfmwyNWNTI2Sg";</script>
+
+
+<div id="page">
+    <header id="mainHeader">
+        <div class="container">
+            <div class="nav-wrapper">
+                <button type="button" class="logo" data-scroll="heroSection">Kautilya Utkarsh</button>
+                
+                <nav class="nav-links">
+                    <button type="button" class="nav-item" data-scroll="projectsSection">Projects</button>
+                    <button type="button" class="nav-item" data-scroll="testimonialsSection">Testimonials</button>
+                    <button type="button" class="nav-item" data-scroll="contactSection">Contact</button>
+                </nav>
+
+                <div class="header-actions">
+                    <button type="button" id="themeToggle" class="theme-toggle" title="Toggle Theme">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    </button>
+                    <button type="button" class="btn-primary" data-scroll="contactSection">Hire Me</button>
+                    <button type="button" class="hamburger" id="mobileMenuBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="heroSection" class="hero">
+        <div class="hero-content container">
+            <span class="reveal" style="color: var(--primary); font-weight: 600; letter-spacing: 3px; display: block; margin-bottom: 1rem;">AI ENGINEER @ THINKVERSE LAB</span>
+            <h1 class="reveal">Architecting Intelligence. Humanizing Data.</h1>
+            <p class="reveal">I build scalable neural architectures and generative AI solutions that bridge the gap between complex research and real-world utility.</p>
+            <div class="hero-btns reveal">
+                <button type="button" class="btn-primary" data-scroll="projectsSection">View Work</button>
+                <button type="button" class="btn-primary" style="background: transparent; border: 1px solid var(--border);" data-scroll="contactSection">Get in Touch</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 class="counter" data-target="45">0</h3>
+                    <p>AI Models Deployed</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="counter" data-target="12">0</h3>
+                    <p>Global Research Papers</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="counter" data-target="1200">0</h3>
+                    <p>Open Source Stars</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="counter" data-target="8">0</h3>
+                    <p>Core AI Patent Grants</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projectsSection" class="work">
+        <div class="container">
+            <div class="section-title reveal">
+                <span>Featured Engineering</span>
+                <h2>Research & Development</h2>
+            </div>
+
+            <div class="project-grid">
+                <!-- Project 1 -->
+                <button type="button" class="project-card reveal" data-modal="project1">
+                    <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=600" alt="Neural Architecture" class="project-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    <div class="project-info">
+                        <div class="tags">
+                            <span class="tag">PyTorch</span>
+                            <span class="tag">NLP</span>
+                        </div>
+                        <h4>Vocal-LLM v2.0</h4>
+                        <p>A low-latency large language model designed specifically for real-time edge voice interaction.</p>
+                        <span style="color: var(--primary); font-size: 0.875rem; font-weight: 600;">View Details →</span>
+                    </div>
+                </button>
+
+                <!-- Project 2 -->
+                <button type="button" class="project-card reveal" data-modal="project2">
+                    <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=600" alt="Generative Art" class="project-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    <div class="project-info">
+                        <div class="tags">
+                            <span class="tag">Stable Diffusion</span>
+                            <span class="tag">API</span>
+                        </div>
+                        <h4>Thinkverse GenEngine</h4>
+                        <p>Enterprise-grade image synthesis engine with consistent brand style enforcement through LoRA.</p>
+                        <span style="color: var(--primary); font-size: 0.875rem; font-weight: 600;">View Details →</span>
+                    </div>
+                </button>
+
+                <!-- Project 3 -->
+                <button type="button" class="project-card reveal" data-modal="project3">
+                    <img src="https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&q=80&w=600" alt="Robotics" class="project-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    <div class="project-info">
+                        <div class="tags">
+                            <span class="tag">C++</span>
+                            <span class="tag">Computer Vision</span>
+                        </div>
+                        <h4>Neural-Path Vision</h4>
+                        <p>Autonomous navigation stack for warehouse robotics using proprietary depth-sensing transformers.</p>
+                        <span style="color: var(--primary); font-size: 0.875rem; font-weight: 600;">View Details →</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonialsSection" class="testimonials">
+        <div class="container">
+            <div class="section-title reveal">
+                <span>The Impact</span>
+                <h2>Industry Voices</h2>
+            </div>
+
+            <div class="testimonial-grid">
+                <div class="testimonial-card reveal">
+                    <p class="quote">Kautilya's ability to translate cutting-edge LLM research into production-ready features is unparalleled. He's been pivotal to Thinkverse.</p>
+                    <div class="client">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=100" alt="Sarah Chen" class="client-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        <div class="client-info">
+                            <button type="button" data-modal="sarah"><h5>Sarah Chen</h5></button>
+                            <p>CTO, Thinkverse Lab</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card reveal">
+                    <p class="quote">One of the most focused AI engineers I've worked with. His work on vision transformers saved our project months of dev time.</p>
+                    <div class="client">
+                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=100" alt="Marcus Thorne" class="client-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        <div class="client-info">
+                            <button type="button" data-modal="marcus"><h5>Marcus Thorne</h5></button>
+                            <p>Director of Engineering, NEXUS AI</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card reveal">
+                    <p class="quote">Exceptional engineering talent. Kautilya doesn't just build models; he builds systems that actually solve human problems.</p>
+                    <div class="client">
+                        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=100" alt="Elena Rodriguez" class="client-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        <div class="client-info">
+                            <button type="button" data-modal="elena"><h5>Elena Rodriguez</h5></button>
+                            <p>Principal AI Researcher, DeepLink</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contactSection" class="contact">
+        <div class="container">
+            <div class="section-title reveal">
+                <span>Collaborate</span>
+                <h2>Get In Touch</h2>
+            </div>
+
+            <div class="contact-layout reveal">
+                <div class="contact-info-panel">
+                    <h3>Let's talk about the future of AI.</h3>
+                    <p style="color: var(--muted); margin-bottom: var(--space-4);">Currently taking on selective consulting projects and research collaborations.</p>
+                    
+                    <div class="contact-item">
+                        <span>Email</span>
+                        <p>kautilya.u@thinkverselab.ai</p>
+                    </div>
+                    <div class="contact-item">
+                        <span>Location</span>
+                        <p>Palo Alto, California / Remote</p>
+                    </div>
+                    <div class="contact-item">
+                        <span>Expertise</span>
+                        <p>LLMs, Computer Vision, Edge Computing</p>
+                    </div>
+                </div>
+
+                <form class="contact-form" id="portfolioContactForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" class="form-control" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="emailAddr">Email Address</label>
+                        <input type="email" id="emailAddr" class="form-control" required placeholder="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" class="form-control" required placeholder="AI Consulting / Research Project">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" class="form-control" required placeholder="Tell me about your project or inquiry..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <button type="button" class="social-btn" title="LinkedIn" data-modal="social-li">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                </button>
+                <button type="button" class="social-btn" title="GitHub" data-modal="social-gh">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                </button>
+            </div>
+            <p class="copyright">© <span id="runtimeYear"></span> Kautilya Utkarsh. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- Modals -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content" id="modalContent">
+        <button type="button" class="modal-close" id="closeModal">&times;</button>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    // Theme Management
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    
+    function setTheme(theme) {
+        html.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }
+
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    setTheme(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-theme');
+        setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    // Year
+    document.getElementById('runtimeYear').textContent = new Date().getFullYear();
+
+    // Scroll Reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // Stats Counters
+    const counters = document.querySelectorAll('.counter');
+    const countObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counter = entry.target;
+                const target = parseInt(counter.getAttribute('data-target'));
+                let current = 0;
+                const increment = target / 50;
+                const update = () => {
+                    if (current < target) {
+                        current += increment;
+                        counter.textContent = Math.ceil(current) + (target > 1000 ? '+' : '');
+                        setTimeout(update, 30);
+                    } else {
+                        counter.textContent = target + (target > 1000 ? '+' : '');
+                    }
+                };
+                update();
+                countObserver.unobserve(counter);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    counters.forEach(c => countObserver.observe(c));
+
+    // Navigation Smooth Scroll
+    document.querySelectorAll('[data-scroll]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-scroll');
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                window.scrollTo({
+                    top: targetEl.offsetTop - 70,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Form Handling
+    const contactForm = document.getElementById('portfolioContactForm');
+    const toastContainer = document.getElementById('toast-container');
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        showToast("Message sent successfully! Kautilya will reach out soon.");
+        contactForm.reset();
+    });
+
+    // Modal Logic
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalBody = document.getElementById('modalBody');
+    const closeModal = document.getElementById('closeModal');
+
+    const modalData = {
+        'project1': {
+            title: 'Vocal-LLM v2.0',
+            img: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=800',
+            desc: 'Developed a quantized transformer model using 4-bit precision to enable real-time speech-to-intent processing on edge devices. Achieved a 35% reduction in latency compared to baseline whisper models while maintaining 94% accuracy in noisy environments.'
+        },
+        'project2': {
+            title: 'Thinkverse GenEngine',
+            img: 'https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=800',
+            desc: 'Built a multi-modal generation pipeline for corporate creative teams. Features include custom LoRA fine-tuning workflows, automated safety filtering, and a RESTful API serving 500k+ monthly requests with 99.9% uptime.'
+        },
+        'project3': {
+            title: 'Neural-Path Vision',
+            img: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&q=80&w=800',
+            desc: 'Implemented a transformer-based spatial awareness system for mobile robots. Utilized self-supervised learning for depth estimation, drastically reducing the need for expensive LiDAR hardware in indoor logistics.'
+        },
+        'sarah': {
+            title: 'Sarah Chen',
+            img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800',
+            desc: 'Sarah Chen is the Chief Technology Officer at Thinkverse Lab. She has over 15 years of experience in distributed systems and AI research, formerly leading engineering teams at Google DeepMind.'
+        },
+        'marcus': {
+            title: 'Marcus Thorne',
+            img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800',
+            desc: 'Marcus is the Director of Engineering at NEXUS AI, focusing on the intersection of robotics and computer vision. He has collaborated with Kautilya on several open-source vision benchmarks.'
+        },
+        'elena': {
+            title: 'Elena Rodriguez',
+            img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=800',
+            desc: 'Elena leads the Principal AI Research wing at DeepLink. She is a frequent speaker at NeurIPS and CVPR and serves as a technical advisor for emerging AI startups.'
+        },
+        'social-li': {
+            title: 'LinkedIn Profile',
+            desc: 'View Kautilya Utkarsh\'s professional history, certifications, and network of AI practitioners on LinkedIn. (External navigation disabled in preview)'
+        },
+        'social-gh': {
+            title: 'GitHub Repository',
+            desc: 'Explore Kautilya\'s open-source contributions, including neural network frameworks, training scripts, and model weights. (External navigation disabled in preview)'
+        }
+    };
+
+    document.querySelectorAll('[data-modal]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const key = btn.getAttribute('data-modal');
+            const data = modalData[key];
+            if (data) {
+                modalBody.innerHTML = `
+                    ${data.img ? `<img src="${data.img}" alt="${data.title}" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">` : ''}
+                    <h2 style="margin-bottom: var(--space-2)">${data.title}</h2>
+                    <p style="color: var(--muted); line-height: 1.6;">${data.desc}</p>
+                `;
+                modalOverlay.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+
+    const closeAllModals = () => {
+        modalOverlay.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+
+    closeModal.addEventListener('click', closeAllModals);
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) closeAllModals();
+    });
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAllModals();
+    });
+
+    // Mobile Menu
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    mobileMenuBtn.addEventListener('click', () => {
+        showToast("Mobile menu navigation enabled in full version.");
+    });
+
+    // Interaction Guard
+    const pageRoot = document.getElementById('page');
+    pageRoot.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') {
+            e.preventDefault();
+            showToast("External or unsafe action disabled in preview.");
+        }
+    });
+</script>
+
+
+
+<script>
+// SharpCoder Vibe Email Helper - v2.0 (Enhanced)
+(function() {
+    'use strict';
+    
+    const CONFIG = window.__SCV_CONFIG || {};
+    const DEPLOY_TOKEN = CONFIG.deployToken || (typeof deployToken !== 'undefined' ? deployToken : null);
+    const API_URL = CONFIG.emailApiUrl || '/api/email/send';
+    
+    console.log('SCV Email Helper: Initialized', { hasToken: !!DEPLOY_TOKEN, apiUrl: API_URL });
+    
+    if (!DEPLOY_TOKEN) {
+        console.warn('SCV Email Helper: No deploy token found. Email sending will not work.');
+    }
+    
+    window.sendContactForm = async function(formData) {
+        if (!DEPLOY_TOKEN) {
+            console.error('SCV Email Helper: Missing deploy token');
+            return { ok: false, error: 'Email service not configured for this deployment.' };
+        }
+        
+        if (!formData.name || !formData.email || !formData.message) {
+            console.warn('SCV Email Helper: Missing required fields', formData);
+            return { ok: false, error: 'Please fill in all required fields.' };
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            console.warn('SCV Email Helper: Invalid email', formData.email);
+            return { ok: false, error: 'Please enter a valid email address.' };
+        }
+        
+        const payload = {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            message: formData.message.trim(),
+            deployToken: DEPLOY_TOKEN
+        };
+        
+        console.log('SCV Email Helper: Sending email', { name: payload.name, email: payload.email });
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            console.log('SCV Email Helper: Response status', response.status);
+            
+            let result;
+            try {
+                result = await response.json();
+                console.log('SCV Email Helper: Response body', result);
+            } catch (e) {
+                console.error('SCV Email Helper: Failed to parse response', e);
+                result = { ok: false, error: 'Invalid response from server.' };
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('SCV Email Helper: Request failed', error);
+            if (error.name === 'AbortError') {
+                return { ok: false, error: 'Request timed out. Please try again.' };
+            }
+            return { ok: false, error: 'Network error. Please check your connection and try again.' };
+        }
+    };
+    
+    function bindContactForm(form) {
+        if (!form || form.hasAttribute('data-scv-bound')) return;
+        form.setAttribute('data-scv-bound', 'true');
+        
+        // Log form structure for debugging
+        console.log('SCV Email Helper: Binding form', { 
+            id: form.id, 
+            classes: form.className,
+            hasNameInput: !!form.querySelector('[name="name"]'),
+            hasEmailInput: !!form.querySelector('[name="email"]'),
+            hasMessageInput: !!form.querySelector('[name="message"]')
+        });
+        
+        // Ensure form has the required structure
+        const hasNameInput = form.querySelector('[name="name"]');
+        const hasEmailInput = form.querySelector('[name="email"]');
+        const hasMessageInput = form.querySelector('[name="message"]');
+        
+        if (!hasNameInput || !hasEmailInput || !hasMessageInput) {
+            console.warn('SCV Email Helper: Form missing required name/email/message inputs');
+            return;
+        }
+        
+        // Remove any existing submit handlers to prevent conflicts
+        const oldSubmit = form.onsubmit;
+        if (oldSubmit) form.onsubmit = null;
+        
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('SCV Email Helper: Form submitted');
+            
+            const formData = {
+                name: (form.querySelector('[name="name"]')?.value || '').trim(),
+                email: (form.querySelector('[name="email"]')?.value || '').trim(),
+                message: (form.querySelector('[name="message"]')?.value || '').trim()
+            };
+            
+            console.log('SCV Email Helper: Form data collected', { 
+                name: formData.name ? 'present' : 'missing',
+                email: formData.email ? 'present' : 'missing', 
+                message: formData.message ? 'present' : 'missing'
+            });
+            
+            let messageDiv = form.querySelector('.form-message');
+            if (!messageDiv) {
+                messageDiv = document.createElement('div');
+                messageDiv.className = 'form-message';
+                form.appendChild(messageDiv);
+                console.log('SCV Email Helper: Created message div');
+            }
+            
+            const submitBtn = form.querySelector('[type="submit"]');
+            const originalText = submitBtn?.textContent || 'Send';
+            const originalDisabled = submitBtn?.disabled || false;
+            
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+            }
+            
+            messageDiv.innerHTML = '';
+            messageDiv.style.display = 'block';
+            
+            try {
+                const result = await window.sendContactForm(formData);
+                
+                if (result.ok) {
+                    messageDiv.innerHTML = '<div style="color: #10b981; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e8f5e9; border-left: 4px solid #10b981;">✓ ' + (result.message || 'Message sent successfully!') + '</div>';
+                    form.reset();
+                    console.log('SCV Email Helper: Email sent successfully');
+                    setTimeout(() => {
+                        if (messageDiv) messageDiv.style.display = 'none';
+                    }, 5000);
+                } else {
+                    console.error('SCV Email Helper: Send failed', result.error);
+                    messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ ' + (result.error || 'Failed to send message. Please try again.') + '</div>';
+                }
+            } catch (error) {
+                console.error('SCV Email Helper: Exception', error);
+                messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ An error occurred. Please try again later.</div>';
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = originalDisabled;
+                    submitBtn.textContent = originalText;
+                }
+            }
+        });
+    }
+    
+    // Auto-bind all forms with scv-contact-form class
+    function bindAllForms() {
+        const forms = document.querySelectorAll('form.scv-contact-form');
+        console.log('SCV Email Helper: Found forms with scv-contact-form class:', forms.length);
+        forms.forEach(bindContactForm);
+        if (forms.length === 0) {
+            console.warn('SCV Email Helper: No forms with class="scv-contact-form" found on this page');
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindAllForms);
+    } else {
+        bindAllForms();
+    }
+    
+    // Watch for dynamically added forms
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        if (node.matches && node.matches('form.scv-contact-form')) {
+                            bindContactForm(node);
+                        }
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('form.scv-contact-form').forEach(bindContactForm);
+                        }
+                    }
+                });
+            });
+        });
+        
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }
+})();
+</script>
+</body>
+</html>
