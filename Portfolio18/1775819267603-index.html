@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <title>Kautilya Utkarsh | AI Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Base Tokens */
+      --gutter: 0;
+      --space-1: 0.5rem;
+      --space-2: 1rem;
+      --space-3: 1.5rem;
+      --space-4: 2.5rem;
+      --space-5: 4rem;
+      --space-6: 8rem;
+      
+      --font-size-1: 0.875rem;
+      --font-size-2: 1rem;
+      --font-size-3: 1.25rem;
+      --font-size-4: 1.75rem;
+      --font-size-5: 2.5rem;
+      --font-size-6: 3.5rem;
+      
+      --radius-btn: 3px;
+      --radius-card: 8px;
+      --radius-pill: 50px;
+      
+      --dur-fast: 0.2s;
+      --dur-med: 0.4s;
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+      
+      --shadow-soft: 0 4px 20px rgba(0,0,0,0.05);
+      --shadow-strong: 0 10px 40px rgba(0,0,0,0.15);
+      
+      --page-top: var(--space-4);
+      --page-bottom: var(--space-6);
+    }
+
+    html[data-theme="light"] {
+      --bg: #ffffff;
+      --bg-2: #f8f9fa;
+      --surface: #ffffff;
+      --surface-2: #f1f3f5;
+      --text: #1a1a1a;
+      --muted: #666666;
+      --border: #e9ecef;
+      --primary: #222222;
+      --primary-2: #444444;
+      --on-primary: #ffffff;
+      --accent: #3b5bdb;
+      --on-accent: #ffffff;
+      --success: #2b8a3e;
+      --warning: #e67700;
+      --danger: #c92a2a;
+      --focus: rgba(59, 91, 219, 0.4);
+      --header-bg: rgba(255, 255, 255, 0.8);
+      --divider: #eeeeee;
+      --overlay: rgba(0, 0, 0, 0.5);
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0f0f0f;
+      --bg-2: #161616;
+      --surface: #1a1a1a;
+      --surface-2: #242424;
+      --text: #eeeeee;
+      --muted: #999999;
+      --border: #2d2d2d;
+      --primary: #ffffff;
+      --primary-2: #cccccc;
+      --on-primary: #000000;
+      --accent: #4dabf7;
+      --on-accent: #ffffff;
+      --success: #40c057;
+      --warning: #fab005;
+      --danger: #fa5252;
+      --focus: rgba(77, 171, 247, 0.4);
+      --header-bg: rgba(15, 15, 15, 0.8);
+      --divider: #262626;
+      --overlay: rgba(0, 0, 0, 0.8);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    #page {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: var(--space-3);
+      padding-right: var(--space-3);
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      background: var(--header-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: background var(--dur-med);
+    }
+
+    .nav-inner {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .nav-links {
+        display: flex;
+        gap: var(--space-3);
+      }
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 0.5rem 0.75rem;
+      transition: color var(--dur-fast);
+      position: relative;
+    }
+
+    .nav-btn:hover {
+      color: var(--accent);
+    }
+
+    .cta-btn {
+      background: var(--primary);
+      color: var(--on-primary);
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius-btn);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: opacity var(--dur-fast), transform var(--dur-fast);
+    }
+
+    .cta-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background var(--dur-fast);
+    }
+
+    .theme-toggle:hover {
+      background: var(--surface-2);
+    }
+
+    /* Hero */
+    .hero {
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                  url('https://images.unsplash.com/photo-1620712943543-bcc4628c9759?auto=format&fit=crop&q=80&w=2000') center/cover no-repeat;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      color: #ffffff;
+      padding: 0 var(--space-3);
+    }
+
+    .hero-h1 {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      margin-bottom: var(--space-2);
+    }
+
+    .hero-p {
+      font-size: clamp(1rem, 3vw, 1.4rem);
+      margin-bottom: var(--space-4);
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    /* Stats Section */
+    .stats-bar {
+      background: var(--bg-2);
+      padding: var(--space-5) 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-4);
+      text-align: center;
+    }
+
+    .stat-item h3 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent);
+    }
+
+    .stat-item p {
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    /* Section Global */
+    section {
+      padding: var(--space-6) 0;
+      width: 100%;
+    }
+
+    .section-header {
+      margin-bottom: var(--space-5);
+      text-align: center;
+    }
+
+    .section-header h2 {
+      font-size: var(--font-size-5);
+      margin-bottom: var(--space-2);
+    }
+
+    .section-header p {
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Grid Layouts */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-4);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      transition: transform var(--dur-med), box-shadow var(--dur-med);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .card-img {
+      width: 100%;
+      aspect-ratio: 16/10;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .card-body {
+      padding: var(--space-3);
+      flex-grow: 1;
+    }
+
+    .card-tag {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: var(--space-3);
+    }
+
+    .card-footer {
+      padding: var(--space-3);
+      border-top: 1px solid var(--divider);
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+      color: var(--accent);
+    }
+
+    /* Testimonials */
+    .testimonial-card {
+      background: var(--bg-2);
+      padding: var(--space-4);
+      border-radius: var(--radius-card);
+      position: relative;
+    }
+
+    .testimonial-content {
+      font-style: italic;
+      font-size: 1.1rem;
+      margin-bottom: var(--space-3);
+      color: var(--text);
+    }
+
+    .testimonial-user {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      cursor: pointer;
+    }
+
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .user-info h4 {
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .user-info p {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Contact Form */
+    .contact-wrapper {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+
+    @media (min-width: 992px) {
+      .contact-wrapper {
+        grid-template-columns: 1fr 1.5fr;
+      }
+    }
+
+    .contact-info h3 {
+      font-size: 2rem;
+      margin-bottom: var(--space-3);
+    }
+
+    .contact-item {
+      margin-bottom: var(--space-3);
+    }
+
+    .contact-item label {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .contact-item p {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .contact-form {
+      background: var(--surface);
+      padding: var(--space-4);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+    }
+
+    .form-group {
+      margin-bottom: var(--space-3);
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input, 
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-btn);
+      color: var(--text);
+      font-family: inherit;
+      transition: border-color var(--dur-fast);
+    }
+
+    .form-group input:focus, 
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--focus);
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--accent);
+      color: var(--on-accent);
+      border: none;
+      padding: 1rem;
+      font-weight: 700;
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      transition: opacity var(--dur-fast);
+    }
+
+    .submit-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-2);
+      padding: var(--space-5) 0;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-4);
+      text-align: center;
+    }
+
+    .footer-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .social-links {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    .social-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: none;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background var(--dur-fast);
+    }
+
+    .social-btn:hover {
+      background: var(--accent);
+      color: var(--on-accent);
+    }
+
+    .footer-bottom {
+      width: 100%;
+      border-top: 1px solid var(--divider);
+      padding-top: var(--space-3);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--overlay);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-3);
+    }
+
+    .modal-content {
+      background: var(--surface);
+      max-width: 600px;
+      width: 100%;
+      border-radius: var(--radius-card);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: var(--space-4);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text);
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .modal-body h2 {
+      margin-bottom: var(--space-2);
+    }
+
+    .modal-img {
+      width: 100%;
+      border-radius: var(--radius-card);
+      margin-bottom: var(--space-3);
+    }
+
+    /* Toast */
+    #status-region {
+      position: fixed;
+      bottom: var(--space-3);
+      right: var(--space-3);
+      z-index: 3000;
+    }
+
+    .toast {
+      background: var(--surface);
+      color: var(--text);
+      padding: 1rem 1.5rem;
+      border-left: 4px solid var(--accent);
+      border-radius: 4px;
+      box-shadow: var(--shadow-strong);
+      margin-bottom: 0.5rem;
+      animation: slideIn 0.3s ease-out;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Hamburger Mobile */
+    .mobile-menu-btn {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 30px;
+    }
+
+    @media (min-width: 768px) {
+      .mobile-menu-btn { display: none; }
+    }
+
+    .mobile-menu-btn span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--text);
+      transition: 0.3s;
+    }
+
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 80%;
+      max-width: 300px;
+      height: 100vh;
+      background: var(--surface);
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-6) var(--space-4);
+      transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+    }
+
+    .mobile-nav.active {
+      right: 0;
+    }
+
+    .mobile-nav .nav-btn {
+      font-size: 1.2rem;
+      text-align: left;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    /* Utilities */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<div id="page">
+  <!-- Navigation -->
+  <header>
+    <div class="container nav-inner">
+      <button type="button" class="brand" data-target="hero">Kautilya Utkarsh</button>
+      
+      <div class="nav-controls">
+        <nav class="nav-links">
+          <button type="button" class="nav-btn" data-target="about">About</button>
+          <button type="button" class="nav-btn" data-target="projects">Projects</button>
+          <button type="button" class="nav-btn" data-target="testimonials">Testimonials</button>
+          <button type="button" class="nav-btn" data-target="contact">Contact</button>
+        </nav>
+        
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        
+        <button type="button" class="cta-btn" data-target="contact">Get in Touch</button>
+        
+        <button type="button" class="mobile-menu-btn" id="mobileMenuOpen" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Nav -->
+  <div class="mobile-nav" id="mobileNav">
+    <button type="button" class="nav-btn" data-target="about">About</button>
+    <button type="button" class="nav-btn" data-target="projects">Projects</button>
+    <button type="button" class="nav-btn" data-target="testimonials">Testimonials</button>
+    <button type="button" class="nav-btn" data-target="contact">Contact</button>
+  </div>
+
+  <main>
+    <!-- Hero -->
+    <section id="hero" class="hero">
+      <div class="hero-content">
+        <h1 class="hero-h1">Architecting Intelligence</h1>
+        <p class="hero-p">Kautilya Utkarsh — Lead AI Engineer at Thinkverse Lab. Pioneering neural systems that bridge the gap between abstract theory and scalable impact.</p>
+        <button type="button" class="cta-btn" style="padding: 1rem 2.5rem; font-size: 1rem;" data-target="projects">View Innovations</button>
+      </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="container stats-grid">
+        <div class="stat-item">
+          <h3 data-count="48">0</h3>
+          <p>Models Deployed</p>
+        </div>
+        <div class="stat-item">
+          <h3 data-count="12">0</h3>
+          <p>Global Partners</p>
+        </div>
+        <div class="stat-item">
+          <h3 data-count="920">0</h3>
+          <p>Innovators Trained</p>
+        </div>
+        <div class="stat-item">
+          <h3 data-count="5">0</h3>
+          <p>Years Experience</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="scroll-reveal">
+      <div class="container">
+        <div class="contact-wrapper">
+          <div class="about-img-wrap">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800" 
+                 alt="Kautilya Utkarsh" 
+                 class="card-img" 
+                 style="border-radius: var(--radius-card); height: 100%; object-position: top;"
+                 referrerpolicy="no-referrer-when-downgrade" 
+                 crossorigin="anonymous"
+                 onclick="showDetailModal('person', 'Kautilya Utkarsh', 'Lead AI Engineer', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800', 'Specializing in Generative AI, Computer Vision, and Large Language Model (LLM) fine-tuning. Kautilya drives innovation at Thinkverse Lab by building production-ready AI solutions for enterprise-level challenges.')">
+          </div>
+          <div class="about-text">
+            <div class="section-header" style="text-align: left; margin-bottom: var(--space-3);">
+              <h2>The Mission</h2>
+            </div>
+            <p style="margin-bottom: var(--space-2);">As an AI Engineer at Thinkverse Lab, I don't just build models; I build ecosystems. My work focuses on the intersection of scalability and ethical alignment, ensuring that the next generation of autonomous systems is both powerful and predictable.</p>
+            <p style="margin-bottom: var(--space-3);">I lead the research and development of multimodal architectures, specializing in latency reduction for real-time edge processing and the orchestration of complex AI agent swarms.</p>
+            <div class="contact-info" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2);">
+              <div class="contact-item">
+                <label>Expertise</label>
+                <p>Neural Architectures</p>
+              </div>
+              <div class="contact-item">
+                <label>Focus</label>
+                <p>Enterprise LLMs</p>
+              </div>
+              <div class="contact-item">
+                <label>Currently</label>
+                <p>Thinkverse Lab</p>
+              </div>
+              <div class="contact-item">
+                <label>Location</label>
+                <p>Global Remote</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" style="background: var(--bg-2);">
+      <div class="container">
+        <div class="section-header scroll-reveal">
+          <h2>Featured Systems</h2>
+          <p>Selected technical implementations currently deployed at scale across diverse industry verticals.</p>
+        </div>
+        <div class="grid-3">
+          <div class="card scroll-reveal">
+            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" 
+                 alt="Cognitive Flow Engine" 
+                 class="card-img" 
+                 referrerpolicy="no-referrer-when-downgrade" 
+                 crossorigin="anonymous"
+                 onclick="showDetailModal('product', 'Cognitive Flow Engine', 'Natural Language Processing', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800', 'A state-of-the-art LLM orchestration layer that handles complex multi-turn reasoning and tool-use for enterprise customer service automation.')">
+            <div class="card-body">
+              <span class="card-tag">Research & Dev</span>
+              <h3>Cognitive Flow Engine</h3>
+              <p>Orchestrating autonomous AI agents for high-consequence decision making in financial sectors.</p>
+            </div>
+            <div class="card-footer">
+              <button type="button" class="action-btn" onclick="showDetailModal('product', 'Cognitive Flow Engine', 'Natural Language Processing', 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800', 'Details on orchestration techniques and benchmark results.')">
+                Explore Tech Stack
+              </button>
+            </div>
+          </div>
+
+          <div class="card scroll-reveal">
+            <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800" 
+                 alt="Vigilant Vision" 
+                 class="card-img" 
+                 referrerpolicy="no-referrer-when-downgrade" 
+                 crossorigin="anonymous"
+                 onclick="showDetailModal('product', 'Vigilant Vision', 'Computer Vision', 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800', 'Edge-deployed computer vision model for real-time safety monitoring in industrial manufacturing plants.')">
+            <div class="card-body">
+              <span class="card-tag">Computer Vision</span>
+              <h3>Vigilant Vision</h3>
+              <p>Real-time safety and anomaly detection systems utilizing YOLO-v11 optimized for edge devices.</p>
+            </div>
+            <div class="card-footer">
+              <button type="button" class="action-btn" onclick="showDetailModal('product', 'Vigilant Vision', 'Computer Vision', 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800', 'Detailed metrics on inference speed and accuracy on mobile chipsets.')">
+                Explore Tech Stack
+              </button>
+            </div>
+          </div>
+
+          <div class="card scroll-reveal">
+            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800" 
+                 alt="SyntheData Pro" 
+                 class="card-img" 
+                 referrerpolicy="no-referrer-when-downgrade" 
+                 crossorigin="anonymous"
+                 onclick="showDetailModal('product', 'SyntheData Pro', 'Generative AI', 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800', 'A Diffusion-based framework for generating high-fidelity synthetic tabular and image data for medical research.')">
+            <div class="card-body">
+              <span class="card-tag">Infrastructure</span>
+              <h3>SyntheData Pro</h3>
+              <p>High-fidelity synthetic data generation pipelines for training models in data-scarce environments.</p>
+            </div>
+            <div class="card-footer">
+              <button type="button" class="action-btn" onclick="showDetailModal('product', 'SyntheData Pro', 'Generative AI', 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800', 'Privacy-preserving techniques and GAN vs Diffusion benchmarks.')">
+                Explore Tech Stack
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials">
+      <div class="container">
+        <div class="section-header scroll-reveal">
+          <h2>Peer Perspectives</h2>
+          <p>Reflections from collaborators and industry leaders at the forefront of AI innovation.</p>
+        </div>
+        <div class="grid-3">
+          <div class="testimonial-card scroll-reveal">
+            <p class="testimonial-content">"Kautilya possesses a rare ability to translate cutting-edge research into functional enterprise infrastructure. His work on Agentic Swarms redefined our roadmap."</p>
+            <div class="testimonial-user" onclick="showDetailModal('person', 'Sarah Chen', 'CTO, Thinkverse Lab', 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400', 'A leading expert in Distributed AI, Sarah oversees the engineering vision at Thinkverse.')">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400" alt="Sarah Chen" class="user-avatar" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+              <div class="user-info">
+                <h4>Sarah Chen</h4>
+                <p>CTO, Thinkverse Lab</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card scroll-reveal">
+            <p class="testimonial-content">"The depth of knowledge Kautilya brings to LLM fine-tuning is exceptional. He doesn't just train models; he builds systems that learn with precision."</p>
+            <div class="testimonial-user" onclick="showDetailModal('person', 'Marcus Thorne', 'Senior AI Researcher', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400', 'Marcus focuses on the mathematical foundations of transformer architectures.')">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400" alt="Marcus Thorne" class="user-avatar" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+              <div class="user-info">
+                <h4>Marcus Thorne</h4>
+                <p>Senior AI Researcher</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card scroll-reveal">
+            <p class="testimonial-content">"A visionary engineer who understands that ethics must be built into the core of AI architecture, not just added as a layer at the end."</p>
+            <div class="testimonial-user" onclick="showDetailModal('person', 'Elena Rodriguez', 'Director of Innovation', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400', 'Elena leads the emerging technologies division at Global AI Alliance.')">
+              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400" alt="Elena Rodriguez" class="user-avatar" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+              <div class="user-info">
+                <h4>Elena Rodriguez</h4>
+                <p>Director of Innovation</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="scroll-reveal">
+      <div class="container">
+        <div class="contact-wrapper">
+          <div class="contact-info">
+            <h3>Let's Define the Future.</h3>
+            <p style="margin-bottom: var(--space-4);">Open for research collaborations, strategic consultations, and high-impact engineering challenges.</p>
+            
+            <div class="contact-item">
+              <label>Direct Inquiries</label>
+              <p>kautilya@thinkverse.lab</p>
+            </div>
+            
+            <div class="contact-item">
+              <label>Office</label>
+              <p>Innovation District, Tech City</p>
+            </div>
+
+            <div class="social-links" style="margin-top: var(--space-3);">
+              <button type="button" class="social-btn" onclick="showDetailModal('social', 'LinkedIn', 'Professional Network', '', 'Connecting with 5,000+ industry experts in AI and Machine Learning.')" aria-label="LinkedIn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </button>
+              <button type="button" class="social-btn" onclick="showDetailModal('social', 'GitHub', 'Open Source Portfolio', '', 'Contributor to several leading AI frameworks and maintainer of local inference tools.')" aria-label="GitHub">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <form class="contact-form" id="contactForm">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" required placeholder="John Doe">
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" required placeholder="john@example.com">
+            </div>
+            <div class="form-group">
+              <label for="subject">Topic of Interest</label>
+              <input type="text" id="subject" placeholder="Project Collaboration">
+            </div>
+            <div class="form-group">
+              <label for="message">Your Message</label>
+              <textarea id="message" rows="5" required placeholder="How can we build the future together?"></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-brand">Kautilya Utkarsh</div>
+      <p style="max-width: 400px; color: var(--muted); font-size: 0.9rem;">Bridging the human-machine interface through robust engineering and visionary design.</p>
+      
+      <div class="footer-bottom">
+        <p>&copy; <span id="currentYear"></span> Kautilya Utkarsh | Thinkverse Lab. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- Modal Container -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-content">
+    <button type="button" class="modal-close" id="modalClose" aria-label="Close modal">&times;</button>
+    <div class="modal-body" id="modalBody">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Toast Area -->
+<div id="status-region" aria-live="polite"></div>
+
+<script>
+  // Runtime Year
+  document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+  // Theme Toggle
+  const themeToggle = document.getElementById('themeToggle');
+  const html = document.documentElement;
+  
+  const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  html.setAttribute('data-theme', savedTheme);
+
+  themeToggle.addEventListener('click', () => {
+    const current = html.getAttribute('data-theme');
+    const target = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', target);
+    localStorage.setItem('theme', target);
+  });
+
+  // Navigation Logic
+  document.querySelectorAll('[data-target]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const targetId = btn.getAttribute('data-target');
+      const targetEl = document.getElementById(targetId);
+      
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth' });
+        // Close mobile nav if open
+        document.getElementById('mobileNav').classList.remove('active');
+      }
+    });
+  });
+
+  // Mobile Menu
+  const mobileMenuOpen = document.getElementById('mobileMenuOpen');
+  const mobileNav = document.getElementById('mobileNav');
+
+  mobileMenuOpen.addEventListener('click', () => {
+    mobileNav.classList.toggle('active');
+  });
+
+  // Close modals/menus on Escape
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      mobileNav.classList.remove('active');
+      closeModal();
+    }
+  });
+
+  // Scroll Reveal Observer
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.scroll-reveal').forEach(el => revealObserver.observe(el));
+
+  // Count Animation
+  const countObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const target = parseInt(el.getAttribute('data-count'));
+        animateCount(el, target);
+        countObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
+
+  function animateCount(el, target) {
+    let current = 0;
+    const duration = 2000;
+    const stepTime = Math.abs(Math.floor(duration / target));
+    
+    const timer = setInterval(() => {
+      current += Math.ceil(target / 100);
+      if (current >= target) {
+        el.textContent = target + (target > 50 ? '+' : '');
+        clearInterval(timer);
+      } else {
+        el.textContent = current;
+      }
+    }, stepTime);
+  }
+
+  // Modal Logic
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalBody = document.getElementById('modalBody');
+  const modalClose = document.getElementById('modalClose');
+
+  function showDetailModal(type, title, subtitle, img, desc) {
+    let content = '';
+    
+    if (type === 'person') {
+      content = `
+        <img src="${img}" class="modal-img" alt="${title}" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+        <h2>${title}</h2>
+        <p style="color: var(--accent); font-weight: 600; margin-bottom: 1rem;">${subtitle}</p>
+        <p>${desc}</p>
+        <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem;">
+          <button type="button" class="cta-btn" onclick="closeModal()">Close Details</button>
+        </div>
+      `;
+    } else if (type === 'product') {
+      content = `
+        <img src="${img}" class="modal-img" alt="${title}" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+        <h2>${title}</h2>
+        <p style="color: var(--muted); margin-bottom: 1rem;">Category: ${subtitle}</p>
+        <p>${desc}</p>
+        <div style="margin-top: 1.5rem; background: var(--bg-2); padding: 1rem; border-radius: 4px;">
+          <p style="font-size: 0.85rem; color: var(--text);"><strong>Status:</strong> Active Deployment</p>
+          <p style="font-size: 0.85rem; color: var(--text);"><strong>Technology:</strong> Python, PyTorch, CUDA</p>
+        </div>
+      `;
+    } else if (type === 'social') {
+      content = `
+        <h2>${title} Profile</h2>
+        <p style="color: var(--accent); margin-bottom: 1rem;">${subtitle}</p>
+        <p>${desc}</p>
+        <div style="margin-top: 1.5rem; padding: 1.5rem; border: 2px dashed var(--border); text-align: center;">
+          <p>This external link is disabled in preview.</p>
+          <button type="button" class="cta-btn" style="margin-top: 1rem" onclick="closeModal()">Back to Portfolio</button>
+        </div>
+      `;
+    }
+
+    modalBody.innerHTML = content;
+    modalOverlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modalOverlay.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+
+  // Form Submission
+  const contactForm = document.getElementById('contactForm');
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    showToast("Success! Your message has been transmitted.");
+    contactForm.reset();
+  });
+
+  // Toast Functionality
+  function showToast(message) {
+    const region = document.getElementById('status-region');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--success)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      <span>${message}</span>
+    `;
+    region.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(20px)';
+      setTimeout(() => toast.remove(), 300);
+    }, 4000);
+  }
+
+  // Local Safe Interaction Guard
+  document.getElementById('page').addEventListener('click', (e) => {
+    const anchor = e.target.closest('a');
+    if (anchor) {
+      e.preventDefault();
+      showToast("External or unsafe action disabled in preview.");
+    }
+  });
+</script>
+
+</body>
+</html>
