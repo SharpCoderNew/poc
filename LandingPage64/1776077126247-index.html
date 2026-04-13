@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSocial — We're Rebuilding C# Corner for the AI Era</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060810;
+            --bg2: #080c18;
+            --surface: #0d1225;
+            --surface2: #111829;
+            --border: rgba(255,255,255,0.07);
+            --border-bright: rgba(99,179,237,0.25);
+            --text: #e8edf8;
+            --text-muted: #7a8ba8;
+            --text-dim: #4a5568;
+            --accent: #3b82f6;
+            --accent2: #06b6d4;
+            --gold: #f59e0b;
+            --green: #10b981;
+            --grad: linear-gradient(135deg, #3b82f6, #06b6d4);
+            --grad3: linear-gradient(135deg, #f59e0b, #ef4444);
+            --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline-color: var(--accent);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+        }
+
+        body {
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- UTILS --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .section-padding {
+            padding: 100px 0;
+        }
+
+        .mono { font-family: var(--font-mono); font-size: 0.9em; letter-spacing: -0.02em; }
+        .gradient-text {
+            background: var(--grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        /* --- COMPONENTS --- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--grad);
+            color: white;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-secondary {
+            background: var(--surface2);
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface);
+            border-color: var(--border-bright);
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 72px;
+            background: rgba(6, 8, 16, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-inner {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .logo-box {
+            background: var(--grad);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-weight: 900;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        /* --- HERO --- */
+        .hero {
+            position: relative;
+            padding-top: 180px;
+            padding-bottom: 120px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border-bright);
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--accent2);
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(6, 182, 212, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            line-height: 1.1;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border);
+            padding-top: 3rem;
+        }
+
+        .stat-item h3 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-item span {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+
+        /* --- WHY SECTION --- */
+        #why {
+            background: var(--bg2);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .evolve-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .evolve-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .evolve-card:hover {
+            border-color: var(--border-bright);
+            transform: translateY(-8px);
+        }
+
+        .evolve-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent2);
+        }
+
+        .evolve-card p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--surface2);
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        /* --- PLATFORM GRID --- */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .feature-card.wide {
+            grid-column: span 2;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* --- BENEFITS --- */
+        .benefit-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .benefit-item {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .benefit-check {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            background: var(--green);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        /* --- BADGE SECTION --- */
+        #badge {
+            background: var(--grad);
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .badge-content {
+            background: rgba(0,0,0,0.2);
+            padding: 3rem;
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* --- PRICING --- */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .pricing-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--accent);
+            transform: scale(1.05);
+            background: var(--surface2);
+            z-index: 2;
+        }
+
+        .pricing-card.featured::after {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 1.5rem 0;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* --- TRANSPARENCY --- */
+        .transparency-content {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 4rem;
+            border: 1px solid var(--border);
+        }
+
+        .t-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .t-bar-wrap {
+            margin-bottom: 1.5rem;
+        }
+
+        .t-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .t-track {
+            height: 10px;
+            background: var(--surface2);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .t-bar {
+            height: 100%;
+            background: var(--grad);
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        /* --- FOUNDER --- */
+        .founder-box {
+            display: flex;
+            gap: 4rem;
+            align-items: center;
+            background: var(--bg2);
+            border-radius: 24px;
+            padding: 4rem;
+            border: 1px solid var(--border);
+        }
+
+        .founder-img {
+            width: 280px;
+            height: 280px;
+            border-radius: 20px;
+            object-fit: cover;
+            flex-shrink: 0;
+            filter: grayscale(0.5);
+            border: 4px solid var(--surface2);
+        }
+
+        .quote {
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 80px 0 40px;
+            border-top: 1px solid var(--border);
+            margin-top: 100px;
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 60px;
+        }
+
+        .footer-col h4 {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-col button, .footer-col a {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .footer-col button:hover, .footer-col a:hover {
+            color: var(--text);
+        }
+
+        .footer-bottom {
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* --- MODALS & OVERLAYS --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border-bright);
+            border-radius: 20px;
+            max-width: 600px;
+            width: 100%;
+            padding: 3rem;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--surface2);
+            border: none;
+            color: var(--text);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Toast notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .toast {
+            background: var(--surface2);
+            border-left: 4px solid var(--accent);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            color: var(--text);
+            animation: toast-in 0.3s ease-out forwards;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        @keyframes toast-in {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            .feature-grid { grid-template-columns: 1fr 1fr; }
+            .feature-card.wide { grid-column: span 2; }
+            .t-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .founder-box { flex-direction: column; text-align: center; padding: 2rem; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero-stats { flex-wrap: wrap; gap: 2rem; }
+            .benefit-list { grid-template-columns: 1fr; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .feature-card.wide { grid-column: span 1; flex-direction: column; text-align: center; }
+            .footer-inner { flex-direction: column; gap: 3rem; }
+        }
+
+        .reveal-up {
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .revealed {
+            opacity: 1 !important;
+            transform: translate(0, 0) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-inner">
+            <a href="#" class="logo">
+                <div class="logo-box">C</div>
+                DevSocial
+            </a>
+            <div class="nav-links">
+                <a href="#why">Why Us</a>
+                <a href="#devsocial">Platform</a>
+                <a href="#benefits">Benefits</a>
+                <a href="#pricing">Pricing</a>
+                <button type="button" class="btn btn-secondary" onclick="showAuthModal('Login')">Login</button>
+                <button type="button" class="btn btn-primary" onclick="showAuthModal('Join Beta')">Join Beta</button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section class="hero container">
+            <div class="hero-badge">
+                <span class="mono">NEW</span>
+                <span>The next evolution of C# Corner is here</span>
+            </div>
+            <h1>We're Rebuilding <span class="gradient-text">C# Corner</span> for the AI Era</h1>
+            <p>Moving from a static forum to a high-signal social infrastructure for the world's best developers. Faster, smarter, and 100% focused on shipping code.</p>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button type="button" class="btn btn-primary" style="padding: 1rem 2.5rem;" onclick="showAuthModal('Join the Beta')">Join the Priority Beta</button>
+                <button type="button" class="btn btn-secondary" style="padding: 1rem 2.5rem;" onclick="scrollToId('devsocial')">Read the Roadmap</button>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <h3 class="mono">3M+</h3>
+                    <span>Developers</span>
+                </div>
+                <div class="stat-item">
+                    <h3 class="mono">24Y</h3>
+                    <span>Heritage</span>
+                </div>
+                <div class="stat-item">
+                    <h3 class="mono">100%</h3>
+                    <span>Community Owned</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHY SECTION -->
+        <section id="why" class="section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Evolving Content Architecture</h2>
+                    <p>Static articles are dead. DevSocial introduces dynamic learning loops and AI-assisted debugging as the primary interface.</p>
+                </div>
+                <div class="evolve-grid">
+                    <div class="evolve-card reveal-up">
+                        <div class="card-icon">⚡</div>
+                        <h3>Instant Knowledge</h3>
+                        <p>No more digging through 2012 threads. Our AI vector search finds the modern answer across millions of technical docs instantly.</p>
+                        <button type="button" class="btn btn-secondary" onclick="showActionModal('Search Demo')">Try Search</button>
+                    </div>
+                    <div class="evolve-card reveal-up" style="transition-delay: 0.1s;">
+                        <div class="card-icon">🤝</div>
+                        <h3>Verified Experts</h3>
+                        <p>Proof of Reputation (PoR) ensures you're learning from real maintainers and Microsoft MVPs, not AI hallucination bots.</p>
+                        <button type="button" class="btn btn-secondary" onclick="showActionModal('Expert Verification')">Learn More</button>
+                    </div>
+                    <div class="evolve-card reveal-up" style="transition-delay: 0.2s;">
+                        <div class="card-icon">🤖</div>
+                        <h3>Co-Pilot Groups</h3>
+                        <p>Collaborate on open-source projects within the platform. Integrated playgrounds and real-time pair programming.</p>
+                        <button type="button" class="btn btn-secondary" onclick="showActionModal('Group Features')">View Groups</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PLATFORM SECTION -->
+        <section id="devsocial" class="section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <h2>The Unified Developer OS</h2>
+                    <p>Everything you need to grow from Junior to Lead, all in one premium interface.</p>
+                </div>
+                <div class="feature-grid">
+                    <div class="feature-card reveal-up">
+                        <h4 class="mono" style="color:var(--accent2); margin-bottom: 0.5rem;">01</h4>
+                        <h3>Smart Feeds</h3>
+                        <p>Algorithmic noise reduction. See only what matters to your stack.</p>
+                    </div>
+                    <div class="feature-card reveal-up">
+                        <h4 class="mono" style="color:var(--accent2); margin-bottom: 0.5rem;">02</h4>
+                        <h3>Live Debug</h3>
+                        <p>Host a session and get help in real-time via WebRTC.</p>
+                    </div>
+                    <div class="feature-card reveal-up">
+                        <h4 class="mono" style="color:var(--accent2); margin-bottom: 0.5rem;">03</h4>
+                        <h3>Job Radar</h3>
+                        <p>Internal placement with 500+ tech partners globally.</p>
+                    </div>
+                    <div class="feature-card wide reveal-up">
+                        <div style="flex: 1;">
+                            <h4 class="mono" style="color:var(--accent2); margin-bottom: 0.5rem;">04</h4>
+                            <h3>The Developer Ledger</h3>
+                            <p>A blockchain-backed CV that records your contributions, commits, and peer-reviews as immutable proof of skill.</p>
+                            <button type="button" class="btn btn-primary" style="margin-top: 1.5rem;" onclick="showActionModal('Ledger Sync')">Sync GitHub</button>
+                        </div>
+                        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" alt="Tech" style="width: 240px; height: 160px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border);">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BENEFITS -->
+        <section id="benefits" class="section-padding" style="background: var(--bg2);">
+            <div class="container">
+                <div class="benefit-list">
+                    <div>
+                        <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Why the top 1% of devs are moving to <span class="gradient-text">DevSocial</span></h2>
+                        
+                        <div class="benefit-item reveal-up">
+                            <div class="benefit-check">✓</div>
+                            <div>
+                                <h4>Zero Sponsored Content</h4>
+                                <p>We don't sell your attention. No annoying ads or "promoted" low-tier tutorials.</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item reveal-up" style="transition-delay: 0.1s;">
+                            <div class="benefit-check">✓</div>
+                            <div>
+                                <h4>Premium UI/UX</h4>
+                                <p>Designed for long-form reading and deep focus sessions. Dark mode by default.</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item reveal-up" style="transition-delay: 0.2s;">
+                            <div class="benefit-check">✓</div>
+                            <div>
+                                <h4>AI Training Credit</h4>
+                                <p>Use our internal LLMs to refactor your code without paying for separate API keys.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="reveal-up" style="position: relative;">
+                        <img src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&q=80&w=1200" alt="Code" style="width: 100%; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BADGE SECTION -->
+        <section id="badge">
+            <div class="container">
+                <div class="badge-content">
+                    <h2 style="font-size: 2rem; margin-bottom: 1rem;">Get the Founding Member Badge</h2>
+                    <p style="margin-bottom: 2rem; max-width: 700px; margin-inline: auto; opacity: 0.9;">Join during the rebuild phase and receive a permanent "Founding Member" status on your profile, unlocking exclusive lifetime perks and early access to all future features.</p>
+                    <button type="button" class="btn btn-secondary" style="background: white; color: black;" onclick="showAuthModal('Claim Badge')">Claim My Badge</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRICING -->
+        <section id="pricing" class="section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Transparent Pricing</h2>
+                    <p>Free forever for learners. Scalable power for pros.</p>
+                </div>
+                <div class="pricing-grid">
+                    <div class="pricing-card reveal-up">
+                        <h3>Community</h3>
+                        <div class="price">$0<span>/mo</span></div>
+                        <ul style="list-style: none; text-align: left; margin-bottom: 2rem; color: var(--text-muted);">
+                            <li style="margin-bottom: 0.8rem;">• Access to all public posts</li>
+                            <li style="margin-bottom: 0.8rem;">• Basic AI search (10/day)</li>
+                            <li style="margin-bottom: 0.8rem;">• Community support</li>
+                        </ul>
+                        <button type="button" class="btn btn-secondary" style="width:100%" onclick="showAuthModal('Free Tier')">Get Started</button>
+                    </div>
+                    <div class="pricing-card featured reveal-up" style="transition-delay: 0.1s;">
+                        <h3>Pro Member</h3>
+                        <div class="price">$12<span>/mo</span></div>
+                        <ul style="list-style: none; text-align: left; margin-bottom: 2rem;">
+                            <li style="margin-bottom: 0.8rem;">• Unlimited AI code reviews</li>
+                            <li style="margin-bottom: 0.8rem;">• Ad-free experience</li>
+                            <li style="margin-bottom: 0.8rem;">• Verified "Pro" badge</li>
+                            <li style="margin-bottom: 0.8rem;">• Priority expert help</li>
+                        </ul>
+                        <button type="button" class="btn btn-primary" style="width:100%" onclick="showAuthModal('Pro Tier')">Start Free Trial</button>
+                    </div>
+                    <div class="pricing-card reveal-up" style="transition-delay: 0.2s;">
+                        <h3>Enterprise</h3>
+                        <div class="price">$49<span>/mo</span></div>
+                        <ul style="list-style: none; text-align: left; margin-bottom: 2rem; color: var(--text-muted);">
+                            <li style="margin-bottom: 0.8rem;">• Private Team Channels</li>
+                            <li style="margin-bottom: 0.8rem;">• SSO / SAML Support</li>
+                            <li style="margin-bottom: 0.8rem;">• Dedicated Account Manager</li>
+                        </ul>
+                        <button type="button" class="btn btn-secondary" style="width:100%" onclick="showActionModal('Enterprise Contact')">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRANSPARENCY -->
+        <section id="transparency" class="section-padding" style="background: var(--bg2);">
+            <div class="container">
+                <div class="transparency-content">
+                    <div class="t-grid">
+                        <div>
+                            <h2 style="margin-bottom: 1.5rem;">Migration Progress</h2>
+                            <p style="color: var(--text-muted); margin-bottom: 2rem;">We are moving 24 years of data to the new infrastructure. Follow our real-time progress below.</p>
+                            
+                            <div class="t-bar-wrap">
+                                <div class="t-label"><span>Content Migration</span><span>85%</span></div>
+                                <div class="t-track"><div class="t-bar reveal-bar" data-width="85%"></div></div>
+                            </div>
+                            <div class="t-bar-wrap">
+                                <div class="t-label"><span>UI/UX Refactor</span><span>92%</span></div>
+                                <div class="t-track"><div class="t-bar reveal-bar" data-width="92%"></div></div>
+                            </div>
+                            <div class="t-bar-wrap">
+                                <div class="t-label"><span>AI Integration</span><span>64%</span></div>
+                                <div class="t-track"><div class="t-bar reveal-bar" data-width="64%"></div></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Our Transparency Promise</h3>
+                            <ul style="list-style: none; margin-top: 1.5rem;">
+                                <li style="margin-bottom: 1.5rem; display: flex; gap: 1rem;">
+                                    <span style="color: var(--accent); font-weight: 800;">01</span>
+                                    <span>Your data is never sold to third-party advertisers.</span>
+                                </li>
+                                <li style="margin-bottom: 1.5rem; display: flex; gap: 1rem;">
+                                    <span style="color: var(--accent); font-weight: 800;">02</span>
+                                    <span>All AI models are trained on opt-in public data only.</span>
+                                </li>
+                                <li style="margin-bottom: 1.5rem; display: flex; gap: 1rem;">
+                                    <span style="color: var(--accent); font-weight: 800;">03</span>
+                                    <span>Open source components are contributed back to GitHub.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOUNDER -->
+        <section id="founder" class="section-padding">
+            <div class="container">
+                <div class="founder-box reveal-up">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" alt="Founder" class="founder-img">
+                    <div>
+                        <p class="quote">"C# Corner has always been about the community. DevSocial is our way of ensuring that community thrives for another 25 years in an AI-driven world."</p>
+                        <h4 style="font-size: 1.2rem; margin-bottom: 0.25rem;">Mahesh Chand</h4>
+                        <p style="color: var(--accent2); font-weight: 600; font-size: 0.9rem;">Founder, C# Corner & DevSocial</p>
+                        <p style="margin-top: 1.5rem; color: var(--text-muted); font-size: 0.95rem;">Mahesh is a 15-time Microsoft MVP and has been leading the C# Corner community since 1999. His vision for DevSocial is to bridge the gap between human expertise and machine intelligence.</p>
+                        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                            <button type="button" class="btn btn-secondary mono" onclick="showActionModal('Founder LinkedIn')">LinkedIn</button>
+                            <button type="button" class="btn btn-secondary mono" onclick="showActionModal('Founder Twitter')">Twitter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINAL CTA -->
+        <section class="section-padding" style="text-align: center;">
+            <div class="container">
+                <h2 style="font-size: 3rem; margin-bottom: 1.5rem;">Ready to build the future?</h2>
+                <p style="color: var(--text-muted); margin-bottom: 3rem; max-width: 600px; margin-inline: auto;">Join 3,000,000+ developers today. The beta is filling up fast.</p>
+                <button type="button" class="btn btn-primary" style="padding: 1.25rem 3rem; font-size: 1.1rem;" onclick="showAuthModal('Footer CTA')">Create Your Account</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-inner">
+                <div style="max-width: 300px;">
+                    <a href="#" class="logo" style="margin-bottom: 1.5rem;">
+                        <div class="logo-box">C</div>
+                        DevSocial
+                    </a>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">The evolution of developer networking. High signal, low noise, AI-augmented.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="#why">How it Works</a></li>
+                        <li><a href="#devsocial">Roadmap</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><button type="button" onclick="showActionModal('Beta Access')">Beta Access</button></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><button type="button" onclick="showActionModal('Global Chapters')">Global Chapters</button></li>
+                        <li><button type="button" onclick="showActionModal('MVPs')">MVPs</button></li>
+                        <li><button type="button" onclick="showActionModal('Conferences')">Conferences</button></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><button type="button" onclick="showModal('privacy')">Privacy Policy</button></li>
+                        <li><button type="button" onclick="showModal('terms')">Terms of Service</button></li>
+                        <li><button type="button" onclick="showModal('contact')">Contact Us</button></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 DevSocial / C# Corner. All rights reserved.</p>
+                <div style="display: flex; gap: 1.5rem;">
+                    <button type="button" onclick="showActionModal('GitHub')">GitHub</button>
+                    <button type="button" onclick="showActionModal('Twitter')">Twitter</button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <button type="button" class="modal-close" onclick="closeModal()">×</button>
+            <div id="modalBody">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <script>
+        // INTERSECTION OBSERVER FOR ANIMATIONS
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    
+                    // Handle progress bars specifically
+                    if (entry.target.classList.contains('reveal-bar')) {
+                        const targetWidth = entry.target.getAttribute('data-width');
+                        entry.target.style.width = targetWidth;
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-up, .reveal-bar').forEach(el => {
+            revealObserver.observe(el);
+        });
+
+        // MODAL SYSTEM
+        function showModal(type) {
+            const overlay = document.getElementById('modalOverlay');
+            const body = document.getElementById('modalBody');
+            overlay.style.display = 'flex';
+
+            const contents = {
+                privacy: `
+                    <h2>Privacy Policy</h2>
+                    <p style="margin-top:1.5rem; color:var(--text-muted);">This is an internal-only preview. In the live experience, we prioritize your data sovereignty. We do not sell your personal information or track your behavior for third-party advertisers.</p>
+                    <button type="button" class="btn btn-primary" style="margin-top:2rem;" onclick="closeModal()">I Understand</button>
+                `,
+                terms: `
+                    <h2>Terms of Service</h2>
+                    <p style="margin-top:1.5rem; color:var(--text-muted);">By using DevSocial, you agree to maintain a professional, high-signal contribution environment. AI-generated content must be clearly labeled and verified by the poster.</p>
+                    <button type="button" class="btn btn-primary" style="margin-top:2rem;" onclick="closeModal()">Accept Terms</button>
+                `,
+                contact: `
+                    <h2>Contact Support</h2>
+                    <form onsubmit="handleForm(event)" style="margin-top:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+                        <input type="text" placeholder="Name" style="padding:0.75rem; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:white;" required>
+                        <input type="email" placeholder="Email" style="padding:0.75rem; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:white;" required>
+                        <textarea placeholder="Message" rows="4" style="padding:0.75rem; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:white;" required></textarea>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                `
+            };
+
+            body.innerHTML = contents[type] || '<h2>Content coming soon</h2>';
+        }
+
+        function showAuthModal(context) {
+            const overlay = document.getElementById('modalOverlay');
+            const body = document.getElementById('modalBody');
+            overlay.style.display = 'flex';
+
+            body.innerHTML = `
+                <h2>${context}</h2>
+                <p style="margin-top:1rem; color:var(--text-muted);">Secure login is disabled in this preview environment. Sign up for the official newsletter to be notified when the beta portal opens.</p>
+                <form onsubmit="handleForm(event, 'Thank you! We\\'ll notify you when the beta opens.')" style="margin-top:2rem; display:flex; flex-direction:column; gap:1rem;">
+                    <input type="email" placeholder="dev@example.com" style="padding:0.75rem; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:white;" required>
+                    <button type="submit" class="btn btn-primary">Reserve My Spot</button>
+                </form>
+                <p class="mono" style="margin-top:1.5rem; font-size:0.7rem; opacity:0.5; text-align:center;">ENVIRONMENT: PREVIEW_SANDBOX_V1</p>
+            `;
+        }
+
+        function showActionModal(action) {
+            const overlay = document.getElementById('modalOverlay');
+            const body = document.getElementById('modalBody');
+            overlay.style.display = 'flex';
+
+            body.innerHTML = `
+                <h2>Action Required</h2>
+                <p style="margin-top:1.5rem; color:var(--text-muted);">The action "<strong>${action}</strong>" would normally navigate to an external URL or secure sub-page. This functionality is restricted in the preview sandbox.</p>
+                <div style="background:var(--surface2); padding:1rem; border-radius:8px; margin-top:1.5rem; border:1px solid var(--border-bright);">
+                    <p class="mono" style="font-size:0.85rem; color:var(--accent2);">ERR_SANDBOX_RESTRICTION: CROSS_ORIGIN_DISABLED</p>
+                </div>
+                <button type="button" class="btn btn-primary" style="margin-top:2rem; width:100%;" onclick="closeModal()">Return to Dashboard</button>
+            `;
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+
+        // FORM HANDLING
+        function handleForm(e, message = "Success! Your request has been received.") {
+            e.preventDefault();
+            closeModal();
+            showToast(message);
+        }
+
+        // TOAST SYSTEM
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<span>✓</span> ${message}`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // SMOOTH SCROLL
+        function scrollToId(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // DEFENSIVE CLICK GUARD
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('a');
+            if (target && target.getAttribute('href')) {
+                const href = target.getAttribute('href');
+                
+                // Allow hash links
+                if (href.startsWith('#')) return;
+                
+                // Otherwise block external and show internal modal
+                e.preventDefault();
+                showActionModal(href);
+            }
+        }, false);
+
+        // Escape key to close modal
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
