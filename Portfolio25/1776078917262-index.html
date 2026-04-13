@@ -1,0 +1,1084 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <title>Kautilya Utkarsh | AI Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #c0a080;
+      --primary-2: #a08060;
+      --on-primary: #ffffff;
+      --accent: #8090c0;
+      --on-accent: #ffffff;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --danger: #f44336;
+      --focus: rgba(192, 160, 128, 0.4);
+      --gutter: 0;
+      --space-1: 0.5rem;
+      --space-2: 1rem;
+      --space-3: 1.5rem;
+      --space-4: 2.5rem;
+      --space-5: 4rem;
+      --space-6: 6rem;
+      --radius-btn: 3px;
+      --radius-card: 8px;
+      --radius-pill: 50px;
+      --shadow-soft: 0 4px 20px rgba(0,0,0,0.1);
+      --shadow-strong: 0 10px 40px rgba(0,0,0,0.25);
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+      --dur-fast: 200ms;
+      --dur-med: 400ms;
+      --header-height: 72px;
+      --page-top: var(--space-4);
+      --page-bottom: var(--space-6);
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0a0a0b;
+      --bg-2: #141416;
+      --surface: #1c1c1e;
+      --surface-2: #242426;
+      --text: #f0f0f2;
+      --muted: #a0a0a5;
+      --border: #2c2c2e;
+      --header-bg: rgba(10, 10, 11, 0.85);
+      --divider: #1f1f21;
+      --overlay: rgba(0, 0, 0, 0.8);
+    }
+
+    html[data-theme="light"] {
+      --bg: #ffffff;
+      --bg-2: #f8f8fa;
+      --surface: #ffffff;
+      --surface-2: #f0f0f2;
+      --text: #1c1c1e;
+      --muted: #636366;
+      --border: #e5e5ea;
+      --header-bg: rgba(255, 255, 255, 0.85);
+      --divider: #f2f2f7;
+      --overlay: rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+      border: none;
+      background: none;
+      color: inherit;
+      transition: all var(--dur-fast) var(--ease-standard);
+    }
+
+    #page {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 var(--space-3);
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--header-height);
+      background: var(--header-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    nav {
+      display: flex;
+      gap: var(--space-3);
+      align-items: center;
+    }
+
+    nav button {
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.5rem 0.75rem;
+      color: var(--muted);
+    }
+
+    nav button:hover {
+      color: var(--text);
+    }
+
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      margin-left: var(--space-2);
+    }
+
+    .theme-toggle:hover {
+      background: var(--surface-2);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      padding: 0.5rem;
+    }
+
+    /* Hero */
+    .hero {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1620712943543-bcc4628c9759?auto=format&fit=crop&q=80&w=2000') no-repeat center/cover;
+      color: #fff;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      padding: var(--space-4);
+      animation: fadeIn 1.2s ease-out;
+    }
+
+    .hero-label {
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      font-size: 0.8rem;
+      margin-bottom: var(--space-2);
+      color: var(--primary);
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 5rem);
+      margin-bottom: var(--space-2);
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      font-weight: 300;
+      margin-bottom: var(--space-4);
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .cta-btn {
+      padding: 1rem 2rem;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      border-radius: var(--radius-btn);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.85rem;
+    }
+
+    .cta-btn:hover {
+      background: var(--primary-2);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-strong);
+    }
+
+    /* Sections */
+    section {
+      padding: var(--space-6) 0;
+    }
+
+    .section-header {
+      margin-bottom: var(--space-5);
+      text-align: center;
+    }
+
+    .section-header h2 {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-1);
+    }
+
+    .section-header .divider {
+      width: 60px;
+      height: 2px;
+      background: var(--primary);
+      margin: 0 auto;
+    }
+
+    /* About Section */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-5);
+      align-items: center;
+    }
+
+    .about-image-wrapper {
+      position: relative;
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      box-shadow: var(--shadow-strong);
+    }
+
+    .about-image-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform var(--dur-med) var(--ease-standard);
+      cursor: pointer;
+    }
+
+    .about-image-wrapper:hover img {
+      transform: scale(1.03);
+    }
+
+    .about-text h3 {
+      font-size: 1.8rem;
+      margin-bottom: var(--space-2);
+      color: var(--primary);
+    }
+
+    .about-text p {
+      margin-bottom: var(--space-3);
+      font-size: 1.1rem;
+      color: var(--muted);
+    }
+
+    /* Stats Section */
+    .stats-section {
+      background: var(--bg-2);
+      padding: var(--space-5) 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      text-align: center;
+    }
+
+    .stat-item h4 {
+      font-size: 3rem;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 0.2rem;
+      color: var(--primary);
+    }
+
+    .stat-item p {
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    /* Projects */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      transition: transform var(--dur-med) var(--ease-standard);
+    }
+
+    .project-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .project-img {
+      height: 240px;
+      overflow: hidden;
+      background: var(--surface-2);
+    }
+
+    .project-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+    .project-content {
+      padding: var(--space-3);
+    }
+
+    .project-tag {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .project-content h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .project-content p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: var(--space-2);
+    }
+
+    /* Contact Form */
+    .contact-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: var(--space-3);
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 1rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-btn);
+      color: var(--text);
+      font-family: inherit;
+      transition: border-color var(--dur-fast);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 150px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      border-radius: var(--radius-btn);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .submit-btn:hover {
+      background: var(--primary-2);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-2);
+      padding: var(--space-5) 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+
+    .footer-brand h3 {
+      font-size: 1.5rem;
+      margin-bottom: var(--space-2);
+    }
+
+    .footer-brand p {
+      color: var(--muted);
+      max-width: 300px;
+    }
+
+    .footer-links h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-2);
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links button {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      padding: 0.4rem 0;
+    }
+
+    .footer-links button:hover {
+      color: var(--text);
+    }
+
+    .footer-bottom {
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--divider);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .social-icons {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .social-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--overlay);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-3);
+    }
+
+    .modal-content {
+      background: var(--surface);
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: var(--radius-card);
+      position: relative;
+      box-shadow: var(--shadow-strong);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      width: 40px;
+      height: 40px;
+      background: var(--surface-2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .modal-body {
+      padding: var(--space-4);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+    }
+
+    .modal-body img {
+      width: 100%;
+      height: auto;
+      border-radius: var(--radius-btn);
+    }
+
+    .modal-info h2 {
+      margin-bottom: var(--space-2);
+      color: var(--primary);
+    }
+
+    .modal-info p {
+      margin-bottom: var(--space-3);
+      color: var(--muted);
+    }
+
+    /* Mobile Nav */
+    .mobile-menu {
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      width: 100%;
+      background: var(--header-bg);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: none;
+      padding: var(--space-3);
+      flex-direction: column;
+      gap: var(--space-2);
+      z-index: 999;
+    }
+
+    .mobile-menu.active {
+      display: flex;
+    }
+
+    /* Utility */
+    .status-toast {
+      position: fixed;
+      bottom: var(--space-3);
+      right: var(--space-3);
+      background: var(--surface);
+      border: 1px solid var(--primary);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-btn);
+      box-shadow: var(--shadow-strong);
+      display: none;
+      z-index: 3000;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .about-grid, .modal-body {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      nav {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: flex;
+      }
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+</head>
+<body>
+
+<div id="page">
+  <header>
+    <div class="container">
+      <button type="button" class="logo" data-target="top">Kautilya Utkarsh</button>
+      <nav>
+        <button type="button" data-scroll="about">About</button>
+        <button type="button" data-scroll="stats">Stats</button>
+        <button type="button" data-scroll="projects">Projects</button>
+        <button type="button" data-scroll="contact">Contact</button>
+        <button type="button" class="theme-toggle" id="themeBtn" aria-label="Toggle Theme">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+        <button type="button" class="cta-btn" data-scroll="contact">Get in Touch</button>
+      </nav>
+      <div style="display:flex; align-items:center;">
+        <button type="button" class="theme-toggle mobile-menu-btn" id="themeBtnMobile">
+           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <button type="button" class="mobile-menu-btn" id="menuToggle" aria-label="Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <button type="button" data-scroll="about">About</button>
+    <button type="button" data-scroll="stats">Stats</button>
+    <button type="button" data-scroll="projects">Projects</button>
+    <button type="button" data-scroll="contact">Contact</button>
+  </div>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero" id="top">
+      <div class="hero-content">
+        <span class="hero-label">AI Engineer @ Think-verse Lab</span>
+        <h1>Architecting Intelligence</h1>
+        <p>Pushing the boundaries of Neural Architectures and LLM Optimization for the next generation of autonomous agents.</p>
+        <button type="button" class="cta-btn" data-scroll="projects">Explore Portfolio</button>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+      <div class="container">
+        <div class="section-header">
+          <h2>About Me</h2>
+          <div class="divider"></div>
+        </div>
+        <div class="about-grid">
+          <div class="about-image-wrapper">
+            <img src="https://app.sharpcoder.ai/uploadedimages/8b2c2838421a4dd99ea781c08571d7ec/20260405_030750_a7029fb956.png" 
+                 alt="Kautilya Utkarsh" 
+                 class="person-detail-trigger" 
+                 data-name="Kautilya Utkarsh" 
+                 data-role="AI Engineer"
+                 data-bio="Kautilya Utkarsh is a dedicated AI Engineer at Think-verse Lab, specialized in Generative AI, Large Language Models, and Scalable Machine Learning Infrastructure. With a focus on bridge-building between research and production, he transforms complex theoretical concepts into robust industrial solutions."
+                 referrerpolicy="no-referrer-when-downgrade" 
+                 crossorigin="anonymous">
+          </div>
+          <div class="about-text">
+            <h3>Pioneering the AI Frontier</h3>
+            <p>I am Kautilya Utkarsh, an AI Engineer currently based at Think-verse Lab. My journey is defined by a relentless curiosity about how synthetic intelligence can complement human creativity and productivity.</p>
+            <p>At Think-verse, I lead the development of specialized transformer models and low-latency inference engines. I believe that the future of technology lies not just in power, but in the precision and ethical alignment of the models we build.</p>
+            <p>With expertise spanning from PyTorch and TensorFlow to advanced vector databases and distributed training, I help organizations navigate the rapidly evolving landscape of artificial intelligence.</p>
+            <button type="button" class="cta-btn" style="background: transparent; border: 1px solid var(--primary); color: var(--primary); margin-top: 1rem;" data-scroll="contact">Download CV</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section" id="stats">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <h4 class="counter" data-target="15">0</h4>
+            <p>AI Models Deployed</p>
+          </div>
+          <div class="stat-item">
+            <h4 class="counter" data-target="8">0</h4>
+            <p>Research Papers</p>
+          </div>
+          <div class="stat-item">
+            <h4 class="counter" data-target="1200">0</h4>
+            <p>Compute Hours / Mo</p>
+          </div>
+          <div class="stat-item">
+            <h4 class="counter" data-target="12">0</h4>
+            <p>Global Workshops</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+      <div class="container">
+        <div class="section-header">
+          <h2>Featured Research</h2>
+          <div class="divider"></div>
+        </div>
+        <div class="projects-grid">
+          <!-- Project 1 -->
+          <div class="project-card">
+            <div class="project-img">
+              <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" 
+                   alt="Project Alpha" 
+                   class="product-detail-trigger"
+                   data-title="Neural Synthesis Engine"
+                   data-desc="A framework for dynamic parameter optimization in multi-modal transformer networks, reducing training latency by 40%."
+                   referrerpolicy="no-referrer-when-downgrade" 
+                   crossorigin="anonymous">
+            </div>
+            <div class="project-content">
+              <span class="project-tag">Neural Architecture</span>
+              <h3>Neural Synthesis Engine</h3>
+              <p>Optimizing multi-modal transformer networks for real-time edge computing.</p>
+              <button type="button" style="color: var(--primary); font-weight: 600; font-size: 0.85rem;" class="product-detail-trigger" data-title="Neural Synthesis Engine" data-desc="A framework for dynamic parameter optimization in multi-modal transformer networks, reducing training latency by 40%.">View Details &rarr;</button>
+            </div>
+          </div>
+          <!-- Project 2 -->
+          <div class="project-card">
+            <div class="project-img">
+              <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=800" 
+                   alt="Project Beta" 
+                   class="product-detail-trigger"
+                   data-title="Think-verse Agentic Mesh"
+                   data-desc="A decentralized swarm of specialized LLM agents working in concert to solve complex enterprise workflows."
+                   referrerpolicy="no-referrer-when-downgrade" 
+                   crossorigin="anonymous">
+            </div>
+            <div class="project-content">
+              <span class="project-tag">Agentic AI</span>
+              <h3>Agentic Mesh Framework</h3>
+              <p>Decentralized swarm intelligence for complex workflow automation.</p>
+              <button type="button" style="color: var(--primary); font-weight: 600; font-size: 0.85rem;" class="product-detail-trigger" data-title="Agentic Mesh Framework" data-desc="A decentralized swarm of specialized LLM agents working in concert to solve complex enterprise workflows.">View Details &rarr;</button>
+            </div>
+          </div>
+          <!-- Project 3 -->
+          <div class="project-card">
+            <div class="project-img">
+              <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800" 
+                   alt="Project Gamma" 
+                   class="product-detail-trigger"
+                   data-title="Quantized Latency Reducer"
+                   data-desc="Experimental 4-bit quantization methods for large-scale language models without significant perplexity loss."
+                   referrerpolicy="no-referrer-when-downgrade" 
+                   crossorigin="anonymous">
+            </div>
+            <div class="project-content">
+              <span class="project-tag">Optimization</span>
+              <h3>4-Bit Quantization Lab</h3>
+              <p>Cutting-edge precision reduction for hardware-efficient inference.</p>
+              <button type="button" style="color: var(--primary); font-weight: 600; font-size: 0.85rem;" class="product-detail-trigger" data-title="4-Bit Quantization Lab" data-desc="Experimental 4-bit quantization methods for large-scale language models without significant perplexity loss.">View Details &rarr;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+      <div class="container">
+        <div class="section-header">
+          <h2>Collaborate</h2>
+          <div class="divider"></div>
+        </div>
+        <div class="contact-container">
+          <form id="portfolioContact">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-2);">
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" class="form-control" placeholder="John Doe" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" class="form-control" placeholder="john@example.com" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" class="form-control" placeholder="Research Opportunity" required>
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" class="form-control" placeholder="Tell me about your project..."></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <h3 class="logo">Kautilya Utkarsh</h3>
+          <p>Innovating at the intersection of Human Potential and Artificial Intelligence.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Navigation</h4>
+          <ul>
+            <li><button type="button" data-scroll="about">About</button></li>
+            <li><button type="button" data-scroll="projects">Projects</button></li>
+            <li><button type="button" data-scroll="stats">Stats</button></li>
+            <li><button type="button" data-scroll="contact">Contact</button></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Connect</h4>
+          <div class="social-icons">
+            <button type="button" class="social-btn social-trigger" data-platform="LinkedIn" data-handle="@kautilya-utkarsh">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            </button>
+            <button type="button" class="social-btn social-trigger" data-platform="GitHub" data-handle="@thinkverse-lab-kautilya">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+            </button>
+            <button type="button" class="social-btn social-trigger" data-platform="Twitter" data-handle="@kutkarsh_ai">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <span id="year"></span> Kautilya Utkarsh. All rights reserved.</p>
+        <p>Built for the future of Intelligence.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <button type="button" class="modal-close" id="modalClose">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div class="modal-body">
+        <div id="modalImageArea">
+          <img src="" id="modalImg" alt="Detail" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+        </div>
+        <div class="modal-info">
+          <h2 id="modalTitle">Detail Title</h2>
+          <div id="modalContentText">
+            <p id="modalDescription">Detailed information will appear here.</p>
+          </div>
+          <button type="button" class="cta-btn" id="modalActionBtn" style="margin-top: var(--space-3);">Learn More</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-toast" id="statusToast">
+    Something went wrong. Please try again.
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const pageRoot = document.getElementById('page');
+    const yearEl = document.getElementById('year');
+    yearEl.textContent = new Date().getFullYear();
+
+    // Theme Toggle
+    const toggleTheme = () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    };
+    document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+    document.getElementById('themeBtnMobile').addEventListener('click', toggleTheme);
+
+    // Mobile Menu
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('active');
+    });
+
+    // Smooth Scroll
+    pageRoot.addEventListener('click', (e) => {
+      const scrollBtn = e.target.closest('[data-scroll]');
+      if (scrollBtn) {
+        const targetId = scrollBtn.getAttribute('data-scroll');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          mobileMenu.classList.remove('active');
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+      
+      const logoBtn = e.target.closest('[data-target="top"]');
+      if (logoBtn) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    // Modal Logic
+    const modal = document.getElementById('modalOverlay');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDescription');
+    const modalClose = document.getElementById('modalClose');
+
+    const openModal = (title, desc, imgSrc) => {
+      modalTitle.textContent = title;
+      modalDesc.textContent = desc;
+      modalImg.src = imgSrc;
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeModal = () => {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    };
+
+    pageRoot.addEventListener('click', (e) => {
+      // Person detail trigger
+      const personTrigger = e.target.closest('.person-detail-trigger');
+      if (personTrigger) {
+        openModal(
+          personTrigger.getAttribute('data-name'),
+          personTrigger.getAttribute('data-bio'),
+          personTrigger.src
+        );
+        return;
+      }
+
+      // Product detail trigger
+      const productTrigger = e.target.closest('.product-detail-trigger');
+      if (productTrigger) {
+        const img = productTrigger.tagName === 'IMG' ? productTrigger : productTrigger.closest('.project-card').querySelector('img');
+        openModal(
+          productTrigger.getAttribute('data-title'),
+          productTrigger.getAttribute('data-desc'),
+          img.src
+        );
+        return;
+      }
+
+      // Social trigger
+      const socialTrigger = e.target.closest('.social-trigger');
+      if (socialTrigger) {
+        openModal(
+          socialTrigger.getAttribute('data-platform'),
+          `Official profile for Kautilya Utkarsh on ${socialTrigger.getAttribute('data-platform')}. Username: ${socialTrigger.getAttribute('data-handle')}`,
+          'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=800'
+        );
+        return;
+      }
+
+      if (e.target === modal || e.target === modalClose || modalClose.contains(e.target)) {
+        closeModal();
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Animated Numbers
+    const statsSection = document.getElementById('stats');
+    const counters = document.querySelectorAll('.counter');
+    let animated = false;
+
+    const animateCounters = () => {
+      counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const increment = target / 50;
+        let current = 0;
+
+        const updateCounter = () => {
+          current += increment;
+          if (current < target) {
+            counter.textContent = Math.ceil(current);
+            requestAnimationFrame(updateCounter);
+          } else {
+            counter.textContent = target;
+          }
+        };
+        updateCounter();
+      });
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !animated) {
+        animateCounters();
+        animated = true;
+      }
+    }, { threshold: 0.5 });
+
+    if (statsSection) observer.observe(statsSection);
+
+    // Form Handling
+    const contactForm = document.getElementById('portfolioContact');
+    const toast = document.getElementById('statusToast');
+
+    const showToast = (message, isSuccess = true) => {
+      toast.textContent = message;
+      toast.style.borderColor = isSuccess ? 'var(--success)' : 'var(--danger)';
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 4000);
+    };
+
+    if (contactForm) {
+      contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const btn = contactForm.querySelector('button');
+        const originalText = btn.textContent;
+        btn.textContent = 'Sending...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          showToast('Thank you! Your message has been sent successfully.', true);
+          contactForm.reset();
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }, 1500);
+      });
+    }
+
+    // Protection Guard
+    pageRoot.addEventListener('click', (e) => {
+      const anchor = e.target.closest('a');
+      if (anchor) {
+        e.preventDefault();
+        showToast('External or unsafe action disabled in preview.', false);
+      }
+    });
+  });
+</script>
+</body>
+</html>
