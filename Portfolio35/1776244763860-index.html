@@ -1,0 +1,1398 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>Kautilya Utkarsh | AI Engineer @ Think-verse Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Design Tokens */
+            --primary: #c5a059;
+            --primary-2: #e0bc7a;
+            --on-primary: #121212;
+            --accent: #4a90e2;
+            --on-accent: #ffffff;
+            
+            --space-1: 0.5rem;
+            --space-2: 1rem;
+            --space-3: 1.5rem;
+            --space-4: 3rem;
+            --space-5: 5rem;
+            --space-6: 8rem;
+
+            --font-size-1: 0.875rem;
+            --font-size-2: 1rem;
+            --font-size-3: 1.25rem;
+            --font-size-4: 2rem;
+            --font-size-5: 3.5rem;
+            --font-size-6: 4.5rem;
+
+            --radius-btn: 3px;
+            --radius-card: 8px;
+            --radius-pill: 50px;
+
+            --gutter: 0;
+            --page-top: var(--space-4);
+            --page-bottom: var(--space-6);
+            --header-height: 80px;
+
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            --dur-fast: 150ms;
+            --dur-med: 300ms;
+            
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-strong: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        html[data-theme="dark"] {
+            --bg: #0a0a0a;
+            --bg-2: #121212;
+            --surface: #1a1a1a;
+            --surface-2: #242424;
+            --text: #f0f0f0;
+            --muted: #a0a0a0;
+            --border: #333333;
+            --focus: var(--primary);
+            --header-bg: rgba(10, 10, 10, 0.85);
+            --divider: #222222;
+            --overlay: rgba(0, 0, 0, 0.9);
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f8f9fa;
+            --surface: #ffffff;
+            --surface-2: #f1f3f5;
+            --text: #1a1a1a;
+            --muted: #666666;
+            --border: #e9ecef;
+            --focus: var(--primary);
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --divider: #eeeeee;
+            --overlay: rgba(255, 255, 255, 0.95);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        #page {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            min-width: 0;
+            padding-left: var(--space-3);
+            padding-right: var(--space-3);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            font-weight: 700;
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .nav-desktop {
+            display: flex;
+            gap: var(--space-3);
+            align-items: center;
+        }
+
+        .nav-link {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color var(--dur-fast) var(--ease-standard);
+            padding: 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .theme-toggle {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--dur-fast);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.4;
+            filter: grayscale(40%);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), var(--bg));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, var(--font-size-6));
+            margin-bottom: var(--space-2);
+            color: #fff;
+        }
+
+        .hero p {
+            font-size: var(--font-size-3);
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: var(--space-4);
+            font-weight: 300;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--on-primary);
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: transform var(--dur-fast), background var(--dur-fast);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-2);
+            transform: translateY(-2px);
+        }
+
+        /* About Section */
+        .section {
+            padding: var(--space-6) 0;
+            width: 100%;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: var(--space-5);
+            align-items: center;
+        }
+
+        .about-image-wrapper {
+            position: relative;
+        }
+
+        .about-image {
+            width: 100%;
+            aspect-ratio: 4/5;
+            object-fit: cover;
+            border-radius: var(--radius-card);
+            filter: grayscale(100%);
+            transition: filter var(--dur-med);
+            cursor: pointer;
+        }
+
+        .about-image:hover {
+            filter: grayscale(0%);
+        }
+
+        .section-tag {
+            color: var(--primary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: var(--space-2);
+            display: block;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-3);
+        }
+
+        .about-text p {
+            margin-bottom: var(--space-2);
+            font-size: 1.1rem;
+            color: var(--muted);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-3);
+            margin-top: var(--space-4);
+            border-top: 1px solid var(--divider);
+            padding-top: var(--space-3);
+        }
+
+        .stat-card {
+            padding: var(--space-2);
+        }
+
+        .stat-number {
+            font-size: var(--font-size-4);
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'Playfair Display', serif;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Tech Stack */
+        .tech-section {
+            background-color: var(--bg-2);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: var(--space-2);
+            margin-top: var(--space-4);
+        }
+
+        .tech-item {
+            background: var(--surface);
+            padding: var(--space-3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            transition: all var(--dur-fast);
+        }
+
+        .tech-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        /* Projects */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: var(--space-3);
+            margin-top: var(--space-4);
+        }
+
+        .project-card {
+            background: var(--surface);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: border-color var(--dur-fast);
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            border-color: var(--primary);
+        }
+
+        .project-img-box {
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+        }
+
+        .project-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--dur-med);
+        }
+
+        .project-card:hover .project-img {
+            transform: scale(1.05);
+        }
+
+        .project-info {
+            padding: var(--space-3);
+        }
+
+        .project-info h3 {
+            font-size: var(--font-size-3);
+            margin-bottom: var(--space-1);
+        }
+
+        .project-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            background: var(--surface-2);
+            color: var(--muted);
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        /* Contact */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: var(--space-5);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .input-group input, 
+        .input-group textarea {
+            padding: 1rem;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            color: var(--text);
+            font-family: inherit;
+            transition: border-color var(--dur-fast);
+        }
+
+        .input-group input:focus, 
+        .input-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .contact-info-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .contact-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--primary);
+            font-weight: 600;
+            letter-spacing: 0.1em;
+        }
+
+        .contact-value {
+            font-size: 1.25rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-5) 0 var(--space-4) 0;
+            border-top: 1px solid var(--divider);
+            background-color: var(--bg-2);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .social-btn {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: color var(--dur-fast);
+        }
+
+        .social-btn:hover {
+            color: var(--primary);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--overlay);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: var(--space-3);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--surface);
+            max-width: 700px;
+            width: 100%;
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: var(--space-3);
+            right: var(--space-3);
+            z-index: 3000;
+        }
+
+        .toast {
+            background: var(--surface-2);
+            color: var(--text);
+            padding: 1rem 2rem;
+            border-radius: var(--radius-btn);
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--shadow-strong);
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Hamburger */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav-desktop {
+                display: none;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .about-grid, .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .section-title {
+                font-size: 2.5rem;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: var(--space-3);
+                text-align: center;
+            }
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg);
+            z-index: 1500;
+            transition: right 0.4s var(--ease-standard);
+            display: flex;
+            flex-direction: column;
+            padding: var(--space-6) var(--space-3);
+            gap: var(--space-3);
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu .nav-link {
+            font-size: 1.5rem;
+            text-align: left;
+        }
+
+        .mobile-menu-close {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            font-size: 2rem;
+            background: none;
+            border: none;
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+<script>
+            // SharpCoder Vibe Configuration
+            window.__SCV_CONFIG = window.__SCV_CONFIG || {};
+            window.__SCV_CONFIG.deployToken = "CfDJ8HFZOoVEHP5EojFr_x7Dd56PIZPa9ALDviizWT0UJAFALsT8Zook3Uq7Qba56HrtN6SNmN1HKNfO4dwgrmnnV-rkZsKtTi0dWqVyfFZBma-UY4HL3CD99mx91lK5tFpGmXQfLumFtHdMnL8lQyD6PXiJd3hfDlx61INfGa8XkK38jnr0ENuOVCAaUgPqzfj9Mg";
+            // In InjectDeployTokenAndEmailConfig method
+            window.__SCV_CONFIG.emailApiUrl = "https://staging.sharpcoder.ai/api/email/send";
+            window.__SCV_CONFIG.emailEnabled = true;
+            window.__SCV_CONFIG.version = "1.0.0";
+            </script>
+<script>let deployToken = "CfDJ8HFZOoVEHP5EojFr_x7Dd56PIZPa9ALDviizWT0UJAFALsT8Zook3Uq7Qba56HrtN6SNmN1HKNfO4dwgrmnnV-rkZsKtTi0dWqVyfFZBma-UY4HL3CD99mx91lK5tFpGmXQfLumFtHdMnL8lQyD6PXiJd3hfDlx61INfGa8XkK38jnr0ENuOVCAaUgPqzfj9Mg";</script>
+
+    <div id="page">
+        <!-- Header -->
+        <header>
+            <div class="container">
+                <button type="button" class="logo" onclick="scrollToSection('hero')">UTKARSH</button>
+                <div class="nav-desktop">
+                    <button type="button" class="nav-link" onclick="scrollToSection('about')">About</button>
+                    <button type="button" class="nav-link" onclick="scrollToSection('expertise')">Expertise</button>
+                    <button type="button" class="nav-link" onclick="scrollToSection('projects')">Projects</button>
+                    <button type="button" class="nav-link" onclick="scrollToSection('contact')">Contact</button>
+                    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+                    </button>
+                    <button type="button" class="btn-primary" onclick="scrollToSection('contact')" style="padding: 0.6rem 1.2rem; font-size: 0.75rem;">Get in Touch</button>
+                </div>
+                <button type="button" class="menu-toggle" id="menuOpen" aria-label="Open Menu">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <button type="button" class="mobile-menu-close" id="menuClose">&times;</button>
+            <button type="button" class="nav-link" onclick="scrollToSection('about')">About</button>
+            <button type="button" class="nav-link" onclick="scrollToSection('expertise')">Expertise</button>
+            <button type="button" class="nav-link" onclick="scrollToSection('projects')">Projects</button>
+            <button type="button" class="nav-link" onclick="scrollToSection('contact')">Contact</button>
+            <div style="margin-top: auto;">
+                <button type="button" class="btn-primary" style="width: 100%;" onclick="scrollToSection('contact')">Hire Me</button>
+            </div>
+        </div>
+
+        <!-- Hero -->
+        <section class="hero" id="hero">
+            <img src="https://images.unsplash.com/photo-1620712943543-bcc4628c9757?auto=format&fit=crop&q=80&w=2000" 
+                 alt="Artificial Intelligence Visualization" 
+                 class="hero-bg" 
+                 referrerpolicy="no-referrer-when-downgrade" 
+                 crossorigin="anonymous">
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <span class="section-tag" style="color: rgba(255,255,255,0.6);">AI Engineer @ Think-verse Lab</span>
+                <h1>Engineering Neural Architectures.</h1>
+                <p>Kautilya Utkarsh develops robust AI systems and deep learning models to bridge the gap between human intuition and machine intelligence.</p>
+                <div style="display: flex; gap: var(--space-2); justify-content: center;">
+                    <button type="button" class="btn-primary" onclick="scrollToSection('projects')">View Portfolio</button>
+                    <button type="button" class="btn-primary" style="background: transparent; border: 1px solid #fff; color: #fff;" onclick="scrollToSection('about')">The Story</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- About -->
+        <section class="section" id="about">
+            <div class="container">
+                <div class="about-grid">
+                    <div class="about-image-wrapper">
+                        <img src="https://staging.sharpcoder.ai/uploadedimages/0587fe45-3149-4580-92f9-b490b7a12ee4/20260415_054852_cb7863acd0.png" 
+                             alt="Kautilya Utkarsh" 
+                             class="about-image"
+                             onclick="showPersonDetail('Kautilya Utkarsh', 'AI Engineer at Think-verse Lab', 'A specialist in Transformer architectures and reinforcement learning, Kautilya leads the neural synthesis team at Think-verse Lab. With over 6 years of experience in deploying scalable AI solutions, he focuses on high-performance inference and generative models.')"
+                             referrerpolicy="no-referrer-when-downgrade" 
+                             crossorigin="anonymous">
+                    </div>
+                    <div class="about-text">
+                        <span class="section-tag">Identity</span>
+                        <h2 class="section-title">A Vision for Synthetic Intelligence.</h2>
+                        <p>I am an AI Engineer currently pushing the boundaries of neural computing at Think-verse Lab. My work revolves around creating efficient, scalable, and ethically-aligned machine learning frameworks.</p>
+                        <p>In the rapidly evolving landscape of 2026, my focus has shifted toward hyper-personalized agentic workflows and advanced computer vision systems that understand context beyond mere pixels.</p>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <span class="stat-number" data-count="42">0</span>
+                                <span class="stat-label">Innovative Projects</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number" data-count="18">0</span>
+                                <span class="stat-label">Neural Architectures</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number" data-count="1200">0</span>
+                                <span class="stat-label">Compute Hours</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number" data-count="9">0</span>
+                                <span class="stat-label">Research Papers</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expertise -->
+        <section class="section tech-section" id="expertise">
+            <div class="container">
+                <div style="text-align: center; max-width: 700px; margin: 0 auto var(--space-4) auto;">
+                    <span class="section-tag">Capabilities</span>
+                    <h2 class="section-title">The Technical Stack.</h2>
+                    <p>Building modern intelligence requires a blend of mathematical rigor and engineering excellence. These are the tools I use to manifest ideas into reality.</p>
+                </div>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <svg width="24" height="24" fill="var(--primary)" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.45L20.07 19H3.93L12 5.45zM11 16h2v2h-2v-2zm0-7h2v5h-2V9z"/></svg>
+                        <span>PyTorch 2.5+</span>
+                    </div>
+                    <div class="tech-item">
+                        <svg width="24" height="24" fill="var(--primary)" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>Transformer LLMs</span>
+                    </div>
+                    <div class="tech-item">
+                        <svg width="24" height="24" fill="var(--primary)" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44a1 1 0 01-.94 0l-7.9-4.44A.99.99 0 013 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44a1 1 0 01.94 0l7.9 4.44c.32.17.53.5.53.88v9z"/></svg>
+                        <span>CUDA Optimization</span>
+                    </div>
+                    <div class="tech-item">
+                        <svg width="24" height="24" fill="var(--primary)" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42A6.92 6.92 0 0119 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.12.94-4.02 2.47-5.27L6.05 5.31A8.91 8.91 0 003 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+                        <span>Computer Vision</span>
+                    </div>
+                    <div class="tech-item">
+                        <svg width="24" height="24" fill="var(--primary)" viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-11v4h2v-4h-2zm0-4v2h2V7h-2z"/></svg>
+                        <span>Reinforcement Learning</span>
+                    </div>
+                    <div class="tech-item">
+                        <svg width="24" height="24" fill="var(--primary)" viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/></svg>
+                        <span>Docker & K8s</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects -->
+        <section class="section" id="projects">
+            <div class="container">
+                <span class="section-tag">Case Studies</span>
+                <h2 class="section-title">Selected Deployments.</h2>
+                <div class="projects-grid">
+                    <div class="project-card" onclick="showProductDetail('Project Neuralis', 'Next-Gen Semantic Search', 'Developed a vector-embedding based retrieval system for multi-modal data, resulting in 40% faster latency than standard architectures.')">
+                        <div class="project-img-box">
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" 
+                                 alt="Neuralis Project" 
+                                 class="project-img"
+                                 referrerpolicy="no-referrer-when-downgrade" 
+                                 crossorigin="anonymous">
+                        </div>
+                        <div class="project-info">
+                            <h3>Project Neuralis</h3>
+                            <p>Real-time semantic retrieval at scale.</p>
+                            <div class="project-tags">
+                                <span class="tag">NLP</span>
+                                <span class="tag">Vectors</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card" onclick="showProductDetail('Aether Vision', 'Contextual Object Detection', 'A computer vision model designed for edge devices that recognizes objects with 98% accuracy in low-light environments.')">
+                        <div class="project-img-box">
+                            <img src="https://images.unsplash.com/photo-1633412802994-5c058f151b66?auto=format&fit=crop&q=80&w=800" 
+                                 alt="Aether Vision" 
+                                 class="project-img"
+                                 referrerpolicy="no-referrer-when-downgrade" 
+                                 crossorigin="anonymous">
+                        </div>
+                        <div class="project-info">
+                            <h3>Aether Vision</h3>
+                            <p>Edge AI for autonomous context awareness.</p>
+                            <div class="project-tags">
+                                <span class="tag">CV</span>
+                                <span class="tag">Edge</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-card" onclick="showProductDetail('Think-Verse Core', 'Proprietary LLM Framework', 'Architected the foundational layer for Think-verse Lab\'s internal LLM, focusing on parameter-efficient fine-tuning.')">
+                        <div class="project-img-box">
+                            <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800" 
+                                 alt="Think-Verse Core" 
+                                 class="project-img"
+                                 referrerpolicy="no-referrer-when-downgrade" 
+                                 crossorigin="anonymous">
+                        </div>
+                        <div class="project-info">
+                            <h3>Think-Verse Core</h3>
+                            <p>State-of-the-art foundation model training.</p>
+                            <div class="project-tags">
+                                <span class="tag">GenAI</span>
+                                <span class="tag">Scalability</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section class="section" id="contact" style="background-color: var(--bg-2);">
+            <div class="container">
+                <div class="contact-grid">
+                    <div>
+                        <span class="section-tag">Let's Connect</span>
+                        <h2 class="section-title">Initiate a Collaboration.</h2>
+                        <p style="margin-bottom: var(--space-4);">I am always open to discussing research collaborations, high-impact projects, or speaking engagements regarding the future of AI.</p>
+                        
+                        <div class="contact-info-list">
+                            <div class="contact-item">
+                                <span class="contact-label">Location</span>
+                                <span class="contact-value" onclick="showLocationDetail('New Delhi, India', 'The bustling technology hub where Think-verse Lab operates at the forefront of AI research.')" style="cursor:pointer">New Delhi, HQ</span>
+                            </div>
+                            <div class="contact-item">
+                                <span class="contact-label">Email</span>
+                                <span class="contact-value">utkarsh@thinkverse.lab</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        
+            <form class='scv-contact-form' id='contactForm'>
+                <div class='form-group'>
+                    <label for='name'>Full Name</label>
+                    <input type='text' name='name' id='name' placeholder='Your Name' required>
+                </div>
+                <div class='form-group'>
+                    <label for='email'>Email Address</label>
+                    <input type='email' name='email' id='email' placeholder='Your Email' required>
+                </div>
+                <div class='form-group'>
+                    <label for='subject'>Subject</label>
+                    <input type='text' name='subject' id='subject' placeholder='Subject'>
+                </div>
+                <div class='form-group'>
+                    <label for='message'>Message</label>
+                    <textarea name='message' id='message' rows='5' placeholder='Your Message...' required></textarea>
+                </div>
+                <button type='submit' class='btn-primary'>Send Message</button>
+                <div class='form-message'></div>
+            </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <div class="logo">UTKARSH</div>
+                    <p>&copy; <span id="currentYear"></span> Kautilya Utkarsh. Engineered with Precision.</p>
+                    <div class="social-links">
+                        <button type="button" class="social-btn" onclick="showSocialDetail('GitHub', '@kautilyautkarsh')">GH</button>
+                        <button type="button" class="social-btn" onclick="showSocialDetail('LinkedIn', 'Kautilya Utkarsh')">LI</button>
+                        <button type="button" class="social-btn" onclick="showSocialDetail('Twitter / X', '@k_utkarsh_ai')">X</button>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-content">
+                <button type="button" class="modal-close" id="modalClose">&times;</button>
+                <div id="modalBody"></div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast-container">
+            <div class="toast" id="formToast">Transmission Received. I will reach out shortly.</div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Persistence
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        html.setAttribute('data-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Current Year
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Smooth Scroll
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+            // Close mobile menu if open
+            document.getElementById('mobileMenu').classList.remove('active');
+        }
+
+        // Mobile Menu
+        const menuOpen = document.getElementById('menuOpen');
+        const menuClose = document.getElementById('menuClose');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        menuOpen.addEventListener('click', () => mobileMenu.classList.add('active'));
+        menuClose.addEventListener('click', () => mobileMenu.classList.remove('active'));
+
+        // Animated Numbers
+        const stats = document.querySelectorAll('.stat-number');
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.getAttribute('data-count'));
+                    let count = 0;
+                    const increment = target / 50;
+                    const timer = setInterval(() => {
+                        count += increment;
+                        if (count >= target) {
+                            entry.target.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            entry.target.textContent = Math.ceil(count);
+                        }
+                    }, 30);
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        stats.forEach(stat => statsObserver.observe(stat));
+
+        // Modals
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalBody = document.getElementById('modalBody');
+        const modalCloseBtn = document.getElementById('modalClose');
+
+        function openModal(content) {
+            modalBody.innerHTML = content;
+            modalOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modalOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        modalCloseBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModal();
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        function showPersonDetail(name, role, bio) {
+            openModal(`
+                <h2 style="font-family:'Playfair Display'; margin-bottom: 1rem;">${name}</h2>
+                <p style="color: var(--primary); font-weight: 600; text-transform: uppercase; margin-bottom: 1.5rem; font-size: 0.9rem;">${role}</p>
+                <div style="line-height: 1.8; color: var(--muted);">${bio}</div>
+            `);
+        }
+
+        function showProductDetail(title, subtitle, detail) {
+            openModal(`
+                <h2 style="font-family:'Playfair Display'; margin-bottom: 1rem;">${title}</h2>
+                <h4 style="color: var(--muted); margin-bottom: 1.5rem;">${subtitle}</h4>
+                <p style="line-height: 1.8;">${detail}</p>
+                <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                    <button type="button" class="btn-primary" onclick="closeModal()">Close View</button>
+                </div>
+            `);
+        }
+
+        function showLocationDetail(city, info) {
+            openModal(`
+                <h2 style="font-family:'Playfair Display'; margin-bottom: 1rem;">${city}</h2>
+                <p style="line-height: 1.8;">${info}</p>
+            `);
+        }
+
+        function showSocialDetail(platform, handle) {
+            openModal(`
+                <h2 style="font-family:'Playfair Display'; margin-bottom: 1rem;">${platform}</h2>
+                <p style="font-size: 1.5rem; margin-bottom: 1.5rem;">${handle}</p>
+                <p style="color: var(--muted);">Interaction with external links is restricted in this preview.</p>
+            `);
+        }
+
+        // Form Validation & Interaction
+        const contactForm = document.getElementById('contactForm');
+        const formToast = document.getElementById('formToast');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            formToast.style.display = 'block';
+            contactForm.reset();
+            setTimeout(() => {
+                formToast.style.display = 'none';
+            }, 4000);
+        });
+
+        // Safe Interaction Guard
+        document.getElementById('page').addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                const toast = document.createElement('div');
+                toast.textContent = "External or unsafe action disabled in preview.";
+                toast.style.cssText = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:10px 20px; border-radius:5px; z-index:9999;";
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2000);
+            }
+        }, true);
+    </script>
+
+
+<script>
+// SharpCoder Vibe Email Helper - v2.0 (Enhanced)
+(function() {
+    'use strict';
+    
+    const CONFIG = window.__SCV_CONFIG || {};
+    const DEPLOY_TOKEN = CONFIG.deployToken || (typeof deployToken !== 'undefined' ? deployToken : null);
+    const API_URL = CONFIG.emailApiUrl || '/api/email/send';
+    
+    console.log('SCV Email Helper: Initialized', { hasToken: !!DEPLOY_TOKEN, apiUrl: API_URL });
+    
+    if (!DEPLOY_TOKEN) {
+        console.warn('SCV Email Helper: No deploy token found. Email sending will not work.');
+    }
+    
+    window.sendContactForm = async function(formData) {
+        if (!DEPLOY_TOKEN) {
+            console.error('SCV Email Helper: Missing deploy token');
+            return { ok: false, error: 'Email service not configured for this deployment.' };
+        }
+        
+        if (!formData.name || !formData.email || !formData.message) {
+            console.warn('SCV Email Helper: Missing required fields', formData);
+            return { ok: false, error: 'Please fill in all required fields.' };
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            console.warn('SCV Email Helper: Invalid email', formData.email);
+            return { ok: false, error: 'Please enter a valid email address.' };
+        }
+        
+        const payload = {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            message: formData.message.trim(),
+            deployToken: DEPLOY_TOKEN
+        };
+        
+        console.log('SCV Email Helper: Sending email', { name: payload.name, email: payload.email });
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            console.log('SCV Email Helper: Response status', response.status);
+            
+            let result;
+            try {
+                result = await response.json();
+                console.log('SCV Email Helper: Response body', result);
+            } catch (e) {
+                console.error('SCV Email Helper: Failed to parse response', e);
+                result = { ok: false, error: 'Invalid response from server.' };
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('SCV Email Helper: Request failed', error);
+            if (error.name === 'AbortError') {
+                return { ok: false, error: 'Request timed out. Please try again.' };
+            }
+            return { ok: false, error: 'Network error. Please check your connection and try again.' };
+        }
+    };
+    
+    function bindContactForm(form) {
+    // Prevent binding the same form multiple times
+    if (!form || form.hasAttribute('data-scv-bound')) return;
+    
+    // ====================================================================
+    // CRITICAL: Remove ALL existing submit handlers by cloning and replacing
+    // This completely eliminates the AI-generated fake toast handler
+    // ====================================================================
+    const originalId = form.id;
+    const originalClass = form.className;
+    
+    // Clone the form without any event listeners
+    const newForm = form.cloneNode(true);
+    
+    // Preserve the original id and class
+    if (originalId) newForm.id = originalId;
+    newForm.className = originalClass;
+    
+    // Replace the old form with the fresh clone
+    form.parentNode.replaceChild(newForm, form);
+    form = newForm;
+    
+    // Mark as bound to prevent re-processing
+    form.setAttribute('data-scv-bound', 'true');
+    
+    // Log form structure for debugging
+    console.log('SCV Email Helper: Binding form (clean clone)', { 
+        id: form.id, 
+        classes: form.className,
+        hasNameInput: !!form.querySelector('[name="name"]'),
+        hasEmailInput: !!form.querySelector('[name="email"]'),
+        hasMessageInput: !!form.querySelector('[name="message"]')
+    });
+    
+    // Find required inputs (try multiple selectors for robustness)
+    let nameInput = form.querySelector('[name="name"]');
+    let emailInput = form.querySelector('[name="email"]');
+    let messageInput = form.querySelector('[name="message"]');
+    
+    // Fallback: try to find by id if name attribute is missing
+    if (!nameInput) nameInput = form.querySelector('#name, [id="name"]');
+    if (!emailInput) emailInput = form.querySelector('#email, [id="email"]');
+    if (!messageInput) messageInput = form.querySelector('#message, [id="message"]');
+    
+    // If inputs exist but don't have name attributes, add them
+    if (nameInput && !nameInput.hasAttribute('name')) nameInput.setAttribute('name', 'name');
+    if (emailInput && !emailInput.hasAttribute('name')) emailInput.setAttribute('name', 'email');
+    if (messageInput && !messageInput.hasAttribute('name')) messageInput.setAttribute('name', 'message');
+    
+    // Validate required fields exist
+    if (!nameInput || !emailInput || !messageInput) {
+        console.warn('SCV Email Helper: Form missing required inputs', {
+            hasName: !!nameInput,
+            hasEmail: !!emailInput,
+            hasMessage: !!messageInput
+        });
+        return;
+    }
+    
+    // Remove any inline onsubmit attribute
+    form.removeAttribute('onsubmit');
+    
+    // Add the email submission handler
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();  // Stop event from bubbling
+        
+        console.log('SCV Email Helper: Form submitted (email handler)');
+        
+        // Get values directly from inputs
+        const name = nameInput.value?.trim() || '';
+        const email = emailInput.value?.trim() || '';
+        const message = messageInput.value?.trim() || '';
+        
+        console.log('SCV Email Helper: Form data collected', { 
+            name: name ? 'present' : 'missing',
+            email: email ? 'present' : 'missing', 
+            message: message ? 'present' : 'missing'
+        });
+        
+        // Validate all fields are filled
+        if (!name || !email || !message) {
+            console.warn('SCV Email Helper: Empty values detected');
+            showFormMessage(form, 'Please fill in all required fields.', 'error');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            console.warn('SCV Email Helper: Invalid email format', email);
+            showFormMessage(form, 'Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        // Get or create message div
+        let messageDiv = form.querySelector('.form-message');
+        if (!messageDiv) {
+            messageDiv = document.createElement('div');
+            messageDiv.className = 'form-message';
+            form.appendChild(messageDiv);
+            console.log('SCV Email Helper: Created message div');
+        }
+        
+        // Get submit button and show loading state
+        const submitBtn = form.querySelector('[type="submit"]');
+        const originalText = submitBtn?.textContent || 'Send';
+        const originalDisabled = submitBtn?.disabled || false;
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+        }
+        
+        // Clear previous messages and show loading indicator
+        messageDiv.innerHTML = '<div style="color: #3b82f6; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e0e7ff; border-left: 4px solid #3b82f6;">⏳ Sending your message...</div>';
+        messageDiv.style.display = 'block';
+        
+        try {
+            // Send the email via the API
+            const result = await window.sendContactForm({ name, email, message });
+            
+            if (result && result.ok) {
+                // Success - show success message and reset form
+                messageDiv.innerHTML = '<div style="color: #10b981; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e8f5e9; border-left: 4px solid #10b981;">✓ ' + (result.message || 'Message sent successfully!') + '</div>';
+                form.reset();
+                console.log('SCV Email Helper: Email sent successfully');
+                
+                // Auto-hide success message after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv) messageDiv.style.display = 'none';
+                }, 5000);
+            } else {
+                // Error from server
+                const errorMsg = result?.error || 'Failed to send message. Please try again.';
+                console.error('SCV Email Helper: Send failed', errorMsg);
+                messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ ' + errorMsg + '</div>';
+            }
+        } catch (error) {
+            console.error('SCV Email Helper: Exception', error);
+            messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ An error occurred. Please try again later.</div>';
+        } finally {
+            // Re-enable submit button
+            if (submitBtn) {
+                submitBtn.disabled = originalDisabled;
+                submitBtn.textContent = originalText;
+            }
+        }
+    });
+    
+    console.log('SCV Email Helper: Successfully bound email handler to form');
+}
+
+// Helper function to show form messages
+function showFormMessage(form, message, type) {
+    let messageDiv = form.querySelector('.form-message');
+    if (!messageDiv) {
+        messageDiv = document.createElement('div');
+        messageDiv.className = 'form-message';
+        form.appendChild(messageDiv);
+    }
+    
+    const color = type === 'error' ? '#ef4444' : '#10b981';
+    const bgColor = type === 'error' ? '#fee2e2' : '#e8f5e9';
+    const borderColor = type === 'error' ? '#ef4444' : '#10b981';
+    
+    messageDiv.innerHTML = `<div style="color: ${color}; padding: 12px; margin-top: 10px; border-radius: 8px; background: ${bgColor}; border-left: 4px solid ${borderColor};">${type === 'error' ? '✗' : '✓'} ${message}</div>`;
+    messageDiv.style.display = 'block';
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        if (messageDiv) messageDiv.style.display = 'none';
+    }, 5000);
+}
+    
+    function bindAllForms() {
+        // Primary: look for scv-contact-form class
+        let forms = document.querySelectorAll('form.scv-contact-form');
+        console.log('SCV Email Helper: Forms with scv-contact-form class:', forms.length);
+    
+        // Fallback: look for any form that might be a contact form
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('#contactForm, #portfolioContactForm, #portfolioContact, form.contact-form, form[id*="contact"]');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using fallback form selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Also look for forms with submit buttons that might be contact forms
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('form:has(input[type="email"]), form:has(textarea)');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using email-input fallback selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Bind each form (cloning removes existing handlers)
+        forms.forEach(bindContactForm);
+    
+        if (forms.length === 0) {
+            console.warn('SCV Email Helper: No contact forms found on this page');
+        } else {
+            console.log('SCV Email Helper: Successfully bound', forms.length, 'contact form(s)');
+        }
+    }
+
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindAllForms);
+    } else {
+        bindAllForms();
+    }
+    
+    // Watch for dynamically added forms
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        if (node.matches && node.matches('form.scv-contact-form')) {
+                            bindContactForm(node);
+                        }
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('form.scv-contact-form').forEach(bindContactForm);
+                        }
+                    }
+                });
+            });
+        });
+        
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }
+})();
+</script>
+</body>
+</html>
