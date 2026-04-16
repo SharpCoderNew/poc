@@ -1,0 +1,1592 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <title>The Gilded Midway | Eat. Drink. Play.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Colors */
+      --primary: #e63946;
+      --primary-2: #b51d29;
+      --on-primary: #ffffff;
+      --accent: #f9d423;
+      --on-accent: #1a1a2e;
+      --success: #06d6a0;
+      --warning: #ffd166;
+      --danger: #ef476f;
+      --focus: #4cc9f0;
+
+      /* Spacing */
+      --space-1: 0.5rem;
+      --space-2: 1rem;
+      --space-3: 1.5rem;
+      --space-4: 2.5rem;
+      --space-5: 4rem;
+      --space-6: 6rem;
+      --gutter: 0;
+
+      /* UI Tokens */
+      --radius-btn: 3px;
+      --radius-card: 12px;
+      --radius-pill: 50px;
+      --font-size-1: 0.875rem;
+      --font-size-2: 1rem;
+      --font-size-3: 1.25rem;
+      --font-size-4: 2rem;
+      --font-size-5: 3.5rem;
+      --font-size-6: 5rem;
+      --line-1: 1.2;
+      --line-2: 1.5;
+      --line-3: 1.7;
+      --dur-fast: 0.2s;
+      --dur-med: 0.4s;
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.1);
+      --shadow-strong: 0 10px 40px rgba(0, 0, 0, 0.3);
+      --header-h: 80px;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #111111;
+      --bg-2: #1a1a1a;
+      --surface: #222222;
+      --surface-2: #2d2d2d;
+      --text: #f8f9fa;
+      --muted: #adb5bd;
+      --border: #333333;
+      --overlay: rgba(0, 0, 0, 0.85);
+      --divider: rgba(255, 255, 255, 0.08);
+      --header-bg: rgba(17, 17, 17, 0.85);
+    }
+
+    html[data-theme="light"] {
+      --bg: #fdfaf5;
+      --bg-2: #f7f0e6;
+      --surface: #ffffff;
+      --surface-2: #f8f9fa;
+      --text: #1a1a2e;
+      --muted: #6c757d;
+      --border: #e9ecef;
+      --overlay: rgba(255, 255, 255, 0.9);
+      --divider: rgba(0, 0, 0, 0.08);
+      --header-bg: rgba(253, 250, 245, 0.85);
+    }
+
+    /* Reset & Base */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: var(--line-2);
+      overflow-x: hidden;
+      transition: background-color var(--dur-med) var(--ease-standard);
+    }
+    h1, h2, h3, h4, .serif {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      line-height: var(--line-1);
+      margin: 0;
+    }
+
+    #page {
+      width: 100%;
+      position: relative;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: var(--space-3);
+      padding-right: var(--space-3);
+    }
+
+    button {
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--dur-fast) var(--ease-standard);
+      outline: none;
+    }
+
+    button:focus-visible {
+      box-shadow: 0 0 0 3px var(--focus);
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--header-h);
+      background: var(--header-bg);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      border-bottom: 1px solid var(--divider);
+      display: flex;
+      align-items: center;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: var(--font-size-3);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--primary);
+    }
+
+    nav.desktop-nav {
+      display: none;
+    }
+
+    @media (min-width: 1024px) {
+      nav.desktop-nav {
+        display: flex;
+        gap: var(--space-3);
+      }
+    }
+
+    .nav-btn {
+      font-size: var(--font-size-1);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text);
+      opacity: 0.8;
+    }
+
+    .nav-btn:hover {
+      opacity: 1;
+      color: var(--primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .btn-cta {
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-btn);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    .btn-cta:hover {
+      background: var(--primary-2);
+      transform: translateY(-2px);
+    }
+
+    /* Hero */
+    .hero {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      padding: var(--space-6) 0;
+      text-align: center;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8));
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 10vw, var(--font-size-6));
+      margin-bottom: var(--space-2);
+      text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .hero-tagline {
+      font-size: var(--font-size-3);
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      margin-bottom: var(--space-4);
+      color: var(--accent);
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: var(--space-3);
+    }
+
+    /* Sections */
+    section {
+      padding: var(--space-6) 0;
+      width: 100%;
+    }
+
+    .section-header {
+      margin-bottom: var(--space-5);
+      text-align: center;
+    }
+
+    .section-title {
+      font-size: var(--font-size-5);
+      margin-bottom: var(--space-2);
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* About Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-4);
+      text-align: center;
+      margin-top: var(--space-5);
+    }
+
+    .stat-item .stat-number {
+      font-size: var(--font-size-5);
+      font-family: 'Playfair Display', serif;
+      color: var(--primary);
+      display: block;
+    }
+
+    .stat-label {
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-size: var(--font-size-1);
+    }
+
+    /* Eat Section: Menu */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-3);
+    }
+
+    .menu-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      transition: transform var(--dur-med) var(--ease-standard);
+      cursor: pointer;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--primary);
+    }
+
+    .menu-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .menu-info {
+      padding: var(--space-3);
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--space-1);
+    }
+
+    .menu-name {
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      font-size: var(--font-size-3);
+    }
+
+    .menu-price {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .menu-desc {
+      font-size: var(--font-size-1);
+      color: var(--muted);
+    }
+
+    /* Play Section: Games */
+    .play-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .game-card {
+      position: relative;
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      height: 400px;
+      cursor: pointer;
+    }
+
+    .game-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s var(--ease-standard);
+    }
+
+    .game-card:hover .game-img {
+      transform: scale(1.1);
+    }
+
+    .game-content {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      color: #fff;
+    }
+
+    /* Reservation Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--dur-med) var(--ease-standard);
+      padding: var(--space-3);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-container {
+      background: var(--bg);
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      border-radius: var(--radius-card);
+      border: 2px solid var(--primary);
+      position: relative;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform var(--dur-med) var(--ease-standard);
+    }
+
+    .modal-overlay.active .modal-container {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: var(--space-3);
+      border-bottom: 1px solid var(--divider);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 10;
+    }
+
+    .modal-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab-btn.active {
+      border-bottom-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .modal-body {
+      padding: var(--space-4);
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: var(--space-3);
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-btn);
+      color: var(--text);
+      font-family: inherit;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Toast */
+    #status-area {
+      position: fixed;
+      bottom: var(--space-4);
+      right: var(--space-4);
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .toast {
+      background: var(--surface);
+      color: var(--text);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-btn);
+      box-shadow: var(--shadow-strong);
+      border-left: 4px solid var(--primary);
+      min-width: 250px;
+      animation: toastIn 0.3s ease forwards;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Utility */
+    .bg-alt { background-color: var(--bg-2); }
+    .hidden { display: none; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+    }
+
+    /* Wavy Text Path */
+    .wavy-text {
+      width: 100%;
+      max-width: 800px;
+      height: 150px;
+      margin: var(--space-4) auto;
+    }
+
+    /* Mobile Menu Overlay */
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-3);
+      padding: var(--space-6);
+      transform: translateX(100%);
+      transition: transform var(--dur-med) var(--ease-standard);
+    }
+
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: var(--space-3);
+      right: var(--space-3);
+      width: 44px;
+      height: 44px;
+      background: var(--surface);
+      border-radius: 50%;
+    }
+
+    /* Grain Texture */
+    #page::after {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('https://grainy-gradients.vercel.app/noise.svg');
+      opacity: 0.05;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-4);
+      padding-bottom: var(--space-5);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--divider);
+      padding-top: var(--space-3);
+      padding-bottom: var(--space-4);
+      text-align: center;
+      font-size: var(--font-size-1);
+      color: var(--muted);
+    }
+
+    /* Detail Modal Styles */
+    .detail-modal-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      border-radius: var(--radius-card);
+      margin-bottom: var(--space-3);
+    }
+  </style>
+  <script>
+    (function() {
+      const storedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+</head>
+<body>
+<script>
+            // SharpCoder Vibe Configuration
+            window.__SCV_CONFIG = window.__SCV_CONFIG || {};
+            window.__SCV_CONFIG.deployToken = "CfDJ8HFZOoVEHP5EojFr_x7Dd570rXXk3mIo6unFgWOxjbjS9PfOakF8qxOsUfImJutNB_QrYXgUS_NjFadsbDIy1eifulE94X5s_8Zb19IaK6JgoU8DsdlEVoZWBJnukqtqKy-oEzSoVbyqJuB7FuJzn_9ymA6z_rBL-ZK34T32_w4Plal8E0eTDlJwSb2dSg2uWQ";
+            // In InjectDeployTokenAndEmailConfig method
+            window.__SCV_CONFIG.emailApiUrl = "https://staging.sharpcoder.ai/api/email/send";
+            window.__SCV_CONFIG.emailEnabled = true;
+            window.__SCV_CONFIG.version = "1.0.0";
+            </script>
+<script>let deployToken = "CfDJ8HFZOoVEHP5EojFr_x7Dd570rXXk3mIo6unFgWOxjbjS9PfOakF8qxOsUfImJutNB_QrYXgUS_NjFadsbDIy1eifulE94X5s_8Zb19IaK6JgoU8DsdlEVoZWBJnukqtqKy-oEzSoVbyqJuB7FuJzn_9ymA6z_rBL-ZK34T32_w4Plal8E0eTDlJwSb2dSg2uWQ";</script>
+
+
+<div id="page">
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <button type="button" class="brand" data-scroll="#home">THE GILDED MIDWAY</button>
+        
+        <nav class="desktop-nav">
+          <button type="button" class="nav-btn" data-scroll="#about">About</button>
+          <button type="button" class="nav-btn" data-scroll="#eat">Eat</button>
+          <button type="button" class="nav-btn" data-scroll="#play">Play</button>
+          <button type="button" class="nav-btn" data-scroll="#groups">Groups</button>
+          <button type="button" class="nav-btn" data-scroll="#events">Events</button>
+          <button type="button" class="nav-btn" data-scroll="#contact">Contact</button>
+        </nav>
+
+        <div class="header-actions">
+          <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
+            <svg class="sun hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+          <button type="button" class="btn-cta" data-action="open-reservation">Réserver</button>
+          <button type="button" class="mobile-toggle" id="mobile-toggle" style="padding: 10px; display: inline-flex; @media (min-width: 1024px) { display: none; }">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section id="home" class="hero" style="background-image: url('https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&q=80&w=1920');">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">EAT. DRINK. PLAY.</h1>
+        <p class="hero-tagline">The most spectacular retro brasserie in the Neo-District.</p>
+        <div class="hero-buttons">
+          <button type="button" class="btn-cta" data-action="open-reservation">Book Your Table</button>
+          <button type="button" class="btn-cta" style="background: transparent; border: 2px solid #fff;" data-scroll="#about">Discover</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="container reveal">
+      <div class="section-header">
+        <h2 class="section-title">Step Into The Spectacle</h2>
+        <p class="section-subtitle">Since 1926, the Gilded Midway has been the crown jewel of carnival entertainment. Today, we've blended that retro magic with award-winning cuisine and craft cocktails.</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number" data-count="15000">0</span>
+          <span class="stat-label">Happy Guests Weekly</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="45">0</span>
+          <span class="stat-label">Retro Game Machines</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="12">0</span>
+          <span class="stat-label">Awards Won</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" data-count="3">0</span>
+          <span class="stat-label">Unique Bar Floors</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- EAT -->
+    <section id="eat" class="bg-alt">
+      <div class="container reveal">
+        <div class="section-header">
+          <h2 class="section-title">The Feast</h2>
+          <p class="section-subtitle">Not your average carnival food. Experience gourmet takes on classic boardwalk favorites.</p>
+        </div>
+
+        <div id="menu-container" class="menu-grid">
+          <!-- Rendered via JS -->
+        </div>
+
+        <div style="text-align: center; margin-top: var(--space-4);">
+          <button type="button" class="btn-cta" data-action="open-reservation" data-tab="eat">Reserve a Table</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLAY -->
+    <section id="play">
+      <div class="container reveal">
+        <div class="section-header">
+          <h2 class="section-title">The Arcade</h2>
+          <p class="section-subtitle">Challenge your friends to the classics. No coins required—just grab a play-card and let the games begin.</p>
+        </div>
+
+        <div id="game-container" class="play-grid">
+          <!-- Rendered via JS -->
+        </div>
+
+        <div style="text-align: center; margin-top: var(--space-4);">
+          <button type="button" class="btn-cta" data-action="open-reservation" data-tab="play">Book a Game Session</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GROUPS -->
+    <section id="groups" class="bg-alt">
+      <div class="container reveal">
+        <div class="section-header">
+          <h2 class="section-title">The Whole Circus</h2>
+          <p class="section-subtitle">Planning an event? We specialize in parties that people actually want to attend.</p>
+        </div>
+
+        <div id="packages-container" class="menu-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENTS -->
+    <section id="events">
+      <div class="container reveal">
+        <div class="section-header">
+          <h2 class="section-title">Weekly Wonders</h2>
+          <p class="section-subtitle">From Trivia Tuesdays to Neon Tournament Sundays, there's always a reason to celebrate.</p>
+        </div>
+
+        <div id="events-container" class="menu-grid">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="bg-alt">
+      <div class="container reveal">
+        <div class="section-header">
+          <h2 class="section-title">Raves & Reviews</h2>
+        </div>
+        <div id="testimonial-container" class="menu-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="container reveal">
+        <div class="section-header">
+          <h2 class="section-title">Get In Touch</h2>
+          <p class="section-subtitle">Located at 42 Vintage Lane, Neo-District. Open late every night.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-4);">
+          <div>
+            <h3 class="serif" style="font-size: var(--font-size-3); margin-bottom: var(--space-2);">Contact Details</h3>
+            <p><strong>Phone:</strong> +1 (555) 738-7622</p>
+            <p><strong>Email:</strong> ringmaster@gildedmidway.com</p>
+            <p><strong>Hours:</strong> Mon-Sun: 11:00 AM - 2:00 AM</p>
+            
+            <form id="newsletter-form" style="margin-top: var(--space-3);">
+              <label class="form-label">Join Our Secret Society (Newsletter)</label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="email" class="form-input" placeholder="your@email.com" required>
+                <button type="submit" class="btn-cta">Join</button>
+              </div>
+            </form>
+          </div>
+
+          <form id="contact-form" class='scv-contact-form'>
+            <div class="form-group">
+              <label class="form-label">Your Name</label>
+              <input type="text" class="form-input" placeholder="The Amazing Guest" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-input" placeholder="guest@example.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Message</label>
+              <textarea class="form-input" rows="4" placeholder="How can we help you create magic?" required></textarea>
+            </div>
+            <button type="submit" class="btn-cta" style="width: 100%;">Send Message</button>
+          <div class='form-message'></div>
+</form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-alt">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4 class="brand" style="margin-bottom: var(--space-2);">THE GILDED MIDWAY</h4>
+          <p style="font-size: var(--font-size-1); color: var(--muted);">Retro gaming, elevated cuisine, and craft cocktails in the heart of the Neo-District.</p>
+        </div>
+        <div>
+          <h4 class="serif" style="margin-bottom: var(--space-2);">Explore</h4>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <button type="button" class="nav-btn" data-scroll="#home" style="justify-content: flex-start;">Home</button>
+            <button type="button" class="nav-btn" data-scroll="#about" style="justify-content: flex-start;">About Us</button>
+            <button type="button" class="nav-btn" data-scroll="#reservation" style="justify-content: flex-start;">Reservations</button>
+          </div>
+        </div>
+        <div>
+          <h4 class="serif" style="margin-bottom: var(--space-2);">Social</h4>
+          <div style="display: flex; gap: 1rem;">
+            <button type="button" class="social-icon" data-social="Instagram">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </button>
+            <button type="button" class="social-icon" data-social="Facebook">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+            </button>
+            <button type="button" class="social-icon" data-social="Twitter">
+              <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.84 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; <span id="copyright-year"></span> The Gilded Midway. All spectacles reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- MOBILE MENU -->
+  <div id="mobile-menu-overlay" class="mobile-menu">
+    <button type="button" class="close-btn" id="mobile-close">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button type="button" class="nav-btn" style="font-size: var(--font-size-3);" data-scroll="#home">Home</button>
+    <button type="button" class="nav-btn" style="font-size: var(--font-size-3);" data-scroll="#about">About</button>
+    <button type="button" class="nav-btn" style="font-size: var(--font-size-3);" data-scroll="#eat">Eat</button>
+    <button type="button" class="nav-btn" style="font-size: var(--font-size-3);" data-scroll="#play">Play</button>
+    <button type="button" class="nav-btn" style="font-size: var(--font-size-3);" data-scroll="#groups">Groups</button>
+    <button type="button" class="nav-btn" style="font-size: var(--font-size-3);" data-scroll="#events">Events</button>
+    <button type="button" class="btn-cta" data-action="open-reservation">Réserver Now</button>
+  </div>
+
+  <!-- RESERVATION MODAL -->
+  <div id="reservation-modal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="serif">Reservation</h3>
+        <button type="button" class="modal-close-btn" data-action="close-modal">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-tabs">
+        <button type="button" class="tab-btn active" data-tab="eat">Eat & Drink</button>
+        <button type="button" class="tab-btn" data-tab="play">Play Games</button>
+      </div>
+      <div class="modal-body">
+        <div id="tab-eat-content">
+          <form id="eat-booking-form">
+            <div class="form-group">
+              <label class="form-label">Guests</label>
+              <select class="form-input" required>
+                <option value="2">2 People</option>
+                <option value="4">4 People</option>
+                <option value="6">6 People</option>
+                <option value="8+">8+ (Group)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date</label>
+              <input type="date" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Time</label>
+              <select class="form-input" required>
+                <option>6:00 PM</option>
+                <option>7:30 PM</option>
+                <option>9:00 PM</option>
+                <option>10:30 PM</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-cta" style="width: 100%;">Confirm Table</button>
+          </form>
+        </div>
+        <div id="tab-play-content" class="hidden">
+          <div style="text-align: center;">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" style="margin-bottom: var(--space-2);"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4h-4Z"/></svg>
+            <h4 class="serif">Arcade Pass Booking</h4>
+            <p style="margin-bottom: var(--space-3);">Game sessions are managed via our central arcade system. Passes start at $25 for unlimited play.</p>
+            <button type="button" class="btn-cta" id="btn-play-external">Open Game Portal</button>
+            <p style="font-size: 0.75rem; color: var(--muted); margin-top: 1rem;">Note: External systems are disabled in this preview.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <div id="detail-modal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="serif" id="detail-title">Detail</h3>
+        <button type="button" class="modal-close-btn" data-action="close-modal">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img id="detail-img" src="" alt="" class="detail-modal-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+        <p id="detail-desc" style="color: var(--muted);"></p>
+        <div id="detail-meta" style="margin-top: var(--space-2); font-weight: 700; color: var(--primary);"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS/TOAST -->
+  <div id="status-area" aria-live="polite"></div>
+</div>
+
+<script>
+  // --- Data ---
+  const MENU_HIGHLIGHTS = [
+    { name: "Truffle Midway Fries", price: "$14", desc: "Double-fried Belgian fries, truffle oil, parmesan, chives.", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&q=80&w=600" },
+    { name: "The Ringmaster Burger", price: "$22", desc: "Dry-aged wagyu, smoked cheddar, bacon jam, brioche.", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=600" },
+    { name: "Cotton Candy Martini", price: "$16", desc: "Vodka, fresh lime, house-spun sugar, magic dust.", img: "https://images.unsplash.com/photo-1536935338788-846bb9981813?auto=format&fit=crop&q=80&w=600" },
+    { name: "Lobster Corn Dogs", price: "$19", desc: "Butter-poached lobster, cornmeal batter, lemon aioli.", img: "https://images.unsplash.com/photo-1525059696034-4967a8e1dca2?auto=format&fit=crop&q=80&w=600" },
+    { name: "Smoked Brisket Tacos", price: "$18", desc: "12-hour brisket, pickled onions, chipotle crema.", img: "https://images.unsplash.com/photo-1552332386-f8dd00dc2f85?auto=format&fit=crop&q=80&w=600" },
+    { name: "Bourbon Glazed Pretzels", price: "$12", desc: "Giant sourdough pretzel, warm beer cheese dip.", img: "https://images.unsplash.com/photo-1582845551381-8b21c430e371?auto=format&fit=crop&q=80&w=600" },
+    { name: "Carnival Sundae", price: "$14", desc: "Gold-leaf vanilla, caramel popcorn, hot fudge.", img: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&q=80&w=600" },
+    { name: "The High Striker Cocktail", price: "$17", desc: "Mezcal, agave, chili-infused honey, grapefruit.", img: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?auto=format&fit=crop&q=80&w=600" }
+  ];
+
+  const GAMES = [
+    { name: "Vintage Skee-Ball", type: "Classic", desc: "The 1950s originals, fully restored. Roll for the high score.", img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=600" },
+    { name: "Pinball Palace", type: "Arcade", desc: "15 machines ranging from the 70s to modern masterpieces.", img: "https://images.unsplash.com/photo-1544652478-6653e09f18a2?auto=format&fit=crop&q=80&w=600" },
+    { name: "The Claw of Destiny", type: "Prize", desc: "A custom-built claw machine with exclusive venue merch.", img: "https://images.unsplash.com/photo-1563841930606-67e2b64da2eb?auto=format&fit=crop&q=80&w=600" },
+    { name: "Air Hockey Arena", type: "Vs Mode", desc: "Glow-in-the-dark tables with high-speed puck action.", img: "https://images.unsplash.com/photo-1628189870102-6902263d917f?auto=format&fit=crop&q=80&w=600" },
+    { name: "Duck Gallery", type: "Shooting", desc: "Laser-based shooting gallery with retro mechanical targets.", img: "https://images.unsplash.com/photo-1521714161819-15534968fc5f?auto=format&fit=crop&q=80&w=600" },
+    { name: "Fortune Teller", type: "Novelty", desc: "Zoltar awaits your question. Real printed fortunes included.", img: "https://images.unsplash.com/photo-1533928298208-27ff66555d8d?auto=format&fit=crop&q=80&w=600" }
+  ];
+
+  const GROUP_PACKAGES = [
+    { name: "The Side Show", price: "$45/pp", desc: "Perfect for birthdays. Includes reserved booth, 2 appetizers, and $20 game card." },
+    { name: "The Big Top", price: "$85/pp", desc: "The ultimate corporate mixer. Full buffet, open bar for 2 hours, and $50 game card." },
+    { name: "The Grand Carnival", price: "Custom", desc: "Full venue buyout. Capacity for 250 guests. Tailored menus and custom game tournament." }
+  ];
+
+  const EVENTS = [
+    { name: "Magic Mondays", date: "Every Monday @ 8PM", desc: "Close-up magicians at every table while you dine.", img: "https://images.unsplash.com/photo-1529154036614-a60975f5c760?auto=format&fit=crop&q=80&w=600" },
+    { name: "Neon Tournament", date: "Sundays @ 3PM", desc: "Skee-Ball and Pinball tournament with cash prizes.", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=600" },
+    { name: "Trivia Carnival", date: "Wednesdays @ 7PM", desc: "Pop culture trivia with themed cocktails and prizes.", img: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80&w=600" },
+    { name: "Retro DJ Night", date: "Fri & Sat @ 9PM", desc: "80s and 90s hits spun on vinyl only.", img: "https://images.unsplash.com/photo-1514525253344-991c058564b2?auto=format&fit=crop&q=80&w=600" }
+  ];
+
+  const TESTIMONIALS = [
+    { name: "Sarah J.", text: "The vibes are immaculate. Best burger I've had in a long time!" },
+    { name: "Marcus L.", text: "Spent three hours on the pinball machines. 10/10 experience." },
+    { name: "Elena V.", text: "Perfect date spot. The Cotton Candy Martini is a must-try." },
+    { name: "Kevin T.", text: "Finally, a venue that takes both food and fun seriously." }
+  ];
+
+  // --- Interaction Logic ---
+  document.addEventListener('DOMContentLoaded', () => {
+    // Current Year
+    document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+    // Theme Toggle
+    const themeBtn = document.getElementById('theme-toggle');
+    const sunIcon = themeBtn.querySelector('.sun');
+    const moonIcon = themeBtn.querySelector('.moon');
+
+    function updateThemeIcons(theme) {
+      if(theme === 'dark') {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+      } else {
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      }
+    }
+
+    themeBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      updateThemeIcons(next);
+      showToast(`Switched to ${next} mode`);
+    });
+    updateThemeIcons(document.documentElement.getAttribute('data-theme'));
+
+    // Render Data
+    const menuContainer = document.getElementById('menu-container');
+    MENU_HIGHLIGHTS.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'menu-card';
+      el.innerHTML = `
+        <img src="${item.img}" class="menu-img" alt="${item.name}" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+        <div class="menu-info">
+          <div class="menu-header">
+            <span class="menu-name">${item.name}</span>
+            <span class="menu-price">${item.price}</span>
+          </div>
+          <p class="menu-desc">${item.desc}</p>
+        </div>
+      `;
+      el.addEventListener('click', () => showDetail(item.name, item.desc, item.img, item.price));
+      menuContainer.appendChild(el);
+    });
+
+    const gameContainer = document.getElementById('game-container');
+    GAMES.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'game-card';
+      el.innerHTML = `
+        <img src="${item.img}" class="game-img" alt="${item.name}" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+        <div class="game-content">
+          <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--primary); font-weight: 800;">${item.type}</span>
+          <h3 class="serif">${item.name}</h3>
+          <p style="font-size: 0.9rem; opacity: 0.9;">${item.desc}</p>
+        </div>
+      `;
+      el.addEventListener('click', () => showDetail(item.name, item.desc, item.img, item.type));
+      gameContainer.appendChild(el);
+    });
+
+    const packageContainer = document.getElementById('packages-container');
+    GROUP_PACKAGES.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'menu-card';
+      el.innerHTML = `
+        <div class="menu-info" style="text-align: center;">
+          <h3 class="serif">${item.name}</h3>
+          <p class="menu-price" style="font-size: 1.5rem; margin: 1rem 0;">${item.price}</p>
+          <p class="menu-desc">${item.desc}</p>
+          <button type="button" class="btn-cta" style="margin-top: 1.5rem; width: 100%;" data-action="open-reservation">Enquire Now</button>
+        </div>
+      `;
+      packageContainer.appendChild(el);
+    });
+
+    const eventsContainer = document.getElementById('events-container');
+    EVENTS.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'menu-card';
+      el.innerHTML = `
+        <img src="${item.img}" class="menu-img" alt="${item.name}" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+        <div class="menu-info">
+          <h3 class="serif">${item.name}</h3>
+          <p style="color: var(--primary); font-weight: 700; margin-bottom: 0.5rem;">${item.date}</p>
+          <p class="menu-desc">${item.desc}</p>
+        </div>
+      `;
+      el.addEventListener('click', () => showDetail(item.name, item.desc, item.img, item.date));
+      eventsContainer.appendChild(el);
+    });
+
+    const testContainer = document.getElementById('testimonial-container');
+    TESTIMONIALS.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'menu-card';
+      el.style.padding = 'var(--space-3)';
+      el.innerHTML = `
+        <div style="color: var(--accent); margin-bottom: 1rem;">★★★★★</div>
+        <p style="font-style: italic; margin-bottom: 1rem;">"${item.text}"</p>
+        <p style="font-weight: 700; font-size: 0.9rem;">— ${item.name}</p>
+      `;
+      testContainer.appendChild(el);
+    });
+
+    // Modals Handling
+    const reservationModal = document.getElementById('reservation-modal');
+    const detailModal = document.getElementById('detail-modal');
+
+    document.querySelectorAll('[data-action="open-reservation"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        reservationModal.classList.add('active');
+        const tab = btn.getAttribute('data-tab') || 'eat';
+        switchTab(tab);
+      });
+    });
+
+    document.querySelectorAll('[data-action="close-modal"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        reservationModal.classList.remove('active');
+        detailModal.classList.remove('active');
+      });
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') {
+        reservationModal.classList.remove('active');
+        detailModal.classList.remove('active');
+      }
+    });
+
+    // Close on backdrop click
+    [reservationModal, detailModal].forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if(e.target === modal) modal.classList.remove('active');
+      });
+    });
+
+    // Modal Tabs
+    const tabBtns = reservationModal.querySelectorAll('.tab-btn');
+    const eatContent = document.getElementById('tab-eat-content');
+    const playContent = document.getElementById('tab-play-content');
+
+    function switchTab(tab) {
+      tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+      eatContent.classList.toggle('hidden', tab !== 'eat');
+      playContent.classList.toggle('hidden', tab !== 'play');
+    }
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    // Forms
+    const eatForm = document.getElementById('eat-booking-form');
+    eatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = Math.random().toString(36).substr(2, 6).toUpperCase();
+      showToast(`Reservation Confirmed! Code: ${code}`);
+      reservationModal.classList.remove('active');
+    });
+
+    document.getElementById('btn-play-external').addEventListener('click', () => {
+      showToast("External booking system disabled in preview.");
+    });
+
+    const contactForm = document.getElementById('contact-form');
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      showToast("Message sent successfully!");
+      contactForm.reset();
+    });
+
+    const newsletterForm = document.getElementById('newsletter-form');
+    newsletterForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      showToast("Welcome to the Midway family!");
+      newsletterForm.reset();
+    });
+
+    // Mobile Menu
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const mobileMenu = document.getElementById('mobile-menu-overlay');
+    const mobileClose = document.getElementById('mobile-close');
+
+    mobileToggle.addEventListener('click', () => mobileMenu.classList.add('active'));
+    mobileClose.addEventListener('click', () => mobileMenu.classList.remove('active'));
+
+    // Smooth Scroll
+    document.querySelectorAll('[data-scroll]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-scroll');
+        const target = document.querySelector(targetId);
+        if(target) {
+          mobileMenu.classList.remove('active');
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Stats Counter
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting) {
+          const numbers = entry.target.querySelectorAll('.stat-number');
+          numbers.forEach(num => {
+            const target = +num.getAttribute('data-count');
+            let current = 0;
+            const inc = target / 50;
+            const timer = setInterval(() => {
+              current += inc;
+              if(current >= target) {
+                num.textContent = target.toLocaleString() + (target > 50 ? '+' : '');
+                clearInterval(timer);
+              } else {
+                num.textContent = Math.ceil(current).toLocaleString();
+              }
+            }, 30);
+          });
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    observer.observe(document.querySelector('.stats-grid'));
+
+    // Reveal on scroll
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Toast Function
+    function showToast(msg) {
+      const area = document.getElementById('status-area');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = msg;
+      area.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Detail Modal Function
+    function showDetail(title, desc, img, meta) {
+      document.getElementById('detail-title').textContent = title;
+      document.getElementById('detail-desc').textContent = desc;
+      document.getElementById('detail-img').src = img;
+      document.getElementById('detail-meta').textContent = meta;
+      detailModal.classList.add('active');
+    }
+
+    // Unsafe Link Guard
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (link && !link.getAttribute('href').startsWith('#')) {
+        e.preventDefault();
+        showToast("External navigation disabled in preview.");
+      }
+    }, true);
+  });
+</script>
+
+
+
+<script>
+// SharpCoder Vibe Email Helper - v2.0 (Enhanced)
+(function() {
+    'use strict';
+    
+    const CONFIG = window.__SCV_CONFIG || {};
+    const DEPLOY_TOKEN = CONFIG.deployToken || (typeof deployToken !== 'undefined' ? deployToken : null);
+    const API_URL = CONFIG.emailApiUrl || '/api/email/send';
+    
+    console.log('SCV Email Helper: Initialized', { hasToken: !!DEPLOY_TOKEN, apiUrl: API_URL });
+    
+    if (!DEPLOY_TOKEN) {
+        console.warn('SCV Email Helper: No deploy token found. Email sending will not work.');
+    }
+    
+    window.sendContactForm = async function(formData) {
+        if (!DEPLOY_TOKEN) {
+            console.error('SCV Email Helper: Missing deploy token');
+            return { ok: false, error: 'Email service not configured for this deployment.' };
+        }
+        
+        if (!formData.name || !formData.email || !formData.message) {
+            console.warn('SCV Email Helper: Missing required fields', formData);
+            return { ok: false, error: 'Please fill in all required fields.' };
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            console.warn('SCV Email Helper: Invalid email', formData.email);
+            return { ok: false, error: 'Please enter a valid email address.' };
+        }
+        
+        const payload = {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            message: formData.message.trim(),
+            deployToken: DEPLOY_TOKEN
+        };
+        
+        console.log('SCV Email Helper: Sending email', { name: payload.name, email: payload.email });
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            console.log('SCV Email Helper: Response status', response.status);
+            
+            let result;
+            try {
+                result = await response.json();
+                console.log('SCV Email Helper: Response body', result);
+            } catch (e) {
+                console.error('SCV Email Helper: Failed to parse response', e);
+                result = { ok: false, error: 'Invalid response from server.' };
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('SCV Email Helper: Request failed', error);
+            if (error.name === 'AbortError') {
+                return { ok: false, error: 'Request timed out. Please try again.' };
+            }
+            return { ok: false, error: 'Network error. Please check your connection and try again.' };
+        }
+    };
+    
+    function bindContactForm(form) {
+    // Prevent binding the same form multiple times
+    if (!form || form.hasAttribute('data-scv-bound')) return;
+    
+    // ====================================================================
+    // CRITICAL: Remove ALL existing submit handlers by cloning and replacing
+    // This completely eliminates the AI-generated fake toast handler
+    // ====================================================================
+    const originalId = form.id;
+    const originalClass = form.className;
+    
+    // Clone the form without any event listeners
+    const newForm = form.cloneNode(true);
+    
+    // Preserve the original id and class
+    if (originalId) newForm.id = originalId;
+    newForm.className = originalClass;
+    
+    // Replace the old form with the fresh clone
+    form.parentNode.replaceChild(newForm, form);
+    form = newForm;
+    
+    // Mark as bound to prevent re-processing
+    form.setAttribute('data-scv-bound', 'true');
+    
+    // Log form structure for debugging
+    console.log('SCV Email Helper: Binding form (clean clone)', { 
+        id: form.id, 
+        classes: form.className,
+        hasNameInput: !!form.querySelector('[name="name"]'),
+        hasEmailInput: !!form.querySelector('[name="email"]'),
+        hasMessageInput: !!form.querySelector('[name="message"]')
+    });
+    
+    // Find required inputs (try multiple selectors for robustness)
+    let nameInput = form.querySelector('[name="name"]');
+    let emailInput = form.querySelector('[name="email"]');
+    let messageInput = form.querySelector('[name="message"]');
+    
+    // Fallback: try to find by id if name attribute is missing
+    if (!nameInput) nameInput = form.querySelector('#name, [id="name"]');
+    if (!emailInput) emailInput = form.querySelector('#email, [id="email"]');
+    if (!messageInput) messageInput = form.querySelector('#message, [id="message"]');
+    
+    // If inputs exist but don't have name attributes, add them
+    if (nameInput && !nameInput.hasAttribute('name')) nameInput.setAttribute('name', 'name');
+    if (emailInput && !emailInput.hasAttribute('name')) emailInput.setAttribute('name', 'email');
+    if (messageInput && !messageInput.hasAttribute('name')) messageInput.setAttribute('name', 'message');
+    
+    // Validate required fields exist
+    if (!nameInput || !emailInput || !messageInput) {
+        console.warn('SCV Email Helper: Form missing required inputs', {
+            hasName: !!nameInput,
+            hasEmail: !!emailInput,
+            hasMessage: !!messageInput
+        });
+        return;
+    }
+    
+    // Remove any inline onsubmit attribute
+    form.removeAttribute('onsubmit');
+    
+    // Add the email submission handler
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();  // Stop event from bubbling
+        
+        console.log('SCV Email Helper: Form submitted (email handler)');
+        
+        // Get values directly from inputs
+        const name = nameInput.value?.trim() || '';
+        const email = emailInput.value?.trim() || '';
+        const message = messageInput.value?.trim() || '';
+        
+        console.log('SCV Email Helper: Form data collected', { 
+            name: name ? 'present' : 'missing',
+            email: email ? 'present' : 'missing', 
+            message: message ? 'present' : 'missing'
+        });
+        
+        // Validate all fields are filled
+        if (!name || !email || !message) {
+            console.warn('SCV Email Helper: Empty values detected');
+            showFormMessage(form, 'Please fill in all required fields.', 'error');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            console.warn('SCV Email Helper: Invalid email format', email);
+            showFormMessage(form, 'Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        // Get or create message div
+        let messageDiv = form.querySelector('.form-message');
+        if (!messageDiv) {
+            messageDiv = document.createElement('div');
+            messageDiv.className = 'form-message';
+            form.appendChild(messageDiv);
+            console.log('SCV Email Helper: Created message div');
+        }
+        
+        // Get submit button and show loading state
+        const submitBtn = form.querySelector('[type="submit"]');
+        const originalText = submitBtn?.textContent || 'Send';
+        const originalDisabled = submitBtn?.disabled || false;
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+        }
+        
+        // Clear previous messages and show loading indicator
+        messageDiv.innerHTML = '<div style="color: #3b82f6; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e0e7ff; border-left: 4px solid #3b82f6;">⏳ Sending your message...</div>';
+        messageDiv.style.display = 'block';
+        
+        try {
+            // Send the email via the API
+            const result = await window.sendContactForm({ name, email, message });
+            
+            if (result && result.ok) {
+                // Success - show success message and reset form
+                messageDiv.innerHTML = '<div style="color: #10b981; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e8f5e9; border-left: 4px solid #10b981;">✓ ' + (result.message || 'Message sent successfully!') + '</div>';
+                form.reset();
+                console.log('SCV Email Helper: Email sent successfully');
+                
+                // Auto-hide success message after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv) messageDiv.style.display = 'none';
+                }, 5000);
+            } else {
+                // Error from server
+                const errorMsg = result?.error || 'Failed to send message. Please try again.';
+                console.error('SCV Email Helper: Send failed', errorMsg);
+                messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ ' + errorMsg + '</div>';
+            }
+        } catch (error) {
+            console.error('SCV Email Helper: Exception', error);
+            messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ An error occurred. Please try again later.</div>';
+        } finally {
+            // Re-enable submit button
+            if (submitBtn) {
+                submitBtn.disabled = originalDisabled;
+                submitBtn.textContent = originalText;
+            }
+        }
+    });
+    
+    console.log('SCV Email Helper: Successfully bound email handler to form');
+}
+
+// Helper function to show form messages
+function showFormMessage(form, message, type) {
+    let messageDiv = form.querySelector('.form-message');
+    if (!messageDiv) {
+        messageDiv = document.createElement('div');
+        messageDiv.className = 'form-message';
+        form.appendChild(messageDiv);
+    }
+    
+    const color = type === 'error' ? '#ef4444' : '#10b981';
+    const bgColor = type === 'error' ? '#fee2e2' : '#e8f5e9';
+    const borderColor = type === 'error' ? '#ef4444' : '#10b981';
+    
+    messageDiv.innerHTML = `<div style="color: ${color}; padding: 12px; margin-top: 10px; border-radius: 8px; background: ${bgColor}; border-left: 4px solid ${borderColor};">${type === 'error' ? '✗' : '✓'} ${message}</div>`;
+    messageDiv.style.display = 'block';
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        if (messageDiv) messageDiv.style.display = 'none';
+    }, 5000);
+}
+    
+    function bindAllForms() {
+        // Primary: look for scv-contact-form class
+        let forms = document.querySelectorAll('form.scv-contact-form');
+        console.log('SCV Email Helper: Forms with scv-contact-form class:', forms.length);
+    
+        // Fallback: look for any form that might be a contact form
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('#contactForm, #portfolioContactForm, #portfolioContact, form.contact-form, form[id*="contact"]');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using fallback form selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Also look for forms with submit buttons that might be contact forms
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('form:has(input[type="email"]), form:has(textarea)');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using email-input fallback selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Bind each form (cloning removes existing handlers)
+        forms.forEach(bindContactForm);
+    
+        if (forms.length === 0) {
+            console.warn('SCV Email Helper: No contact forms found on this page');
+        } else {
+            console.log('SCV Email Helper: Successfully bound', forms.length, 'contact form(s)');
+        }
+    }
+
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindAllForms);
+    } else {
+        bindAllForms();
+    }
+    
+    // Watch for dynamically added forms
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        if (node.matches && node.matches('form.scv-contact-form')) {
+                            bindContactForm(node);
+                        }
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('form.scv-contact-form').forEach(bindContactForm);
+                        }
+                    }
+                });
+            });
+        });
+        
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }
+})();
+</script>
+</body>
+</html>
