@@ -1,0 +1,1352 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>VoyageVista | Premium Travel Curators</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --bg-2: #141414;
+            --surface: #1a1a1a;
+            --surface-2: #242424;
+            --text: #f0f0f0;
+            --muted: #999999;
+            --border: #333333;
+            --primary: #c5a368;
+            --primary-2: #a68b55;
+            --on-primary: #0a0a0a;
+            --accent: #5e72e4;
+            --on-accent: #ffffff;
+            --success: #2dce89;
+            --warning: #fb6340;
+            --danger: #f5365c;
+            --focus: #c5a368;
+            --shadow-soft: 0 10px 30px rgba(0,0,0,0.5);
+            --shadow-strong: 0 20px 40px rgba(0,0,0,0.7);
+            --radius-btn: 3px;
+            --radius-card: 8px;
+            --radius-pill: 50px;
+            --space-1: 0.5rem;
+            --space-2: 1rem;
+            --space-3: 1.5rem;
+            --space-4: 2rem;
+            --space-5: 4rem;
+            --space-6: 8rem;
+            --font-size-1: 0.875rem;
+            --font-size-2: 1rem;
+            --font-size-3: 1.25rem;
+            --font-size-4: 1.5rem;
+            --font-size-5: 2.5rem;
+            --font-size-6: 4rem;
+            --line-1: 1.2;
+            --line-2: 1.5;
+            --line-3: 1.8;
+            --gutter: 0;
+            --page-top: var(--space-4);
+            --page-bottom: var(--space-6);
+            --header-bg: rgba(10, 10, 10, 0.85);
+            --divider: rgba(255, 255, 255, 0.05);
+            --overlay: rgba(0, 0, 0, 0.8);
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            --dur-fast: 200ms;
+            --dur-med: 400ms;
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f8f9fa;
+            --surface: #ffffff;
+            --surface-2: #f1f3f5;
+            --text: #1a1a1a;
+            --muted: #666666;
+            --border: #e9ecef;
+            --shadow-soft: 0 10px 30px rgba(0,0,0,0.05);
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --divider: rgba(0, 0, 0, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: var(--line-2);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .serif { font-family: 'Playfair Display', serif; }
+        h1, h2 { line-height: var(--line-1); }
+
+        #page { width: 100%; position: relative; }
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0 var(--space-3);
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-family: 'Playfair Display', serif;
+            font-size: var(--font-size-4);
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .nav-desktop { display: flex; gap: var(--space-3); }
+        .nav-desktop button {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: var(--font-size-1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: color var(--dur-fast);
+            font-weight: 500;
+        }
+        .nav-desktop button:hover { color: var(--primary); }
+
+        .header-actions { display: flex; align-items: center; gap: var(--space-3); }
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 5px 10px;
+            border-radius: var(--radius-pill);
+            color: var(--text);
+            cursor: pointer;
+            font-size: var(--font-size-1);
+        }
+
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: var(--bg);
+            z-index: 999;
+            overflow: hidden;
+            transition: height var(--dur-med) var(--ease-standard);
+            display: flex;
+            flex-direction: column;
+            padding: 0 var(--space-3);
+        }
+        .mobile-menu.active { height: calc(100vh - 70px); padding: var(--space-4); }
+        .mobile-menu button {
+            background: none;
+            border: none;
+            color: var(--text);
+            padding: var(--space-2) 0;
+            font-size: var(--font-size-3);
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Hero */
+        .hero {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: var(--space-3);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            margin-bottom: var(--space-2);
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: var(--font-size-3);
+            margin-bottom: var(--space-4);
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .search-box {
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+            padding: var(--space-3);
+            border-radius: var(--radius-card);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-2);
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .search-box input, .search-box select {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: var(--radius-btn);
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 12px 24px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: var(--radius-btn);
+            transition: background var(--dur-fast);
+        }
+        .btn-primary:hover { background: var(--primary-2); }
+
+        /* Section Spacing */
+        section { padding: var(--space-6) 0; }
+        .section-header { text-align: center; margin-bottom: var(--space-5); }
+        .section-header h2 { font-size: var(--font-size-5); margin-bottom: var(--space-1); }
+        .section-header p { color: var(--muted); font-size: var(--font-size-2); max-width: 600px; margin: 0 auto; }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: var(--space-3);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            transition: transform var(--dur-med) var(--ease-standard), box-shadow var(--dur-med);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .card-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .card-body { padding: var(--space-3); }
+        .card-title { font-size: var(--font-size-3); margin-bottom: var(--space-1); }
+        .card-meta { color: var(--muted); font-size: var(--font-size-1); margin-bottom: var(--space-2); }
+        .card-price { color: var(--primary); font-weight: 700; font-size: var(--font-size-2); margin-top: auto; }
+
+        /* Stats */
+        .stats {
+            background: var(--surface);
+            padding: var(--space-5) 0;
+            margin: var(--space-4) 0;
+            border-top: 1px solid var(--divider);
+            border-bottom: 1px solid var(--divider);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            text-align: center;
+        }
+        .stat-item h3 { font-size: var(--font-size-5); color: var(--primary); margin-bottom: 5px; }
+        .stat-item p { text-transform: uppercase; letter-spacing: 1px; font-size: var(--font-size-1); color: var(--muted); }
+
+        /* Booking Form */
+        .booking-section { background: var(--bg-2); border-radius: var(--radius-card); padding: var(--space-4); border: 1px solid var(--border); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: var(--font-size-1); font-weight: 500; color: var(--muted); }
+        .form-group input, .form-group select, .form-group textarea {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: var(--radius-btn);
+            color: var(--text);
+            font-family: inherit;
+        }
+        .form-group textarea { height: 100px; resize: none; }
+        .full-width { grid-column: span 2; }
+
+        /* Reviews */
+        .review-card {
+            background: var(--surface);
+            padding: var(--space-3);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+        }
+        .stars { color: #f1c40f; margin-bottom: var(--space-1); }
+        .review-text { font-style: italic; margin-bottom: var(--space-2); color: var(--muted); }
+        .reviewer { display: flex; align-items: center; gap: var(--space-2); }
+        .reviewer img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .reviewer-info h4 { font-size: var(--font-size-1); }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        .modal {
+            background: var(--bg);
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: var(--radius-card);
+            position: relative;
+            padding: var(--space-4);
+            border: 1px solid var(--border);
+        }
+        .close-modal {
+            position: absolute;
+            top: var(--space-2);
+            right: var(--space-2);
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: var(--space-3);
+            right: var(--space-3);
+            background: var(--surface);
+            border-left: 4px solid var(--primary);
+            padding: 15px 25px;
+            border-radius: var(--radius-btn);
+            box-shadow: var(--shadow-strong);
+            display: none;
+            z-index: 3000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-2);
+            padding: var(--space-5) 0 var(--space-3);
+            border-top: 1px solid var(--border);
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+        .footer-logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: var(--space-2); }
+        .footer-col h4 { margin-bottom: var(--space-2); text-transform: uppercase; letter-spacing: 1px; font-size: var(--font-size-1); }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 10px; }
+        .footer-col button { background: none; border: none; color: var(--muted); cursor: pointer; transition: color var(--dur-fast); }
+        .footer-col button:hover { color: var(--primary); }
+        .footer-bottom {
+            text-align: center;
+            padding-top: var(--space-3);
+            border-top: 1px solid var(--divider);
+            color: var(--muted);
+            font-size: var(--font-size-1);
+        }
+
+        .social-icons { display: flex; gap: var(--space-2); }
+        .social-icons button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--surface-2);
+            border: none;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav-desktop { display: none; }
+            .hamburger { display: block; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+        }
+
+        @media (max-width: 480px) {
+            .footer-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<script>
+            // SharpCoder Vibe Configuration
+            window.__SCV_CONFIG = window.__SCV_CONFIG || {};
+            window.__SCV_CONFIG.deployToken = "CfDJ8Cz4i254mnRHsyPAWO2yNygKWmRGXvicAgQzS2y2Y6J7U4EXMTGRckvu2TYCmZB9OS1LcsbbORcaFJnBmpzei1A_Ia8Mrr6us04nBFlVgNHQzEtcYo4DkYcyG3XT_8k8YTJerY1alFLEP3kuBpb5KjgJAQJxILd5k-V4V-GeYdBr1GdIHqJlWV0iCqcgapp_XA";
+            // In InjectDeployTokenAndEmailConfig method
+            window.__SCV_CONFIG.emailApiUrl = "https://app.sharpcoder.ai/api/email/send";
+            window.__SCV_CONFIG.emailEnabled = true;
+            window.__SCV_CONFIG.version = "1.0.0";
+            </script>
+<script>let deployToken = "CfDJ8Cz4i254mnRHsyPAWO2yNygKWmRGXvicAgQzS2y2Y6J7U4EXMTGRckvu2TYCmZB9OS1LcsbbORcaFJnBmpzei1A_Ia8Mrr6us04nBFlVgNHQzEtcYo4DkYcyG3XT_8k8YTJerY1alFLEP3kuBpb5KjgJAQJxILd5k-V4V-GeYdBr1GdIHqJlWV0iCqcgapp_XA";</script>
+
+
+<div id="page">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <button type="button" class="brand" data-target="home">VoyageVista</button>
+            <nav class="nav-desktop">
+                <button type="button" data-target="destinations">Destinations</button>
+                <button type="button" data-target="packages">Packages</button>
+                <button type="button" data-target="booking">Planner</button>
+                <button type="button" data-target="about">About</button>
+                <button type="button" data-target="reviews">Reviews</button>
+                <button type="button" data-target="contact">Contact</button>
+            </nav>
+            <div class="header-actions">
+                <button type="button" class="theme-toggle" id="theme-btn">Light</button>
+                <button type="button" class="hamburger" id="ham-btn">☰</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Nav -->
+    <div class="mobile-menu" id="mobile-menu">
+        <button type="button" data-target="home">Home</button>
+        <button type="button" data-target="destinations">Destinations</button>
+        <button type="button" data-target="packages">Packages</button>
+        <button type="button" data-target="booking">Planner</button>
+        <button type="button" data-target="about">About</button>
+        <button type="button" data-target="reviews">Reviews</button>
+        <button type="button" data-target="contact">Contact</button>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Escape the Ordinary</h1>
+            <p>Curated luxury journeys for the discerning wanderer.</p>
+            <div class="search-box">
+                <input type="text" placeholder="Where to?" id="hero-loc">
+                <select id="hero-type">
+                    <option value="">Any Style</option>
+                    <option value="adventure">Adventure</option>
+                    <option value="luxury">Luxury</option>
+                    <option value="wellness">Wellness</option>
+                </select>
+                <button type="button" class="btn-primary" id="hero-search-btn">Find Experiences</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destinations -->
+    <section id="destinations">
+        <div class="container">
+            <div class="section-header">
+                <h2>Bespoke Destinations</h2>
+                <p>Hand-picked locations that redefine the meaning of travel.</p>
+            </div>
+            <div class="grid" id="destinations-grid">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <div class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3 class="counter" data-count="52">0</h3>
+                    <p>Countries</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="counter" data-count="12400">0</h3>
+                    <p>Happy Travelers</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="counter" data-count="85">0</h3>
+                    <p>Exclusive Resorts</p>
+                </div>
+                <div class="stat-item">
+                    <h3 class="counter" data-count="4.9">0</h3>
+                    <p>Avg Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Packages & Deals -->
+    <section id="packages">
+        <div class="container">
+            <div class="section-header">
+                <h2>Curated Packages</h2>
+                <p>Meticulously planned itineraries designed for seamless exploration.</p>
+            </div>
+            <div class="grid" id="packages-grid">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking / Planner -->
+    <section id="booking">
+        <div class="container">
+            <div class="section-header">
+                <h2>Trip Planner</h2>
+                <p>Your journey begins here. Share your vision with us.</p>
+            </div>
+            <div class="booking-section">
+                <form id="booking-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Destination Preference</label>
+                            <input type="text" id="book-dest" placeholder="e.g. Kyoto, Japan" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Travel Type</label>
+                            <select id="book-type">
+                                <option>Solo Expedition</option>
+                                <option>Couples Retreat</option>
+                                <option>Family Venture</option>
+                                <option>Private Group</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Departure Date</label>
+                            <input type="date" id="book-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Travelers</label>
+                            <input type="number" min="1" max="20" value="1" id="book-count" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Special Requirements</label>
+                            <textarea placeholder="Tell us about your preferences, allergies, or special occasions..."></textarea>
+                        </div>
+                        <div class="form-group full-width" style="text-align: right;">
+                            <button type="submit" class="btn-primary">Reserve Exploration</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us -->
+    <section id="about">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-5); align-items: center;">
+                <div>
+                    <h2 class="serif" style="font-size: var(--font-size-5); margin-bottom: var(--space-2);">Legacy of Discovery</h2>
+                    <p style="color: var(--muted); margin-bottom: var(--space-3); line-height: 1.8;">Founded in 2012, VoyageVista was born out of a desire to eliminate the friction of mass tourism. We believe travel should be an intimate conversation between the soul and the horizon. Our team of regional experts scours the globe to find the untold stories, the hidden doorways, and the most exceptional stays.</p>
+                    <p style="color: var(--muted); line-height: 1.8;">From the frost-bitten peaks of the Arctic to the sun-drenched terraced hills of Amalfi, we don't just book trips—we craft memories that stand the test of time.</p>
+                </div>
+                <img src="https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=800&q=80" alt="Travel Culture" style="width: 100%; border-radius: var(--radius-card); box-shadow: var(--shadow-strong);" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews -->
+    <section id="reviews">
+        <div class="container">
+            <div class="section-header">
+                <h2>Voyager Stories</h2>
+                <p>Real experiences from our global community of explorers.</p>
+            </div>
+            <div class="grid" id="reviews-grid">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Contact Our Concierge</h2>
+                <p>Have questions? We are available 24/7 for our esteemed clients.</p>
+            </div>
+            <div class="booking-section" style="max-width: 600px; margin: 0 auto;">
+                <form id="contact-form" class='scv-contact-form'>
+                    <div class="form-group" style="margin-bottom: var(--space-2);">
+                        <label>Full Name</label>
+                        <input type="text" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: var(--space-2);">
+                        <label>Email Address</label>
+                        <input type="email" placeholder="john@example.com" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: var(--space-2);">
+                        <label>Subject</label>
+                        <input type="text" placeholder="Inquiry about Japan trip" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: var(--space-3);">
+                        <label>Message</label>
+                        <textarea placeholder="How can we assist you?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Send Message</button>
+                <div class='form-message'></div>
+</form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo serif">VoyageVista</div>
+                    <p style="color: var(--muted); font-size: var(--font-size-1);">Curating life's most meaningful journeys since 2012. Join us in exploring the unseen.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><button type="button" data-modal="about">Our Story</button></li>
+                        <li><button type="button" data-modal="careers">Careers</button></li>
+                        <li><button type="button" data-modal="partners">Partners</button></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><button type="button" data-modal="faq">FAQ</button></li>
+                        <li><button type="button" data-modal="privacy">Privacy Policy</button></li>
+                        <li><button type="button" data-modal="terms">Terms of Service</button></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Connect</h4>
+                    <div class="social-icons" style="margin-bottom: var(--space-2);">
+                        <button type="button" data-social="Instagram">Ig</button>
+                        <button type="button" data-social="Twitter">Tw</button>
+                        <button type="button" data-social="Facebook">Fb</button>
+                    </div>
+                    <p style="color: var(--muted); font-size: var(--font-size-1);">hello@voyagevista.com<br>+1 (555) 000-0000</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; <span id="year"></span> VoyageVista. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal-content">
+        <button type="button" class="close-modal" id="close-modal">&times;</button>
+        <div id="modal-body"></div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+    <span id="toast-msg"></span>
+</div>
+
+<script>
+    // --- Data ---
+    const destinations = [
+        { id: 1, name: 'Santorini, Greece', img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=600&q=80', tag: 'Romance', price: 'From $1,200', desc: 'Whitewashed buildings overlooking the deep blue Aegean Sea.' },
+        { id: 2, name: 'Kyoto, Japan', img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=600&q=80', tag: 'Culture', price: 'From $1,500', desc: 'Ancient temples and zen gardens in the heart of Japan.' },
+        { id: 3, name: 'Swiss Alps', img: 'https://images.unsplash.com/photo-1531310197839-ccf54634509e?auto=format&fit=crop&w=600&q=80', tag: 'Adventure', price: 'From $2,100', desc: 'World-class skiing and luxury chalets amidst majestic peaks.' },
+        { id: 4, name: 'Maasai Mara, Kenya', img: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=600&q=80', tag: 'Wildlife', price: 'From $2,800', desc: 'An immersive safari experience in the cradle of life.' },
+        { id: 5, name: 'Amalfi Coast, Italy', img: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=600&q=80', tag: 'Luxury', price: 'From $1,900', desc: 'Cliffs plunging into the sea and lemon-scented air.' },
+        { id: 6, name: 'Bali, Indonesia', img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=600&q=80', tag: 'Wellness', price: 'From $900', desc: 'A spiritual sanctuary of lush jungles and sandy shores.' },
+        { id: 7, name: 'Reykjavik, Iceland', img: 'https://images.unsplash.com/photo-1476610182048-b716b8518aae?auto=format&fit=crop&w=600&q=80', tag: 'Nature', price: 'From $2,400', desc: 'Fire and ice collide in this dramatic northern landscape.' },
+        { id: 8, name: 'Petra, Jordan', img: 'https://images.unsplash.com/photo-1579483113542-c6505779093a?auto=format&fit=crop&w=600&q=80', tag: 'History', price: 'From $1,750', desc: 'The rose-red city, half as old as time, carved into rock.' }
+    ];
+
+    const packages = [
+        { id: 101, name: 'The Golden Pavilion Tour', dest: 'Kyoto, Japan', duration: '7 Days', price: '$2,499', details: 'Private guide, tea ceremony, and temple stays.' },
+        { id: 102, name: 'Aegean Sunset Escape', dest: 'Santorini, Greece', duration: '5 Days', price: '$1,899', details: 'Private yacht cruise and clifftop dining.' },
+        { id: 103, name: 'Serengeti Grand Safari', dest: 'Kenya', duration: '10 Days', price: '$4,200', details: 'Luxury glamping and expert wildlife tracking.' },
+        { id: 104, name: 'Alpine Ski Expedition', dest: 'Zermatt, Switzerland', duration: '6 Days', price: '$3,150', details: 'Helicopter transfers and premium equipment.' },
+        { id: 105, name: 'Amalfi Coastal Drive', dest: 'Positano, Italy', duration: '5 Days', price: '$2,100', details: 'Vintage Alfa Romeo rental and villa stay.' },
+        { id: 106, name: 'Arctic Aurora Hunt', dest: 'Iceland', duration: '4 Days', price: '$1,650', details: 'Northern lights photography workshop.' },
+        { id: 107, name: 'Bali Spiritual Retreat', dest: 'Ubud, Bali', duration: '14 Days', price: '$3,800', details: 'Yoga, meditation, and organic culinary course.' },
+        { id: 108, name: 'The Lost City Voyage', dest: 'Petra, Jordan', duration: '6 Days', price: '$2,200', details: 'Desert camping under the stars and archeology tour.' },
+        { id: 109, name: 'Parisian Art & Soul', dest: 'Paris, France', duration: '4 Days', price: '$1,950', details: 'After-hours Louvre tour and Michelin dining.' },
+        { id: 110, name: 'Great Barrier Reef Dive', dest: 'Queensland, Australia', duration: '7 Days', price: '$2,900', details: 'Liveaboard diving and coral restoration session.' }
+    ];
+
+    const reviews = [
+        { name: 'Elena Gilbert', stars: 5, text: 'The Kyoto tour exceeded every expectation. The attention to detail was unparalleled.', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80' },
+        { name: 'Marcus Chen', stars: 5, text: 'Iceland was life-changing. Everything from transport to stays was seamless.', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80' },
+        { name: 'Sarah Watkins', stars: 4, text: 'Beautiful experience in Amalfi. The villa view was exactly as described.', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80' },
+        { name: 'David Miller', stars: 5, text: 'Kenya Safari was wild and luxurious. A perfect balance for my family.', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80' },
+        { name: 'Lila Rossi', stars: 5, text: 'Santorini sunsets are better with VoyageVista’s private yacht arrangements.', img: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&w=150&q=80' },
+        { name: 'Julian Thorne', stars: 5, text: 'A level of service I didn\'t think existed anymore. Truly exceptional.', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80' },
+        { name: 'Aisha Kahn', stars: 4, text: 'Petra is a must-see. The local guides were incredibly knowledgeable.', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80' },
+        { name: 'Thomas Beck', stars: 5, text: 'Their wellness retreat in Bali actually helped me reset. Highly recommended.', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80' }
+    ];
+
+    // --- State & Selectors ---
+    const page = document.getElementById('page');
+    const themeBtn = document.getElementById('theme-btn');
+    const hamBtn = document.getElementById('ham-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalBody = document.getElementById('modal-body');
+    const closeModal = document.getElementById('close-modal');
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-msg');
+    const yearSpan = document.getElementById('year');
+
+    // --- Initialization ---
+    function init() {
+        yearSpan.textContent = new Date().getFullYear() === 2026 ? '2026' : '2026';
+        renderDestinations();
+        renderPackages();
+        renderReviews();
+        setupTheme();
+        setupEventListeners();
+        animateStats();
+    }
+
+    // --- Renderers ---
+    function renderDestinations() {
+        const grid = document.getElementById('destinations-grid');
+        grid.innerHTML = destinations.map(d => `
+            <div class="card" data-id="${d.id}">
+                <img src="${d.img}" class="card-img" alt="${d.name}" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                <div class="card-body">
+                    <div class="card-meta">${d.tag}</div>
+                    <h3 class="card-title">${d.name}</h3>
+                    <p class="card-price">${d.price}</p>
+                    <button type="button" class="btn-primary" style="margin-top: 15px; width:100%" onclick="openDestDetail(${d.id})">Explore Details</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderPackages() {
+        const grid = document.getElementById('packages-grid');
+        grid.innerHTML = packages.map(p => `
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-meta">${p.duration} | ${p.dest}</div>
+                    <h3 class="card-title">${p.name}</h3>
+                    <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 15px;">${p.details}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="card-price">${p.price}</span>
+                        <div style="display:flex; gap: 5px;">
+                            <button type="button" class="btn-primary" style="padding: 5px 10px; font-size: 0.8rem;" onclick="bookPackage('${p.dest}')">Book</button>
+                            <button type="button" class="btn-primary" style="padding: 5px 10px; font-size: 0.8rem; background: var(--surface-2); color: var(--text);" onclick="openPackageDetail(${p.id})">Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderReviews() {
+        const grid = document.getElementById('reviews-grid');
+        grid.innerHTML = reviews.map(r => `
+            <div class="review-card">
+                <div class="stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</div>
+                <p class="review-text">"${r.text}"</p>
+                <div class="reviewer">
+                    <img src="${r.img}" alt="${r.name}" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    <div class="reviewer-info">
+                        <h4>${r.name}</h4>
+                        <p style="font-size: 0.7rem; color: var(--muted);">Verified Explorer</p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // --- Core Logic ---
+    function setupTheme() {
+        const savedTheme = localStorage.getItem('theme_v1') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeBtn.textContent = savedTheme === 'dark' ? 'Light' : 'Dark';
+    }
+
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme_v1', next);
+        themeBtn.textContent = next === 'dark' ? 'Light' : 'Dark';
+    }
+
+    function setupEventListeners() {
+        // Nav items
+        document.querySelectorAll('button[data-target]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth' });
+                    mobileMenu.classList.remove('active');
+                }
+            });
+        });
+
+        // Theme Toggle
+        themeBtn.addEventListener('click', toggleTheme);
+
+        // Mobile Toggle
+        hamBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Forms
+        document.getElementById('booking-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const ref = 'VV-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            showModal(`
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; color: var(--success); margin-bottom: 20px;">✓</div>
+                    <h2 class="serif">Reservation Inquiry Received</h2>
+                    <p style="margin: 20px 0; color: var(--muted);">Your reference number is <strong>${ref}</strong>. A travel specialist will contact you within 2 hours to finalize your itinerary.</p>
+                    <button type="button" class="btn-primary" onclick="closeModalWindow()">Close</button>
+                </div>
+            `);
+            e.target.reset();
+        });
+
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            showToast('Message sent! Our concierge will be in touch shortly.');
+            e.target.reset();
+        });
+
+        // Hero Search
+        document.getElementById('hero-search-btn').addEventListener('click', () => {
+            const loc = document.getElementById('hero-loc').value;
+            const type = document.getElementById('hero-type').value;
+            if (loc) document.getElementById('book-dest').value = loc;
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+            showToast('Search filters applied to planner.');
+        });
+
+        // Modals / Footer Links
+        document.querySelectorAll('[data-modal]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.getAttribute('data-modal');
+                showModal(`
+                    <h2 class="serif">${type.charAt(0).toUpperCase() + type.slice(1)}</h2>
+                    <p style="margin: 20px 0; color: var(--muted);">Information about <strong>${type}</strong> is currently exclusive to our registered members. Please contact our concierge for a detailed dossier.</p>
+                    <button type="button" class="btn-primary" onclick="closeModalWindow()">Acknowledge</button>
+                `);
+            });
+        });
+
+        document.querySelectorAll('[data-social]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const soc = btn.getAttribute('data-social');
+                showModal(`
+                    <h2 class="serif">${soc} Profile</h2>
+                    <p style="margin: 20px 0; color: var(--muted);">External navigation to social media is restricted in this preview. This button would normally link to our official <strong>${soc}</strong> page.</p>
+                    <button type="button" class="btn-primary" onclick="closeModalWindow()">Return to Site</button>
+                `);
+            });
+        });
+
+        // Modal Close on click outside
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModalWindow();
+        });
+
+        closeModal.addEventListener('click', closeModalWindow);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModalWindow();
+                mobileMenu.classList.remove('active');
+            }
+        });
+    }
+
+    function showModal(content) {
+        modalBody.innerHTML = content;
+        modalOverlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModalWindow() {
+        modalOverlay.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function showToast(msg) {
+        toastMsg.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 4000);
+    }
+
+    function animateStats() {
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const countTo = parseFloat(target.getAttribute('data-count'));
+                    let current = 0;
+                    const increment = countTo / speed;
+
+                    const updateCount = () => {
+                        current += increment;
+                        if (current < countTo) {
+                            target.innerText = countTo % 1 === 0 ? Math.ceil(current) : current.toFixed(1);
+                            setTimeout(updateCount, 1);
+                        } else {
+                            target.innerText = countTo;
+                        }
+                    };
+                    updateCount();
+                    observer.unobserve(target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(c => observer.observe(c));
+    }
+
+    window.openDestDetail = function(id) {
+        const d = destinations.find(x => x.id === id);
+        showModal(`
+            <img src="${d.img}" style="width:100%; height: 300px; object-fit: cover; border-radius: var(--radius-card); margin-bottom: 20px;" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+            <h2 class="serif">${d.name}</h2>
+            <p style="color: var(--primary); font-weight: 600; margin-bottom: 10px;">${d.tag} Experience | ${d.price}</p>
+            <p style="color: var(--muted); margin-bottom: 20px;">${d.desc} This curated location offers exclusive access to private events, luxury transport, and a dedicated 24/7 host. Package can be customized to your specific needs.</p>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" class="btn-primary" onclick="bookPackage('${d.name}')">Book Now</button>
+                <button type="button" class="btn-primary" style="background: var(--surface-2); color: var(--text);" onclick="closeModalWindow()">Close</button>
+            </div>
+        `);
+    };
+
+    window.openPackageDetail = function(id) {
+        const p = packages.find(x => x.id === id);
+        showModal(`
+            <h2 class="serif">${p.name}</h2>
+            <p style="color: var(--primary); font-weight: 600; margin-bottom: 20px;">${p.dest} • ${p.duration}</p>
+            <h4 style="margin-bottom: 10px; font-weight: 600;">Proposed Itinerary:</h4>
+            <ul style="color: var(--muted); margin-bottom: 20px; list-style: none; display: flex; flex-direction: column; gap: 8px;">
+                <li>• Day 1-2: Arrival & Private Orientation</li>
+                <li>• Day 3: Curated Local Experience & Gastronomy</li>
+                <li>• Day 4-5: Leisure & Personalized Discovery</li>
+                <li>• Final Day: Farewell Brunch & Private Transfer</li>
+            </ul>
+            <p style="font-size: 0.9rem; color: var(--muted); border-top: 1px solid var(--divider); pt: 15px;">Includes: ${p.details}</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn-primary" onclick="bookPackage('${p.dest}')">Start Booking</button>
+                <button type="button" class="btn-primary" style="background: var(--surface-2); color: var(--text);" onclick="closeModalWindow()">Back</button>
+            </div>
+        `);
+    };
+
+    window.bookPackage = function(destName) {
+        document.getElementById('book-dest').value = destName;
+        closeModalWindow();
+        document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+        showToast(`Booking details for ${destName} pre-filled.`);
+    };
+
+    // Defensive interaction guard
+    page.addEventListener('click', (e) => {
+        const anchor = e.target.closest('a');
+        if (anchor) {
+            e.preventDefault();
+            showToast('External or unsafe action disabled in preview.');
+        }
+    });
+
+    init();
+</script>
+
+
+<script>
+// SharpCoder Vibe Email Helper - v2.0 (Enhanced)
+(function() {
+    'use strict';
+    
+    const CONFIG = window.__SCV_CONFIG || {};
+    const DEPLOY_TOKEN = CONFIG.deployToken || (typeof deployToken !== 'undefined' ? deployToken : null);
+    const API_URL = CONFIG.emailApiUrl || '/api/email/send';
+    
+    console.log('SCV Email Helper: Initialized', { hasToken: !!DEPLOY_TOKEN, apiUrl: API_URL });
+    
+    if (!DEPLOY_TOKEN) {
+        console.warn('SCV Email Helper: No deploy token found. Email sending will not work.');
+    }
+    
+    window.sendContactForm = async function(formData) {
+        if (!DEPLOY_TOKEN) {
+            console.error('SCV Email Helper: Missing deploy token');
+            return { ok: false, error: 'Email service not configured for this deployment.' };
+        }
+        
+        if (!formData.name || !formData.email || !formData.message) {
+            console.warn('SCV Email Helper: Missing required fields', formData);
+            return { ok: false, error: 'Please fill in all required fields.' };
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            console.warn('SCV Email Helper: Invalid email', formData.email);
+            return { ok: false, error: 'Please enter a valid email address.' };
+        }
+        
+        const payload = {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            message: formData.message.trim(),
+            deployToken: DEPLOY_TOKEN
+        };
+        
+        console.log('SCV Email Helper: Sending email', { name: payload.name, email: payload.email });
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            console.log('SCV Email Helper: Response status', response.status);
+            
+            let result;
+            try {
+                result = await response.json();
+                console.log('SCV Email Helper: Response body', result);
+            } catch (e) {
+                console.error('SCV Email Helper: Failed to parse response', e);
+                result = { ok: false, error: 'Invalid response from server.' };
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('SCV Email Helper: Request failed', error);
+            if (error.name === 'AbortError') {
+                return { ok: false, error: 'Request timed out. Please try again.' };
+            }
+            return { ok: false, error: 'Network error. Please check your connection and try again.' };
+        }
+    };
+    
+    function bindContactForm(form) {
+    // Prevent binding the same form multiple times
+    if (!form || form.hasAttribute('data-scv-bound')) return;
+    
+    // ====================================================================
+    // CRITICAL: Remove ALL existing submit handlers by cloning and replacing
+    // This completely eliminates the AI-generated fake toast handler
+    // ====================================================================
+    const originalId = form.id;
+    const originalClass = form.className;
+    
+    // Clone the form without any event listeners
+    const newForm = form.cloneNode(true);
+    
+    // Preserve the original id and class
+    if (originalId) newForm.id = originalId;
+    newForm.className = originalClass;
+    
+    // Replace the old form with the fresh clone
+    form.parentNode.replaceChild(newForm, form);
+    form = newForm;
+    
+    // Mark as bound to prevent re-processing
+    form.setAttribute('data-scv-bound', 'true');
+    
+    // Log form structure for debugging
+    console.log('SCV Email Helper: Binding form (clean clone)', { 
+        id: form.id, 
+        classes: form.className,
+        hasNameInput: !!form.querySelector('[name="name"]'),
+        hasEmailInput: !!form.querySelector('[name="email"]'),
+        hasMessageInput: !!form.querySelector('[name="message"]')
+    });
+    
+    // Find required inputs (try multiple selectors for robustness)
+    let nameInput = form.querySelector('[name="name"]');
+    let emailInput = form.querySelector('[name="email"]');
+    let messageInput = form.querySelector('[name="message"]');
+    
+    // Fallback: try to find by id if name attribute is missing
+    if (!nameInput) nameInput = form.querySelector('#name, [id="name"]');
+    if (!emailInput) emailInput = form.querySelector('#email, [id="email"]');
+    if (!messageInput) messageInput = form.querySelector('#message, [id="message"]');
+    
+    // If inputs exist but don't have name attributes, add them
+    if (nameInput && !nameInput.hasAttribute('name')) nameInput.setAttribute('name', 'name');
+    if (emailInput && !emailInput.hasAttribute('name')) emailInput.setAttribute('name', 'email');
+    if (messageInput && !messageInput.hasAttribute('name')) messageInput.setAttribute('name', 'message');
+    
+    // Validate required fields exist
+    if (!nameInput || !emailInput || !messageInput) {
+        console.warn('SCV Email Helper: Form missing required inputs', {
+            hasName: !!nameInput,
+            hasEmail: !!emailInput,
+            hasMessage: !!messageInput
+        });
+        return;
+    }
+    
+    // Remove any inline onsubmit attribute
+    form.removeAttribute('onsubmit');
+    
+    // Add the email submission handler
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();  // Stop event from bubbling
+        
+        console.log('SCV Email Helper: Form submitted (email handler)');
+        
+        // Get values directly from inputs
+        const name = nameInput.value?.trim() || '';
+        const email = emailInput.value?.trim() || '';
+        const message = messageInput.value?.trim() || '';
+        
+        console.log('SCV Email Helper: Form data collected', { 
+            name: name ? 'present' : 'missing',
+            email: email ? 'present' : 'missing', 
+            message: message ? 'present' : 'missing'
+        });
+        
+        // Validate all fields are filled
+        if (!name || !email || !message) {
+            console.warn('SCV Email Helper: Empty values detected');
+            showFormMessage(form, 'Please fill in all required fields.', 'error');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            console.warn('SCV Email Helper: Invalid email format', email);
+            showFormMessage(form, 'Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        // Get or create message div
+        let messageDiv = form.querySelector('.form-message');
+        if (!messageDiv) {
+            messageDiv = document.createElement('div');
+            messageDiv.className = 'form-message';
+            form.appendChild(messageDiv);
+            console.log('SCV Email Helper: Created message div');
+        }
+        
+        // Get submit button and show loading state
+        const submitBtn = form.querySelector('[type="submit"]');
+        const originalText = submitBtn?.textContent || 'Send';
+        const originalDisabled = submitBtn?.disabled || false;
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+        }
+        
+        // Clear previous messages and show loading indicator
+        messageDiv.innerHTML = '<div style="color: #3b82f6; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e0e7ff; border-left: 4px solid #3b82f6;">⏳ Sending your message...</div>';
+        messageDiv.style.display = 'block';
+        
+        try {
+            // Send the email via the API
+            const result = await window.sendContactForm({ name, email, message });
+            
+            if (result && result.ok) {
+                // Success - show success message and reset form
+                messageDiv.innerHTML = '<div style="color: #10b981; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e8f5e9; border-left: 4px solid #10b981;">✓ ' + (result.message || 'Message sent successfully!') + '</div>';
+                form.reset();
+                console.log('SCV Email Helper: Email sent successfully');
+                
+                // Auto-hide success message after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv) messageDiv.style.display = 'none';
+                }, 5000);
+            } else {
+                // Error from server
+                const errorMsg = result?.error || 'Failed to send message. Please try again.';
+                console.error('SCV Email Helper: Send failed', errorMsg);
+                messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ ' + errorMsg + '</div>';
+            }
+        } catch (error) {
+            console.error('SCV Email Helper: Exception', error);
+            messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ An error occurred. Please try again later.</div>';
+        } finally {
+            // Re-enable submit button
+            if (submitBtn) {
+                submitBtn.disabled = originalDisabled;
+                submitBtn.textContent = originalText;
+            }
+        }
+    });
+    
+    console.log('SCV Email Helper: Successfully bound email handler to form');
+}
+
+// Helper function to show form messages
+function showFormMessage(form, message, type) {
+    let messageDiv = form.querySelector('.form-message');
+    if (!messageDiv) {
+        messageDiv = document.createElement('div');
+        messageDiv.className = 'form-message';
+        form.appendChild(messageDiv);
+    }
+    
+    const color = type === 'error' ? '#ef4444' : '#10b981';
+    const bgColor = type === 'error' ? '#fee2e2' : '#e8f5e9';
+    const borderColor = type === 'error' ? '#ef4444' : '#10b981';
+    
+    messageDiv.innerHTML = `<div style="color: ${color}; padding: 12px; margin-top: 10px; border-radius: 8px; background: ${bgColor}; border-left: 4px solid ${borderColor};">${type === 'error' ? '✗' : '✓'} ${message}</div>`;
+    messageDiv.style.display = 'block';
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        if (messageDiv) messageDiv.style.display = 'none';
+    }, 5000);
+}
+    
+    function bindAllForms() {
+        // Primary: look for scv-contact-form class
+        let forms = document.querySelectorAll('form.scv-contact-form');
+        console.log('SCV Email Helper: Forms with scv-contact-form class:', forms.length);
+    
+        // Fallback: look for any form that might be a contact form
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('#contactForm, #portfolioContactForm, #portfolioContact, form.contact-form, form[id*="contact"]');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using fallback form selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Also look for forms with submit buttons that might be contact forms
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('form:has(input[type="email"]), form:has(textarea)');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using email-input fallback selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Bind each form (cloning removes existing handlers)
+        forms.forEach(bindContactForm);
+    
+        if (forms.length === 0) {
+            console.warn('SCV Email Helper: No contact forms found on this page');
+        } else {
+            console.log('SCV Email Helper: Successfully bound', forms.length, 'contact form(s)');
+        }
+    }
+
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindAllForms);
+    } else {
+        bindAllForms();
+    }
+    
+    // Watch for dynamically added forms
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        if (node.matches && node.matches('form.scv-contact-form')) {
+                            bindContactForm(node);
+                        }
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('form.scv-contact-form').forEach(bindContactForm);
+                        }
+                    }
+                });
+            });
+        });
+        
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }
+})();
+</script>
+</body>
+</html>
