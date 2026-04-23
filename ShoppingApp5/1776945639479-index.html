@@ -1,0 +1,1423 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>Lumina Books | Curated Stories</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --bg-2: #141414;
+            --surface: #1e1e1e;
+            --surface-2: #2a2a2a;
+            --text: #f0f0f0;
+            --muted: #a0a0a0;
+            --border: #333333;
+            --primary: #c0a080;
+            --primary-2: #d4b494;
+            --on-primary: #1a1a1a;
+            --accent: #5070a0;
+            --on-accent: #ffffff;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --focus: #c0a08080;
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-strong: 0 10px 40px rgba(0, 0, 0, 0.6);
+            --radius-btn: 3px;
+            --radius-card: 8px;
+            --radius-pill: 100px;
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 1rem;
+            --space-4: 2rem;
+            --space-5: 4rem;
+            --space-6: 8rem;
+            --font-size-1: 0.75rem;
+            --font-size-2: 0.875rem;
+            --font-size-3: 1rem;
+            --font-size-4: 1.25rem;
+            --font-size-5: 2rem;
+            --font-size-6: 3.5rem;
+            --line-1: 1.2;
+            --line-2: 1.5;
+            --line-3: 1.8;
+            --gutter: 0;
+            --page-top: var(--space-4);
+            --page-bottom: var(--space-6);
+            --header-bg: rgba(10, 10, 10, 0.8);
+            --divider: #333333;
+            --overlay: rgba(0, 0, 0, 0.85);
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            --dur-fast: 150ms;
+            --dur-med: 300ms;
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f8f8f8;
+            --surface: #ffffff;
+            --surface-2: #f0f0f0;
+            --text: #1a1a1a;
+            --muted: #666666;
+            --border: #e0e0e0;
+            --primary: #8a6d3b;
+            --primary-2: #a6844a;
+            --on-primary: #ffffff;
+            --accent: #2c3e50;
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow-strong: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --divider: #eeeeee;
+            --overlay: rgba(255, 255, 255, 0.95);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: var(--line-2);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: var(--line-1);
+        }
+
+        #page {
+            width: 100%;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            min-width: 0;
+            padding-left: var(--space-3);
+            padding-right: var(--space-3);
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            color: inherit;
+            transition: all var(--dur-fast) var(--ease-standard);
+        }
+
+        button:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: var(--font-size-2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-2);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-btn);
+            font-size: var(--font-size-2);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            z-index: 1000;
+            background-color: var(--header-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        header .container {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        nav {
+            display: flex;
+            gap: var(--space-4);
+        }
+
+        .nav-link {
+            font-size: var(--font-size-2);
+            font-weight: 500;
+            color: var(--muted);
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+        }
+
+        /* Hero */
+        #hero {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            text-align: center;
+            color: #ffffff;
+            position: relative;
+        }
+
+        .hero-content {
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            margin-bottom: var(--space-3);
+            max-width: 900px;
+        }
+
+        .hero-subtitle {
+            font-size: var(--font-size-4);
+            font-weight: 300;
+            margin-bottom: var(--space-4);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.9;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: center;
+        }
+
+        /* Stats */
+        #stats {
+            padding: var(--space-5) 0;
+            background-color: var(--bg-2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: var(--font-size-5);
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-item p {
+            color: var(--muted);
+            text-transform: uppercase;
+            font-size: var(--font-size-2);
+            letter-spacing: 0.1em;
+        }
+
+        /* Sections General */
+        section {
+            padding: var(--space-6) 0;
+        }
+
+        .section-header {
+            margin-bottom: var(--space-5);
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-2);
+        }
+
+        .section-desc {
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Books Grid */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .book-card {
+            background-color: var(--surface);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform var(--dur-med) var(--ease-standard);
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            width: 100%;
+        }
+
+        .book-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+        }
+
+        .book-img-wrapper {
+            aspect-ratio: 2/3;
+            overflow: hidden;
+            background-color: var(--surface-2);
+        }
+
+        .book-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--dur-med) var(--ease-standard);
+        }
+
+        .book-card:hover .book-img {
+            transform: scale(1.05);
+        }
+
+        .book-info {
+            padding: var(--space-3);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-category {
+            font-size: var(--font-size-1);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .book-title {
+            font-family: 'Inter', sans-serif;
+            font-size: var(--font-size-3);
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+        }
+
+        .book-author {
+            font-size: var(--font-size-2);
+            color: var(--muted);
+            margin-bottom: var(--space-3);
+        }
+
+        .book-price {
+            margin-top: auto;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Curators */
+        .curators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .curator-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            background-color: var(--surface);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+        }
+
+        .curator-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .curator-info h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: var(--font-size-3);
+            margin-bottom: 2px;
+        }
+
+        .curator-info p {
+            font-size: var(--font-size-2);
+            color: var(--muted);
+        }
+
+        /* Contact */
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--surface);
+            padding: var(--space-4);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-3);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--font-size-2);
+            font-weight: 500;
+            margin-bottom: var(--space-1);
+            color: var(--muted);
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            color: var(--text);
+            font-family: inherit;
+            transition: border-color var(--dur-fast);
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-2);
+            padding: var(--space-5) 0 var(--space-4);
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .footer-col h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: var(--font-size-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: var(--space-2);
+        }
+
+        .footer-col button {
+            color: var(--muted);
+            font-size: var(--font-size-2);
+        }
+
+        .footer-col button:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--muted);
+            font-size: var(--font-size-1);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .social-icon {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--overlay);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: var(--space-3);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--surface);
+            max-width: 600px;
+            width: 100%;
+            border-radius: var(--radius-card);
+            position: relative;
+            box-shadow: var(--shadow-strong);
+            overflow: hidden;
+            animation: modalFadeIn 0.3s var(--ease-standard);
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            width: 32px;
+            height: 32px;
+            background: var(--surface-2);
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .modal-body {
+            padding: var(--space-4);
+        }
+
+        .modal-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        /* Toasts */
+        #toast-container {
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .toast {
+            padding: 1rem 1.5rem;
+            background-color: var(--surface-2);
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--shadow-strong);
+            color: var(--text);
+            font-size: var(--font-size-2);
+            animation: toastIn 0.3s var(--ease-standard);
+        }
+
+        @keyframes toastIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Mobile Menu */
+        #mobile-menu-btn {
+            display: none;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            nav { display: none; }
+            #mobile-menu-btn { display: block; }
+            .hero-btns { flex-direction: column; align-items: stretch; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* Utility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s var(--ease-standard);
+        }
+
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+<script>
+            // SharpCoder Vibe Configuration
+            window.__SCV_CONFIG = window.__SCV_CONFIG || {};
+            window.__SCV_CONFIG.deployToken = "CfDJ8OUDH72-h_xMuKpv5SB4va6Ldt0KxsLXDbICQoQCt-UbByNDjmD-nupcwW46rGW1e20DObVqc5HLVYz6cuWvr94TI00xuesCOSvwz2Uauji-9mZgrSP9o1hphmo9h5nBZsDmYu4D0Tv1SUz-vaq2vbYCziN3gYNFZcu9O7L-oL2YHm_4xune-Aty1f0EoIp2AA";
+            // In InjectDeployTokenAndEmailConfig method
+            window.__SCV_CONFIG.emailApiUrl = "https://app.sharpcoder.ai/api/email/send";
+            window.__SCV_CONFIG.emailEnabled = true;
+            window.__SCV_CONFIG.version = "1.0.0";
+            </script>
+<script>let deployToken = "CfDJ8OUDH72-h_xMuKpv5SB4va6Ldt0KxsLXDbICQoQCt-UbByNDjmD-nupcwW46rGW1e20DObVqc5HLVYz6cuWvr94TI00xuesCOSvwz2Uauji-9mZgrSP9o1hphmo9h5nBZsDmYu4D0Tv1SUz-vaq2vbYCziN3gYNFZcu9O7L-oL2YHm_4xune-Aty1f0EoIp2AA";</script>
+
+    <div id="page">
+        <header>
+            <div class="container">
+                <div class="brand">LUMINA</div>
+                
+                <nav id="desktop-nav">
+                    <button type="button" class="nav-link" data-target="hero">Home</button>
+                    <button type="button" class="nav-link" data-target="books">Store</button>
+                    <button type="button" class="nav-link" data-target="curators">Curators</button>
+                    <button type="button" class="nav-link" data-target="contact">Contact</button>
+                </nav>
+
+                <div class="header-actions">
+                    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
+                        <svg class="sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    </button>
+                    <button type="button" class="btn-primary" id="header-cta">Get Started</button>
+                    <button type="button" id="mobile-menu-btn" aria-label="Menu">☰</button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section id="hero">
+                <div class="container hero-content">
+                    <h1 class="hero-title">Curated Stories for the Curious Mind.</h1>
+                    <p class="hero-subtitle">Discover hand-picked literature across genres, from timeless classics to modern masterpieces.</p>
+                    <div class="hero-btns">
+                        <button type="button" class="btn-primary" data-target="books">Browse Collection</button>
+                        <button type="button" class="btn-outline" style="color: white; border-color: white;" data-target="curators">Meet Curators</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="stats">
+                <div class="container">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <h3 class="counter" data-target="42000">0</h3>
+                            <p>Books Available</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3 class="counter" data-target="15000">0</h3>
+                            <p>Active Readers</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3 class="counter" data-target="28">0</h3>
+                            <p>Awarded Authors</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3 class="counter" data-target="12">0</h3>
+                            <p>Global Locations</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="books" class="scroll-reveal">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">New Arrivals</h2>
+                        <p class="section-desc">Each month our curators select a handful of exceptional titles that deserve your attention.</p>
+                    </div>
+                    
+                    <div class="books-grid">
+                        <!-- Book Card 1 -->
+                        <button type="button" class="book-card" data-product='{"name": "The Shadow of the Wind", "author": "Carlos Ruiz Zafón", "category": "Fiction", "price": "$24.99", "desc": "A mesmerizing thriller about a boy who is taken to a secret cemetery of books in post-war Barcelona.", "img": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop"}'>
+                            <div class="book-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop" alt="The Shadow of the Wind" class="book-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                            </div>
+                            <div class="book-info">
+                                <span class="book-category">Fiction</span>
+                                <h3 class="book-title">The Shadow of the Wind</h3>
+                                <p class="book-author">Carlos Ruiz Zafón</p>
+                                <span class="book-price">$24.99</span>
+                            </div>
+                        </button>
+
+                        <!-- Book Card 2 -->
+                        <button type="button" class="book-card" data-product='{"name": "Atomic Habits", "author": "James Clear", "category": "Self-Help", "price": "$18.50", "desc": "A revolutionary system to get 1% better every day through small, manageable habits.", "img": "https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=800&auto=format&fit=crop"}'>
+                            <div class="book-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?q=80&w=800&auto=format&fit=crop" alt="Atomic Habits" class="book-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                            </div>
+                            <div class="book-info">
+                                <span class="book-category">Self-Help</span>
+                                <h3 class="book-title">Atomic Habits</h3>
+                                <p class="book-author">James Clear</p>
+                                <span class="book-price">$18.50</span>
+                            </div>
+                        </button>
+
+                        <!-- Book Card 3 -->
+                        <button type="button" class="book-card" data-product='{"name": "Circe", "author": "Madeline Miller", "category": "Fantasy", "price": "$16.00", "desc": "A bold retelling of the story of the mythological witch Circe, daughter of Helios.", "img": "https://images.unsplash.com/photo-1543004218-ee1411043384?q=80&w=800&auto=format&fit=crop"}'>
+                            <div class="book-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1543004218-ee1411043384?q=80&w=800&auto=format&fit=crop" alt="Circe" class="book-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                            </div>
+                            <div class="book-info">
+                                <span class="book-category">Fantasy</span>
+                                <h3 class="book-title">Circe</h3>
+                                <p class="book-author">Madeline Miller</p>
+                                <span class="book-price">$16.00</span>
+                            </div>
+                        </button>
+
+                        <!-- Book Card 4 -->
+                        <button type="button" class="book-card" data-product='{"name": "The Midnight Library", "author": "Matt Haig", "category": "Fiction", "price": "$21.00", "desc": "Between life and death there is a library, and within that library, the shelves go on forever.", "img": "https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop"}'>
+                            <div class="book-img-wrapper">
+                                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop" alt="The Midnight Library" class="book-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                            </div>
+                            <div class="book-info">
+                                <span class="book-category">Fiction</span>
+                                <h3 class="book-title">The Midnight Library</h3>
+                                <p class="book-author">Matt Haig</p>
+                                <span class="book-price">$21.00</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="curators" class="scroll-reveal">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">Meet Our Curators</h2>
+                        <p class="section-desc">The literary experts behind our collection who ensure every book on our shelves is worth your time.</p>
+                    </div>
+
+                    <div class="curators-grid">
+                        <button type="button" class="curator-card" data-person='{"name": "Evelyn Thorne", "role": "Chief Curator", "bio": "With 15 years in publishing, Evelyn specializes in contemporary fiction and forgotten classics.", "img": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop"}'>
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop" alt="Evelyn Thorne" class="curator-avatar" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                            <div class="curator-info">
+                                <h4>Evelyn Thorne</h4>
+                                <p>Chief Curator</p>
+                            </div>
+                        </button>
+
+                        <button type="button" class="curator-card" data-person='{"name": "Marcus Chen", "role": "Non-Fiction Specialist", "bio": "Marcus has a passion for history and science, curating books that challenge perspectives.", "img": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop"}'>
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop" alt="Marcus Chen" class="curator-avatar" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                            <div class="curator-info">
+                                <h4>Marcus Chen</h4>
+                                <p>Non-Fiction Specialist</p>
+                            </div>
+                        </button>
+
+                        <button type="button" class="curator-card" data-person='{"name": "Sarah Jenkins", "role": "Poetry & Arts", "bio": "Sarah brings an artistic eye to our gallery section, selecting high-quality prints and poetry collections.", "img": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop"}'>
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop" alt="Sarah Jenkins" class="curator-avatar" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                            <div class="curator-info">
+                                <h4>Sarah Jenkins</h4>
+                                <p>Poetry & Arts</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="scroll-reveal">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">Get in Touch</h2>
+                        <p class="section-desc">Have a question about an order or looking for a specific recommendation? We're here to help.</p>
+                    </div>
+                    
+                    <div class="contact-container">
+                        <form id="contact-form" class='scv-contact-form'>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+                                <div class="form-group">
+                                    <label class="form-label" for="name">Full Name</label>
+                                    <input type='text' name='name' id='name' class="form-input" required placeholder="Jane Doe">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="email">Email Address</label>
+                                    <input type='email' name='email' id='email' class="form-input" required placeholder="jane@example.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="subject">Subject</label>
+                                <input type="text" id="subject" class="form-input" required placeholder="Regarding recommendation...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="message">Message</label>
+                                <textarea name='message' id='message' class="form-textarea" required placeholder="How can we help you?"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%;">Send Message</button>
+                        <div class='form-message'></div>
+</form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <div class="brand" style="margin-bottom: var(--space-3);">LUMINA</div>
+                        <p style="font-size: var(--font-size-2); color: var(--muted); max-width: 200px;">Providing literary excellence and curated reading experiences since 2012.</p>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Explore</h4>
+                        <ul>
+                            <li><button type="button" data-target="books">Store</button></li>
+                            <li><button type="button" data-target="curators">Curators</button></li>
+                            <li><button type="button" id="footer-loc-btn">Locations</button></li>
+                            <li><button type="button" id="footer-gift-btn">Gift Cards</button></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Support</h4>
+                        <ul>
+                            <li><button type="button" id="footer-shipping-btn">Shipping Policy</button></li>
+                            <li><button type="button" id="footer-faq-btn">FAQs</button></li>
+                            <li><button type="button" id="footer-returns-btn">Returns</button></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Stay Connected</h4>
+                        <div class="social-links">
+                            <button type="button" class="social-icon" data-social='{"name": "Instagram", "handle": "@lumina_books", "info": "Daily book inspiration and behind the scenes."}' aria-label="Instagram">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                            </button>
+                            <button type="button" class="social-icon" data-social='{"name": "Twitter", "handle": "@luminabks", "info": "Literary news and author spotlights."}' aria-label="Twitter">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; <span id="year-display"></span> Lumina Books. All rights reserved.</p>
+                    <p>Designed with passion for readers.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <button type="button" class="modal-close" id="modal-close" aria-label="Close">✕</button>
+            <div id="modal-body-content"></div>
+        </div>
+    </div>
+
+    <!-- Toasts -->
+    <div id="toast-container"></div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Set Year
+        document.getElementById('year-display').textContent = new Date().getFullYear();
+
+        // Navigation
+        document.querySelectorAll('button[data-target]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const targetEl = document.getElementById(targetId);
+                if (targetEl) {
+                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Counter Animation
+        function animateCounter(el) {
+            const target = parseInt(el.getAttribute('data-target'));
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    el.textContent = target.toLocaleString() + (target > 100 ? '+' : '');
+                    clearInterval(timer);
+                } else {
+                    el.textContent = Math.ceil(current).toLocaleString();
+                }
+            }, 20);
+        }
+
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    if (entry.target.id === 'stats') {
+                        document.querySelectorAll('.counter').forEach(animateCounter);
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.scroll-reveal, #stats').forEach(el => observer.observe(el));
+
+        // Modal Logic
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalContent = document.getElementById('modal-body-content');
+        const modalClose = document.getElementById('modal-close');
+
+        function openModal(html) {
+            modalContent.innerHTML = html;
+            modalOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modalOverlay.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Book Modals
+        document.querySelectorAll('.book-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const data = JSON.parse(card.getAttribute('data-product'));
+                openModal(`
+                    <img src="${data.img}" alt="${data.name}" class="modal-img" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                    <div class="modal-body">
+                        <span class="book-category" style="display:block; margin-bottom: 0.5rem;">${data.category}</span>
+                        <h2 style="margin-bottom: 0.25rem;">${data.name}</h2>
+                        <p style="color: var(--muted); margin-bottom: 1.5rem;">by ${data.author}</p>
+                        <p style="margin-bottom: 2rem; line-height: 1.6;">${data.desc}</p>
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span style="font-size: 1.5rem; font-weight: 700;">${data.price}</span>
+                            <button type="button" class="btn-primary" onclick="showToast('Added to bag!')">Add to Bag</button>
+                        </div>
+                    </div>
+                `);
+            });
+        });
+
+        // Curator Modals
+        document.querySelectorAll('.curator-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const data = JSON.parse(card.getAttribute('data-person'));
+                openModal(`
+                    <div class="modal-body" style="text-align: center; padding-top: 3rem;">
+                        <img src="${data.img}" alt="${data.name}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 1.5rem;" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        <h2>${data.name}</h2>
+                        <p style="color: var(--primary); font-weight: 600; margin-bottom: 1rem;">${data.role}</p>
+                        <p style="margin-bottom: 2rem; color: var(--muted); max-width: 400px; margin-left: auto; margin-right: auto;">${data.bio}</p>
+                        <button type="button" class="btn-outline" onclick="showToast('Viewing curated list...')">View Curator's Picks</button>
+                    </div>
+                `);
+            });
+        });
+
+        // Social Modals
+        document.querySelectorAll('.social-icon').forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const data = JSON.parse(icon.getAttribute('data-social'));
+                openModal(`
+                    <div class="modal-body" style="text-align: center; padding: 3rem;">
+                        <h2 style="margin-bottom: 0.5rem;">${data.name}</h2>
+                        <p style="color: var(--primary); font-size: 1.25rem; margin-bottom: 1rem;">${data.handle}</p>
+                        <p style="color: var(--muted);">${data.info}</p>
+                    </div>
+                `);
+            });
+        });
+
+        // Location Modal
+        document.getElementById('footer-loc-btn').addEventListener('click', () => {
+            openModal(`
+                <div class="modal-body">
+                    <h2 style="margin-bottom: 1.5rem;">Our Locations</h2>
+                    <div style="display: grid; gap: 1rem;">
+                        <div style="padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-card);">
+                            <h4 style="margin-bottom: 0.25rem;">New York Flagship</h4>
+                            <p style="font-size: 0.9rem; color: var(--muted);">122 Greene St, Soho, NY</p>
+                        </div>
+                        <div style="padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-card);">
+                            <h4 style="margin-bottom: 0.25rem;">London Boutique</h4>
+                            <p style="font-size: 0.9rem; color: var(--muted);">45 Marylebone High St, London</p>
+                        </div>
+                    </div>
+                </div>
+            `);
+        });
+
+        // Toast System
+        function showToast(message) {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Contact Form
+        const contactForm = document.getElementById('contact-form');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                showToast('Message sent successfully!');
+                contactForm.reset();
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 1200);
+        });
+
+        // Fake actions
+        document.getElementById('header-cta').addEventListener('click', () => showToast('Membership portal coming soon!'));
+        document.getElementById('footer-gift-btn').addEventListener('click', () => showToast('Gift card system currently offline.'));
+        document.getElementById('footer-shipping-btn').addEventListener('click', () => showToast('We ship to over 50 countries.'));
+        document.getElementById('footer-faq-btn').addEventListener('click', () => showToast('FAQ center loading...'));
+        document.getElementById('footer-returns-btn').addEventListener('click', () => showToast('30-day no-hassle returns policy.'));
+
+        // Mobile Menu Placeholder
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            showToast('Mobile navigation is disabled in preview.');
+        });
+
+        // Interaction Guard
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest('a');
+            if (target) {
+                e.preventDefault();
+                showToast('External action disabled in preview.');
+            }
+        }, true);
+    </script>
+
+
+<script>
+// SharpCoder Vibe Email Helper - v2.0 (Enhanced)
+(function() {
+    'use strict';
+    
+    const CONFIG = window.__SCV_CONFIG || {};
+    const DEPLOY_TOKEN = CONFIG.deployToken || (typeof deployToken !== 'undefined' ? deployToken : null);
+    const API_URL = CONFIG.emailApiUrl || '/api/email/send';
+    
+    console.log('SCV Email Helper: Initialized', { hasToken: !!DEPLOY_TOKEN, apiUrl: API_URL });
+    
+    if (!DEPLOY_TOKEN) {
+        console.warn('SCV Email Helper: No deploy token found. Email sending will not work.');
+    }
+    
+    window.sendContactForm = async function(formData) {
+        if (!DEPLOY_TOKEN) {
+            console.error('SCV Email Helper: Missing deploy token');
+            return { ok: false, error: 'Email service not configured for this deployment.' };
+        }
+        
+        if (!formData.name || !formData.email || !formData.message) {
+            console.warn('SCV Email Helper: Missing required fields', formData);
+            return { ok: false, error: 'Please fill in all required fields.' };
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            console.warn('SCV Email Helper: Invalid email', formData.email);
+            return { ok: false, error: 'Please enter a valid email address.' };
+        }
+        
+        const payload = {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            message: formData.message.trim(),
+            deployToken: DEPLOY_TOKEN
+        };
+        
+        console.log('SCV Email Helper: Sending email', { name: payload.name, email: payload.email });
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            console.log('SCV Email Helper: Response status', response.status);
+            
+            let result;
+            try {
+                result = await response.json();
+                console.log('SCV Email Helper: Response body', result);
+            } catch (e) {
+                console.error('SCV Email Helper: Failed to parse response', e);
+                result = { ok: false, error: 'Invalid response from server.' };
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('SCV Email Helper: Request failed', error);
+            if (error.name === 'AbortError') {
+                return { ok: false, error: 'Request timed out. Please try again.' };
+            }
+            return { ok: false, error: 'Network error. Please check your connection and try again.' };
+        }
+    };
+    
+    function bindContactForm(form) {
+    // Prevent binding the same form multiple times
+    if (!form || form.hasAttribute('data-scv-bound')) return;
+    
+    // ====================================================================
+    // CRITICAL: Remove ALL existing submit handlers by cloning and replacing
+    // This completely eliminates the AI-generated fake toast handler
+    // ====================================================================
+    const originalId = form.id;
+    const originalClass = form.className;
+    
+    // Clone the form without any event listeners
+    const newForm = form.cloneNode(true);
+    
+    // Preserve the original id and class
+    if (originalId) newForm.id = originalId;
+    newForm.className = originalClass;
+    
+    // Replace the old form with the fresh clone
+    form.parentNode.replaceChild(newForm, form);
+    form = newForm;
+    
+    // Mark as bound to prevent re-processing
+    form.setAttribute('data-scv-bound', 'true');
+    
+    // Log form structure for debugging
+    console.log('SCV Email Helper: Binding form (clean clone)', { 
+        id: form.id, 
+        classes: form.className,
+        hasNameInput: !!form.querySelector('[name="name"]'),
+        hasEmailInput: !!form.querySelector('[name="email"]'),
+        hasMessageInput: !!form.querySelector('[name="message"]')
+    });
+    
+    // Find required inputs (try multiple selectors for robustness)
+    let nameInput = form.querySelector('[name="name"]');
+    let emailInput = form.querySelector('[name="email"]');
+    let messageInput = form.querySelector('[name="message"]');
+    
+    // Fallback: try to find by id if name attribute is missing
+    if (!nameInput) nameInput = form.querySelector('#name, [id="name"]');
+    if (!emailInput) emailInput = form.querySelector('#email, [id="email"]');
+    if (!messageInput) messageInput = form.querySelector('#message, [id="message"]');
+    
+    // If inputs exist but don't have name attributes, add them
+    if (nameInput && !nameInput.hasAttribute('name')) nameInput.setAttribute('name', 'name');
+    if (emailInput && !emailInput.hasAttribute('name')) emailInput.setAttribute('name', 'email');
+    if (messageInput && !messageInput.hasAttribute('name')) messageInput.setAttribute('name', 'message');
+    
+    // Validate required fields exist
+    if (!nameInput || !emailInput || !messageInput) {
+        console.warn('SCV Email Helper: Form missing required inputs', {
+            hasName: !!nameInput,
+            hasEmail: !!emailInput,
+            hasMessage: !!messageInput
+        });
+        return;
+    }
+    
+    // Remove any inline onsubmit attribute
+    form.removeAttribute('onsubmit');
+    
+    // Add the email submission handler
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();  // Stop event from bubbling
+        
+        console.log('SCV Email Helper: Form submitted (email handler)');
+        
+        // Get values directly from inputs
+        const name = nameInput.value?.trim() || '';
+        const email = emailInput.value?.trim() || '';
+        const message = messageInput.value?.trim() || '';
+        
+        console.log('SCV Email Helper: Form data collected', { 
+            name: name ? 'present' : 'missing',
+            email: email ? 'present' : 'missing', 
+            message: message ? 'present' : 'missing'
+        });
+        
+        // Validate all fields are filled
+        if (!name || !email || !message) {
+            console.warn('SCV Email Helper: Empty values detected');
+            showFormMessage(form, 'Please fill in all required fields.', 'error');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            console.warn('SCV Email Helper: Invalid email format', email);
+            showFormMessage(form, 'Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        // Get or create message div
+        let messageDiv = form.querySelector('.form-message');
+        if (!messageDiv) {
+            messageDiv = document.createElement('div');
+            messageDiv.className = 'form-message';
+            form.appendChild(messageDiv);
+            console.log('SCV Email Helper: Created message div');
+        }
+        
+        // Get submit button and show loading state
+        const submitBtn = form.querySelector('[type="submit"]');
+        const originalText = submitBtn?.textContent || 'Send';
+        const originalDisabled = submitBtn?.disabled || false;
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+        }
+        
+        // Clear previous messages and show loading indicator
+        messageDiv.innerHTML = '<div style="color: #3b82f6; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e0e7ff; border-left: 4px solid #3b82f6;">⏳ Sending your message...</div>';
+        messageDiv.style.display = 'block';
+        
+        try {
+            // Send the email via the API
+            const result = await window.sendContactForm({ name, email, message });
+            
+            if (result && result.ok) {
+                // Success - show success message and reset form
+                messageDiv.innerHTML = '<div style="color: #10b981; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e8f5e9; border-left: 4px solid #10b981;">✓ ' + (result.message || 'Message sent successfully!') + '</div>';
+                form.reset();
+                console.log('SCV Email Helper: Email sent successfully');
+                
+                // Auto-hide success message after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv) messageDiv.style.display = 'none';
+                }, 5000);
+            } else {
+                // Error from server
+                const errorMsg = result?.error || 'Failed to send message. Please try again.';
+                console.error('SCV Email Helper: Send failed', errorMsg);
+                messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ ' + errorMsg + '</div>';
+            }
+        } catch (error) {
+            console.error('SCV Email Helper: Exception', error);
+            messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ An error occurred. Please try again later.</div>';
+        } finally {
+            // Re-enable submit button
+            if (submitBtn) {
+                submitBtn.disabled = originalDisabled;
+                submitBtn.textContent = originalText;
+            }
+        }
+    });
+    
+    console.log('SCV Email Helper: Successfully bound email handler to form');
+}
+
+// Helper function to show form messages
+function showFormMessage(form, message, type) {
+    let messageDiv = form.querySelector('.form-message');
+    if (!messageDiv) {
+        messageDiv = document.createElement('div');
+        messageDiv.className = 'form-message';
+        form.appendChild(messageDiv);
+    }
+    
+    const color = type === 'error' ? '#ef4444' : '#10b981';
+    const bgColor = type === 'error' ? '#fee2e2' : '#e8f5e9';
+    const borderColor = type === 'error' ? '#ef4444' : '#10b981';
+    
+    messageDiv.innerHTML = `<div style="color: ${color}; padding: 12px; margin-top: 10px; border-radius: 8px; background: ${bgColor}; border-left: 4px solid ${borderColor};">${type === 'error' ? '✗' : '✓'} ${message}</div>`;
+    messageDiv.style.display = 'block';
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        if (messageDiv) messageDiv.style.display = 'none';
+    }, 5000);
+}
+    
+    function bindAllForms() {
+        // Primary: look for scv-contact-form class
+        let forms = document.querySelectorAll('form.scv-contact-form');
+        console.log('SCV Email Helper: Forms with scv-contact-form class:', forms.length);
+    
+        // Fallback: look for any form that might be a contact form
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('#contactForm, #portfolioContactForm, #portfolioContact, form.contact-form, form[id*="contact"]');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using fallback form selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Also look for forms with submit buttons that might be contact forms
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('form:has(input[type="email"]), form:has(textarea)');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using email-input fallback selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Bind each form (cloning removes existing handlers)
+        forms.forEach(bindContactForm);
+    
+        if (forms.length === 0) {
+            console.warn('SCV Email Helper: No contact forms found on this page');
+        } else {
+            console.log('SCV Email Helper: Successfully bound', forms.length, 'contact form(s)');
+        }
+    }
+
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindAllForms);
+    } else {
+        bindAllForms();
+    }
+    
+    // Watch for dynamically added forms
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        if (node.matches && node.matches('form.scv-contact-form')) {
+                            bindContactForm(node);
+                        }
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('form.scv-contact-form').forEach(bindContactForm);
+                        }
+                    }
+                });
+            });
+        });
+        
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }
+})();
+</script>
+</body>
+</html>
