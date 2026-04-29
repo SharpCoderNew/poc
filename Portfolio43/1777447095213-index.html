@@ -1,0 +1,1277 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>Kautilya Utkarsh | AI Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Design Tokens */
+            --primary: #c4b5fd;
+            --primary-2: #8b5cf6;
+            --on-primary: #1e1b4b;
+            --accent: #2dd4bf;
+            --on-accent: #042f2e;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --focus: #8b5cf6;
+            
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 1rem;
+            --space-4: 2rem;
+            --space-5: 4rem;
+            --space-6: 8rem;
+
+            --font-size-1: 0.75rem;
+            --font-size-2: 1rem;
+            --font-size-3: 1.25rem;
+            --font-size-4: 1.5rem;
+            --font-size-5: 2.5rem;
+            --font-size-6: 4rem;
+
+            --radius-btn: 3px;
+            --radius-card: 12px;
+            --radius-pill: 9999px;
+
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-strong: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            --gutter: 0;
+            --page-top: var(--space-4);
+            --page-bottom: var(--space-6);
+            --header-h: 72px;
+            --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+            --dur-fast: 150ms;
+            --dur-med: 300ms;
+        }
+
+        html[data-theme="dark"] {
+            --bg: #0a0a0a;
+            --bg-2: #141414;
+            --surface: #1a1a1a;
+            --surface-2: #242424;
+            --text: #f9fafb;
+            --muted: #9ca3af;
+            --border: #2e2e2e;
+            --header-bg: rgba(10, 10, 10, 0.8);
+            --overlay: rgba(0, 0, 0, 0.85);
+            --divider: rgba(255, 255, 255, 0.05);
+        }
+
+        html[data-theme="light"] {
+            --bg: #ffffff;
+            --bg-2: #f9fafb;
+            --surface: #f3f4f6;
+            --surface-2: #e5e7eb;
+            --text: #111827;
+            --muted: #4b5563;
+            --border: #e5e7eb;
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --overlay: rgba(255, 255, 255, 0.9);
+            --divider: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Base Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        #page {
+            width: 100%;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1120px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: var(--space-3);
+            padding-right: var(--space-3);
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            color: inherit;
+            transition: all var(--dur-fast) var(--ease-standard);
+        }
+
+        /* Layout Sections */
+        section {
+            width: 100%;
+            padding: var(--space-6) 0;
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-h);
+            z-index: 1000;
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--divider);
+            display: flex;
+            align-items: center;
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: var(--font-size-4);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-desktop {
+            display: none;
+            gap: var(--space-4);
+        }
+
+        @media (min-width: 768px) {
+            .nav-desktop {
+                display: flex;
+            }
+        }
+
+        .nav-btn {
+            font-size: var(--font-size-2);
+            font-weight: 500;
+            padding: var(--space-2) var(--space-3);
+        }
+
+        .nav-btn:hover {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-pill);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+        }
+
+        .cta-btn {
+            background: var(--primary);
+            color: var(--on-primary);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-btn);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* Hero Section */
+        .hero {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(45, 212, 191, 0.15) 0%, transparent 40%);
+        }
+
+        .hero-bg-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .hero-content {
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            margin-bottom: var(--space-3);
+            max-width: 900px;
+        }
+
+        .hero p {
+            font-size: var(--font-size-4);
+            color: var(--muted);
+            margin-bottom: var(--space-4);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .profile-wrapper {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto var(--space-4);
+            border-radius: var(--radius-pill);
+            padding: 4px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            box-shadow: var(--shadow-strong);
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius-pill);
+            object-fit: cover;
+            border: 4px solid var(--bg);
+            cursor: pointer;
+        }
+
+        /* Stats Bar */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+            padding: var(--space-5) 0;
+            text-align: center;
+            border-top: 1px solid var(--divider);
+            border-bottom: 1px solid var(--divider);
+            margin-top: var(--space-5);
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-item h3 {
+            font-size: var(--font-size-5);
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-item p {
+            font-size: var(--font-size-1);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+        }
+
+        /* Projects Section */
+        .section-title {
+            text-align: center;
+            margin-bottom: var(--space-5);
+        }
+
+        .section-title h2 {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-2);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-4);
+        }
+
+        @media (min-width: 768px) {
+            .projects-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .project-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            overflow: hidden;
+            transition: transform var(--dur-med) var(--ease-standard);
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .project-img-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .project-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s var(--ease-standard);
+        }
+
+        .project-card:hover .project-img {
+            transform: scale(1.05);
+        }
+
+        .project-info {
+            padding: var(--space-4);
+        }
+
+        .project-tag {
+            font-size: var(--font-size-1);
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-2);
+            display: block;
+        }
+
+        .project-card h3 {
+            font-size: var(--font-size-4);
+            margin-bottom: var(--space-2);
+        }
+
+        .project-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: var(--space-4);
+        }
+
+        /* About Section */
+        .about-split {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-5);
+            align-items: center;
+        }
+
+        @media (min-width: 1024px) {
+            .about-split {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .about-image {
+            width: 100%;
+            aspect-ratio: 4/5;
+            border-radius: var(--radius-card);
+            object-fit: cover;
+        }
+
+        .about-text h2 {
+            font-size: var(--font-size-5);
+            margin-bottom: var(--space-4);
+        }
+
+        .about-text p {
+            font-size: var(--font-size-3);
+            margin-bottom: var(--space-3);
+        }
+
+        /* Contact Form */
+        .contact-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--surface);
+            padding: var(--space-5);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-2);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-3);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-btn);
+            color: var(--text);
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea.form-input {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--primary);
+            color: var(--on-primary);
+            padding: var(--space-3);
+            font-weight: 700;
+            border-radius: var(--radius-btn);
+            font-size: 1.1rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: var(--space-3);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: var(--surface);
+            max-width: 600px;
+            width: 100%;
+            padding: var(--space-5);
+            border-radius: var(--radius-card);
+            position: relative;
+            box-shadow: var(--shadow-strong);
+            border: 1px solid var(--divider);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-5) 0;
+            border-top: 1px solid var(--divider);
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .social-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-pill);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-btn:hover {
+            background: var(--primary);
+            color: var(--on-primary);
+        }
+
+        /* Feedback Toast */
+        #toast-container {
+            position: fixed;
+            bottom: var(--space-4);
+            right: var(--space-4);
+            z-index: 3000;
+        }
+
+        .toast {
+            background: var(--surface-2);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-btn);
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--shadow-strong);
+            margin-bottom: var(--space-2);
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Mobile Nav */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: 1500;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-5);
+        }
+
+        .mobile-nav-btn {
+            font-size: var(--font-size-4);
+            margin: var(--space-3) 0;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 1600;
+        }
+
+        @media (min-width: 768px) {
+            .hamburger { display: none; }
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background: var(--text);
+            transition: 0.3s;
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s var(--ease-standard);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+<script>
+            // SharpCoder Vibe Configuration
+            window.__SCV_CONFIG = window.__SCV_CONFIG || {};
+            window.__SCV_CONFIG.deployToken = "CfDJ8HFZOoVEHP5EojFr_x7Dd54_X9a6WrejdCnGrd5MsaUr19d_bOqK11nM45DZ6ONPXUSH6upA5RnUQwMJ2XLmeZN0HLfJVWUx_gD7Sv4bevjrzVqi8RT29W1v5t2_RbBYmB7GXUGUpnff33I5pkCV0H-u_frxAoP3_l7qVneGqPVI7FwYonrPxjDqFwqbxsg6Bw";
+            // In InjectDeployTokenAndEmailConfig method
+            window.__SCV_CONFIG.emailApiUrl = "https://staging.sharpcoder.ai/api/email/send";
+            window.__SCV_CONFIG.emailEnabled = true;
+            window.__SCV_CONFIG.version = "1.0.0";
+            </script>
+<script>let deployToken = "CfDJ8HFZOoVEHP5EojFr_x7Dd54_X9a6WrejdCnGrd5MsaUr19d_bOqK11nM45DZ6ONPXUSH6upA5RnUQwMJ2XLmeZN0HLfJVWUx_gD7Sv4bevjrzVqi8RT29W1v5t2_RbBYmB7GXUGUpnff33I5pkCV0H-u_frxAoP3_l7qVneGqPVI7FwYonrPxjDqFwqbxsg6Bw";</script>
+
+
+<div id="page">
+    <header id="siteHeader">
+        <div class="container header-inner">
+            <div class="logo">Kautilya Utkarsh</div>
+            
+            <nav class="nav-desktop">
+                <button type="button" class="nav-btn" data-target="home">Home</button>
+                <button type="button" class="nav-btn" data-target="projects">Research</button>
+                <button type="button" class="nav-btn" data-target="about">About</button>
+                <button type="button" class="nav-btn" data-target="contact">Inquiry</button>
+            </nav>
+
+            <div class="header-actions">
+                <button type="button" class="theme-toggle" id="themeToggle" title="Toggle Theme">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>
+                </button>
+                <button type="button" class="cta-btn" data-target="contact">Collaborate</button>
+                <button type="button" class="hamburger" id="mobileMenuBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <button type="button" class="mobile-nav-btn" data-target="home">Home</button>
+        <button type="button" class="mobile-nav-btn" data-target="projects">Research</button>
+        <button type="button" class="mobile-nav-btn" data-target="about">About</button>
+        <button type="button" class="mobile-nav-btn" data-target="contact">Inquiry</button>
+    </div>
+
+    <main>
+        <section id="home" class="hero">
+            <img src="https://images.unsplash.com/photo-1620712943543-bcc4628c6789?auto=format&fit=crop&q=80&w=1920" 
+                 class="hero-bg-img" alt="Neural Networks" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+            <div class="container hero-content">
+                <div class="profile-wrapper reveal">
+                    <img src="https://staging.sharpcoder.ai/uploadedimages/99e78d86-3b5e-4d09-9161-abc30b843c20/20260429_071336_a75963328a.png" 
+                         class="profile-img" alt="Kautilya Utkarsh" id="profilePic" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                </div>
+                <h1 class="reveal">Architecting the future of Machine Intelligence</h1>
+                <p class="reveal">Kautilya Utkarsh — AI Engineer at Think-verse Lab. Specializing in LLM alignment, generative diffusion models, and efficient neural architectures.</p>
+                
+                <div class="stats-grid container reveal">
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="14">0</h3>
+                        <p>Global Deployments</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="82">0</h3>
+                        <p>Model Accuracy %</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="5">0</h3>
+                        <p>Research Papers</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 class="counter" data-target="200">0</h3>
+                        <p>Open Source Stars</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects">
+            <div class="container">
+                <div class="section-title reveal">
+                    <h2>Selected Research</h2>
+                    <p>Pioneering advancements in AI efficiency and reasoning.</p>
+                </div>
+                <div class="projects-grid">
+                    <!-- Project 1 -->
+                    <div class="project-card reveal">
+                        <div class="project-img-container">
+                            <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800" 
+                                 class="project-img" alt="LLM Project" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        </div>
+                        <div class="project-info">
+                            <span class="project-tag">Language Modeling</span>
+                            <h3>Contextual Quantum LLM</h3>
+                            <p>Optimizing multi-modal context windows for enterprise-grade generative AI with 40% less memory overhead.</p>
+                            <button type="button" class="nav-btn" data-modal="project1">View Details →</button>
+                        </div>
+                    </div>
+                    <!-- Project 2 -->
+                    <div class="project-card reveal">
+                        <div class="project-img-container">
+                            <img src="https://images.unsplash.com/photo-1633412802994-5c058f151b66?auto=format&fit=crop&q=80&w=800" 
+                                 class="project-img" alt="Vision AI" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                        </div>
+                        <div class="project-info">
+                            <span class="project-tag">Computer Vision</span>
+                            <h3>Edge-Vision Synthesis</h3>
+                            <p>Real-time visual processing for autonomous systems operating in low-bandwidth, high-latency environments.</p>
+                            <button type="button" class="nav-btn" data-modal="project2">View Details →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="bg-2">
+            <div class="container about-split">
+                <img src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=800" 
+                     class="about-image reveal" alt="Laboratory" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+                <div class="about-text reveal">
+                    <h2>Think-verse Lab</h2>
+                    <p>At Think-verse, we bridge the gap between theoretical research and production-grade AI solutions. My work focuses on making intelligence accessible, ethical, and efficient.</p>
+                    <p>I believe in a future where AI serves as a symbiotic partner to human creativity, handling the complexities while we focus on the intuition.</p>
+                    <button type="button" class="cta-btn" data-target="contact">Read more about our vision</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <div class="container">
+                <div class="section-title reveal">
+                    <h2>Get in Touch</h2>
+                    <p>Let's discuss neural engineering or collaborative research opportunities.</p>
+                </div>
+                <div class="contact-box reveal">
+                    <form id="contactForm" class='scv-contact-form'>
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input name='name' type="text" class="form-input"  name='name' id='name' required placeholder="Dr. Sarah Jenkins">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input name='email' type="email" class="form-input"  id='email' required placeholder="sarah@institute.org">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Subject</label>
+                            <input type="text" class="form-input" id="subject" required placeholder="AI Model Collaboration">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <textarea name='message' class="form-input"  id='message' required placeholder="Tell me about your project..."></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Send Transmission</button>
+                    <div class='form-message'></div>
+</form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <button type="button" class="social-btn" data-modal="linkedin" title="LinkedIn">LN</button>
+                <button type="button" class="social-btn" data-modal="github" title="GitHub">GH</button>
+                <button type="button" class="social-btn" data-modal="twitter" title="Twitter/X">TW</button>
+            </div>
+            <p>&copy; <span id="currentYear"></span> Kautilya Utkarsh. AI Engineer at Think-verse Lab. All Rights Reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<!-- Modals -->
+<div id="modalOverlay" class="modal-overlay">
+    <div class="modal-content" id="modalContent">
+        <button type="button" class="modal-close" id="modalClose">&times;</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+    // Theme Management
+    const themeToggle = document.getElementById('themeToggle');
+    const htmlEl = document.documentElement;
+    
+    const applyTheme = (theme) => {
+        htmlEl.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    };
+
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = htmlEl.getAttribute('data-theme');
+        applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    // Navigation and Scrolling
+    const scrollButtons = document.querySelectorAll('[data-target]');
+    scrollButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth' });
+                // Close mobile menu if open
+                document.getElementById('mobileMenu').style.display = 'none';
+            }
+        });
+    });
+
+    // Mobile Menu
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    mobileMenuBtn.addEventListener('click', () => {
+        const isVisible = mobileMenu.style.display === 'flex';
+        mobileMenu.style.display = isVisible ? 'none' : 'flex';
+    });
+
+    // Animated Counters
+    const counters = document.querySelectorAll('.counter');
+    const observerOptions = { threshold: 0.5 };
+    
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = +entry.target.getAttribute('data-target');
+                let count = 0;
+                const increment = target / 100;
+                const updateCount = () => {
+                    if (count < target) {
+                        count += increment;
+                        entry.target.innerText = Math.ceil(count);
+                        setTimeout(updateCount, 20);
+                    } else {
+                        entry.target.innerText = target;
+                    }
+                };
+                updateCount();
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    counters.forEach(c => counterObserver.observe(c));
+
+    // Reveal on Scroll
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    // Modal Logic
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalBody = document.getElementById('modalBody');
+    const modalClose = document.getElementById('modalClose');
+
+    const modalData = {
+        'profilePic': {
+            title: 'Kautilya Utkarsh',
+            content: 'Lead AI Engineer at Think-verse Lab with over 6 years of experience in deep learning. Focused on large-scale model orchestration and neural alignment research.'
+        },
+        'project1': {
+            title: 'Contextual Quantum LLM',
+            content: 'A breakthrough in attention mechanisms that allows for nearly infinite context windows without linear memory scaling. Featured in the 2025 AI Systems Journal.'
+        },
+        'project2': {
+            title: 'Edge-Vision Synthesis',
+            content: 'Compressing vision transformers for high-speed edge devices. Used in next-gen autonomous drone fleets for real-time obstacle avoidance.'
+        },
+        'linkedin': {
+            title: 'LinkedIn Profile',
+            content: 'Connecting with industry leaders in AI. Visit to see full career history and publications.'
+        },
+        'github': {
+            title: 'GitHub Repositories',
+            content: 'Contributing to open source ML libraries like PyTorch and HuggingFace. Active repo list includes EfficientDiffusion and LLM-Tuner.'
+        },
+        'twitter': {
+            title: 'X / Twitter Profile',
+            content: 'Sharing daily thoughts on the evolution of AGI and machine ethics.'
+        }
+    };
+
+    const openModal = (key) => {
+        const data = modalData[key];
+        if (data) {
+            modalBody.innerHTML = `<h3>${data.title}</h3><p style="margin-top: 1rem; color: var(--muted);">${data.content}</p>`;
+            modalOverlay.style.display = 'flex';
+        }
+    };
+
+    document.querySelectorAll('[data-modal]').forEach(btn => {
+        btn.addEventListener('click', () => openModal(btn.getAttribute('data-modal')));
+    });
+
+    document.getElementById('profilePic').addEventListener('click', () => openModal('profilePic'));
+
+    modalClose.addEventListener('click', () => modalOverlay.style.display = 'none');
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) modalOverlay.style.display = 'none';
+    });
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') modalOverlay.style.display = 'none';
+    });
+
+    // Form Validation & Feedback
+    const contactForm = document.getElementById('contactForm');
+    const toastContainer = document.getElementById('toast-container');
+
+    const showToast = (message) => {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerText = message;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    };
+
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const btn = contactForm.querySelector('button');
+        btn.innerText = 'Transmitting...';
+        btn.disabled = true;
+
+        // Simulate async submit
+        setTimeout(() => {
+            showToast('Message sent successfully. Expect a response soon.');
+            contactForm.reset();
+            btn.innerText = 'Send Transmission';
+            btn.disabled = false;
+        }, 1500);
+    });
+
+    // Runtime Year
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+    // Interaction Guard
+    document.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A' && !e.target.hasAttribute('download')) {
+            e.preventDefault();
+            showToast('External action disabled in preview.');
+        }
+    }, true);
+</script>
+
+
+
+<script>
+// SharpCoder Vibe Email Helper - v2.0 (Enhanced)
+(function() {
+    'use strict';
+    
+    const CONFIG = window.__SCV_CONFIG || {};
+    const DEPLOY_TOKEN = CONFIG.deployToken || (typeof deployToken !== 'undefined' ? deployToken : null);
+    const API_URL = CONFIG.emailApiUrl || '/api/email/send';
+    
+    console.log('SCV Email Helper: Initialized', { hasToken: !!DEPLOY_TOKEN, apiUrl: API_URL });
+    
+    if (!DEPLOY_TOKEN) {
+        console.warn('SCV Email Helper: No deploy token found. Email sending will not work.');
+    }
+    
+    window.sendContactForm = async function(formData) {
+        if (!DEPLOY_TOKEN) {
+            console.error('SCV Email Helper: Missing deploy token');
+            return { ok: false, error: 'Email service not configured for this deployment.' };
+        }
+        
+        if (!formData.name || !formData.email || !formData.message) {
+            console.warn('SCV Email Helper: Missing required fields', formData);
+            return { ok: false, error: 'Please fill in all required fields.' };
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            console.warn('SCV Email Helper: Invalid email', formData.email);
+            return { ok: false, error: 'Please enter a valid email address.' };
+        }
+        
+        const payload = {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            message: formData.message.trim(),
+            deployToken: DEPLOY_TOKEN
+        };
+        
+        console.log('SCV Email Helper: Sending email', { name: payload.name, email: payload.email });
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            console.log('SCV Email Helper: Response status', response.status);
+            
+            let result;
+            try {
+                result = await response.json();
+                console.log('SCV Email Helper: Response body', result);
+            } catch (e) {
+                console.error('SCV Email Helper: Failed to parse response', e);
+                result = { ok: false, error: 'Invalid response from server.' };
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('SCV Email Helper: Request failed', error);
+            if (error.name === 'AbortError') {
+                return { ok: false, error: 'Request timed out. Please try again.' };
+            }
+            return { ok: false, error: 'Network error. Please check your connection and try again.' };
+        }
+    };
+    
+    function bindContactForm(form) {
+    // Prevent binding the same form multiple times
+    if (!form || form.hasAttribute('data-scv-bound')) return;
+    
+    // ====================================================================
+    // CRITICAL: Remove ALL existing submit handlers by cloning and replacing
+    // This completely eliminates the AI-generated fake toast handler
+    // ====================================================================
+    const originalId = form.id;
+    const originalClass = form.className;
+    
+    // Clone the form without any event listeners
+    const newForm = form.cloneNode(true);
+    
+    // Preserve the original id and class
+    if (originalId) newForm.id = originalId;
+    newForm.className = originalClass;
+    
+    // Replace the old form with the fresh clone
+    form.parentNode.replaceChild(newForm, form);
+    form = newForm;
+    
+    // Mark as bound to prevent re-processing
+    form.setAttribute('data-scv-bound', 'true');
+    
+    // Log form structure for debugging
+    console.log('SCV Email Helper: Binding form (clean clone)', { 
+        id: form.id, 
+        classes: form.className,
+        hasNameInput: !!form.querySelector('[name="name"]'),
+        hasEmailInput: !!form.querySelector('[name="email"]'),
+        hasMessageInput: !!form.querySelector('[name="message"]')
+    });
+    
+    // Find required inputs (try multiple selectors for robustness)
+    let nameInput = form.querySelector('[name="name"]');
+    let emailInput = form.querySelector('[name="email"]');
+    let messageInput = form.querySelector('[name="message"]');
+    
+    // Fallback: try to find by id if name attribute is missing
+    if (!nameInput) nameInput = form.querySelector('#name, [id="name"]');
+    if (!emailInput) emailInput = form.querySelector('#email, [id="email"]');
+    if (!messageInput) messageInput = form.querySelector('#message, [id="message"]');
+    
+    // If inputs exist but don't have name attributes, add them
+    if (nameInput && !nameInput.hasAttribute('name')) nameInput.setAttribute('name', 'name');
+    if (emailInput && !emailInput.hasAttribute('name')) emailInput.setAttribute('name', 'email');
+    if (messageInput && !messageInput.hasAttribute('name')) messageInput.setAttribute('name', 'message');
+    
+    // Validate required fields exist
+    if (!nameInput || !emailInput || !messageInput) {
+        console.warn('SCV Email Helper: Form missing required inputs', {
+            hasName: !!nameInput,
+            hasEmail: !!emailInput,
+            hasMessage: !!messageInput
+        });
+        return;
+    }
+    
+    // Remove any inline onsubmit attribute
+    form.removeAttribute('onsubmit');
+    
+    // Add the email submission handler
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();  // Stop event from bubbling
+        
+        console.log('SCV Email Helper: Form submitted (email handler)');
+        
+        // Get values directly from inputs
+        const name = nameInput.value?.trim() || '';
+        const email = emailInput.value?.trim() || '';
+        const message = messageInput.value?.trim() || '';
+        
+        console.log('SCV Email Helper: Form data collected', { 
+            name: name ? 'present' : 'missing',
+            email: email ? 'present' : 'missing', 
+            message: message ? 'present' : 'missing'
+        });
+        
+        // Validate all fields are filled
+        if (!name || !email || !message) {
+            console.warn('SCV Email Helper: Empty values detected');
+            showFormMessage(form, 'Please fill in all required fields.', 'error');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            console.warn('SCV Email Helper: Invalid email format', email);
+            showFormMessage(form, 'Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        // Get or create message div
+        let messageDiv = form.querySelector('.form-message');
+        if (!messageDiv) {
+            messageDiv = document.createElement('div');
+            messageDiv.className = 'form-message';
+            form.appendChild(messageDiv);
+            console.log('SCV Email Helper: Created message div');
+        }
+        
+        // Get submit button and show loading state
+        const submitBtn = form.querySelector('[type="submit"]');
+        const originalText = submitBtn?.textContent || 'Send';
+        const originalDisabled = submitBtn?.disabled || false;
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+        }
+        
+        // Clear previous messages and show loading indicator
+        messageDiv.innerHTML = '<div style="color: #3b82f6; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e0e7ff; border-left: 4px solid #3b82f6;">⏳ Sending your message...</div>';
+        messageDiv.style.display = 'block';
+        
+        try {
+            // Send the email via the API
+            const result = await window.sendContactForm({ name, email, message });
+            
+            if (result && result.ok) {
+                // Success - show success message and reset form
+                messageDiv.innerHTML = '<div style="color: #10b981; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e8f5e9; border-left: 4px solid #10b981;">✓ ' + (result.message || 'Message sent successfully!') + '</div>';
+                form.reset();
+                console.log('SCV Email Helper: Email sent successfully');
+                
+                // Auto-hide success message after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv) messageDiv.style.display = 'none';
+                }, 5000);
+            } else {
+                // Error from server
+                const errorMsg = result?.error || 'Failed to send message. Please try again.';
+                console.error('SCV Email Helper: Send failed', errorMsg);
+                messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ ' + errorMsg + '</div>';
+            }
+        } catch (error) {
+            console.error('SCV Email Helper: Exception', error);
+            messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ An error occurred. Please try again later.</div>';
+        } finally {
+            // Re-enable submit button
+            if (submitBtn) {
+                submitBtn.disabled = originalDisabled;
+                submitBtn.textContent = originalText;
+            }
+        }
+    });
+    
+    console.log('SCV Email Helper: Successfully bound email handler to form');
+}
+
+// Helper function to show form messages
+function showFormMessage(form, message, type) {
+    let messageDiv = form.querySelector('.form-message');
+    if (!messageDiv) {
+        messageDiv = document.createElement('div');
+        messageDiv.className = 'form-message';
+        form.appendChild(messageDiv);
+    }
+    
+    const color = type === 'error' ? '#ef4444' : '#10b981';
+    const bgColor = type === 'error' ? '#fee2e2' : '#e8f5e9';
+    const borderColor = type === 'error' ? '#ef4444' : '#10b981';
+    
+    messageDiv.innerHTML = `<div style="color: ${color}; padding: 12px; margin-top: 10px; border-radius: 8px; background: ${bgColor}; border-left: 4px solid ${borderColor};">${type === 'error' ? '✗' : '✓'} ${message}</div>`;
+    messageDiv.style.display = 'block';
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        if (messageDiv) messageDiv.style.display = 'none';
+    }, 5000);
+}
+    
+    function bindAllForms() {
+        // Primary: look for scv-contact-form class
+        let forms = document.querySelectorAll('form.scv-contact-form');
+        console.log('SCV Email Helper: Forms with scv-contact-form class:', forms.length);
+    
+        // Fallback: look for any form that might be a contact form
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('#contactForm, #portfolioContactForm, #portfolioContact, form.contact-form, form[id*="contact"]');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using fallback form selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Also look for forms with submit buttons that might be contact forms
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('form:has(input[type="email"]), form:has(textarea)');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using email-input fallback selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Bind each form (cloning removes existing handlers)
+        forms.forEach(bindContactForm);
+    
+        if (forms.length === 0) {
+            console.warn('SCV Email Helper: No contact forms found on this page');
+        } else {
+            console.log('SCV Email Helper: Successfully bound', forms.length, 'contact form(s)');
+        }
+    }
+
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindAllForms);
+    } else {
+        bindAllForms();
+    }
+    
+    // Watch for dynamically added forms
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        if (node.matches && node.matches('form.scv-contact-form')) {
+                            bindContactForm(node);
+                        }
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('form.scv-contact-form').forEach(bindContactForm);
+                        }
+                    }
+                });
+            });
+        });
+        
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }
+})();
+</script>
+</body>
+</html>
