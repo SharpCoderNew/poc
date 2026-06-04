@@ -1,0 +1,1570 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <title>Lumina Academy | Modern Learning Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-2: #4f46e5;
+      --on-primary: #ffffff;
+      --accent: #f43f5e;
+      --on-accent: #ffffff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --focus: #818cf8;
+      
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 16px;
+      --space-4: 32px;
+      --space-5: 64px;
+      --space-6: 128px;
+      
+      --font-size-1: 0.75rem;
+      --font-size-2: 0.875rem;
+      --font-size-3: 1rem;
+      --font-size-4: 1.25rem;
+      --font-size-5: 2.5rem;
+      --font-size-6: 4rem;
+      
+      --radius-btn: 4px;
+      --radius-card: 12px;
+      --radius-pill: 9999px;
+      
+      --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-strong: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      
+      --gutter: 0;
+      --page-top: var(--space-4);
+      --page-bottom: var(--space-6);
+      --header-height: 72px;
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+      --dur-fast: 150ms;
+      --dur-med: 300ms;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0f172a;
+      --bg-2: #1e293b;
+      --surface: #1e293b;
+      --surface-2: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --header-bg: rgba(15, 23, 42, 0.8);
+      --divider: rgba(255, 255, 255, 0.05);
+      --overlay: rgba(0, 0, 0, 0.85);
+    }
+
+    html[data-theme="light"] {
+      --bg: #ffffff;
+      --bg-2: #f8fafc;
+      --surface: #ffffff;
+      --surface-2: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --header-bg: rgba(255, 255, 255, 0.8);
+      --divider: rgba(0, 0, 0, 0.05);
+      --overlay: rgba(0, 0, 0, 0.6);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    #page {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: var(--space-3);
+      padding-right: var(--space-3);
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--header-height);
+      background: var(--header-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .nav-desktop {
+      display: none;
+      gap: var(--space-4);
+    }
+
+    @media (min-width: 768px) {
+      .nav-desktop {
+        display: flex;
+      }
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-weight: 500;
+      font-size: var(--font-size-2);
+      cursor: pointer;
+      padding: var(--space-2);
+      transition: color var(--dur-fast) var(--ease-standard);
+    }
+
+    .nav-btn:hover {
+      color: var(--primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .theme-toggle {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--radius-btn);
+      font-weight: 600;
+      font-size: var(--font-size-2);
+      cursor: pointer;
+      transition: transform var(--dur-fast), filter var(--dur-fast);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    .mobile-toggle {
+      display: flex;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    @media (min-width: 768px) {
+      .mobile-toggle {
+        display: none;
+      }
+    }
+
+    /* Hero */
+    .hero {
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      padding-top: var(--header-height);
+    }
+
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.4);
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      margin-bottom: var(--space-3);
+      color: #fff;
+    }
+
+    .hero p {
+      font-size: var(--font-size-4);
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: var(--space-4);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Stats Section */
+    .stats-section {
+      padding: var(--space-5) 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+      text-align: center;
+    }
+
+    @media (min-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .stat-item h3 {
+      font-size: 2.5rem;
+      color: var(--primary);
+      font-family: 'Inter', sans-serif;
+      margin-bottom: var(--space-1);
+    }
+
+    .stat-item p {
+      color: var(--muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: var(--font-size-1);
+    }
+
+    /* Featured Courses */
+    .section-title {
+      text-align: center;
+      margin-bottom: var(--space-5);
+    }
+
+    .section-title h2 {
+      font-size: 2.5rem;
+      margin-bottom: var(--space-2);
+    }
+
+    .section-title p {
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--space-4);
+      padding-bottom: var(--space-5);
+    }
+
+    .course-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      transition: transform var(--dur-med) var(--ease-standard), box-shadow var(--dur-med) var(--ease-standard);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .course-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-strong);
+    }
+
+    .course-image {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .course-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--dur-med) var(--ease-standard);
+    }
+
+    .course-card:hover .course-image img {
+      transform: scale(1.05);
+    }
+
+    .course-content {
+      padding: var(--space-3);
+      flex-grow: 1;
+    }
+
+    .course-category {
+      font-size: var(--font-size-1);
+      color: var(--primary);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: var(--space-1);
+      display: block;
+    }
+
+    .course-title {
+      font-size: 1.25rem;
+      margin-bottom: var(--space-2);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    .course-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: var(--font-size-2);
+      margin-top: auto;
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--divider);
+    }
+
+    .course-action-btn {
+      width: 100%;
+      padding: var(--space-2);
+      background: var(--surface-2);
+      border: none;
+      color: var(--text);
+      font-weight: 600;
+      margin-top: var(--space-3);
+      cursor: pointer;
+      border-radius: var(--radius-btn);
+      transition: background var(--dur-fast);
+    }
+
+    .course-action-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Instructors */
+    .instructors-section {
+      background: var(--bg-2);
+      padding: var(--space-5) 0;
+    }
+
+    .instructors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .instructor-card {
+      text-align: center;
+      background: var(--surface);
+      padding: var(--space-4);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+    }
+
+    .instructor-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto var(--space-3);
+      cursor: pointer;
+    }
+
+    .instructor-name {
+      font-size: 1.25rem;
+      margin-bottom: 4px;
+    }
+
+    .instructor-role {
+      color: var(--muted);
+      font-size: var(--font-size-2);
+      margin-bottom: var(--space-3);
+    }
+
+    /* Contact Section */
+    .contact-section {
+      padding: var(--space-5) 0;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+    }
+
+    @media (min-width: 992px) {
+      .contact-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .form-group label {
+      font-size: var(--font-size-2);
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .form-control {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px;
+      border-radius: var(--radius-btn);
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .form-control:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
+    }
+
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: var(--space-5) 0 var(--space-3);
+      margin-top: auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+
+    .footer-col h4 {
+      font-size: 1.1rem;
+      margin-bottom: var(--space-3);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col ul li {
+      margin-bottom: var(--space-2);
+    }
+
+    .footer-link {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: var(--font-size-2);
+      transition: color var(--dur-fast);
+    }
+
+    .footer-link:hover {
+      color: var(--primary);
+    }
+
+    .social-links {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    .social-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      cursor: pointer;
+      border: none;
+      font-size: 1.1rem;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--divider);
+      padding-top: var(--space-3);
+      text-align: center;
+      font-size: var(--font-size-1);
+      color: var(--muted);
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--overlay);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-3);
+    }
+
+    .modal-content {
+      background: var(--surface);
+      width: 100%;
+      max-width: 600px;
+      border-radius: var(--radius-card);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-strong);
+      animation: modalFadeIn 0.3s var(--ease-standard);
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: var(--space-2);
+      right: var(--space-2);
+      background: var(--surface-2);
+      border: none;
+      color: var(--text);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .modal-body {
+      padding: var(--space-4);
+    }
+
+    .modal-img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      margin-bottom: var(--space-4);
+      border-radius: var(--radius-card);
+    }
+
+    /* Mobile Menu Drawer */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 80%;
+      max-width: 300px;
+      height: 100%;
+      background: var(--surface);
+      z-index: 1500;
+      padding: var(--space-5) var(--space-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      transition: right 0.3s var(--ease-standard);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+    }
+
+    .mobile-nav.open {
+      right: 0;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: var(--space-4);
+      right: var(--space-4);
+      z-index: 3000;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: var(--surface-2);
+      color: var(--text);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-btn);
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow-strong);
+      margin-top: var(--space-2);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      animation: toastIn 0.3s var(--ease-standard);
+      pointer-events: auto;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s var(--ease-standard);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+  </style>
+</head>
+<body>
+<script>
+            // SharpCoder Vibe Configuration
+            window.__SCV_CONFIG = window.__SCV_CONFIG || {};
+            window.__SCV_CONFIG.deployToken = "CfDJ8HFZOoVEHP5EojFr_x7Dd57GeXZO1I9XAw4CV9VAClRzJzTBQi4B1vzFrG8Bl-hcJLOsbAAv7YOfgTpEdYUqwKMcibSzFUzytx0rSicZxa3fT8CKBEkDaXvaQ5iESbyZqqp3o2-bLSOOzxebgHTYHAr8dV77goI7XT2Zr3VpsNbRkc0oeDciOLeoacLmqyyG5g";
+            // In InjectDeployTokenAndEmailConfig method
+            window.__SCV_CONFIG.emailApiUrl = "https://staging.sharpcoder.ai/api/email/send";
+            window.__SCV_CONFIG.emailEnabled = true;
+            window.__SCV_CONFIG.version = "1.0.0";
+            </script>
+<script>let deployToken = "CfDJ8HFZOoVEHP5EojFr_x7Dd57GeXZO1I9XAw4CV9VAClRzJzTBQi4B1vzFrG8Bl-hcJLOsbAAv7YOfgTpEdYUqwKMcibSzFUzytx0rSicZxa3fT8CKBEkDaXvaQ5iESbyZqqp3o2-bLSOOzxebgHTYHAr8dV77goI7XT2Zr3VpsNbRkc0oeDciOLeoacLmqyyG5g";</script>
+
+
+  <div id="page">
+    <!-- Header -->
+    <header>
+      <div class="container header-inner">
+        <button type="button" class="brand-logo" id="homeBtn">Lumina</button>
+        
+        <nav class="nav-desktop">
+          <button type="button" class="nav-btn" data-scroll="courses">Courses</button>
+          <button type="button" class="nav-btn" data-scroll="instructors">Instructors</button>
+          <button type="button" class="nav-btn" data-scroll="about">About</button>
+          <button type="button" class="nav-btn" data-scroll="contact">Contact</button>
+        </nav>
+
+        <div class="header-actions">
+          <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <svg class="sun hidden" width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>
+            <svg class="moon" width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+          </button>
+          <button type="button" class="btn-primary" id="startBtn">Get Started</button>
+          <button type="button" class="mobile-toggle" id="menuOpen" aria-label="Open menu">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Drawer -->
+    <div class="mobile-nav" id="mobileNav">
+      <button type="button" class="modal-close" id="menuClose">✕</button>
+      <button type="button" class="nav-btn" data-scroll="courses">Courses</button>
+      <button type="button" class="nav-btn" data-scroll="instructors">Instructors</button>
+      <button type="button" class="nav-btn" data-scroll="about">About Us</button>
+      <button type="button" class="nav-btn" data-scroll="contact">Contact</button>
+      <button type="button" class="btn-primary" style="margin-top: var(--space-4)">Join Community</button>
+    </div>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-bg">
+          <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070" alt="Students learning together" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+        </div>
+        <div class="container hero-content">
+          <h1 class="reveal">Illuminate Your Path to Mastery</h1>
+          <p class="reveal">Join over 50,000 students worldwide and learn from industry leaders in technology, business, and creative arts.</p>
+          <div class="reveal" style="display:flex; gap: var(--space-3); justify-content:center;">
+            <button type="button" class="btn-primary" data-scroll="courses">Explore Courses</button>
+            <button type="button" class="btn-primary" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); color: #fff;">Watch Demo</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="stats-section">
+        <div class="container">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <h3 class="stat-number" data-target="1500">0</h3>
+              <p>Premium Courses</p>
+            </div>
+            <div class="stat-item">
+              <h3 class="stat-number" data-target="52000">0</h3>
+              <p>Active Students</p>
+            </div>
+            <div class="stat-item">
+              <h3 class="stat-number" data-target="240">0</h3>
+              <p>Expert Mentors</p>
+            </div>
+            <div class="stat-item">
+              <h3 class="stat-number" data-target="48">0</h3>
+              <p>Countries Represented</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Featured Courses -->
+      <section id="courses" class="container" style="padding: var(--space-5) var(--space-3);">
+        <div class="section-title reveal">
+          <h2>Popular Curriculums</h2>
+          <p>Hand-picked paths designed to take you from novice to expert in 12 weeks or less.</p>
+        </div>
+
+        <div class="courses-grid">
+          <!-- Course 1 -->
+          <article class="course-card reveal">
+            <div class="course-image">
+              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=600" alt="Web Development" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+            </div>
+            <div class="course-content">
+              <span class="course-category">Development</span>
+              <h3 class="course-title">Modern Web Engineering</h3>
+              <p class="course-meta">
+                <span>42 Lessons</span>
+                <span>⭐ 4.9 (2.1k)</span>
+              </p>
+              <button type="button" class="course-action-btn" data-product="web-eng">View Course Details</button>
+            </div>
+          </article>
+
+          <!-- Course 2 -->
+          <article class="course-card reveal">
+            <div class="course-image">
+              <img src="https://images.unsplash.com/photo-1557838923-2985c318be48?q=80&w=600" alt="UI/UX Design" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+            </div>
+            <div class="course-content">
+              <span class="course-category">Design</span>
+              <h3 class="course-title">User Experience Mastery</h3>
+              <p class="course-meta">
+                <span>28 Lessons</span>
+                <span>⭐ 4.8 (1.5k)</span>
+              </p>
+              <button type="button" class="course-action-btn" data-product="uiux">View Course Details</button>
+            </div>
+          </article>
+
+          <!-- Course 3 -->
+          <article class="course-card reveal">
+            <div class="course-image">
+              <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600" alt="Business Growth" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+            </div>
+            <div class="course-content">
+              <span class="course-category">Business</span>
+              <h3 class="course-title">Digital Entrepreneurship</h3>
+              <p class="course-meta">
+                <span>35 Lessons</span>
+                <span>⭐ 4.7 (890)</span>
+              </p>
+              <button type="button" class="course-action-btn" data-product="business">View Course Details</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Instructors -->
+      <section id="instructors" class="instructors-section">
+        <div class="container">
+          <div class="section-title reveal">
+            <h2>Learn from the Best</h2>
+            <p>Our mentors aren't just teachers—they are practitioners currently working at the world's top tech firms.</p>
+          </div>
+
+          <div class="instructors-grid">
+            <div class="instructor-card reveal">
+              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=300" alt="Dr. Sarah Chen" class="instructor-avatar" data-person="sarah" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+              <h4 class="instructor-name">Dr. Sarah Chen</h4>
+              <p class="instructor-role">Senior AI Researcher</p>
+              <button type="button" class="nav-btn" data-person="sarah">View Bio</button>
+            </div>
+            <div class="instructor-card reveal">
+              <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=300" alt="Marcus Thorne" class="instructor-avatar" data-person="marcus" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+              <h4 class="instructor-name">Marcus Thorne</h4>
+              <p class="instructor-role">Principal Product Designer</p>
+              <button type="button" class="nav-btn" data-person="marcus">View Bio</button>
+            </div>
+            <div class="instructor-card reveal">
+              <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=300" alt="Elena Rodriguez" class="instructor-avatar" data-person="elena" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+              <h4 class="instructor-name">Elena Rodriguez</h4>
+              <p class="instructor-role">Full Stack Architect</p>
+              <button type="button" class="nav-btn" data-person="elena">View Bio</button>
+            </div>
+            <div class="instructor-card reveal">
+              <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=300" alt="David Park" class="instructor-avatar" data-person="david" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+              <h4 class="instructor-name">David Park</h4>
+              <p class="instructor-role">Strategic Ops Lead</p>
+              <button type="button" class="nav-btn" data-person="david">View Bio</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact -->
+      <section id="contact" class="contact-section">
+        <div class="container">
+          <div class="contact-grid">
+            <div class="reveal">
+              <h2 style="font-size: 3rem; margin-bottom: var(--space-3)">Get in Touch</h2>
+              <p style="color: var(--muted); margin-bottom: var(--space-4)">Have questions about our curriculums or need a custom plan for your team? Our education consultants are ready to help you navigate your learning journey.</p>
+              
+              <div style="display:flex; flex-direction:column; gap: var(--space-2)">
+                <div style="display:flex; align-items:center; gap: var(--space-3)">
+                  <span style="color: var(--primary); font-size: 1.5rem">📍</span>
+                  <span>101 Silicon Valley Blvd, CA 94043</span>
+                </div>
+                <div style="display:flex; align-items:center; gap: var(--space-3)">
+                  <span style="color: var(--primary); font-size: 1.5rem">✉️</span>
+                  <span>admissions@lumina.edu</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="reveal">
+              
+            <form class='scv-contact-form' id='contactForm'>
+                <div class='form-group'>
+                    <label for='name'>Full Name</label>
+                    <input type='text' name='name' id='name' placeholder='Your Name' required>
+                </div>
+                <div class='form-group'>
+                    <label for='email'>Email Address</label>
+                    <input type='email' name='email' id='email' placeholder='Your Email' required>
+                </div>
+                <div class='form-group'>
+                    <label for='subject'>Subject</label>
+                    <input type='text' name='subject' id='subject' placeholder='Subject'>
+                </div>
+                <div class='form-group'>
+                    <label for='message'>Message</label>
+                    <textarea name='message' id='message' rows='5' placeholder='Your Message...' required></textarea>
+                </div>
+                <button type='submit' class='btn-primary'>Send Message</button>
+                <div class='form-message'></div>
+            </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h4 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--text)">Lumina</h4>
+            <p style="color: var(--muted); margin-bottom: var(--space-3)">Empowering the next generation of digital leaders since 2018.</p>
+            <div class="social-links">
+              <button type="button" class="social-icon" data-social="twitter" aria-label="Twitter">𝕏</button>
+              <button type="button" class="social-icon" data-social="linkedin" aria-label="LinkedIn">in</button>
+              <button type="button" class="social-icon" data-social="instagram" aria-label="Instagram">ig</button>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><button type="button" class="footer-link" data-scroll="courses">All Courses</button></li>
+              <li><button type="button" class="footer-link" data-scroll="instructors">Our Mentors</button></li>
+              <li><button type="button" class="footer-link">Learning Paths</button></li>
+              <li><button type="button" class="footer-link">Scholarships</button></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Support</h4>
+            <ul>
+              <li><button type="button" class="footer-link">Help Center</button></li>
+              <li><button type="button" class="footer-link">Terms of Service</button></li>
+              <li><button type="button" class="footer-link">Privacy Policy</button></li>
+              <li><button type="button" class="footer-link" data-scroll="contact">Contact Us</button></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Newsletter</h4>
+            <p style="color: var(--muted); font-size: var(--font-size-2); margin-bottom: var(--space-2)">Get monthly learning resources and discount codes.</p>
+            <div style="display:flex; gap: var(--space-2)">
+              <input type="email" class="form-control" placeholder="Email" id="newsletterInput">
+              <button type="button" class="btn-primary" id="newsletterSubmit">Join</button>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; <span id="year"></span> Lumina Academy. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-content">
+        <button type="button" class="modal-close" id="modalClose">✕</button>
+        <div class="modal-body" id="modalBody">
+          <!-- Injected Content -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+  </div>
+
+  <script>
+    // Theme Logic
+    const themeToggle = document.getElementById('themeToggle');
+    const sunIcon = themeToggle.querySelector('.sun');
+    const moonIcon = themeToggle.querySelector('.moon');
+
+    function updateThemeUI(theme) {
+      if (theme === 'dark') {
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      } else {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+      }
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeUI(newTheme);
+    });
+
+    updateThemeUI(document.documentElement.getAttribute('data-theme'));
+
+    // Mobile Menu
+    const menuOpen = document.getElementById('menuOpen');
+    const menuClose = document.getElementById('menuClose');
+    const mobileNav = document.getElementById('mobileNav');
+
+    menuOpen.addEventListener('click', () => mobileNav.classList.add('open'));
+    menuClose.addEventListener('click', () => mobileNav.classList.remove('open'));
+
+    // Navigation and Scrolling
+    document.addEventListener('click', (e) => {
+      const scrollTarget = e.target.closest('[data-scroll]');
+      if (scrollTarget) {
+        const id = scrollTarget.getAttribute('data-scroll');
+        const element = document.getElementById(id);
+        if (element) {
+          mobileNav.classList.remove('open');
+          window.scrollTo({
+            top: element.offsetTop - 72,
+            behavior: 'smooth'
+          });
+        }
+      }
+    });
+
+    // Animated Numbers
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const target = parseInt(entry.target.getAttribute('data-target'));
+          let current = 0;
+          const increment = target / 50;
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+              entry.target.textContent = target + (target > 50 ? '+' : '');
+              clearInterval(timer);
+            } else {
+              entry.target.textContent = Math.floor(current);
+            }
+          }, 30);
+          statsObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stat-number').forEach(stat => statsObserver.observe(stat));
+
+    // Reveal on Scroll
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Modals
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalBody = document.getElementById('modalBody');
+    const modalClose = document.getElementById('modalClose');
+
+    const personData = {
+      sarah: {
+        name: "Dr. Sarah Chen",
+        role: "Senior AI Researcher",
+        bio: "Sarah has published over 40 papers on neural networks and currently leads the AI ethics department at a major global technology firm. She brings a practical yet deeply theoretical approach to teaching machine learning.",
+        img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600"
+      },
+      marcus: {
+        name: "Marcus Thorne",
+        role: "Principal Product Designer",
+        bio: "With over 15 years in the industry, Marcus has designed interfaces used by millions. He specializes in accessibility and design systems. His course focuses on the intersection of aesthetic beauty and functional utility.",
+        img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600"
+      },
+      elena: {
+        name: "Elena Rodriguez",
+        role: "Full Stack Architect",
+        bio: "Elena is a veteran developer who transitioned from legacy systems to modern cloud architecture. She advocates for clean code and developer wellness. She teaches students how to build resilient, scalable systems.",
+        img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=600"
+      },
+      david: {
+        name: "David Park",
+        role: "Strategic Ops Lead",
+        bio: "David specializes in scaling startups from seed to Series C. His insights into operational efficiency and market strategy have helped dozens of entrepreneurs launch successful ventures.",
+        img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600"
+      }
+    };
+
+    const productData = {
+      "web-eng": {
+        title: "Modern Web Engineering",
+        desc: "A comprehensive deep-dive into React, Node.js, and Cloud Deployment. Build real-world projects that scale.",
+        img: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=600"
+      },
+      "uiux": {
+        title: "User Experience Mastery",
+        desc: "Learn the psychology of user behavior, wireframing, high-fidelity prototyping, and usability testing.",
+        img: "https://images.unsplash.com/photo-1557838923-2985c318be48?q=80&w=600"
+      },
+      "business": {
+        title: "Digital Entrepreneurship",
+        desc: "From idea validation to customer acquisition. Learn how to build a sustainable digital business from scratch.",
+        img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600"
+      }
+    };
+
+    document.addEventListener('click', (e) => {
+      const personBtn = e.target.closest('[data-person]');
+      const productBtn = e.target.closest('[data-product]');
+      const socialBtn = e.target.closest('[data-social]');
+
+      if (personBtn) {
+        const id = personBtn.getAttribute('data-person');
+        const data = personData[id];
+        modalBody.innerHTML = `
+          <img src="${data.img}" class="modal-img" alt="${data.name}" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+          <h2 style="margin-bottom: var(--space-2)">${data.name}</h2>
+          <p style="color: var(--primary); font-weight: 600; margin-bottom: var(--space-3)">${data.role}</p>
+          <p>${data.bio}</p>
+          <button type="button" class="btn-primary" style="margin-top: var(--space-4); width: 100%">Follow Profile</button>
+        `;
+        modalOverlay.style.display = 'flex';
+      }
+
+      if (productBtn) {
+        const id = productBtn.getAttribute('data-product');
+        const data = productData[id];
+        modalBody.innerHTML = `
+          <img src="${data.img}" class="modal-img" alt="${data.title}" referrerpolicy="no-referrer-when-downgrade" crossorigin="anonymous">
+          <h2 style="margin-bottom: var(--space-2)">${data.title}</h2>
+          <p style="margin-bottom: var(--space-3)">${data.desc}</p>
+          <div style="background: var(--surface-2); padding: var(--space-3); border-radius: var(--radius-btn); margin-bottom: var(--space-4)">
+            <p><strong>Duration:</strong> 12 Weeks</p>
+            <p><strong>Level:</strong> Intermediate</p>
+            <p><strong>Certification:</strong> Professional Diploma</p>
+          </div>
+          <button type="button" class="btn-primary" style="width: 100%">Enroll Now</button>
+        `;
+        modalOverlay.style.display = 'flex';
+      }
+
+      if (socialBtn) {
+        const platform = socialBtn.getAttribute('data-social');
+        showToast(`Social link to ${platform} is disabled in preview.`);
+      }
+    });
+
+    const closeModal = () => modalOverlay.style.display = 'none';
+    modalClose.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        mobileNav.classList.remove('open');
+      }
+    });
+
+    // Toast Logic
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `<span>${message}</span>`;
+      const container = document.getElementById('toastContainer');
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Forms
+    const contactForm = document.getElementById('contactForm');
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      showToast("Thank you! Your message has been sent successfully.");
+      contactForm.reset();
+    });
+
+    const newsletterSubmit = document.getElementById('newsletterSubmit');
+    newsletterSubmit.addEventListener('click', () => {
+      const email = document.getElementById('newsletterInput').value;
+      if (email.includes('@')) {
+        showToast("Welcome to the community! Check your inbox.");
+        document.getElementById('newsletterInput').value = '';
+      } else {
+        showToast("Please enter a valid email address.");
+      }
+    });
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+      showToast("Registration is currently open for the Spring 2026 cohort!");
+    });
+
+    document.getElementById('homeBtn').addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Runtime Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Local Safe Interaction Guard
+    document.getElementById('page').addEventListener('click', (e) => {
+      const anchor = e.target.closest('a');
+      if (anchor) {
+        e.preventDefault();
+        showToast("External or unsafe action disabled in preview.");
+      }
+    }, true);
+  </script>
+
+
+<script>
+// SharpCoder Vibe Email Helper - v2.0 (Enhanced)
+(function() {
+    'use strict';
+    
+    const CONFIG = window.__SCV_CONFIG || {};
+    const DEPLOY_TOKEN = CONFIG.deployToken || (typeof deployToken !== 'undefined' ? deployToken : null);
+    const API_URL = CONFIG.emailApiUrl || '/api/email/send';
+    
+    console.log('SCV Email Helper: Initialized', { hasToken: !!DEPLOY_TOKEN, apiUrl: API_URL });
+    
+    if (!DEPLOY_TOKEN) {
+        console.warn('SCV Email Helper: No deploy token found. Email sending will not work.');
+    }
+    
+    window.sendContactForm = async function(formData) {
+        if (!DEPLOY_TOKEN) {
+            console.error('SCV Email Helper: Missing deploy token');
+            return { ok: false, error: 'Email service not configured for this deployment.' };
+        }
+        
+        if (!formData.name || !formData.email || !formData.message) {
+            console.warn('SCV Email Helper: Missing required fields', formData);
+            return { ok: false, error: 'Please fill in all required fields.' };
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            console.warn('SCV Email Helper: Invalid email', formData.email);
+            return { ok: false, error: 'Please enter a valid email address.' };
+        }
+        
+        const payload = {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            message: formData.message.trim(),
+            deployToken: DEPLOY_TOKEN
+        };
+        
+        console.log('SCV Email Helper: Sending email', { name: payload.name, email: payload.email });
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            console.log('SCV Email Helper: Response status', response.status);
+            
+            let result;
+            try {
+                result = await response.json();
+                console.log('SCV Email Helper: Response body', result);
+            } catch (e) {
+                console.error('SCV Email Helper: Failed to parse response', e);
+                result = { ok: false, error: 'Invalid response from server.' };
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('SCV Email Helper: Request failed', error);
+            if (error.name === 'AbortError') {
+                return { ok: false, error: 'Request timed out. Please try again.' };
+            }
+            return { ok: false, error: 'Network error. Please check your connection and try again.' };
+        }
+    };
+    
+    function bindContactForm(form) {
+    // Prevent binding the same form multiple times
+    if (!form || form.hasAttribute('data-scv-bound')) return;
+    
+    // ====================================================================
+    // CRITICAL: Remove ALL existing submit handlers by cloning and replacing
+    // This completely eliminates the AI-generated fake toast handler
+    // ====================================================================
+    const originalId = form.id;
+    const originalClass = form.className;
+    
+    // Clone the form without any event listeners
+    const newForm = form.cloneNode(true);
+    
+    // Preserve the original id and class
+    if (originalId) newForm.id = originalId;
+    newForm.className = originalClass;
+    
+    // Replace the old form with the fresh clone
+    form.parentNode.replaceChild(newForm, form);
+    form = newForm;
+    
+    // Mark as bound to prevent re-processing
+    form.setAttribute('data-scv-bound', 'true');
+    
+    // Log form structure for debugging
+    console.log('SCV Email Helper: Binding form (clean clone)', { 
+        id: form.id, 
+        classes: form.className,
+        hasNameInput: !!form.querySelector('[name="name"]'),
+        hasEmailInput: !!form.querySelector('[name="email"]'),
+        hasMessageInput: !!form.querySelector('[name="message"]')
+    });
+    
+    // Find required inputs (try multiple selectors for robustness)
+    let nameInput = form.querySelector('[name="name"]');
+    let emailInput = form.querySelector('[name="email"]');
+    let messageInput = form.querySelector('[name="message"]');
+    
+    // Fallback: try to find by id if name attribute is missing
+    if (!nameInput) nameInput = form.querySelector('#name, [id="name"]');
+    if (!emailInput) emailInput = form.querySelector('#email, [id="email"]');
+    if (!messageInput) messageInput = form.querySelector('#message, [id="message"]');
+    
+    // If inputs exist but don't have name attributes, add them
+    if (nameInput && !nameInput.hasAttribute('name')) nameInput.setAttribute('name', 'name');
+    if (emailInput && !emailInput.hasAttribute('name')) emailInput.setAttribute('name', 'email');
+    if (messageInput && !messageInput.hasAttribute('name')) messageInput.setAttribute('name', 'message');
+    
+    // Validate required fields exist
+    if (!nameInput || !emailInput || !messageInput) {
+        console.warn('SCV Email Helper: Form missing required inputs', {
+            hasName: !!nameInput,
+            hasEmail: !!emailInput,
+            hasMessage: !!messageInput
+        });
+        return;
+    }
+    
+    // Remove any inline onsubmit attribute
+    form.removeAttribute('onsubmit');
+    
+    // Add the email submission handler
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();  // Stop event from bubbling
+        
+        console.log('SCV Email Helper: Form submitted (email handler)');
+        
+        // Get values directly from inputs
+        const name = nameInput.value?.trim() || '';
+        const email = emailInput.value?.trim() || '';
+        const message = messageInput.value?.trim() || '';
+        
+        console.log('SCV Email Helper: Form data collected', { 
+            name: name ? 'present' : 'missing',
+            email: email ? 'present' : 'missing', 
+            message: message ? 'present' : 'missing'
+        });
+        
+        // Validate all fields are filled
+        if (!name || !email || !message) {
+            console.warn('SCV Email Helper: Empty values detected');
+            showFormMessage(form, 'Please fill in all required fields.', 'error');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            console.warn('SCV Email Helper: Invalid email format', email);
+            showFormMessage(form, 'Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        // Get or create message div
+        let messageDiv = form.querySelector('.form-message');
+        if (!messageDiv) {
+            messageDiv = document.createElement('div');
+            messageDiv.className = 'form-message';
+            form.appendChild(messageDiv);
+            console.log('SCV Email Helper: Created message div');
+        }
+        
+        // Get submit button and show loading state
+        const submitBtn = form.querySelector('[type="submit"]');
+        const originalText = submitBtn?.textContent || 'Send';
+        const originalDisabled = submitBtn?.disabled || false;
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+        }
+        
+        // Clear previous messages and show loading indicator
+        messageDiv.innerHTML = '<div style="color: #3b82f6; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e0e7ff; border-left: 4px solid #3b82f6;">⏳ Sending your message...</div>';
+        messageDiv.style.display = 'block';
+        
+        try {
+            // Send the email via the API
+            const result = await window.sendContactForm({ name, email, message });
+            
+            if (result && result.ok) {
+                // Success - show success message and reset form
+                messageDiv.innerHTML = '<div style="color: #10b981; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e8f5e9; border-left: 4px solid #10b981;">✓ ' + (result.message || 'Message sent successfully!') + '</div>';
+                form.reset();
+                console.log('SCV Email Helper: Email sent successfully');
+                
+                // Auto-hide success message after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv) messageDiv.style.display = 'none';
+                }, 5000);
+            } else {
+                // Error from server
+                const errorMsg = result?.error || 'Failed to send message. Please try again.';
+                console.error('SCV Email Helper: Send failed', errorMsg);
+                messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ ' + errorMsg + '</div>';
+            }
+        } catch (error) {
+            console.error('SCV Email Helper: Exception', error);
+            messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ An error occurred. Please try again later.</div>';
+        } finally {
+            // Re-enable submit button
+            if (submitBtn) {
+                submitBtn.disabled = originalDisabled;
+                submitBtn.textContent = originalText;
+            }
+        }
+    });
+    
+    console.log('SCV Email Helper: Successfully bound email handler to form');
+}
+
+// Helper function to show form messages
+function showFormMessage(form, message, type) {
+    let messageDiv = form.querySelector('.form-message');
+    if (!messageDiv) {
+        messageDiv = document.createElement('div');
+        messageDiv.className = 'form-message';
+        form.appendChild(messageDiv);
+    }
+    
+    const color = type === 'error' ? '#ef4444' : '#10b981';
+    const bgColor = type === 'error' ? '#fee2e2' : '#e8f5e9';
+    const borderColor = type === 'error' ? '#ef4444' : '#10b981';
+    
+    messageDiv.innerHTML = `<div style="color: ${color}; padding: 12px; margin-top: 10px; border-radius: 8px; background: ${bgColor}; border-left: 4px solid ${borderColor};">${type === 'error' ? '✗' : '✓'} ${message}</div>`;
+    messageDiv.style.display = 'block';
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        if (messageDiv) messageDiv.style.display = 'none';
+    }, 5000);
+}
+    
+    function bindAllForms() {
+        // Primary: look for scv-contact-form class
+        let forms = document.querySelectorAll('form.scv-contact-form');
+        console.log('SCV Email Helper: Forms with scv-contact-form class:', forms.length);
+    
+        // Fallback: look for any form that might be a contact form
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('#contactForm, #portfolioContactForm, #portfolioContact, form.contact-form, form[id*="contact"]');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using fallback form selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Also look for forms with submit buttons that might be contact forms
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('form:has(input[type="email"]), form:has(textarea)');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using email-input fallback selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Bind each form (cloning removes existing handlers)
+        forms.forEach(bindContactForm);
+    
+        if (forms.length === 0) {
+            console.warn('SCV Email Helper: No contact forms found on this page');
+        } else {
+            console.log('SCV Email Helper: Successfully bound', forms.length, 'contact form(s)');
+        }
+    }
+
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindAllForms);
+    } else {
+        bindAllForms();
+    }
+    
+    // Watch for dynamically added forms
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        if (node.matches && node.matches('form.scv-contact-form')) {
+                            bindContactForm(node);
+                        }
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('form.scv-contact-form').forEach(bindContactForm);
+                        }
+                    }
+                });
+            });
+        });
+        
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }
+})();
+</script>
+</body>
+</html>
