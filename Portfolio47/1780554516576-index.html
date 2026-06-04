@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporting Hub Pro | Enterprise Analytics</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 80px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #020617;
+            --bg-card: #1e293b;
+            --bg-sidebar: #020617;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            transition: background-color 0.3s ease;
+        }
+
+        button, input, select {
+            background: none;
+            border: none;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+            outline: none;
+        }
+
+        input, select {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        input:focus { border-color: var(--primary); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-outline { border: 1px solid var(--border); }
+        .btn-outline:hover { background: var(--border); }
+
+        /* Sidebar */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        #sidebar.collapsed { width: var(--sidebar-collapsed); }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .logo-box {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-item.active { border-left: 3px solid var(--primary); }
+
+        /* Main Content */
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            height: 64px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            z-index: 90;
+        }
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            scroll-behavior: smooth;
+        }
+
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-change {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .positive { color: var(--success); }
+        .negative { color: var(--danger); }
+
+        /* Tables */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 1rem;
+            background: var(--bg-body);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover { background: rgba(59, 130, 246, 0.05); }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-paused { background: #fef9c3; color: #854d0e; }
+
+        /* Modals & Panels */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+
+        .panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: var(--bg-card);
+            box-shadow: -10px 0 20px rgba(0,0,0,0.1);
+            transition: var(--transition);
+            z-index: 1001;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel.open { right: 0; }
+
+        /* Charts */
+        canvas {
+            width: 100%;
+            height: 300px !important;
+        }
+
+        /* Notifications Toast */
+        #toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: var(--bg-sidebar);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Filter Pills */
+        .filters-bar {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            font-size: 0.875rem;
+            padding: 0.4rem 2rem 0.4rem 0.75rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                left: -260px;
+            }
+            #sidebar.mobile-open {
+                left: 0;
+            }
+            .sidebar-width { width: 0; }
+        }
+
+        .hidden { display: none !important; }
+
+        /* Skeleton Pulse */
+        .skeleton {
+            background: linear-gradient(90deg, var(--border) 25%, var(--bg-body) 50%, var(--border) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+
+                <style>
+                /* Beautiful Contact Form Styles */
+                .scv-contact-form {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 2rem;
+                    background: rgba(255, 255, 255, 0.05);
+                    border-radius: 24px;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    backdrop-filter: blur(10px);
+                }
+
+                .scv-contact-form .form-group {
+                    margin-bottom: 1.25rem;
+                }
+
+                .scv-contact-form label {
+                    display: block;
+                    margin-bottom: 0.5rem;
+                    font-weight: 500;
+                    color: #e2e8f0;
+                    font-size: 0.875rem;
+                }
+
+                .scv-contact-form input,
+                .scv-contact-form textarea {
+                    width: 100%;
+                    padding: 0.75rem 1rem;
+                    background: rgba(255, 255, 255, 0.08);
+                    border: 1px solid rgba(255, 255, 255, 0.15);
+                    border-radius: 12px;
+                    color: #f1f5ff;
+                    font-size: 1rem;
+                    transition: all 0.2s ease;
+                }
+
+                .scv-contact-form input:focus,
+                .scv-contact-form textarea:focus {
+                    outline: none;
+                    border-color: #6c5ce7;
+                    background: rgba(255, 255, 255, 0.12);
+                    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+                }
+
+                .scv-contact-form input::placeholder,
+                .scv-contact-form textarea::placeholder {
+                    color: rgba(255, 255, 255, 0.4);
+                }
+
+                .scv-contact-form button[type='submit'] {
+                    background: linear-gradient(135deg, #6c5ce7 0%, #a78bfa 100%);
+                    border: none;
+                    padding: 0.875rem 1.5rem;
+                    border-radius: 40px;
+                    color: white;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    cursor: pointer;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    width: 100%;
+                }
+
+                .scv-contact-form button[type='submit']:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
+                }
+
+                .scv-contact-form button[type='submit']:disabled {
+                    opacity: 0.6;
+                    transform: none;
+                    cursor: not-allowed;
+                }
+
+                .scv-contact-form .form-message {
+                    margin-top: 1rem;
+                    font-size: 0.875rem;
+                }
+
+                @media (max-width: 640px) {
+                    .scv-contact-form {
+                        padding: 1.25rem;
+                    }
+                }
+                </style></head>
+<body data-theme="light">
+<script>
+            // SharpCoder Vibe Configuration
+            window.__SCV_CONFIG = window.__SCV_CONFIG || {};
+            window.__SCV_CONFIG.deployToken = "CfDJ8OUDH72-h_xMuKpv5SB4va7s1VfTS7Gam6M3DKeGafhRvMmWlI2cVQZkj3GEA67dcpJg_22GgKm_g1yEPIO4DEfvTkcIiib-sXsfHhkHjCtATXlOHLohAUbcgFM209o6T6DOiSc3D59fpGXBWx9Qx2RKpNR2ZxJvhV1xlhy0xrY8OAvUkahNerUxgRDV7co3JA";
+            // In InjectDeployTokenAndEmailConfig method
+            window.__SCV_CONFIG.emailApiUrl = "https://staging.sharpcoder.ai/api/email/send";
+            window.__SCV_CONFIG.emailEnabled = true;
+            window.__SCV_CONFIG.version = "1.0.0";
+            </script>
+<script>let deployToken = "CfDJ8OUDH72-h_xMuKpv5SB4va7s1VfTS7Gam6M3DKeGafhRvMmWlI2cVQZkj3GEA67dcpJg_22GgKm_g1yEPIO4DEfvTkcIiib-sXsfHhkHjCtATXlOHLohAUbcgFM209o6T6DOiSc3D59fpGXBWx9Qx2RKpNR2ZxJvhV1xlhy0xrY8OAvUkahNerUxgRDV7co3JA";</script>
+
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+            </div>
+            <span style="font-weight: 700; font-size: 1.1rem; letter-spacing: -0.5px">Reporting Hub <span style="color: var(--primary)">Pro</span></span>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="nav-item active" onclick="app.setView('dashboard')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>Dashboard</span>
+            </button>
+            <button class="nav-item" onclick="app.setView('campaigns')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                <span>Campaigns</span>
+            </button>
+            <button class="nav-item" onclick="app.setView('analytics')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                <span>Analytics</span>
+            </button>
+            <button class="nav-item" onclick="app.setView('reports')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span>Reports</span>
+            </button>
+            <button class="nav-item" onclick="app.setView('alerts')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <span>Alerts</span>
+            </button>
+            <div style="flex: 1"></div>
+            <button class="nav-item" onclick="app.setView('settings')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>Settings</span>
+            </button>
+        </nav>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <main id="main">
+        <header>
+            <div class="header-left">
+                <button onclick="app.toggleSidebar()" class="btn btn-outline" aria-label="Toggle Sidebar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <div style="position: relative">
+                    <input type="text" id="global-search" placeholder="Search campaigns, reports..." style="padding-left: 2.5rem; width: 300px;">
+                    <svg style="position: absolute; left: 0.75rem; top: 0.6rem; color: var(--text-muted)" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-outline" onclick="app.toggleTheme()" title="Toggle Dark/Light Mode">
+                    <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+                <button class="btn btn-outline" onclick="app.showPanel('notifications')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                </button>
+                <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; border: 2px solid var(--primary); cursor: pointer;" onclick="app.showModal('user-menu')">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" alt="User">
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area" id="view-container">
+            <!-- Dynamic Content Injected Here -->
+        </div>
+    </main>
+
+    <!-- UI Components: Modal / Overlay -->
+    <div id="overlay" class="overlay" onclick="app.closeAllOverlays()">
+        <div id="modal-container" class="modal" onclick="event.stopPropagation()">
+            <!-- Dynamic Modal Content -->
+        </div>
+    </div>
+
+    <div id="slide-panel" class="panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 id="panel-title">Notifications</h2>
+            <button onclick="app.closePanel()" class="btn btn-outline" style="padding: 0.5rem">✕</button>
+        </div>
+        <div id="panel-content" style="flex: 1; overflow-y: auto;">
+            <!-- Dynamic Panel Content -->
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        /** STATE MANAGEMENT **/
+        const state = {
+            view: 'dashboard',
+            isSidebarCollapsed: false,
+            theme: 'light',
+            filters: {
+                region: 'Global',
+                channel: 'All Channels',
+                device: 'All Devices',
+                dateRange: 'Last 30 Days'
+            },
+            campaigns: [
+                { id: 1, name: 'Summer Kickoff Sale', status: 'Active', spend: 4500, conv: 320, roi: 4.2 },
+                { id: 2, name: 'Brand Awareness Q3', status: 'Paused', spend: 1200, conv: 12, roi: 0.8 },
+                { id: 3, name: 'Retargeting - Cart Abandon', status: 'Active', spend: 890, conv: 154, roi: 7.5 },
+                { id: 4, name: 'Holiday Early Bird', status: 'Active', spend: 15600, conv: 1240, roi: 3.1 },
+                { id: 5, name: 'Influencer Collab v2', status: 'Active', spend: 2500, conv: 89, roi: 2.2 }
+            ],
+            reports: [
+                { id: 101, title: 'Quarterly Growth Performance', date: '2023-10-15', author: 'Alex Chen' },
+                { id: 102, title: 'Marketing Attribution Model', date: '2023-10-12', author: 'Sarah Smith' }
+            ],
+            alerts: [
+                { id: 1, title: 'CPA Spike Detected', status: true, severity: 'High' },
+                { id: 2, title: 'Budget Under-utilization', status: false, severity: 'Medium' }
+            ],
+            notifications: [
+                { title: 'New Report Shared', body: 'Sarah shared "Q4 Roadmap" with you.', time: '2h ago' },
+                { title: 'System Update', body: 'V2.4 is now live with better charts.', time: '5h ago' }
+            ]
+        };
+
+        /** UTILITIES **/
+        const $ = (id) => document.getElementById(id);
+        const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+
+        /** APP LOGIC **/
+        const app = {
+            init() {
+                this.render();
+                window.addEventListener('resize', () => this.renderCurrentView());
+                $('global-search').addEventListener('input', (e) => this.handleSearch(e.target.value));
+            },
+
+            setView(view) {
+                state.view = view;
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                const activeBtn = Array.from(document.querySelectorAll('.nav-item')).find(btn => btn.innerText.toLowerCase().includes(view));
+                if (activeBtn) activeBtn.classList.add('active');
+                this.renderCurrentView();
+            },
+
+            toggleTheme() {
+                state.theme = state.theme === 'light' ? 'dark' : 'light';
+                document.body.setAttribute('data-theme', state.theme);
+                $('theme-icon').innerHTML = state.theme === 'light' 
+                    ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>' 
+                    : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+                this.renderCurrentView();
+            },
+
+            toggleSidebar() {
+                state.isSidebarCollapsed = !state.isSidebarCollapsed;
+                $('sidebar').classList.toggle('collapsed');
+            },
+
+            showMessage(text) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerText = text;
+                $('toast-container').appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            },
+
+            showPanel(type) {
+                const panel = $('slide-panel');
+                const title = $('panel-title');
+                const content = $('panel-content');
+                panel.classList.add('open');
+
+                if (type === 'notifications') {
+                    title.innerText = 'Recent Activity';
+                    content.innerHTML = state.notifications.map(n => `
+                        <div style="padding: 1rem 0; border-bottom: 1px solid var(--border)">
+                            <div style="font-weight: 600">${n.title}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted)">${n.body}</div>
+                            <div style="font-size: 0.75rem; color: var(--primary); margin-top: 4px">${n.time}</div>
+                        </div>
+                    `).join('');
+                }
+            },
+
+            closePanel() { $('slide-panel').classList.remove('open'); },
+
+            showModal(type) {
+                const modal = $('modal-container');
+                $('overlay').style.display = 'flex';
+                
+                if (type === 'user-menu') {
+                    modal.innerHTML = `
+                        <h2>User Account</h2>
+                        <div style="margin: 1.5rem 0; text-align: center">
+                            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80" style="border-radius: 50%; margin-bottom: 1rem">
+                            <h3>Alex Chen</h3>
+                            <p style="color: var(--text-muted)">Administrator</p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem">
+                            <button class="btn btn-outline" onclick="app.closeAllOverlays()">Profile Settings</button>
+                            <button class="btn btn-outline" onclick="app.closeAllOverlays()">Billing</button>
+                            <button class="btn btn-primary" onclick="app.showMessage('Logout simulated.')">Log Out</button>
+                        </div>
+                    `;
+                } else if (type === 'create-campaign') {
+                    modal.innerHTML = `
+                        <h2>New Campaign</h2>
+                        <form class='scv-contact-form' onsubmit="app.handleForm(event, 'Campaign created!')" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem">
+                            <input type="text" placeholder="Campaign Name" required>
+                            <div style="display: flex; gap: 1rem">
+                                <input type="number" placeholder="Daily Budget" style="flex: 1">
+                                <select style="flex: 1"><option>Search</option><option>Display</option><option>Video</option></select>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem">
+                                <button type="button" class="btn btn-outline" onclick="app.closeAllOverlays()">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Launch Campaign</button>
+                            </div>
+                        <div class='form-message'></div>
+</form>
+                    `;
+                }
+            },
+
+            handleForm(e, msg) {
+                e.preventDefault();
+                this.showMessage(msg);
+                this.closeAllOverlays();
+            },
+
+            closeAllOverlays() {
+                $('overlay').style.display = 'none';
+            },
+
+            handleSearch(val) {
+                if (state.view === 'campaigns') {
+                    const filtered = state.campaigns.filter(c => c.name.toLowerCase().includes(val.toLowerCase()));
+                    this.renderCampaigns(filtered);
+                }
+            },
+
+            render() {
+                this.renderCurrentView();
+            },
+
+            renderCurrentView() {
+                const container = $('view-container');
+                container.innerHTML = '';
+                
+                // Common Toolbar for most views
+                const toolbar = document.createElement('div');
+                toolbar.className = 'filters-bar';
+                toolbar.innerHTML = `
+                    <select class="btn btn-outline filter-select" onchange="state.filters.region = this.value; app.showMessage('Filtered by ' + this.value)">
+                        <option>Global</option><option>North America</option><option>Europe</option><option>Asia</option>
+                    </select>
+                    <select class="btn btn-outline filter-select" onchange="state.filters.channel = this.value">
+                        <option>All Channels</option><option>Direct</option><option>Organic</option><option>Social</option>
+                    </select>
+                    <button class="btn btn-primary" style="margin-left: auto" onclick="app.showModal('create-campaign')">+ Create New</button>
+                    <button class="btn btn-outline" onclick="app.showMessage('Exporting CSV...')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Export
+                    </button>
+                `;
+                container.appendChild(toolbar);
+
+                if (state.view === 'dashboard') this.renderDashboard(container);
+                else if (state.view === 'campaigns') this.renderCampaigns();
+                else if (state.view === 'analytics') this.renderAnalytics(container);
+                else if (state.view === 'reports') this.renderReports(container);
+                else if (state.view === 'alerts') this.renderAlerts(container);
+                else if (state.view === 'settings') this.renderSettings(container);
+            },
+
+            renderDashboard(container) {
+                const grid = document.createElement('div');
+                grid.className = 'grid';
+                
+                const stats = [
+                    { label: 'Total Revenue', value: '$124,592', change: '+12.5%', pos: true },
+                    { label: 'Active Users', value: '14,820', change: '+3.2%', pos: true },
+                    { label: 'Avg. Conversion', value: '4.82%', change: '-0.4%', pos: false },
+                    { label: 'Total Spend', value: '$32,100', change: '+8.1%', pos: false }
+                ];
+
+                stats.forEach(s => {
+                    grid.innerHTML += `
+                        <div class="card">
+                            <div class="card-header">
+                                <span style="color: var(--text-muted); font-size: 0.9rem">${s.label}</span>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                            </div>
+                            <div class="metric-value">${s.value}</div>
+                            <div class="metric-change ${s.pos ? 'positive' : 'negative'}">
+                                ${s.pos ? '↑' : '↓'} ${s.change} <span style="color: var(--text-muted); font-size: 0.75rem">vs last month</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.appendChild(grid);
+
+                const chartCard = document.createElement('div');
+                chartCard.className = 'card';
+                chartCard.style.gridColumn = '1 / -1';
+                chartCard.innerHTML = `
+                    <div class="card-header">
+                        <h3 style="font-size: 1.1rem">Performance Over Time</h3>
+                        <div style="display: flex; gap: 1rem">
+                            <span style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem"><span style="width:10px;height:10px;background:var(--primary);border-radius:2px"></span> Revenue</span>
+                            <span style="display: flex; align-items: center; gap: 4px; font-size: 0.85rem"><span style="width:10px;height:10px;background:var(--success);border-radius:2px"></span> Goals</span>
+                        </div>
+                    </div>
+                    <canvas id="mainChart"></canvas>
+                `;
+                container.appendChild(chartCard);
+                this.drawMainChart('mainChart');
+            },
+
+            renderCampaigns(data = state.campaigns) {
+                const container = $('view-container');
+                const tableWrap = document.createElement('div');
+                tableWrap.className = 'card table-container';
+                
+                let rows = data.map(c => `
+                    <tr>
+                        <td style="font-weight: 500">${c.name}</td>
+                        <td><span class="status-pill status-${c.status.toLowerCase()}">${c.status}</span></td>
+                        <td>${formatCurrency(c.spend)}</td>
+                        <td>${c.conv}</td>
+                        <td style="font-weight: 600; color: ${c.roi > 3 ? 'var(--success)' : 'inherit'}">${c.roi}x</td>
+                        <td style="text-align: right">
+                            <button class="btn btn-outline" style="padding: 4px 8px" onclick="app.showMessage('Opening detail for ${c.name}')">Edit</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                tableWrap.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Campaign Name</th>
+                                <th>Status</th>
+                                <th>Spend</th>
+                                <th>Conversions</th>
+                                <th>ROI</th>
+                                <th style="text-align: right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                `;
+                container.appendChild(tableWrap);
+            },
+
+            renderAnalytics(container) {
+                const tabs = document.createElement('div');
+                tabs.style.display = 'flex';
+                tabs.style.gap = '2rem';
+                tabs.style.borderBottom = '1px solid var(--border)';
+                tabs.style.marginBottom = '1.5rem';
+                tabs.innerHTML = `
+                    <button class="btn" style="border-bottom: 2px solid var(--primary); border-radius: 0">Trends</button>
+                    <button class="btn" onclick="app.showMessage('Breakdown view loading...')">Breakdown</button>
+                    <button class="btn" onclick="app.showMessage('Attribution view loading...')">Attribution</button>
+                `;
+                container.appendChild(tabs);
+
+                const bigChart = document.createElement('div');
+                bigChart.className = 'card';
+                bigChart.innerHTML = `<h3 style="margin-bottom: 1rem">Conversion Traffic Trend</h3><canvas id="bigChart"></canvas>`;
+                container.appendChild(bigChart);
+                this.drawMainChart('bigChart', true);
+            },
+
+            renderReports(container) {
+                const list = document.createElement('div');
+                list.className = 'grid';
+                state.reports.forEach(r => {
+                    list.innerHTML += `
+                        <div class="card">
+                            <div style="display: flex; align-items: flex-start; gap: 1rem">
+                                <div style="background: rgba(59, 130, 246, 0.1); padding: 0.75rem; border-radius: 8px">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                </div>
+                                <div style="flex: 1">
+                                    <h4 style="font-size: 1rem; margin-bottom: 4px">${r.title}</h4>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted)">Modified ${r.date} by ${r.author}</div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem">
+                                <button class="btn btn-outline" style="flex: 1" onclick="app.showMessage('Opening report...')">Open</button>
+                                <button class="btn btn-outline" onclick="app.showMessage('Cloning report...')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.appendChild(list);
+            },
+
+            renderAlerts(container) {
+                const list = document.createElement('div');
+                list.style.display = 'flex';
+                list.style.flexDirection = 'column';
+                list.style.gap = '1rem';
+                
+                state.alerts.forEach(a => {
+                    list.innerHTML += `
+                        <div class="card" style="display: flex; align-items: center; justify-content: space-between">
+                            <div style="display: flex; align-items: center; gap: 1rem">
+                                <div style="width: 12px; height: 12px; border-radius: 50%; background: ${a.severity === 'High' ? 'var(--danger)' : 'var(--warning)'}"></div>
+                                <div>
+                                    <h4 style="font-size: 1rem">${a.title}</h4>
+                                    <p style="font-size: 0.8rem; color: var(--text-muted)">Severity: ${a.severity}</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem">
+                                <span style="font-size: 0.85rem">${a.status ? 'Active' : 'Disabled'}</span>
+                                <button onclick="a.status = !a.status; app.renderCurrentView()" style="width: 44px; height: 24px; background: ${a.status ? 'var(--primary)' : 'var(--border)'}; border-radius: 12px; position: relative; transition: 0.3s">
+                                    <div style="width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; top: 3px; ${a.status ? 'right: 3px' : 'left: 3px'}; transition: 0.3s"></div>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.appendChild(list);
+            },
+
+            renderSettings(container) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.maxWidth = '600px';
+                card.innerHTML = `
+                    <h3 style="margin-bottom: 1.5rem">System Settings</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem">
+                        <div style="display: flex; justify-content: space-between; align-items: center">
+                            <div>
+                                <div style="font-weight: 600">Timezone</div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted)">Affects all reporting timestamps.</div>
+                            </div>
+                            <select><option>UTC (GMT+0)</option><option>EST (GMT-5)</option><option>PST (GMT-8)</option></select>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center">
+                            <div>
+                                <div style="font-weight: 600">Auto-Refresh</div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted)">Update data every 5 minutes.</div>
+                            </div>
+                            <button onclick="app.showMessage('Setting saved.')" style="width: 44px; height: 24px; background: var(--primary); border-radius: 12px; position: relative;">
+                                <div style="width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; top: 3px; right: 3px;"></div>
+                            </button>
+                        </div>
+                        <div style="padding-top: 1rem; border-top: 1px solid var(--border)">
+                            <button class="btn btn-outline" style="color: var(--danger)" onclick="app.showMessage('Data reset process started...')">Reset All Cache</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            },
+
+            /** CANVAS CHARTING ENGINE **/
+            drawMainChart(canvasId, isBig = false) {
+                const canvas = $(canvasId);
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const parent = canvas.parentElement;
+                canvas.width = parent.clientWidth;
+                canvas.height = isBig ? 400 : 300;
+
+                const dataPoints = [40, 55, 45, 70, 65, 85, 80, 95, 100, 90, 110, 120];
+                const dataPoints2 = [30, 40, 35, 50, 45, 60, 55, 70, 75, 65, 80, 85];
+                const padding = 40;
+                const width = canvas.width - (padding * 2);
+                const height = canvas.height - (padding * 2);
+                const step = width / (dataPoints.length - 1);
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Grid Lines
+                ctx.strokeStyle = state.theme === 'light' ? '#e2e8f0' : '#334155';
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= 4; i++) {
+                    const y = padding + (height / 4) * i;
+                    ctx.beginPath();
+                    ctx.moveTo(padding, y);
+                    ctx.lineTo(padding + width, y);
+                    ctx.stroke();
+                }
+
+                const drawLine = (pts, color, fill) => {
+                    ctx.beginPath();
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 3;
+                    ctx.lineJoin = 'round';
+                    ctx.lineCap = 'round';
+                    
+                    pts.forEach((p, i) => {
+                        const x = padding + (i * step);
+                        const y = padding + height - (p / 130 * height);
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    });
+                    ctx.stroke();
+
+                    // Area Fill
+                    ctx.lineTo(padding + width, padding + height);
+                    ctx.lineTo(padding, padding + height);
+                    ctx.closePath();
+                    const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                    grad.addColorStop(0, fill);
+                    grad.addColorStop(1, 'transparent');
+                    ctx.fillStyle = grad;
+                    ctx.fill();
+                };
+
+                drawLine(dataPoints, '#3b82f6', 'rgba(59, 130, 246, 0.2)');
+                drawLine(dataPoints2, '#10b981', 'rgba(16, 185, 129, 0.1)');
+
+                // Interaction placeholder
+                canvas.onmousemove = (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    if (mouseX > padding && mouseX < padding + width) {
+                        this.render(); // Simple way to "clear" and redraw with tooltip simulated if we wanted to
+                    }
+                };
+            }
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+
+
+<script>
+// SharpCoder Vibe Email Helper - v2.0 (Enhanced)
+(function() {
+    'use strict';
+    
+    const CONFIG = window.__SCV_CONFIG || {};
+    const DEPLOY_TOKEN = CONFIG.deployToken || (typeof deployToken !== 'undefined' ? deployToken : null);
+    const API_URL = CONFIG.emailApiUrl || '/api/email/send';
+    
+    console.log('SCV Email Helper: Initialized', { hasToken: !!DEPLOY_TOKEN, apiUrl: API_URL });
+    
+    if (!DEPLOY_TOKEN) {
+        console.warn('SCV Email Helper: No deploy token found. Email sending will not work.');
+    }
+    
+    window.sendContactForm = async function(formData) {
+        if (!DEPLOY_TOKEN) {
+            console.error('SCV Email Helper: Missing deploy token');
+            return { ok: false, error: 'Email service not configured for this deployment.' };
+        }
+        
+        if (!formData.name || !formData.email || !formData.message) {
+            console.warn('SCV Email Helper: Missing required fields', formData);
+            return { ok: false, error: 'Please fill in all required fields.' };
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            console.warn('SCV Email Helper: Invalid email', formData.email);
+            return { ok: false, error: 'Please enter a valid email address.' };
+        }
+        
+        const payload = {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            message: formData.message.trim(),
+            deployToken: DEPLOY_TOKEN
+        };
+        
+        console.log('SCV Email Helper: Sending email', { name: payload.name, email: payload.email });
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            console.log('SCV Email Helper: Response status', response.status);
+            
+            let result;
+            try {
+                result = await response.json();
+                console.log('SCV Email Helper: Response body', result);
+            } catch (e) {
+                console.error('SCV Email Helper: Failed to parse response', e);
+                result = { ok: false, error: 'Invalid response from server.' };
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('SCV Email Helper: Request failed', error);
+            if (error.name === 'AbortError') {
+                return { ok: false, error: 'Request timed out. Please try again.' };
+            }
+            return { ok: false, error: 'Network error. Please check your connection and try again.' };
+        }
+    };
+    
+    function bindContactForm(form) {
+    // Prevent binding the same form multiple times
+    if (!form || form.hasAttribute('data-scv-bound')) return;
+    
+    // ====================================================================
+    // CRITICAL: Remove ALL existing submit handlers by cloning and replacing
+    // This completely eliminates the AI-generated fake toast handler
+    // ====================================================================
+    const originalId = form.id;
+    const originalClass = form.className;
+    
+    // Clone the form without any event listeners
+    const newForm = form.cloneNode(true);
+    
+    // Preserve the original id and class
+    if (originalId) newForm.id = originalId;
+    newForm.className = originalClass;
+    
+    // Replace the old form with the fresh clone
+    form.parentNode.replaceChild(newForm, form);
+    form = newForm;
+    
+    // Mark as bound to prevent re-processing
+    form.setAttribute('data-scv-bound', 'true');
+    
+    // Log form structure for debugging
+    console.log('SCV Email Helper: Binding form (clean clone)', { 
+        id: form.id, 
+        classes: form.className,
+        hasNameInput: !!form.querySelector('[name="name"]'),
+        hasEmailInput: !!form.querySelector('[name="email"]'),
+        hasMessageInput: !!form.querySelector('[name="message"]')
+    });
+    
+    // Find required inputs (try multiple selectors for robustness)
+    let nameInput = form.querySelector('[name="name"]');
+    let emailInput = form.querySelector('[name="email"]');
+    let messageInput = form.querySelector('[name="message"]');
+    
+    // Fallback: try to find by id if name attribute is missing
+    if (!nameInput) nameInput = form.querySelector('#name, [id="name"]');
+    if (!emailInput) emailInput = form.querySelector('#email, [id="email"]');
+    if (!messageInput) messageInput = form.querySelector('#message, [id="message"]');
+    
+    // If inputs exist but don't have name attributes, add them
+    if (nameInput && !nameInput.hasAttribute('name')) nameInput.setAttribute('name', 'name');
+    if (emailInput && !emailInput.hasAttribute('name')) emailInput.setAttribute('name', 'email');
+    if (messageInput && !messageInput.hasAttribute('name')) messageInput.setAttribute('name', 'message');
+    
+    // Validate required fields exist
+    if (!nameInput || !emailInput || !messageInput) {
+        console.warn('SCV Email Helper: Form missing required inputs', {
+            hasName: !!nameInput,
+            hasEmail: !!emailInput,
+            hasMessage: !!messageInput
+        });
+        return;
+    }
+    
+    // Remove any inline onsubmit attribute
+    form.removeAttribute('onsubmit');
+    
+    // Add the email submission handler
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopPropagation();  // Stop event from bubbling
+        
+        console.log('SCV Email Helper: Form submitted (email handler)');
+        
+        // Get values directly from inputs
+        const name = nameInput.value?.trim() || '';
+        const email = emailInput.value?.trim() || '';
+        const message = messageInput.value?.trim() || '';
+        
+        console.log('SCV Email Helper: Form data collected', { 
+            name: name ? 'present' : 'missing',
+            email: email ? 'present' : 'missing', 
+            message: message ? 'present' : 'missing'
+        });
+        
+        // Validate all fields are filled
+        if (!name || !email || !message) {
+            console.warn('SCV Email Helper: Empty values detected');
+            showFormMessage(form, 'Please fill in all required fields.', 'error');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            console.warn('SCV Email Helper: Invalid email format', email);
+            showFormMessage(form, 'Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        // Get or create message div
+        let messageDiv = form.querySelector('.form-message');
+        if (!messageDiv) {
+            messageDiv = document.createElement('div');
+            messageDiv.className = 'form-message';
+            form.appendChild(messageDiv);
+            console.log('SCV Email Helper: Created message div');
+        }
+        
+        // Get submit button and show loading state
+        const submitBtn = form.querySelector('[type="submit"]');
+        const originalText = submitBtn?.textContent || 'Send';
+        const originalDisabled = submitBtn?.disabled || false;
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+        }
+        
+        // Clear previous messages and show loading indicator
+        messageDiv.innerHTML = '<div style="color: #3b82f6; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e0e7ff; border-left: 4px solid #3b82f6;">⏳ Sending your message...</div>';
+        messageDiv.style.display = 'block';
+        
+        try {
+            // Send the email via the API
+            const result = await window.sendContactForm({ name, email, message });
+            
+            if (result && result.ok) {
+                // Success - show success message and reset form
+                messageDiv.innerHTML = '<div style="color: #10b981; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e8f5e9; border-left: 4px solid #10b981;">✓ ' + (result.message || 'Message sent successfully!') + '</div>';
+                form.reset();
+                console.log('SCV Email Helper: Email sent successfully');
+                
+                // Auto-hide success message after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv) messageDiv.style.display = 'none';
+                }, 5000);
+            } else {
+                // Error from server
+                const errorMsg = result?.error || 'Failed to send message. Please try again.';
+                console.error('SCV Email Helper: Send failed', errorMsg);
+                messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ ' + errorMsg + '</div>';
+            }
+        } catch (error) {
+            console.error('SCV Email Helper: Exception', error);
+            messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ An error occurred. Please try again later.</div>';
+        } finally {
+            // Re-enable submit button
+            if (submitBtn) {
+                submitBtn.disabled = originalDisabled;
+                submitBtn.textContent = originalText;
+            }
+        }
+    });
+    
+    console.log('SCV Email Helper: Successfully bound email handler to form');
+}
+
+// Helper function to show form messages
+function showFormMessage(form, message, type) {
+    let messageDiv = form.querySelector('.form-message');
+    if (!messageDiv) {
+        messageDiv = document.createElement('div');
+        messageDiv.className = 'form-message';
+        form.appendChild(messageDiv);
+    }
+    
+    const color = type === 'error' ? '#ef4444' : '#10b981';
+    const bgColor = type === 'error' ? '#fee2e2' : '#e8f5e9';
+    const borderColor = type === 'error' ? '#ef4444' : '#10b981';
+    
+    messageDiv.innerHTML = `<div style="color: ${color}; padding: 12px; margin-top: 10px; border-radius: 8px; background: ${bgColor}; border-left: 4px solid ${borderColor};">${type === 'error' ? '✗' : '✓'} ${message}</div>`;
+    messageDiv.style.display = 'block';
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        if (messageDiv) messageDiv.style.display = 'none';
+    }, 5000);
+}
+    
+    function bindAllForms() {
+        // Primary: look for scv-contact-form class
+        let forms = document.querySelectorAll('form.scv-contact-form');
+        console.log('SCV Email Helper: Forms with scv-contact-form class:', forms.length);
+    
+        // Fallback: look for any form that might be a contact form
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('#contactForm, #portfolioContactForm, #portfolioContact, form.contact-form, form[id*="contact"]');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using fallback form selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Also look for forms with submit buttons that might be contact forms
+        if (forms.length === 0) {
+            forms = document.querySelectorAll('form:has(input[type="email"]), form:has(textarea)');
+            if (forms.length > 0) {
+                console.warn('SCV Email Helper: Using email-input fallback selector. Found', forms.length, 'forms');
+            }
+        }
+    
+        // Bind each form (cloning removes existing handlers)
+        forms.forEach(bindContactForm);
+    
+        if (forms.length === 0) {
+            console.warn('SCV Email Helper: No contact forms found on this page');
+        } else {
+            console.log('SCV Email Helper: Successfully bound', forms.length, 'contact form(s)');
+        }
+    }
+
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindAllForms);
+    } else {
+        bindAllForms();
+    }
+    
+    // Watch for dynamically added forms
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        if (node.matches && node.matches('form.scv-contact-form')) {
+                            bindContactForm(node);
+                        }
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('form.scv-contact-form').forEach(bindContactForm);
+                        }
+                    }
+                });
+            });
+        });
+        
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }
+})();
+</script>
+</body>
+</html>
