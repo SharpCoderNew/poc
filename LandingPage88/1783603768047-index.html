@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sharp Platform | Next-Gen AI & Developer Ecosystem</title>
+    <meta name="description" content="Sharp Platform is the premier environment for building, deploying, and scaling AI agents and enterprise workflows.">
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #111111;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.5);
+            --accent: #a855f7;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Utilities */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .glass-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background: var(--glass);
+            border-color: var(--text-dim);
+        }
+
+        /* Decorative Elements */
+        .glow-orb {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            filter: blur(60px);
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-content {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 100px;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(180deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+        }
+
+        /* Marquee */
+        .marquee {
+            padding: 4rem 0;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .marquee-inner {
+            display: flex;
+            gap: 4rem;
+            animation: scroll 30s linear infinite;
+            width: max-content;
+        }
+
+        .marquee span {
+            color: var(--text-dim);
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            opacity: 0.5;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Features Section */
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-dim);
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* Showcase Section */
+        .showcase {
+            padding: 100px 0;
+            background: radial-gradient(circle at bottom, #111, transparent);
+        }
+
+        .showcase-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 4rem;
+        }
+
+        .showcase-img {
+            width: 100%;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        /* News Section */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .news-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        /* CTA Section */
+        .cta-box {
+            padding: 6rem 2rem;
+            text-align: center;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #0a0a0a, #111);
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+            margin: 100px 0;
+        }
+
+        /* Footer */
+        footer {
+            padding: 80px 0 40px;
+            border-top: 1px solid var(--glass-border);
+            background: #050505;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 60px;
+        }
+
+        .footer-col h4 {
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-col ul li a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* Modal / Overlay */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--glass-border);
+            padding: 3rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            text-align: center;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Fade Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 3000;
+            animation: slideUp 0.3s forwards;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Mobile Menu */
+        .mobile-nav {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 100%;
+            background: var(--bg);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 2rem;
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            z-index: 999;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links, .nav-btn-group { display: none; }
+            .mobile-menu-btn { display: block; }
+            .showcase-content { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .stats { grid-template-columns: 1fr 1fr; }
+            .hero h1 { font-size: 3rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+
+                <style id='scv-contact-form-safety'>
+                .scv-contact-form,
+                [data-scv-contact-form='true'] {
+                    width: min(100%, 640px) !important;
+                    max-width: 640px !important;
+                    margin: 2rem auto !important;
+                    padding: clamp(1.25rem, 3vw, 2rem) !important;
+                    display: grid !important;
+                    grid-template-columns: minmax(0, 1fr) !important;
+                    gap: 1rem !important;
+                    align-items: stretch !important;
+                    box-sizing: border-box !important;
+                    position: relative !important;
+                    overflow: hidden !important;
+                    border-radius: 24px !important;
+                    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+                    background: rgba(255, 255, 255, 0.06) !important;
+                    box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22) !important;
+                    backdrop-filter: blur(10px) !important;
+                }
+
+                .scv-contact-form *,
+                [data-scv-contact-form='true'] * {
+                    box-sizing: border-box !important;
+                }
+
+                .scv-contact-form .form-group,
+                [data-scv-contact-form='true'] .form-group {
+                    display: grid !important;
+                    grid-template-columns: minmax(0, 1fr) !important;
+                    gap: 0.5rem !important;
+                    width: 100% !important;
+                    margin: 0 !important;
+                }
+
+                .scv-contact-form label,
+                [data-scv-contact-form='true'] label {
+                    display: block !important;
+                    width: 100% !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    float: none !important;
+                    text-align: left !important;
+                    line-height: 1.2 !important;
+                    font-weight: 600 !important;
+                    letter-spacing: 0.02em !important;
+                    color: #e2e8f0 !important;
+                }
+
+                .scv-contact-form input,
+                .scv-contact-form textarea,
+                [data-scv-contact-form='true'] input,
+                [data-scv-contact-form='true'] textarea {
+                    display: block !important;
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    min-width: 0 !important;
+                    margin: 0 !important;
+                    padding: 0.85rem 1rem !important;
+                    border-radius: 14px !important;
+                    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+                    background: rgba(255, 255, 255, 0.08) !important;
+                    color: #f8fafc !important;
+                    font: inherit !important;
+                    line-height: 1.4 !important;
+                    appearance: none !important;
+                }
+
+                .scv-contact-form textarea,
+                [data-scv-contact-form='true'] textarea {
+                    min-height: 160px !important;
+                    resize: vertical !important;
+                }
+
+                .scv-contact-form input:focus,
+                .scv-contact-form textarea:focus,
+                [data-scv-contact-form='true'] input:focus,
+                [data-scv-contact-form='true'] textarea:focus {
+                    outline: none !important;
+                    border-color: #8b5cf6 !important;
+                    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.18) !important;
+                    background: rgba(255, 255, 255, 0.12) !important;
+                }
+
+                .scv-contact-form button[type='submit'],
+                [data-scv-contact-form='true'] button[type='submit'] {
+                    width: 100% !important;
+                    min-width: 0 !important;
+                    padding: 0.95rem 1.25rem !important;
+                    margin-top: 0.25rem !important;
+                    border: 0 !important;
+                    border-radius: 999px !important;
+                    color: #fff !important;
+                    background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 45%, #a78bfa 100%) !important;
+                    box-shadow: 0 12px 28px rgba(124, 58, 237, 0.32) !important;
+                    letter-spacing: 0.04em !important;
+                    font-weight: 700 !important;
+                    cursor: pointer !important;
+                }
+
+                .scv-contact-form button[type='submit']:hover,
+                [data-scv-contact-form='true'] button[type='submit']:hover {
+                    transform: translateY(-1px) !important;
+                    box-shadow: 0 16px 36px rgba(124, 58, 237, 0.4) !important;
+                }
+
+                .scv-contact-form .form-message,
+                [data-scv-contact-form='true'] .form-message {
+                    margin-top: 0.25rem !important;
+                    font-size: 0.95rem !important;
+                    line-height: 1.5 !important;
+                }
+
+                @media (max-width: 640px) {
+                    .scv-contact-form,
+                    [data-scv-contact-form='true'] {
+                        width: min(100%, calc(100vw - 1.5rem)) !important;
+                        margin: 1rem auto !important;
+                        padding: 1.25rem !important;
+                    }
+                }
+                </style></head>
+<body>
+<script>
+            // SharpCoder Vibe Configuration
+            window.__SCV_CONFIG = window.__SCV_CONFIG || {};
+            window.__SCV_CONFIG.deployToken = "CfDJ8BY36Zyr2jxKpe5_sI5LyDc5WSQ1YJxSz4iJ2zBpZTkI0xm8iAAEy8jHyQQ3I_pw3aoyod4vsLJ-ckb-8efKnS_aURfJOz2soz5oYx0NPh7ISQVN4V1l6QCMLnjEtvawnk_wm0yqaqLdS0e3O-T7RyPTPi2x-lugOCzsYAmsbeWvm_0FU2goC80pF0QPS-tG5g";
+            // In InjectDeployTokenAndEmailConfig method
+            window.__SCV_CONFIG.emailApiUrl = "https://staging.sharpcoder.ai/api/email/send";
+            window.__SCV_CONFIG.emailEnabled = true;
+            window.__SCV_CONFIG.version = "1.0.0";
+            </script>
+<script>let deployToken = "CfDJ8BY36Zyr2jxKpe5_sI5LyDc5WSQ1YJxSz4iJ2zBpZTkI0xm8iAAEy8jHyQQ3I_pw3aoyod4vsLJ-ckb-8efKnS_aURfJOz2soz5oYx0NPh7ISQVN4V1l6QCMLnjEtvawnk_wm0yqaqLdS0e3O-T7RyPTPi2x-lugOCzsYAmsbeWvm_0FU2goC80pF0QPS-tG5g";</script>
+
+
+    <div id="toast">Request Successful</div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-content">
+            <a href="#" class="logo">SHARP<span>.</span></a>
+            <div class="nav-links">
+                <a href="#solutions">Solutions</a>
+                <a href="#platform">Platform</a>
+                <a href="#community">Community</a>
+                <a href="#news">Latest</a>
+            </div>
+            <div class="nav-btn-group">
+                <button class="btn btn-outline launch-trigger" style="margin-right: 10px;">Login</button>
+                <button class="btn btn-primary launch-trigger">Launch Dashboard</button>
+            </div>
+            <button class="mobile-menu-btn" id="menuToggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#solutions" class="mobile-link">Solutions</a>
+        <a href="#platform" class="mobile-link">Platform</a>
+        <a href="#community" class="mobile-link">Community</a>
+        <a href="#news" class="mobile-link">Latest</a>
+        <button class="btn btn-primary launch-trigger">Launch Dashboard</button>
+    </div>
+
+    <main>
+        <!-- Hero -->
+        <section class="hero">
+            <div class="glow-orb" style="top: 10%; left: 20%;"></div>
+            <div class="glow-orb" style="top: 40%; right: 10%; background: radial-gradient(circle, var(--accent) 0%, transparent 70%);"></div>
+            
+            <div class="container reveal">
+                <h1>Build the Future of <br> AI Agents.</h1>
+                <p>Sharp Platform provides the ultimate infrastructure for orchestrating complex AI workflows, deploying autonomous agents, and scaling developer operations at light speed.</p>
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <button class="btn btn-primary btn-lg launch-trigger">Get Started Now</button>
+                    <button class="btn btn-outline btn-lg launch-trigger">View Documentation</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Marquee -->
+        <div class="marquee">
+            <div class="marquee-inner">
+                <span>INTELLECT</span>
+                <span>NEURAL-FLOW</span>
+                <span>DATA-CORE</span>
+                <span>QUANTUM-LABS</span>
+                <span>APEX-AI</span>
+                <span>SYNTHETIC</span>
+                <span>NEXUS-GRID</span>
+                <span>ORBITAL-SYNC</span>
+                <!-- Repeat for infinite scroll effect -->
+                <span>INTELLECT</span>
+                <span>NEURAL-FLOW</span>
+                <span>DATA-CORE</span>
+                <span>QUANTUM-LABS</span>
+                <span>APEX-AI</span>
+                <span>SYNTHETIC</span>
+                <span>NEXUS-GRID</span>
+                <span>ORBITAL-SYNC</span>
+            </div>
+        </div>
+
+        <!-- Solutions Section -->
+        <section id="solutions" class="container" style="padding: 100px 0;">
+            <div class="section-header reveal">
+                <h2>Intelligent Solutions</h2>
+                <p>Purpose-built tools for the next generation of builders.</p>
+            </div>
+            <div class="grid-3">
+                <div class="glass-card reveal">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Agentic Workflows</h3>
+                    <p style="color: var(--text-dim); margin-top: 1rem;">Deploy multi-agent systems that communicate and execute tasks autonomously across your entire stack.</p>
+                    <button class="btn btn-outline launch-trigger" style="margin-top: 1.5rem; width: 100%;">Explore Agents</button>
+                </div>
+                <div class="glass-card reveal">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Serverless Scaling</h3>
+                    <p style="color: var(--text-dim); margin-top: 1rem;">Auto-scaling compute that handles billions of requests without managing a single server or configuration file.</p>
+                    <button class="btn btn-outline launch-trigger" style="margin-top: 1.5rem; width: 100%;">Scale Now</button>
+                </div>
+                <div class="glass-card reveal">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Enterprise Security</h3>
+                    <p style="color: var(--text-dim); margin-top: 1rem;">Military-grade encryption and SOC2 compliance built into every layer of your AI deployment pipeline.</p>
+                    <button class="btn btn-outline launch-trigger" style="margin-top: 1.5rem; width: 100%;">Security Specs</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Showcase -->
+        <section id="platform" class="showcase">
+            <div class="container showcase-content">
+                <div class="reveal">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Visual Workflow Builder</h2>
+                    <p style="color: var(--text-dim); margin-bottom: 2rem;">Stop writing boilerplate code. Drag, drop, and connect your AI models, databases, and third-party APIs in a unified canvas.</p>
+                    <ul style="list-style: none; color: var(--text-dim); margin-bottom: 2rem;">
+                        <li style="margin-bottom: 0.5rem;">✓ Real-time collaboration</li>
+                        <li style="margin-bottom: 0.5rem;">✓ Version controlled environments</li>
+                        <li style="margin-bottom: 0.5rem;">✓ 500+ Instant integrations</li>
+                    </ul>
+                    <button class="btn btn-primary launch-trigger">Try Visual Builder</button>
+                </div>
+                <div class="reveal">
+                    <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&q=80&w=1000" alt="Platform Dashboard" class="showcase-img">
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="container reveal">
+            <div class="stats">
+                <div class="stat-item">
+                    <h3>99.99%</h3>
+                    <p style="color: var(--text-dim)">Uptime SLA</p>
+                </div>
+                <div class="stat-item">
+                    <h3>150ms</h3>
+                    <p style="color: var(--text-dim)">Avg. Latency</p>
+                </div>
+                <div class="stat-item">
+                    <h3>2M+</h3>
+                    <p style="color: var(--text-dim)">Agents Deployed</p>
+                </div>
+                <div class="stat-item">
+                    <h3>50k+</h3>
+                    <p style="color: var(--text-dim)">Developers</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- News Section -->
+        <section id="news" class="container" style="padding: 100px 0;">
+            <div class="section-header reveal">
+                <h2>Latest from Sharp</h2>
+                <p>Product updates, research, and community spotlights.</p>
+            </div>
+            <div class="news-grid">
+                <div class="news-card glass-card reveal">
+                    <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800" alt="News 1">
+                    <span style="color: var(--primary); font-size: 0.8rem; font-weight: 700;">RESEARCH</span>
+                    <h3 style="margin: 0.5rem 0;">Introducing Sharp-LLM v2</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">The fastest open-weights model optimized for agentic reasoning and tool-calling.</p>
+                    <button class="btn btn-outline launch-trigger" style="margin-top: 1.5rem;">Read More</button>
+                </div>
+                <div class="news-card glass-card reveal">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800" alt="News 2">
+                    <span style="color: var(--accent); font-size: 0.8rem; font-weight: 700;">UPDATE</span>
+                    <h3 style="margin: 0.5rem 0;">Zero-Trust SDK Launch</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">Building secure AI applications just became effortless with our new cryptographic wrapper.</p>
+                    <button class="btn btn-outline launch-trigger" style="margin-top: 1.5rem;">Read More</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="container">
+            <div class="cta-box reveal">
+                <div class="glow-orb" style="bottom: -20%; left: 30%; width: 600px; opacity: 0.2;"></div>
+                <h2 style="font-size: 3rem; margin-bottom: 1.5rem;">Ready to build the future?</h2>
+                <p style="color: var(--text-dim); max-width: 600px; margin: 0 auto 2rem;">Join thousands of teams building the next generation of autonomous software on Sharp Platform.</p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-primary btn-lg launch-trigger">Launch Sharp Platform</button>
+                    <button class="btn btn-outline btn-lg launch-trigger">Talk to Sales</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="#" class="logo" style="margin-bottom: 1rem;">SHARP<span>.</span></a>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">The enterprise-grade platform for AI development, deployment, and orchestration. Built for the modern engineering team.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#" class="footer-link">Features</a></li>
+                        <li><a href="#" class="footer-link">Integrations</a></li>
+                        <li><a href="#" class="footer-link">Pricing</a></li>
+                        <li><a href="#" class="footer-link">Changelog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#" class="footer-link">Documentation</a></li>
+                        <li><a href="#" class="footer-link">API Reference</a></li>
+                        <li><a href="#" class="footer-link">Community</a></li>
+                        <li><a href="#" class="footer-link">Templates</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#" class="footer-link">About Us</a></li>
+                        <li><a href="#" class="footer-link">Careers</a></li>
+                        <li><a href="#" class="footer-link">Privacy Policy</a></li>
+                        <li><a href="#" class="footer-link">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Sharp Platform Inc. All rights reserved.</p>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="#" class="footer-link">Twitter</a>
+                    <a href="#" class="footer-link">GitHub</a>
+                    <a href="#" class="footer-link">Discord</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Universal Modal -->
+    <div class="modal" id="universalModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <h2 id="modalTitle" style="margin-bottom: 1rem;">System Notification</h2>
+            <p id="modalBody" style="color: var(--text-dim); margin-bottom: 2rem;">This feature is currently being provisioned for your region. Please try again in a few moments.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button class="btn btn-primary" id="modalOk">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Reveal Animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Mobile Menu Logic
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+        let isMenuOpen = false;
+
+        menuToggle.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            mobileNav.style.display = isMenuOpen ? 'flex' : 'none';
+            menuToggle.textContent = isMenuOpen ? '✕' : '☰';
+        });
+
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNav.style.display = 'none';
+                menuToggle.textContent = '☰';
+                isMenuOpen = false;
+            });
+        });
+
+        // Modal Logic
+        const modal = document.getElementById('universalModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const closeModal = document.getElementById('closeModal');
+        const modalOk = document.getElementById('modalOk');
+
+        function openModal(title, message) {
+            modalTitle.textContent = title;
+            modalBody.textContent = message;
+            modal.style.display = 'flex';
+        }
+
+        closeModal.onclick = () => modal.style.display = 'none';
+        modalOk.onclick = () => modal.style.display = 'none';
+        window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; };
+
+        // Handle All "Interactive" elements
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+
+            // Handle Dashboard Triggers
+            if (target.closest('.launch-trigger')) {
+                e.preventDefault();
+                openModal('Initialize Environment', 'Securely connecting to Sharp Node Clusters. Your dashboard session is being prepared...');
+                setTimeout(() => {
+                    showToast('Connection Established');
+                }, 1000);
+            }
+
+            // Handle Footer/Internal Links
+            if (target.closest('.footer-link') || target.closest('.nav-links a') || target.closest('.logo')) {
+                if (!target.hash) {
+                    e.preventDefault();
+                    const label = target.textContent || "Action";
+                    openModal(label, `The ${label} section is restricted to registered developers. Accessing internal documentation...`);
+                }
+            }
+        });
+
+        // Toast System
+        const toast = document.getElementById('toast');
+        function showToast(message) {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Smooth Scroll handling for links with hash
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if (this.hash) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.hash);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Handle Reduced Motion
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+        }
+    </script>
+
+
+<script>
+// SharpCoder Vibe Email Helper - v2.0 (Enhanced)
+(function() {
+    'use strict';
+    
+    const CONFIG = window.__SCV_CONFIG || {};
+    const DEPLOY_TOKEN = CONFIG.deployToken || (typeof deployToken !== 'undefined' ? deployToken : null);
+    const API_URL = CONFIG.emailApiUrl || '/api/email/send';
+    
+    console.log('SCV Email Helper: Initialized', { hasToken: !!DEPLOY_TOKEN, apiUrl: API_URL });
+    
+    if (!DEPLOY_TOKEN) {
+        console.warn('SCV Email Helper: No deploy token found. Email sending will not work.');
+    }
+    
+    window.sendContactForm = async function(formData) {
+        if (!DEPLOY_TOKEN) {
+            console.error('SCV Email Helper: Missing deploy token');
+            return { ok: false, error: 'Email service not configured for this deployment.' };
+        }
+        
+        if (!formData.name || !formData.email || !formData.message) {
+            console.warn('SCV Email Helper: Missing required fields', formData);
+            return { ok: false, error: 'Please fill in all required fields.' };
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            console.warn('SCV Email Helper: Invalid email', formData.email);
+            return { ok: false, error: 'Please enter a valid email address.' };
+        }
+        
+        const payload = {
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            message: formData.message.trim(),
+            deployToken: DEPLOY_TOKEN
+        };
+        
+        console.log('SCV Email Helper: Sending email', { name: payload.name, email: payload.email });
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            console.log('SCV Email Helper: Response status', response.status);
+            
+            let result;
+            try {
+                result = await response.json();
+                console.log('SCV Email Helper: Response body', result);
+            } catch (e) {
+                console.error('SCV Email Helper: Failed to parse response', e);
+                result = { ok: false, error: 'Invalid response from server.' };
+            }
+            
+            return result;
+        } catch (error) {
+            console.error('SCV Email Helper: Request failed', error);
+            if (error.name === 'AbortError') {
+                return { ok: false, error: 'Request timed out. Please try again.' };
+            }
+            return { ok: false, error: 'Network error. Please check your connection and try again.' };
+        }
+    };
+    
+    function bindContactForm(form) {
+    // Prevent binding the same form multiple times
+    if (!form || form.hasAttribute('data-scv-bound')) return;
+
+    form.setAttribute('data-scv-bound', 'true');
+    form.classList.add('scv-contact-form');
+    form.removeAttribute('onsubmit');
+
+    // Find required inputs (try multiple selectors for robustness)
+    let nameInput = form.querySelector('[name="name"]');
+    let emailInput = form.querySelector('[name="email"]');
+    let messageInput = form.querySelector('[name="message"]');
+
+    // Fallback: try to find by id if name attribute is missing
+    if (!nameInput) nameInput = form.querySelector('#name, [id="name"]');
+    if (!emailInput) emailInput = form.querySelector('#email, [id="email"]');
+    if (!messageInput) messageInput = form.querySelector('#message, [id="message"]');
+
+    // If inputs exist but don't have name attributes, add them
+    if (nameInput && !nameInput.hasAttribute('name')) nameInput.setAttribute('name', 'name');
+    if (emailInput && !emailInput.hasAttribute('name')) emailInput.setAttribute('name', 'email');
+    if (messageInput && !messageInput.hasAttribute('name')) messageInput.setAttribute('name', 'message');
+
+    // Validate required fields exist
+    if (!nameInput || !emailInput || !messageInput) {
+        console.warn('SCV Email Helper: Form missing required inputs', {
+            hasName: !!nameInput,
+            hasEmail: !!emailInput,
+            hasMessage: !!messageInput
+        });
+        return;
+    }
+
+    console.log('SCV Email Helper: Binding form in place', {
+        id: form.id,
+        classes: form.className,
+        hasNameInput: !!nameInput,
+        hasEmailInput: !!emailInput,
+        hasMessageInput: !!messageInput
+    });
+
+    // Add the email submission handler without replacing the original form node.
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();  // Stop the AI-generated handler and other submit listeners
+        
+        console.log('SCV Email Helper: Form submitted (email handler)');
+        
+        // Get values directly from inputs
+        const name = nameInput.value?.trim() || '';
+        const email = emailInput.value?.trim() || '';
+        const message = messageInput.value?.trim() || '';
+        
+        console.log('SCV Email Helper: Form data collected', { 
+            name: name ? 'present' : 'missing',
+            email: email ? 'present' : 'missing', 
+            message: message ? 'present' : 'missing'
+        });
+        
+        // Validate all fields are filled
+        if (!name || !email || !message) {
+            console.warn('SCV Email Helper: Empty values detected');
+            showFormMessage(form, 'Please fill in all required fields.', 'error');
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            console.warn('SCV Email Helper: Invalid email format', email);
+            showFormMessage(form, 'Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        // Get or create message div
+        let messageDiv = form.querySelector('.form-message');
+        if (!messageDiv) {
+            messageDiv = document.createElement('div');
+            messageDiv.className = 'form-message';
+            form.appendChild(messageDiv);
+            console.log('SCV Email Helper: Created message div');
+        }
+        
+        // Get submit button and show loading state
+        const submitBtn = form.querySelector('[type="submit"]');
+        const originalText = submitBtn?.textContent || 'Send';
+        const originalDisabled = submitBtn?.disabled || false;
+        
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+        }
+        
+        // Clear previous messages and show loading indicator
+        messageDiv.innerHTML = '<div style="color: #3b82f6; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e0e7ff; border-left: 4px solid #3b82f6;">⏳ Sending your message...</div>';
+        messageDiv.style.display = 'block';
+        
+        try {
+            // Send the email via the API
+            const result = await window.sendContactForm({ name, email, message });
+            
+            if (result && result.ok) {
+                // Success - show success message and reset form
+                messageDiv.innerHTML = '<div style="color: #10b981; padding: 12px; margin-top: 10px; border-radius: 8px; background: #e8f5e9; border-left: 4px solid #10b981;">✓ ' + (result.message || 'Message sent successfully!') + '</div>';
+                form.reset();
+                console.log('SCV Email Helper: Email sent successfully');
+                
+                // Auto-hide success message after 5 seconds
+                setTimeout(() => {
+                    if (messageDiv) messageDiv.style.display = 'none';
+                }, 5000);
+            } else {
+                // Error from server
+                const errorMsg = result?.error || 'Failed to send message. Please try again.';
+                console.error('SCV Email Helper: Send failed', errorMsg);
+                messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ ' + errorMsg + '</div>';
+            }
+        } catch (error) {
+            console.error('SCV Email Helper: Exception', error);
+            messageDiv.innerHTML = '<div style="color: #ef4444; padding: 12px; margin-top: 10px; border-radius: 8px; background: #fee2e2; border-left: 4px solid #ef4444;">✗ An error occurred. Please try again later.</div>';
+        } finally {
+            // Re-enable submit button
+            if (submitBtn) {
+                submitBtn.disabled = originalDisabled;
+                submitBtn.textContent = originalText;
+            }
+        }
+    }, true);
+    
+    console.log('SCV Email Helper: Successfully bound email handler to form');
+}
+
+// Helper function to show form messages
+function showFormMessage(form, message, type) {
+    let messageDiv = form.querySelector('.form-message');
+    if (!messageDiv) {
+        messageDiv = document.createElement('div');
+        messageDiv.className = 'form-message';
+        form.appendChild(messageDiv);
+    }
+    
+    const color = type === 'error' ? '#ef4444' : '#10b981';
+    const bgColor = type === 'error' ? '#fee2e2' : '#e8f5e9';
+    const borderColor = type === 'error' ? '#ef4444' : '#10b981';
+    
+    messageDiv.innerHTML = `<div style="color: ${color}; padding: 12px; margin-top: 10px; border-radius: 8px; background: ${bgColor}; border-left: 4px solid ${borderColor};">${type === 'error' ? '✗' : '✓'} ${message}</div>`;
+    messageDiv.style.display = 'block';
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        if (messageDiv) messageDiv.style.display = 'none';
+    }, 5000);
+}
+    
+    function bindAllForms() {
+        // Primary: look for explicitly marked contact forms.
+        let forms = document.querySelectorAll('form.scv-contact-form, form[data-scv-contact-form="true"], #contactForm, #portfolioContactForm, #portfolioContact, section#contact form, section.contact form, [data-contact-section="true"] form');
+        console.log('SCV Email Helper: Explicit contact forms found:', forms.length);
+
+        // Bind each explicit contact form in place.
+        forms.forEach(bindContactForm);
+    
+        if (forms.length === 0) {
+            console.warn('SCV Email Helper: No contact forms found on this page');
+        } else {
+            console.log('SCV Email Helper: Successfully bound', forms.length, 'contact form(s)');
+        }
+    }
+
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindAllForms);
+    } else {
+        bindAllForms();
+    }
+    
+    // Watch for dynamically added forms
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        if (node.matches && node.matches('form.scv-contact-form')) {
+                            bindContactForm(node);
+                        }
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('form.scv-contact-form').forEach(bindContactForm);
+                        }
+                    }
+                });
+            });
+        });
+        
+        if (document.body) {
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    }
+})();
+</script>
+</body>
+</html>
